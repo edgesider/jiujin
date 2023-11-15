@@ -2,7 +2,7 @@
 const cloud = require('wx-server-sdk')
 
 cloud.init({
-  env: "dreamland2-a708ef"
+  env: cloud.DYNAMIC_CURRENT_ENV
 })
 
 const TcbRouter = require('tcb-router')
@@ -44,6 +44,7 @@ exports.main = async (event, context) => {
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
+        error: e ?? 'unknown',
         errno: -1,
       }
     }
@@ -66,6 +67,7 @@ exports.main = async (event, context) => {
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
+        error: e ?? 'unknown',
         errno: -1
       }
     }
@@ -96,10 +98,12 @@ exports.main = async (event, context) => {
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
+        error: e ?? 'unknown',
         errno: -1
       }
       if (e.errCode.toString() === '87014'){
         ctx.body = {
+          error: e ?? 'unknown',
           errno: 87014
         }
      }
@@ -160,6 +164,7 @@ exports.main = async (event, context) => {
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
+        error: e ?? 'unknown',
         errno: -1,
       }
       if (e.errCode.toString() === '87014'){

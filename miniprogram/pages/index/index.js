@@ -22,7 +22,7 @@ Page({
   async onLoad(options) {
     res = await cache.getMyInfoAndMyUniversityInfo()
     if(res.errno == -1){
-      console.log("读取我的信息和我的大学信息失败！")
+      console.log("读取我的信息和我的大学信息失败！", res)
     }else{
       myInfoAndMyUniversityInfo = res.data
       console.log({"我的信息和我的大学信息:":myInfoAndMyUniversityInfo})

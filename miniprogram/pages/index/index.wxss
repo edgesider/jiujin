@@ -1,6 +1,6 @@
 /* miniprogram/pages/index/index.wxss */
 page{
-  background-image: url(https://6472-dreamland2-a708ef-1259161827.tcb.qcloud.la/bg-image/index-bg.PNG?sign=63ba1ec84f43d4d6049a01307e8a4f5a&t=1603625990);
+  background-image: url(cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg);
   background-repeat:no-repeat;
   background-size:100% 100%;
   -moz-background-size:100% 100%;

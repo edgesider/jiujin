@@ -2,7 +2,7 @@
 
 
 .UCenter-bg {
-  background-image: url(https://6472-dreamland2-a708ef-1259161827.tcb.qcloud.la/bg-image/home-bg.jpg?sign=5a5b234ae9dfd0b5e3aa48a4bb3bc716&t=1603641071);
+  background-image: url(cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg);
   background-size: cover;
   height: 550rpx;
   display: flex;

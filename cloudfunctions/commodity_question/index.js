@@ -2,7 +2,7 @@
 const cloud = require('wx-server-sdk')
 
 cloud.init({
-  env: "dreamland2-a708ef"
+  env: cloud.DYNAMIC_CURRENT_ENV
 })
 
 const TcbRouter = require('tcb-router')
