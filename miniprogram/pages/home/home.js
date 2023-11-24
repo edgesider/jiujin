@@ -101,7 +101,19 @@ Page({
         showLoginPopup: true
       })
     }
-    
+  },
+
+  onEnterPrivateMessage(){
+    const registered = app.globalData.registered
+    if(registered){
+      wx.navigateTo({
+        url: '../../TUIService/pages/tim_index/tim_index',
+      })
+    }else{
+      this.setData({
+        showLoginPopup: true
+      })
+    }
   },
 
   onEnterHomeAbout(){

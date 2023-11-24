@@ -1,6 +1,9 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
 
+const crypto = require('crypto')
+const zlib = require('zlib')
+
 cloud.init({
   env: cloud.DYNAMIC_CURRENT_ENV
 })
@@ -188,6 +191,60 @@ exports.main = async (event, context) => {
   //     return true
   //   })
   // })
+  
+  app.router('genUserChatSig', async (ctx, next) => {
+    try{
+      var userid = event.params.userID;
+      var expire = event.params.EXPIRETIME;
+
+      var currTime = Math.floor(Date.now() / 1000);
+
+      var sigDoc = {
+          'TLS.ver': "2.0",
+          'TLS.identifier': "" + userid,
+          'TLS.sdkappid': Number(this.sdkappid),
+          'TLS.time': Number(currTime),
+          'TLS.expire': Number(expire),
+          'TLS.sig': ''
+      };
+
+//       var sig = '';
+//       if (userBuf != null && userBuf != undefined) {
+//           var base64UserBuf = base64encode(userBuf);
+//           sigDoc['TLS.userbuf'] = base64UserBuf;
+//           sig = this._hmacsha256(userid, currTime, expire, base64UserBuf);
+//       } else {
+//           sig = this._hmacsha256(userid, currTime, expire, null);
+//       }
+//       sigDoc['TLS.sig'] = sig;
+
+      var newBuffer = function (fill, encoding) {
+        return Buffer.from ? Buffer.from(fill, encoding) : new Buffer(fill, encoding)
+      };
+
+      var escape = function escape(str) {
+        return str.replace(/\+/g, '*')
+            .replace(/\//g, '-')
+            .replace(/=/g, '_');
+      };
+
+      var compressed = zlib.deflateSync(newBuffer(JSON.stringify(sigDoc))).toString('base64');
+      ctx.body = {
+        userSig: escape(compressed),
+        errno: 0
+      }
+    }catch(e){
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e.errCode.toString() === '87014'){
+        ctx.body = {
+          errno: 87014
+        }
+     }
+    }
+  })
 
   return app.serve()
 }

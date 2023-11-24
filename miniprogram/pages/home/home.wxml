@@ -45,6 +45,12 @@
 				<text class="text-grey">我发布的商品</text>
 			</view>
 		</view>
+    <view class="cu-item arrow" bindtap="onEnterPrivateMessage">
+			<view class="content" hover-class="none">
+				<text class="cuIcon-messagefill text-blue"></text>
+				<text class="text-grey">我的私信</text>
+			</view>
+		</view>
 		<view class="cu-item arrow" bindtap="copyLink">
 			<view class="content" data-link="https://github.com/2horse9sun/University_O2O">
 				<text class="cuIcon-github text-grey"></text>

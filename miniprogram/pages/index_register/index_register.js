@@ -208,6 +208,7 @@ Page({
     const myInfoAndMyUniversityInfo = res.data
     wx.hideLoading()
     app.globalData.registered = true
+    app.loginTUI()
     wx.showToast({
       title: '注册成功！',
       icon: 'success',

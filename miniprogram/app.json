@@ -16,6 +16,16 @@
     "pages/question_detail/question_detail",
     "pages/home_about/home_about"
   ],
+  "subPackages": [
+    {
+      "root": "TUIService",
+      "name": "TUIService",
+      "pages": [
+        "pages/tim_index/tim_index"
+      ],
+      "independent": false
+    }
+  ],
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",

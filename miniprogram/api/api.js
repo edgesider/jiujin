@@ -92,6 +92,28 @@ const api = {
   },
 
 
+  // 获取用户私信ID
+  async genUserSig(params) {
+    res = await wx.cloud.callFunction({
+      name: "user",
+      data: {
+        $url: "genUserChatSig",
+        params
+      }
+    })
+    if (res.result.errno == -1) {
+      console.log("获取用户私信ID上传用户信息失败！")
+      return new RespError("上传失败！")
+    } else if (res.result.errno == 87014) {
+      console.log("获取用户私信ID上传信息包含敏感内容！")
+      return new RespError("包含敏感内容！")
+    } else {
+      console.log("获取用户私信ID成功")
+      return new RespSuccess(res.result.userSig)
+    }
+  },
+
+
   // 从云数据库中获取所有大学信息
   async getUniversityInfo() {
     res = await wx.cloud.callFunction({
