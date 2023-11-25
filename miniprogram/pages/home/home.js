@@ -5,6 +5,9 @@ const cache = require('../../cache/cache')
 import Dialog from '@vant/weapp/dialog/dialog';
 let res = {}
 let params = {}
+
+import { debugRegister } from '../../utils/debug';
+
 Page({
 
   /**
@@ -23,9 +26,9 @@ Page({
     })
 
     // 获取我的信息和大学信息
-    const registered = app.globalData.registered
+    const registered = app.globalData.registered && !debugRegister;
     let myInfoAndMyUniversityInfo = {}
-    if(false && registered){
+    if(registered){
       res = await cache.getMyInfoAndMyUniversityInfo()
       myInfoAndMyUniversityInfo = res.data
       res = cache.setMyInfoAndMyUniversityInfo({myInfoAndMyUniversityInfo})

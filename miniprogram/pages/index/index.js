@@ -1,13 +1,11 @@
 // miniprogram/pages/index/index.js
-import Toast from '@vant/weapp/toast/toast';
+import { debugRegister } from '../../utils/debug';
 const app = getApp()
 const api = require("../../api/api")
 const cache = require("../../cache/cache")
 let params = {}
 let res = {}
 let myInfoAndMyUniversityInfo = {}
-
-const debugRegister = true;
 
 Page({
 
