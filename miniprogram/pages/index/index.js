@@ -21,18 +21,18 @@ Page({
    */
   // 获取并缓存数据库中用户的信息，若数据库中无用户信息，则缓存为空
   async onLoad(options) {
-    res = await cache.getMyInfoAndMyUniversityInfo()
-    if (res.errno == -1) {
-      console.log("读取我的信息和我的大学信息失败！", res)
-    } else {
-      myInfoAndMyUniversityInfo = res.data
-      console.log({ "我的信息和我的大学信息:": myInfoAndMyUniversityInfo })
-      if (!debugRegister) {
-        wx.redirectTo({
-          url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
-        })
-      }
-    }
+    // res = await cache.getMyInfoAndMyUniversityInfo()
+    // if (res.errno == -1) {
+    //   console.log("读取我的信息和我的大学信息失败！", res)
+    // } else {
+    //   myInfoAndMyUniversityInfo = res.data
+    //   console.log({ "我的信息和我的大学信息:": myInfoAndMyUniversityInfo })
+    //   if (!debugRegister) {
+    //     wx.redirectTo({
+    //       url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
+    //     })
+    //   }
+    // }
   },
 
   async onEnter(event) {

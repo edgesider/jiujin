@@ -10,63 +10,19 @@
 
 <swiper indicator-dots autoplay circular style="z-index: -1; width: 100%; height: 184px;">
   <swiper-item>
-    <image
-      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
-      style="width: 100%; height: 100%;"
-    />
+    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg" style="width: 100%; height: 100%;" />
   </swiper-item>
   <swiper-item>
-    <image
-      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg"
-      style="width: 100%; height: 100%;"
-    />
+    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg" style="width: 100%; height: 100%;" />
   </swiper-item>
   <swiper-item>
-    <image
-      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
-      style="width: 100%; height: 100%;"
-    />
+    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg" style="width: 100%; height: 100%;" />
   </swiper-item>
 </swiper>
-
-<view class="cu-bar bg-white">
-  <view class="action" bindtap="onShowLoginPopup">
-    <text class="cuIcon-locationfill text-orange"></text>
-    <text>{{universityName}}</text>
-  </view>
-</view>
-
-
-<!-- <swiper class="card-swiper square-dot" indicator-dots="true" circular="true" autoplay="true" interval="5000" duration="500" bindchange="cardSwiper" indicator-color="#8799a3" indicator-active-color="#0081ff">
-	<swiper-item wx:for="{{swiperList}}" wx:key="_id" class="{{cardCur==index?'cur':''}}">
-		<view class="swiper-item shadow">
-			<image src="{{item.url}}" mode="aspectFill"></image>
-		</view>
-	</swiper-item>
-</swiper> -->
-
-<view class="cu-list grid col-4 margin-sm radius">
-  <view class="cu-item" wx:for="{{categoryInfo}}" wx:key="key" wx:if="{{index<8}}">
-    <view class="cuIcon-{{item.icon}} text-{{item.color}}" bindtap="tabSelect" data-id="{{index}}">
-      <view class="cu-tag badge" wx:if="{{currCategory==item.name}}">
-        <block>当前</block>
-      </view>
-    </view>
-    <text bindtap="tabSelect" data-id="{{index}}">{{item.name}}</text>
-  </view>
-</view>
-
-
-<!-- <scroll-view scroll-x class="bg-gradual-orange nav text-center">
-	<view class="cu-item {{index==TabCur?'text-white cur':''}}" wx:for="{{categoryInfo}}" wx:key="_id" bindtap="tabSelect" data-id="{{index}}">
-		<text>{{item.name}}</text>
-	</view>
-</scroll-view> -->
 
 <view wx:if="{{commodityList.length==0}}">
   <van-empty description="暂时没有商品哦，快去发布吧" />
 </view>
-
 
 <view wx:for="{{commodityList}}" wx:key="_id">
   <van-card custom-class="commodity-card shadow-warp" thumb-mode="aspectFill" desc-class="text-cut" title-class="text-cut" num="{{item.number}}" price="{{item.price_now}}" origin-price="{{item.price_origin}}" desc="{{item.content}}" title="{{item.title}}" thumb="{{item.thumbnail_url[0]}}" data-id="{{item._id}}" bind:tap="onEnterCommodityDetail">
@@ -81,10 +37,8 @@
 </view>
 <view class="hline"></view>
 
-
-
 <view class="cu-modal bottom-modal {{showLoginPopup?'show':''}}">
-  <view class="cu-dialog" catchtap>
+  <view class="cu-dialog">
     <view class="cu-bar bg-white">
       <view class="action text-blue"></view>
       <view class="action text-green" catch:tap="onCancelLoginPopup">取消</view>

@@ -1,9 +1,76 @@
-// 云函数调用统一接口，可考虑分成多文件？
-
 const { RespSuccess, RespError } = require('../utils/resp')
+import { mock } from '../utils/debug';
 let res = {}
 
 const api = {
+  async getSelfInfo() {
+    if (mock) {
+      return new RespSuccess({
+        id: 0,
+        avatar_url: '',
+        name: '用户1',
+        sex: 1,
+        openid: '123',
+        rid: 1,
+        total_published: 0,
+        total_transaction: 0,
+        create_time: 0,
+        update_time: 0,
+        phone: null,
+      })
+    }
+    const res = await wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        $url: 'getSelfInfo',
+      }
+    });
+    if (res.errno !== 0) {
+      return new RespError(res);
+    }
+    return new RespSuccess(res);
+  },
+
+  async getRegions() {
+    const res = await wx.cloud.callFunction({
+      name: 'region',
+      data: {
+        $url: 'getRegions',
+      }
+    })
+    console.log(res);
+  },
+
+  async getHomeRegions() {
+    if (mock) {
+      return new RespSuccess([
+        {
+          id: 0,
+          name: '公寓1'
+        },
+        {
+          id: 1,
+          name: '片区1'
+        },
+        {
+          id: 2,
+          name: '校区1'
+        },
+        {
+          id: 2,
+          name: '学校'
+        },
+      ]);
+    }
+    const res = await wx.cloud.callFunction({
+      name: 'region',
+      data: {
+        $url: 'getHomeRegion',
+      }
+    });
+    return new RespSuccess(res);
+  },
+
   // 获取此用户信息和大学信息，无需参数
   async getMyInfoAndMyUniversityInfo() {
     res = await wx.cloud.callFunction({
@@ -192,8 +259,6 @@ const api = {
     return new RespSuccess(commodityDetail)
 
   },
-
-
 
   // 上传商品详细信息，参数见调用处
   async setCommodityDetail(params) {
@@ -686,8 +751,23 @@ const api = {
     }
     console.log("发送推送消息成功！")
     return new RespSuccess()
-  }
+  },
 
+  async getCommodityListByRegion(rid) {
+    const res = await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'getCommodityListByRegion',
+        params: {
+          rid
+        }
+      }
+    })
+    if (res.result.errno !== 0) {
+      return new RespError(res);
+    }
+    return res.result;
+  },
 }
 
-module.exports = api
+module.exports = api;
