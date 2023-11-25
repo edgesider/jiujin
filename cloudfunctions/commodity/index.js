@@ -21,9 +21,7 @@ exports.main = async (event, context) => {
 
   // 上传商品详细信息
   app.router('setCommodityDetail', async (ctx, next) => {
-    let params = event.params
-    const userPrimaryKey = params.userPrimaryKey
-    delete params.userPrimaryKey
+    const { user_id, rid, cid, content, price, quality, img_urls, sex } = evnet.params
     // 创建事务
     const transaction = await db.startTransaction()
     try {
@@ -31,23 +29,27 @@ exports.main = async (event, context) => {
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
-
       await transaction
         .collection("commodity")
         .add({
           data: {
-            ...params,
-            user_id: wxContext.OPENID,
+            rid,
+            cid,
+            content,
+            price,
+            quality,
+            img_urls,
+            sex,
+            openid: wxContext.OPENID,
             status: 0,
             create_time: db.serverDate(),
             update_time: db.serverDate(),
-            is_deleted: false
           }
         })
 
       await transaction
         .collection("user")
-        .doc(userPrimaryKey)
+        .doc(user_id)
         .update({
           data: {
             total_release: _.inc(1),
