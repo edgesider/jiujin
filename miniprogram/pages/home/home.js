@@ -25,7 +25,7 @@ Page({
     // 获取我的信息和大学信息
     const registered = app.globalData.registered
     let myInfoAndMyUniversityInfo = {}
-    if(registered){
+    if(false && registered){
       res = await cache.getMyInfoAndMyUniversityInfo()
       myInfoAndMyUniversityInfo = res.data
       res = cache.setMyInfoAndMyUniversityInfo({myInfoAndMyUniversityInfo})

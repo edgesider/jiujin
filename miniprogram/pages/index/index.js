@@ -6,6 +6,9 @@ const cache = require("../../cache/cache")
 let params = {}
 let res = {}
 let myInfoAndMyUniversityInfo = {}
+
+const debugRegister = true;
+
 Page({
 
   /**
@@ -26,14 +29,16 @@ Page({
     } else {
       myInfoAndMyUniversityInfo = res.data
       console.log({ "我的信息和我的大学信息:": myInfoAndMyUniversityInfo })
-      wx.redirectTo({
-        url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
-      })
+      if (!debugRegister) {
+        wx.redirectTo({
+          url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
+        })
+      }
     }
   },
 
   async onEnter(event) {
-    const registered = app.globalData.registered
+    const registered = app.globalData.registered && !debugRegister
     const userInfo = event.detail.userInfo
     console.log(userInfo)
     wx.setStorageSync('userInfo', userInfo)
@@ -62,7 +67,7 @@ Page({
 
 
   async onRegister(event) {
-    const registered = app.globalData.registered
+    const registered = app.globalData.registered && !debugRegister;
     const userInfo = event.detail.userInfo
     console.log(userInfo)
     wx.setStorageSync('userInfo', userInfo)
