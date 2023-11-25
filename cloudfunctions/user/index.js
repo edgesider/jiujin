@@ -67,7 +67,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  // 添加自己的信息
+  // 注册
   app.router('registerUser', async (ctx, next) => {
     try{
       res = await cloud.openapi.security.msgSecCheck({

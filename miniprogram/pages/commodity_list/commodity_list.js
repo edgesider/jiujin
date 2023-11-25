@@ -25,8 +25,8 @@ Page({
     pageIndex: 0,
     searchInput: "",
     universityName: "",
+    regionPath: [],
     commodityList: [],
-    categoryName: [],
     start: 0,
     isLoading: false,
     hasMore: true,
@@ -40,10 +40,22 @@ Page({
       title: '加载中',
     })
 
-    const selfInfo = await api.getSelfInfo();
-    console.log(selfInfo);
+    const { data: selfInfo } = await api.getSelfInfo();
+    const { rid } = selfInfo;
 
-    const regions = await api.getRegions();
+    const { data: regions } = await api.getRegions() ?? [];
+    const ridToRegion = {};
+    for (const region of regions) {
+      ridToRegion[region._id] = region;
+    }
+    let lastRegion = ridToRegion[rid];
+    const regionPath = [];
+    while (lastRegion !== undefined) {
+      regionPath.push(lastRegion);
+      lastRegion = ridToRegion[lastRegion.parents?.[0]];
+    }
+    console.log('calc region path', regionPath)
+    this.setData({ regionPath });
 
     // res = await api.getCommodityListByRegion(selfInfo.rid);
     // console.log(res);

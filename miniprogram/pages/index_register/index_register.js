@@ -1,30 +1,21 @@
-// miniprogram/pages/index_register/index_register.js
 import Toast from '@vant/weapp/toast/toast';
 import Dialog from '@vant/weapp/dialog/dialog';
 const app = getApp()
 const api = require("../../api/api")
-const cache = require("../../cache/cache")
 const rules = require('../../utils/rules')
-let params = {}
-let res = {}
-let uid = 0
-
-// 二级联动表单
-let universities = [[],[]]
-let objectMultiArray = [[],[]]
-let multiIndex = [0, 0]
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     name: "",
     avatarUrl: "",
     contactInfoQQ: "",
     contactInfoWX: "",
-    objectMultiArray: [[],[]],
+    regions: [],
+    l1ToL4: {},
+    indexes: [0, 0],
+    l1L4Pair: [[], []],
+
+    objectMultiArray: [[], []],
     multiIndex: [0, 0]
   },
 
@@ -37,131 +28,99 @@ Page({
     })
     // 获取用户头像，性别等信息
     const userInfo = wx.getStorageSync('userInfo')
-    console.log(userInfo)
-    const avatarUrl = userInfo.avatarUrl
-    const gender = userInfo.gender
+    const { avatarUrl, nickName, gender } = userInfo;
 
-    // 从数据库中读取大学信息，加工成合适的格式
-    universities = [[],[]]
-    objectMultiArray = [[],[]]
-    multiIndex = [0, 0]
-    params = {
-      is_mine: false
-    }
-    res = await api.getUniversityInfo(params)
-    if(res.errno == -1){
-      console.log("获取大学信息失败！")
-      return
-    }
-    const universityInfo = res.data
-    for(let i = 0;i < universityInfo.length;i++){
-      const province = universityInfo[i].province
-      const name = universityInfo[i].name
-      uid = universityInfo[i].uid
-      if(universities[0].indexOf(province) == -1){
-        universities[0].push(province)
-      }
-      universities[1].push({
-        province,
-        uid,
-        name
-      })
-    }
-    universities[0] = universities[0].map(function (item){
-      return {
-        name: item
-      }
-    })
-    console.log({"二级联动":universities})
+    const { data: regions } = await api.getRegions();
+    // 大学
+    const l1Regions = [];
+    // 大学 -> 楼号
+    const l1ToL4 = {};
 
-    // 渲染大学信息
-    uid = universities[1][0].uid
-    console.log({"用户uid":uid})
-    objectMultiArray = [universities[0],[]]
-    for(let i = 0;i < universities[1].length;i++){
-      if(universities[1][i].province == universities[0][0].name){
-        objectMultiArray[1].push(universities[1][i])
+    const ridToRegion = {}
+    for (const region of regions) {
+      ridToRegion[region._id] = region;
+      if (region.level === 1) {
+        l1Regions.push(region);
       }
+    }
+    // 从树根开始，找到所有的叶子节点（L4）
+    const tillL4 = (rid) => {
+      const region = ridToRegion[rid];
+      if (!region) {
+        return [];
+      }
+      if (region.level === 4) {
+        return [region._id];
+      } else {
+        const list = [];
+        for (const child of region.children) {
+          list.push(...tillL4(child));
+        }
+        return list;
+      }
+    }
+    for (const l1 of l1Regions) {
+      if (l1.level !== 1) {
+        continue;
+      }
+      l1ToL4[l1._id] = tillL4(l1._id).map(rid => ridToRegion[rid]);
     }
     this.setData({
-      objectMultiArray,
-      multiIndex,
+      l1ToL4,
+      l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
+      indexes: [0, 0],
       avatarUrl,
-      gender
-    }) 
+      name: nickName,
+      gender,
+    });
     wx.hideLoading()
   },
 
-
   // 导航栏
-  onNavigateBack(){
+  onNavigateBack() {
     wx.navigateBack({
       delta: 1
     })
   },
 
   // 表单相关
-  onChangeName(event){
+  onChangeName(event) {
     this.setData({
       name: event.detail.value
     })
   },
-  onChangeContactInfoWX(event){
+  onRegionPickerChange(event) {
+    const columnIndex = event.detail.column; // 被更新的列
+    const index = event.detail.value; // 更新的值
+
+    const { indexes, l1ToL4, l1L4Pair } = this.data;
+    // 先更新索引
+    indexes[columnIndex] = index;
+
+    // 根据索引更新数据（l1L4Pair）
+    const l1 = l1L4Pair[0][indexes[0]]; // 获取新的l1
+    const l4List = l1ToL4[l1._id]; // 获取新的l4
     this.setData({
-      contactInfoWX: event.detail.value
-    })
-  },
-  onChangeContactInfoQQ(event){
-    this.setData({
-      contactInfoQQ: event.detail.value
+      indexes,
+      l1L4Pair: [l1L4Pair[0], l4List]
     })
   },
 
-  // 选择大学表单 二级联动
-  onMultiColumnChange(event){
-    if(universities[0].length==0 || universities[1].length==0){
-      console.log("大学信息条数为0！")
-      return
-    }
-    objectMultiArray = [universities[0],[]]
-    const columnIndex = event.detail.column
-    const index = event.detail.value
-    multiIndex[columnIndex] = index
-    if(columnIndex == 0){
-      for(let i = 0;i < universities[1].length;i++){
-        if(universities[1][i].province == universities[0][index].name){
-          objectMultiArray[1].push(universities[1][i])
-        }
-      }
-      multiIndex[1] = 0
-      uid = objectMultiArray[1][0].uid
-      console.log({"当前选择大学uid":uid})
-      this.setData({
-        objectMultiArray,
-        multiIndex
-      })
-    }else{
-      uid = this.data.objectMultiArray[1][index].uid
-      console.log({"当前选择大学uid":uid})
-      this.setData({
-        multiIndex
-      })
-    } 
+  getSelectedRegion() {
+    const { l1L4Pair, indexes } = this.data;
+    return l1L4Pair[1][indexes[1]];
   },
 
   // 提交注册信息
-  async onRegister(){
-    params = {
-      "contact_info_wx": this.data.contactInfoWX,
-      "avatar_url": this.data.avatarUrl,
-      "contact_info_qq": this.data.contactInfoQQ,
-      "name": this.data.name,
-      uid,
+  async onRegister() {
+    const { avatarUrl: avatar_url, name, gender: sex } = this.data;
+    const params = {
+      avatar_url, name, sex, rid: this.getSelectedRegion()._id
     }
-    if(!rules.required(params.name)){
+    if (!rules.required(params.name)) {
       Dialog.alert({
         title: '格式错误',
-        message:"昵称不能为空！",
+        message: "昵称不能为空！",
       })
       return
     }
@@ -170,15 +129,15 @@ Page({
       title: '正在提交中',
     })
 
-    res = await api.setMyInfo(params)
-    if(res.errno != 0){
+    const res = await api.registerUser(params);
+    if (res.errno != 0) {
       wx.hideLoading()
       console.log("上传用户信息失败！")
       wx.showToast({
         title: res.message,
         icon: 'none',
         duration: 2000,
-        success(res){
+        success(res) {
           setTimeout(() => {
           }, 1500)
         }
@@ -186,36 +145,17 @@ Page({
       return
     }
     console.log("注册成功！")
-    // 缓存数据库中用户的信息
-    res = await cache.getMyInfoAndMyUniversityInfo()
-    if(res.errno == -1){
-      console.log("读取我的信息和我的大学信息失败！")
-      wx.showToast({
-        title: '内部错误',
-        icon: 'none',
-        duration: 2000,
-        success(res){
-          setTimeout(() => {
-            wx.redirectTo({
-              url: `../index/index`,
-            })
-          }, 1500)
-        }
-      })
-      return
-    }
-    console.log({"我的信息和我的大学信息:":res.data})
-    const myInfoAndMyUniversityInfo = res.data
     wx.hideLoading()
+
     app.globalData.registered = true
     wx.showToast({
       title: '注册成功！',
       icon: 'success',
       duration: 2000,
-      success(res){
+      success(res) {
         setTimeout(() => {
           wx.redirectTo({
-            url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
+            url: `../commodity_list/commodity_list`,
           })
         }, 1500)
       }

@@ -1,2 +1,2 @@
-export const debugRegister = false;
+export const debugRegister = true;
 export const mock = true;

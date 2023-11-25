@@ -20,6 +20,12 @@
   </swiper-item>
 </swiper>
 
+<view class="regions-filter">
+  <view wx:for="{{regionPath}}" wx:key="_id" class="region">
+    <text>{{item.name}}</text>
+  </view>
+</view>
+
 <view wx:if="{{commodityList.length==0}}">
   <van-empty description="暂时没有商品哦，快去发布吧" />
 </view>

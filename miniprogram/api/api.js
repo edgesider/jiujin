@@ -1,34 +1,18 @@
 const { RespSuccess, RespError } = require('../utils/resp')
-import { mock } from '../utils/debug';
 let res = {}
 
 const api = {
   async getSelfInfo() {
-    if (mock) {
-      return new RespSuccess({
-        id: 0,
-        avatar_url: '',
-        name: '用户1',
-        sex: 1,
-        openid: '123',
-        rid: 1,
-        total_published: 0,
-        total_transaction: 0,
-        create_time: 0,
-        update_time: 0,
-        phone: null,
-      })
-    }
     const res = await wx.cloud.callFunction({
       name: 'user',
       data: {
         $url: 'getSelfInfo',
       }
     });
-    if (res.errno !== 0) {
-      return new RespError(res);
+    if (res.result.errno !== 0) {
+      return new RespError(res.result);
     }
-    return new RespSuccess(res);
+    return new RespSuccess(res.result.data);
   },
 
   async getRegions() {
@@ -38,100 +22,24 @@ const api = {
         $url: 'getRegions',
       }
     })
-    console.log(res);
+    if (res.result.errno !== 0) {
+      return new RespError(res);
+    }
+    return new RespSuccess(res.result.data);
   },
 
-  async getHomeRegions() {
-    if (mock) {
-      return new RespSuccess([
-        {
-          id: 0,
-          name: '公寓1'
-        },
-        {
-          id: 1,
-          name: '片区1'
-        },
-        {
-          id: 2,
-          name: '校区1'
-        },
-        {
-          id: 2,
-          name: '学校'
-        },
-      ]);
-    }
+  async registerUser(params) {
     const res = await wx.cloud.callFunction({
-      name: 'region',
-      data: {
-        $url: 'getHomeRegion',
-      }
-    });
-    return new RespSuccess(res);
-  },
-
-  // 获取此用户信息和大学信息，无需参数
-  async getMyInfoAndMyUniversityInfo() {
-    res = await wx.cloud.callFunction({
       name: 'user',
       data: {
-        $url: 'getMyInfoAndMyUniversityInfo',
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("调用云数据库获取我的信息和我的大学信息错误！", res.result)
-      return new RespError("调用云数据库获取我的信息和我的大学信息错误！")
-    }
-    res = res.result
-    if (res.list.length == 0) {
-      console.log("用户信息不在云数据库中！")
-      return new RespError("用户信息不在云数据库中！")
-    }
-    res.list[0].universityInfo = res.list[0].universityInfo[0]
-    res.list = res.list[0]
-    const myInfoAndMyUniversityInfo = res.list
-    return new RespSuccess(myInfoAndMyUniversityInfo)
-  },
-
-  // 通过用户的openid从数据库中读取用户信息
-  async getUserInfoFromDbByUserId(params) {
-    res = await wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        $url: 'getUserInfoFromDbByUserId',
+        $url: 'registerUser',
         params
       }
     })
-    if (res.result.errno == -1) {
-      console.log("获取用户信息失败！")
-      return new RespError("获取用户信息失败！")
+    if (res.result.errno !== 0) {
+      return new RespError(res.result);
     }
-    const userInfo = res.result.data[0]
-    console.log({ "获取用户信息成功！": userInfo })
-    return new RespSuccess(userInfo)
-
-  },
-
-  // 上传自己的信息，参数见调用处
-  async setMyInfo(params) {
-    res = await wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        $url: 'setMyInfo',
-        params
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("上传用户信息失败！")
-      return new RespError("上传失败！")
-    } else if (res.result.errno == 87014) {
-      console.log("上传信息包含敏感内容！")
-      return new RespError("包含敏感内容！")
-    } else {
-      console.log("上传用户信息成功！")
-      return new RespSuccess()
-    }
+    return new RespSuccess(res.result.data);
   },
 
   // 更新自己的信息，参数是所有字段的子集
@@ -157,46 +65,6 @@ const api = {
       return new RespSuccess()
     }
   },
-
-
-  // 从云数据库中获取所有大学信息
-  async getUniversityInfo() {
-    res = await wx.cloud.callFunction({
-      name: 'university',
-      data: {
-        $url: 'getUniversityInfo',
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("获取大学信息失败！", res)
-      return new RespError("获取大学信息失败！")
-    }
-    const universityInfo = res.result.data
-    console.log({ "获取大学信息成功！": universityInfo })
-    return new RespSuccess(universityInfo)
-  },
-
-  // 通过大学的uid获取大学信息
-  getUniversityInfoByUid(params) {
-    return wx.cloud.callFunction({
-      name: 'university',
-      data: {
-        $url: 'getUniversityInfoByUid',
-        params
-      }
-    })
-  },
-
-  // 验证学生身份
-  // TODO: 如何验证学生身份？
-  // studentIdAuth(){
-  //   return wx.cloud.callFunction({
-  //     name: 'user',
-  //     data: {
-  //       $url: 'studentIdAuth',
-  //     }
-  //   })
-  // },
 
   // 获取商品分类信息
   async getCommodityCategory() {
