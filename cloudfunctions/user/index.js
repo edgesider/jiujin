@@ -52,11 +52,10 @@ exports.main = async (event, context) => {
   // })
 
   // 获取用户信息
-  app.outer('getUserInfo', async (ctx, next) => {
-    const {openid} = event.params
+  app.outer('getSelfInfo', async (ctx, next) => {
     try{
       ctx.body = await userCollection.where({
-        openid: openid,
+        openid: wxContext.OPENID,
         is_deleted: false
       })
       .get()

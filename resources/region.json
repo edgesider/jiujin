@@ -1,0 +1,67 @@
+{
+	"id": 1,
+	"name": "北京航空航天大学",
+	"level": 1,
+	"parents": [],
+	"children": [2,3]
+} {
+	"id": 2,
+	"name": "学院路校区",
+	"level": 2,
+	"parents": [1],
+	"children": [4,5]
+} {
+	"id": 3,
+	"name": "沙河校区",
+	"level": 2,
+	"parents": [1],
+	"children": []
+} {
+	"id": 4,
+	"name": "大运村",
+	"level": 3,
+	"parents": [2],
+	"children": [6,7,8,9]
+} {
+	"id": 5,
+	"name": "校内",
+	"level": 3,
+	"parents": [2],
+	"children": [10,11]
+} {
+	"id": 6,
+	"name": "1号楼",
+	"level": 4,
+	"parents": [4],
+	"children": []
+} {
+	"id": 7,
+	"name": "2号楼",
+	"level": 4,
+	"parents": [4],
+	"children": []
+} {
+	"id": 8,
+	"name": "3号楼",
+	"level": 4,
+	"parents": [4],
+	"children": []
+} {
+	"id": 9,
+	"name": "4号楼",
+	"level": 4,
+	"parents": [4],
+	"children": []
+} {
+	"id": 10,
+	"name": "一公寓",
+	"level": 4,
+	"parents": [5],
+	"children": []
+} {
+	"id": 11,
+	"name": "二公寓",
+	"level": 4,
+	"parents": [5],
+	"children": []
+} 
