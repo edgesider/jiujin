@@ -6,6 +6,7 @@ cloud.init({
 })
 
 const TcbRouter = require('tcb-router')
+const { registerTexture } = require('XrFrame/xrFrameSystem')
 
 const db = cloud.database()
 
@@ -22,46 +23,41 @@ exports.main = async (event, context) => {
   })
 
   // 获取此用户信息和大学信息
-  app.router('getMyInfoAndMyUniversityInfo', async (ctx, next) => {
-    try{
-      ctx.body = await userCollection.aggregate()
-      .match({
-        openid: wxContext.OPENID,
-        is_deleted: false
-      })
-      .project({
-        create_time: false,
-        update_time: false,
-        is_deleted: false
-      })
-      .lookup({
-        from: 'university',
-        localField: 'uid',
-        foreignField: 'uid',
-        as: 'universityInfo'
-      })
-      .end()
-      ctx.body.errno = 0
-    }catch(e){
-      ctx.body = {
-        error: e ?? 'unknown',
-        errno: -1,
-      }
-    }
-  })
+  // app.router('getUserInfoAndMyUniversityInfo', async (ctx, next) => {
+  //   try{
+  //     ctx.body = await userCollection.aggregate()
+  //     .match({
+  //       openid: wxContext.OPENID,
+  //       is_deleted: false
+  //     })
+  //     .project({
+  //       create_time: false,
+  //       update_time: false,
+  //       is_deleted: false
+  //     })
+  //     .lookup({
+  //       from: 'university',
+  //       localField: 'uid',
+  //       foreignField: 'uid',
+  //       as: 'universityInfo'
+  //     })
+  //     .end()
+  //     ctx.body.errno = 0
+  //   }catch(e){
+  //     ctx.body = {
+  //       error: e ?? 'unknown',
+  //       errno: -1,
+  //     }
+  //   }
+  // })
 
   // 获取用户信息
-  app.router('getUserInfoFromDbByUserId', async (ctx, next) => {
-    const {userId} = event.params
+  app.outer('getUserInfo', async (ctx, next) => {
+    const {openid} = event.params
     try{
       ctx.body = await userCollection.where({
-        openid: userId,
+        openid: openid,
         is_deleted: false
-      })
-      .field({
-        _id: true,
-        contact_info_qq: true,
-        contact_info_wx: true,
       })
       .get()
       ctx.body.errno = 0
@@ -71,23 +67,24 @@ exports.main = async (event, context) => {
         errno: -1
       }
     }
-   
   })
 
   // 添加自己的信息
-  app.router('setMyInfo', async (ctx, next) => {
+  app.router('registerUser', async (ctx, next) => {
     try{
-
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
-
-
+      const { id,avatar_url,name,sex,rid,phone } = event.params;
       ctx.body = await userCollection.add({
         data: {
-          ...event.params,
+          id:id,
+          avatar_url:avatar_url,
+          name:name,
+          sex:sex,
+          rid:rid,
+          phone:phone,
           openid: wxContext.OPENID,
-          student_auth: true,
           total_transaction: 0,
           total_release: 0,
           create_time: db.serverDate(),
@@ -108,13 +105,11 @@ exports.main = async (event, context) => {
         }
      }
     }
-    
   })
 
   // 更新自己的信息，如果变更大学则检查是否仍有未删除的商品/进行中的交易
   app.router('updateMyInfo', async (ctx, next) => {
     try{
-
       // 检查是否仍有未删除的商品/进行中的交易
       let new_uid = event.params.uid
       let userInfo = await userCollection.where({
