@@ -6,7 +6,6 @@ cloud.init({
 })
 
 const TcbRouter = require('tcb-router')
-const { registerTexture } = require('XrFrame/xrFrameSystem')
 
 const db = cloud.database()
 
@@ -52,17 +51,19 @@ exports.main = async (event, context) => {
   // })
 
   // 获取用户信息
-  app.outer('getSelfInfo', async (ctx, next) => {
+  app.router('getSelfInfo', async (ctx, next) => {
     try{
       ctx.body = await userCollection.where({
         _id: wxContext.OPENID,
         is_deleted: false
       })
       .get()
+      // ctx.body.data = ctx.body.data.get[0]
+      ctx.body.t = typeof ctx.body.data;
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
-        error: e ?? 'unknown',
+        error: e?.toString() ?? 'unknown',
         errno: -1
       }
     }
@@ -74,7 +75,7 @@ exports.main = async (event, context) => {
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
-      const { avatar_url,name,sex,rid,phone } = event.params;
+      const { avatar_url,name,sex,rid} = event.params;
       ctx.body = await userCollection.add({
         data: {
           _id:wxContext.OPENID,
@@ -82,7 +83,6 @@ exports.main = async (event, context) => {
           name:name,
           sex:sex,
           rid:rid,
-          phone:phone,
           total_transaction: 0,
           total_release: 0,
           create_time: db.serverDate(),
