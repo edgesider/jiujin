@@ -30,15 +30,18 @@ exports.main = async (event, context) => {
   // 获取所有主页区域信息
   app.outer('getHomeRegions', async (ctx, next) => {
     try{
-      rid = await userCollection.where({
-        openid: wxContext.OPENID,
-        is_deleted: false
-      })
-      .field({
-        rid: true,
-      })
-      .get()
+      // rid = await userCollection.where({
+      //   openid: wxContext.OPENID,
+      //   is_deleted: false
+      // })
+      // .field({
+      //   rid: true,
+      // })
+      // .get()
+      rid =1
       regions = await regionCollection.get()
+
+
       //TODO
       ctx.body.errno = 0
     }catch(e){
