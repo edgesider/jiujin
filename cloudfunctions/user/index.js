@@ -53,13 +53,11 @@ exports.main = async (event, context) => {
   // 获取用户信息
   app.router('getSelfInfo', async (ctx, next) => {
     try{
-      ctx.body = await userCollection.where({
+      const { data } = await userCollection.where({
         _id: wxContext.OPENID,
         is_deleted: false
-      })
-      .get()
-      // ctx.body.data = ctx.body.data.get[0]
-      ctx.body.t = typeof ctx.body.data;
+      }).get()
+      ctx.body = { data: data?.[0] }
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
