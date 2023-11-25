@@ -55,7 +55,7 @@ exports.main = async (event, context) => {
   app.outer('getSelfInfo', async (ctx, next) => {
     try{
       ctx.body = await userCollection.where({
-        openid: wxContext.OPENID,
+        _id: wxContext.OPENID,
         is_deleted: false
       })
       .get()
@@ -74,16 +74,15 @@ exports.main = async (event, context) => {
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
-      const { id,avatar_url,name,sex,rid,phone } = event.params;
+      const { avatar_url,name,sex,rid,phone } = event.params;
       ctx.body = await userCollection.add({
         data: {
-          id:id,
+          _id:wxContext.OPENID,
           avatar_url:avatar_url,
           name:name,
           sex:sex,
           rid:rid,
           phone:phone,
-          openid: wxContext.OPENID,
           total_transaction: 0,
           total_release: 0,
           create_time: db.serverDate(),

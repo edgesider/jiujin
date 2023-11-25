@@ -21,11 +21,10 @@ exports.main = async (event, context) => {
 
   // 上传商品详细信息
   app.router('setCommodityDetail', async (ctx, next) => {
-    const { user_id, rid, cid, content, price, quality, img_urls, sex } = evnet.params
+    const { rid, cid, content, price, quality, img_urls, sex } = evnet.params
     // 创建事务
     const transaction = await db.startTransaction()
     try {
-
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
@@ -40,7 +39,7 @@ exports.main = async (event, context) => {
             quality,
             img_urls,
             sex,
-            openid: wxContext.OPENID,
+            sell_id: wxContext.OPENID,
             status: 0,
             create_time: db.serverDate(),
             update_time: db.serverDate(),
@@ -49,7 +48,7 @@ exports.main = async (event, context) => {
 
       await transaction
         .collection("user")
-        .doc(user_id)
+        .doc(wxContext.OPENID)
         .update({
           data: {
             total_release: _.inc(1),
@@ -74,10 +73,15 @@ exports.main = async (event, context) => {
   })
 
   // 获取商品列表
-  app.router('getCommodityListByUidAndCid', async (ctx, next) => {
-    const { uid, cid, keyword, start, count, is_mine } = event.params
+  app.router('getCommodityList', async (ctx, next) => {
+    const { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
+    const _ = db.command
     let w = {}
-    if (keyword.trim() != '') {
+    w["rid"] = rid
+    if (cid) {
+      w["cid"] = cid
+    }
+    if (keyword && keyword.trim() != '') {
       w = {
         title: new db.RegExp({
           regexp: keyword,
@@ -85,31 +89,27 @@ exports.main = async (event, context) => {
         }),
       }
     }
-    w["is_deleted"] = false
-    w["uid"] = uid
-    if (cid != -1) {
-      w["cid"] = cid
+    //如果卖方不是自己的话，需要过滤删除
+    if (!sell_id || sell_id != wxContext.OPENID) {
+      w["is_deleted"] = false
     }
-
-    if (is_mine) {
-      w["user_id"] = wxContext.OPENID
+    if (sell_id) {
+      w["sell_id"] = sell_id
+    }
+    if (buyer_id) {
+      w["buyer_id"] = buyer_id
+    }
+    if(sell_id!=wxContext.OPENID&&buyer_id!=wxContext.OPENID){
+      w["sex"] = _.eq(0).or(_.eq(sex))
+    }
+    if (status) {
+      w["status"] = status
     }
     try {
       ctx.body = await commodityCollection.where(w)
-        .orderBy('create_time', 'desc')
+        .orderBy('update_time', 'desc')
         .skip(start)
         .limit(count)
-        .field({
-          _id: true,
-          cid: true,
-          content: true,
-          number: true,
-          price_now: true,
-          price_origin: true,
-          status: true,
-          thumbnail_url: true,
-          title: true
-        })
         .get()
       ctx.body.errno = 0
     } catch (e) {
@@ -120,7 +120,7 @@ exports.main = async (event, context) => {
   })
 
   // 通过_id获取商品详细信息
-  app.router('getCommodityDetail', async (ctx, next) => {
+  app.router('getCommodityList', async (ctx, next) => {
     const { id } = event.params
     try {
       ctx.body = await commodityCollection.where({

@@ -15,7 +15,7 @@ exports.main = async (event, context) => {
   })
 
   // 获取所有区域信息
-  app.outer('getRegions', async (ctx, next) => {
+  app.router('getRegions', async (ctx, next) => {
     try{
       ctx.body = await regionCollection.get()
       ctx.body.errno = 0
@@ -27,29 +27,5 @@ exports.main = async (event, context) => {
     }
   })
 
-  // 获取所有主页区域信息
-  app.outer('getHomeRegions', async (ctx, next) => {
-    try{
-      // rid = await userCollection.where({
-      //   openid: wxContext.OPENID,
-      //   is_deleted: false
-      // })
-      // .field({
-      //   rid: true,
-      // })
-      // .get()
-      rid =1
-      regions = await regionCollection.get()
-
-
-      //TODO
-      ctx.body.errno = 0
-    }catch(e){
-      ctx.body = {
-        error: e ?? 'unknown',
-        errno: -1
-      }
-    }
-  })
   return app.serve()
 }
