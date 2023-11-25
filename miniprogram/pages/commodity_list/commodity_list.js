@@ -19,6 +19,8 @@ Page({
    * 页面的初始数据
    */
   data: {
+    StatusBar: app.globalData.StatusBar,
+    CustomBar: app.globalData.CustomBar,
     showLoginPopup: false,
     pageIndex: 0,
     searchInput:"",
@@ -463,6 +465,10 @@ Page({
         showLoginPopup: true
       })
     }
+  },
+
+  onTitleClick() {
+    console.log('click')
   },
 
   onCancelLoginPopup(){
