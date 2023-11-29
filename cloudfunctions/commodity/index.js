@@ -20,8 +20,8 @@ exports.main = async (event, context) => {
   })
 
   // 上传商品详细信息
-  app.router('setCommodityDetail', async (ctx, next) => {
-    const { rid, cid, content, price, quality, img_urls, sex } = evnet.params
+  app.router('createCommodity', async (ctx, next) => {
+    const { rid, cid, content, price, quality, img_urls, sex } = event.params
     // 创建事务
     const transaction = await db.startTransaction()
     try {
@@ -43,6 +43,7 @@ exports.main = async (event, context) => {
             status: 0,
             create_time: db.serverDate(),
             update_time: db.serverDate(),
+            is_deleted: false,
           }
         })
 
@@ -99,7 +100,7 @@ exports.main = async (event, context) => {
     if (buyer_id) {
       w["buyer_id"] = buyer_id
     }
-    if(sell_id!=wxContext.OPENID&&buyer_id!=wxContext.OPENID){
+    if (sell_id != wxContext.OPENID && buyer_id != wxContext.OPENID) {
       w["sex"] = _.eq(0).or(_.eq(sex))
     }
     if (status) {
@@ -119,30 +120,132 @@ exports.main = async (event, context) => {
     }
   })
 
-  // 通过_id获取商品详细信息
-  app.router('getCommodityList', async (ctx, next) => {
-    const { id } = event.params
+
+  // 更新商品状态
+  app.router('updateCommodityStatus', async (ctx, next) => {
+    const { _id, status } = event.params
+    if (status != 0 && status != 1 && status != 2) {
+      ctx.body = {
+        error: '不合法的状态',
+        errno: -2,
+      }
+    }
+    else {
+      try {
+        ctx.body = await commodityCollection.where({
+          sell_id: wxContext.OPENID,
+          _id: _id,
+          is_deleted: false
+        }).field(
+          {
+            status: true,
+          }
+        ).get()
+        const before_status = ctx.body.data.status;
+        if (!status) {
+          if ((before_status == 1 && status == 2) || (before_status == 2 && status != 2)) {
+            ctx.body = {
+              error: "无效的状态切换",
+              errno: -1,
+            }
+          } else {
+            ctx.body = await commodityCollection.where({
+              sell_id: wxContext.OPENID,
+              _id: _id,
+              is_deleted: false
+            }).update({
+              data: {
+                status,
+                update_time: db.serverDate(),
+              }
+            })
+            ctx.body.errno = 0
+          }
+        }
+        else {
+          ctx.body = {
+            error: "unknown status",
+            errno: -1,
+          }
+
+        }
+      } catch (e) {
+        ctx.body = {
+          error: e ?? 'unknown',
+          errno: -1,
+        }
+        if (e.errCode.toString() === '87014') {
+          ctx.body = {
+            errno: 87014
+          }
+        }
+      }
+    }
+  })
+
+  // 更新商品
+  app.router('updateCommodity', async (ctx, next) => {
+    const { rid, cid, content, price, quality, img_urls, sex } = event.params
     try {
-      ctx.body = await commodityCollection.where({
-        _id: id,
-        is_deleted: false
+      res = await cloud.openapi.security.msgSecCheck({
+        content: JSON.stringify(event.params)
       })
-        .field({
-          create_time: false,
-          update_time: false,
-          is_deleted: false,
-          cid: false
-        })
-        .get()
+      ctx.body = await commodityCollection.where({
+        sell_id: wxContext.OPENID,
+        _id: _id,
+        is_deleted: false
+      }).update({
+        data: {
+          rid,
+          cid,
+          content,
+          price,
+          quality,
+          img_urls,
+          sex,
+          update_time: db.serverDate(),
+        }
+      })
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {
-        errno: -1
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e.errCode.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
       }
     }
-
   })
 
+  // 擦亮商品
+  app.router('polishCommodity', async (ctx, next) => {
+    const { _id} = event.params
+    try {
+      ctx.body = await commodityCollection.where({
+        sell_id: wxContext.OPENID,
+        _id: _id,
+        is_deleted: false
+      }).update({
+        data: {
+          update_time: db.serverDate(),
+        }
+      })
+      ctx.body.errno = 0
+    } catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e.errCode.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
 
   // 图片安全校验
   app.router('imgSecCheck', async (ctx, next) => {
@@ -170,7 +273,50 @@ exports.main = async (event, context) => {
         }
       }
     }
+  })
 
+  // 删除商品
+  app.router('deleteCommodity', async (ctx, next) => {
+    const { _id } = event.params
+    // 创建事务
+    const transaction = await db.startTransaction()
+    try {
+      await transaction
+        .collection("commodity")
+        .where({
+          openid: wxContext.OPENID,
+          _id: _id,
+          is_deleted: false
+        }).update({
+          data: {
+            is_deleted: true
+          }
+        })
+
+      await transaction
+        .collection("user")
+        .doc(wxContext.OPENID)
+        .update({
+          data: {
+            total_release: _.inc(-1),
+            update_time: db.serverDate(),
+          }
+        })
+      transaction.commit()
+      ctx.body = {
+        errno: 0
+      }
+    } catch (e) {
+      transaction.rollback()
+      ctx.body = {
+        errno: -1
+      }
+      if (e.errCode.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
   })
 
 
@@ -203,10 +349,6 @@ exports.main = async (event, context) => {
           return
         }
       }
-
-
-
-
       // 删除相关提问
       for (let i = 0; i < qids.length; i++) {
         res = await transaction
@@ -248,7 +390,6 @@ exports.main = async (event, context) => {
       res = await cloud.deleteFile({
         fileList: fileIDs,
       })
-
       transaction.commit()
       ctx.body = {
         errno: 0
@@ -260,7 +401,6 @@ exports.main = async (event, context) => {
         errno: -1
       }
     }
-
   })
 
 

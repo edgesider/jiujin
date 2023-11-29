@@ -21,35 +21,6 @@ exports.main = async (event, context) => {
     event
   })
 
-  // 获取此用户信息和大学信息
-  // app.router('getUserInfoAndMyUniversityInfo', async (ctx, next) => {
-  //   try{
-  //     ctx.body = await userCollection.aggregate()
-  //     .match({
-  //       openid: wxContext.OPENID,
-  //       is_deleted: false
-  //     })
-  //     .project({
-  //       create_time: false,
-  //       update_time: false,
-  //       is_deleted: false
-  //     })
-  //     .lookup({
-  //       from: 'university',
-  //       localField: 'uid',
-  //       foreignField: 'uid',
-  //       as: 'universityInfo'
-  //     })
-  //     .end()
-  //     ctx.body.errno = 0
-  //   }catch(e){
-  //     ctx.body = {
-  //       error: e ?? 'unknown',
-  //       errno: -1,
-  //     }
-  //   }
-  // })
-
   // 获取用户信息
   app.router('getSelfInfo', async (ctx, next) => {
     try{
@@ -103,52 +74,19 @@ exports.main = async (event, context) => {
     }
   })
 
-  // 更新自己的信息，如果变更大学则检查是否仍有未删除的商品/进行中的交易
-  app.router('updateMyInfo', async (ctx, next) => {
+  //更新学生信息
+  app.router('updateUser', async (ctx, next) => {
     try{
-      // 检查是否仍有未删除的商品/进行中的交易
-      let new_uid = event.params.uid
-      let userInfo = await userCollection.where({
-        openid: wxContext.OPENID,
-        is_deleted: false
-      })
-      .get()
-      if(new_uid != userInfo.data[0].uid){
-        let countResult = await commodityCollection.where({
-          user_id: wxContext.OPENID,
-          is_deleted: false
-        }).count()
-        commodityCount = countResult.total
-        countResult = await transactionCollection.where({
-          buyer_id: wxContext.OPENID,
-          status: 0,
-          is_deleted: false
-        }).count()
-        transactionCount = countResult.total
-        countResult = await transactionCollection.where({
-          seller_id: wxContext.OPENID,
-          status: 0,
-          is_deleted: false
-        }).count()
-        transactionCount += countResult.total
-        if(commodityCount+transactionCount>0){
-          ctx.body = {
-            errno: -2,
-          }
-          return
-        }
-      }
-
-
-    
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
+      const {name,rid} = event.params;
       ctx.body = await userCollection.where({
         openid: wxContext.OPENID
       }).update({
         data: {
-          ...event.params,
+          name:name,
+          rid:rid,
           update_time: db.serverDate()
         }
       })
@@ -164,8 +102,6 @@ exports.main = async (event, context) => {
         }
      }
     }
-    
-    
   })
 
 

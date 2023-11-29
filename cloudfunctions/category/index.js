@@ -19,13 +19,13 @@ exports.main = async (event, context) => {
   })
 
   // 获取商品分类信息
-  app.router('getCommodityCategory', async (ctx, next) => {
+  app.router('getCategory', async (ctx, next) => {
     try{
       ctx.body = await categoryCollection.where({
         is_deleted: false
       })
       .field({
-        cid: true,
+        _id: true,
         name: true
       })
       .get()
