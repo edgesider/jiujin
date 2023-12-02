@@ -12,6 +12,10 @@ class Resp {
           this.message = message
       }
   }
+
+  get isError() {
+    return this instanceof RespError;
+  }
 }
 
 class RespSuccess extends Resp {

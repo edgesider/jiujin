@@ -1,9 +1,9 @@
 const cache = require("./cache/cache")
 const api = require('./api/api');
+import { debugRegister } from './utils/debug';
 
 App({
   async onLaunch() {
-
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
@@ -17,7 +17,11 @@ App({
       })
     }
 
-    this.globalData = {}
+    this.globalData = {
+      registered: false,
+      self: null,
+      ridToRegion: null,
+    }
 
     // Color UI: 获得系统信息
     wx.getSystemInfo({
@@ -36,6 +40,13 @@ App({
     const res = await api.getSelfInfo()
     const registered = !!res.data?._id;
     this.globalData.registered = registered;
+    if (registered) {
+      this.globalData.self = res.data;
+    }
     console.log(`registered=${registered}`);
   },
+
+  isRegistered() {
+    return this.globalData.registered && !debugRegister;
+  }
 })

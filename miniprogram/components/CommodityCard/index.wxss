@@ -1,0 +1,81 @@
+.root {
+  height: 165px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.bg-placeholder {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.price {
+  font-size: 14px;
+  font-weight: bold;
+  color: red;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 6px 8px;
+
+  margin: 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.quality {
+  font-size: 14px;
+  font-style: italic;
+  color: black;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 6px 8px;
+
+  margin: 4px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.bottom {
+  width: 100%;
+  height: fit-content;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+
+  padding: 4px;
+}
+
+.bottom .content {
+  font-size: 12px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  padding: 2px 4px;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bottom .region {
+  font-size: 12px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  flex-shrink: 0;
+  padding: 2px 4px;
+}

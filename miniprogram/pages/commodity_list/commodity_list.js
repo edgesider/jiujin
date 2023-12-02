@@ -1,17 +1,7 @@
 const app = getApp()
 const api = require("../../api/api")
-const cache = require("../../cache/cache")
-const MAX_COMMODITY_LIMIT_SIZE = 10
-let res = {}
-let params = {}
-let uid = 0
-let cid = -1
-let start = 0
-let categories = [{
-  name: "全部",
-  cid: -1
-}]
-let currCategory = ""
+const { getQualitiesMap } = require("../../utils/strings");
+const SIZE_PER_PAGE = 10
 
 Page({
 
@@ -24,9 +14,16 @@ Page({
     showLoginPopup: false,
     pageIndex: 0,
     searchInput: "",
-    universityName: "",
-    regionPath: [],
+
+    ridToRegion: null,
+    regions: [],
+    selectedRegionIndex: 0, // 选中的区域
+
     commodityList: [],
+    commodityListRows: [],
+
+    qualitiesMap: getQualitiesMap(),
+
     start: 0,
     isLoading: false,
     hasMore: true,
@@ -48,38 +45,67 @@ Page({
     for (const region of regions) {
       ridToRegion[region._id] = region;
     }
+    app.globalData.ridToRegion = ridToRegion;
+
     let lastRegion = ridToRegion[rid];
-    const regionPath = [];
+    const regionPath = []; // 自己所在的区域，以及所有父区域
     while (lastRegion !== undefined) {
       regionPath.push(lastRegion);
       lastRegion = ridToRegion[lastRegion.parents?.[0]];
     }
-    console.log('calc region path', regionPath)
-    this.setData({ regionPath });
+    this.setData({
+      ridToRegion,
+      regions: regionPath,
+      selectedRegionIndex: 0,
+    });
 
-    // res = await api.getCommodityListByRegion(selfInfo.rid);
-    // console.log(res);
-    // if (res.errno == -1) {
-    //   console.log("获取商品列表失败！", res)
-    //   return
-    // }
-    // this.setData({
-    //   commodityList: res.data
-    // })
-
-    // params = {
-    //   uid,
-    //   start: 0,
-    //   count: MAX_COMMODITY_LIMIT_SIZE,
-    //   is_mine: false
-    // }
-    // res = await cache.getCommodityListByUidAndCid(params)
-    // console.log(res);
-
-    wx.hideLoading()
+    await this.refreshList(rid, false);
+    wx.hideLoading();
   },
 
-  async onShow() {
+  async onShow() {},
+
+  async refreshList(rid, loading) {
+    if (rid === undefined) {
+      rid = this.data.regions[this.data.selectedRegionIndex]._id;
+    }
+    loading = Boolean(loading);
+
+    if (loading) {
+      wx.showLoading({ mask: true });
+    }
+    try {
+      console.log(`get list rid=${rid}`);
+      const list = await api.getCommodityList(rid, {
+        start: 0,
+        count: SIZE_PER_PAGE,
+        is_mine: false,
+        status: 0 // TODO enum
+      });
+      console.log(`list data for rid=${rid}`, list.data);
+      this.setListData(list.data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      wx.hideLoading()
+    }
+  },
+
+  setListData(commodityList) {
+    // const first = commodityList.data[0];
+    // commodityList = [...new Array(40)].map(() => first);
+    this.setData({
+      commodityList,
+      commodityListRows: this.splitListToRows(commodityList)
+    });
+  },
+
+  splitListToRows(list) {
+    const rows = [];
+    for (let i = 0; i < list.length; i += 2) {
+      rows.push(list.slice(i, i + 2));
+    }
+    return rows;
   },
 
   // 表单
@@ -97,44 +123,55 @@ Page({
     })
   },
 
+  // 切换区域
+  async onChangeRegion(ev) {
+    const targetIdx = ev.currentTarget.dataset.idx;
+    if (typeof targetIdx !== 'number' || targetIdx === this.data.selectedRegionIndex) {
+      return;
+    }
+    this.setData({ selectedRegionIndex: targetIdx }, () => {
+      this.refreshList(undefined, true);
+    });
+  },
+
   // 标签页，切换分类
   async tabSelect(e) {
-    wx.showLoading({
-      title: '加载中',
-    })
-    const idx = e.currentTarget.dataset.id
-    currCategory = this.data.categoryInfo[idx].name,
-      this.setData({
-        // TabCur: e.currentTarget.dataset.id,
-        // scrollLeft: (e.currentTarget.dataset.id-1)*60,
-        commodityList: [],
-        currCategory,
-      })
-    cid = categories[idx].cid
-    start = 0
-
-    // 获取商品列表
-    params = {
-      uid,
-      cid,
-      keyword: "",
-      start: start,
-      count: MAX_COMMODITY_LIMIT_SIZE,
-      is_mine: false
-    }
-    res = await cache.getCommodityListByUidAndCid(params)
-    if (res.errno == -1) {
-      console.log("获取商品列表失败！")
-      return
-    }
-    const commodityList = res.data
-    start = commodityList.length
-    this.setData({
-      commodityList,
-      hasMore: true,
-      isLoading: false
-    })
-    wx.hideLoading()
+    // wx.showLoading({
+    //   title: '加载中',
+    // })
+    // const idx = e.currentTarget.dataset.id
+    // currCategory = this.data.categoryInfo[idx].name,
+    //   this.setData({
+    //     // TabCur: e.currentTarget.dataset.id,
+    //     // scrollLeft: (e.currentTarget.dataset.id-1)*60,
+    //     commodityList: [],
+    //     currCategory,
+    //   })
+    // cid = categories[idx].cid
+    // start = 0
+    //
+    // // 获取商品列表
+    // params = {
+    //   uid,
+    //   cid,
+    //   keyword: "",
+    //   start: start,
+    //   count: MAX_COMMODITY_LIMIT_SIZE,
+    //   is_mine: false
+    // }
+    // res = await cache.getCommodityListByUidAndCid(params)
+    // if (res.errno == -1) {
+    //   console.log("获取商品列表失败！")
+    //   return
+    // }
+    // const commodityList = res.data
+    // start = commodityList.length
+    // this.setData({
+    //   commodityList,
+    //   hasMore: true,
+    //   isLoading: false
+    // })
+    // wx.hideLoading()
   },
 
   // 轮播图相关 cardSwiper
@@ -146,89 +183,88 @@ Page({
 
   // 刷新商品列表
   async onPullDownRefresh() {
-    wx.showLoading({
-      title: '加载中',
-    })
-
-    params = {
-      uid,
-      cid,
-      keyword: "",
-      start: 0,
-      count: MAX_COMMODITY_LIMIT_SIZE,
-      is_mine: false
-    }
-    res = await api.getCommodityListByUidAndCid(params)
-    if (res.errno == -1) {
-      console.log("刷新商品列表失败！")
-      return
-    }
-    const commodityList = res.data
-    start = commodityList.length
-
-    params = {
-      cid,
-      commodityList
-    }
-    res = await cache.setCommodityListByCid(params)
-    if (res.errno == -1) {
-      console.log("新数据写入缓存失败")
-      return
-    }
-    this.setData({
-      commodityList,
-      hasMore: true,
-      isLoading: false
-    })
-    wx.hideLoading()
+    // wx.showLoading({
+    //   title: '加载中',
+    // })
+    //
+    // params = {
+    //   uid,
+    //   cid,
+    //   keyword: "",
+    //   start: 0,
+    //   count: MAX_COMMODITY_LIMIT_SIZE,
+    //   is_mine: false
+    // }
+    // res = await api.getCommodityListByUidAndCid(params)
+    // if (res.errno == -1) {
+    //   console.log("刷新商品列表失败！")
+    //   return
+    // }
+    // const commodityList = res.data
+    // start = commodityList.length
+    //
+    // params = {
+    //   cid,
+    //   commodityList
+    // }
+    // res = await cache.setCommodityListByCid(params)
+    // if (res.errno == -1) {
+    //   console.log("新数据写入缓存失败")
+    //   return
+    // }
+    // this.setData({
+    //   commodityList,
+    //   hasMore: true,
+    //   isLoading: false
+    // })
+    // wx.hideLoading()
   },
 
   // 到底加载更多数据
   async onReachBottom() {
-
-    if (!this.data.hasMore) {
-      return
-    }
-    this.setData({
-      isLoading: true
-    })
-
-    params = {
-      uid,
-      cid,
-      keyword: "",
-      start: start,
-      count: MAX_COMMODITY_LIMIT_SIZE,
-      is_mine: false
-    }
-    res = await api.getCommodityListByUidAndCid(params)
-    if (res.errno == -1) {
-      console.log("加载更多商品列表失败！")
-      return
-    }
-    const moreCommodityList = res.data
-    if (moreCommodityList.length == 0) {
-      console.log("没有更多数据了！")
-      this.setData({
-        isLoading: false,
-        hasMore: false
-      })
-      return
-    }
-    start += moreCommodityList.length
-    const newCommodityList = this.data.commodityList.concat(moreCommodityList)
-    params = {
-      cid,
-      commodityList: newCommodityList
-    }
-    res = await cache.setCommodityListByCid(params)
-    if (res.errno == -1) {
-      console.log("新数据写入缓存失败")
-      return
-    }
-    this.setData({
-      commodityList: newCommodityList
-    })
+    // if (!this.data.hasMore) {
+    //   return
+    // }
+    // this.setData({
+    //   isLoading: true
+    // })
+    //
+    // params = {
+    //   uid,
+    //   cid,
+    //   keyword: "",
+    //   start: start,
+    //   count: MAX_COMMODITY_LIMIT_SIZE,
+    //   is_mine: false
+    // }
+    // res = await api.getCommodityListByUidAndCid(params)
+    // if (res.errno == -1) {
+    //   console.log("加载更多商品列表失败！")
+    //   return
+    // }
+    // const moreCommodityList = res.data
+    // if (moreCommodityList.length == 0) {
+    //   console.log("没有更多数据了！")
+    //   this.setData({
+    //     isLoading: false,
+    //     hasMore: false
+    //   })
+    //   return
+    // }
+    // start += moreCommodityList.length
+    // const newCommodityList = this.data.commodityList.concat(moreCommodityList)
+    // params = {
+    //   cid,
+    //   commodityList: newCommodityList
+    // }
+    // res = await cache.setCommodityListByCid(params)
+    // if (res.errno == -1) {
+    //   console.log("新数据写入缓存失败")
+    //   return
+    // }
+    // this.setData({
+    //   commodityList: newCommodityList
+    // })
 
   },
 

@@ -1,6 +1,13 @@
 const { RespSuccess, RespError } = require('../utils/resp')
 let res = {}
 
+function wrapResponse(resp) {
+    if (resp.result.errno !== 0) {
+      return new RespError(resp.result);
+    }
+    return new RespSuccess(resp.result.data);
+}
+
 const api = {
   async getSelfInfo() {
     const res = await wx.cloud.callFunction({
@@ -9,10 +16,7 @@ const api = {
         $url: 'getSelfInfo',
       }
     });
-    if (res.result.errno !== 0) {
-      return new RespError(res.result);
-    }
-    return new RespSuccess(res.result.data);
+    return wrapResponse(res);
   },
 
   async getRegions() {
@@ -22,10 +26,7 @@ const api = {
         $url: 'getRegions',
       }
     })
-    if (res.result.errno !== 0) {
-      return new RespError(res);
-    }
-    return new RespSuccess(res.result.data);
+    return wrapResponse(res);
   },
 
   async registerUser(params) {
@@ -36,10 +37,7 @@ const api = {
         params
       }
     })
-    if (res.result.errno !== 0) {
-      return new RespError(res.result);
-    }
-    return new RespSuccess(res.result.data);
+    return wrapResponse(res);
   },
 
   // 更新自己的信息，参数是所有字段的子集
@@ -84,6 +82,40 @@ const api = {
 
   },
 
+  async getCategory() {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'category',
+      data: {
+        $url: 'getCategory',
+      }
+    }))
+  },
+
+  async getCommodityList(rid, filter) {
+    // const { cid, keyword, seller_id, buyer_id, sex, status, start, count } = filter ?? {};
+    const res = await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'getCommodityList',
+        params: {
+          rid,
+          ...filter
+        }
+      }
+    });
+    return wrapResponse(res);
+  },
+
+  async createCommodity(commodityInfo) {
+    const res = await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'createCommodity',
+        params: commodityInfo
+      }
+    });
+    return wrapResponse(res);
+  },
 
   // 获取商品列表，使用分页查询，参数见调用处
   // cid = -1 说明是全部分类

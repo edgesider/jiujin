@@ -1,0 +1,10 @@
+<view class="root">
+  <image class="bg" wx:if="{{commodity.img_urls[0]}}" src="{{commodity.img_urls[0]}}" />
+  <view wx:else class="bg bg-placeholder" />
+  <view class="price">￥{{commodity.price}}</view>
+  <view class="quality">{{qualitiesMap[commodity.quality].name}}</view>
+  <view class="bottom">
+    <text class="content">{{desc}}</text>
+    <text class="region">{{ridToRegion[commodity.rid].name}}</text>
+  </view>
+</view>

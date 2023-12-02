@@ -21,75 +21,31 @@ Page({
    */
   // 获取并缓存数据库中用户的信息，若数据库中无用户信息，则缓存为空
   async onLoad(options) {
-    // res = await cache.getMyInfoAndMyUniversityInfo()
-    // if (res.errno == -1) {
-    //   console.log("读取我的信息和我的大学信息失败！", res)
-    // } else {
-    //   myInfoAndMyUniversityInfo = res.data
-    //   console.log({ "我的信息和我的大学信息:": myInfoAndMyUniversityInfo })
-    //   if (!debugRegister) {
-    //     wx.redirectTo({
-    //       url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
-    //     })
-    //   }
-    // }
+    if (app.isRegistered()) {
+      wx.redirectTo({
+        url: `../commodity_list/commodity_list`,
+      })
+    }
   },
 
   async onEnter(event) {
-    const registered = app.globalData.registered && !debugRegister
     const userInfo = event.detail.userInfo
-    console.log(userInfo)
     wx.setStorageSync('userInfo', userInfo)
 
-    // 用户已注册
-    if (registered) {
-      // 更新头像
-      const myInfoAndMyUniversityInfo = wx.getStorageSync('myInfoAndMyUniversityInfo')
-      const avatarUrl = userInfo.avatarUrl
-      params = {
-        avatar_url: avatarUrl
-      }
-      res = await api.updateMyInfo(params)
-
-      wx.redirectTo({
-        url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
-      })
-    } else {
-      // 用户未注册，进入默认的大学商品界面
-      wx.navigateTo({
-        url: '../commodity_list/commodity_list?uid=10698',
-      })
-    }
+    wx.redirectTo({
+      url: `../commodity_list/commodity_list`,
+    })
   },
 
-
-
   async onRegister(event) {
-    const registered = app.globalData.registered && !debugRegister;
     const userInfo = event.detail.userInfo
     console.log(userInfo)
     wx.setStorageSync('userInfo', userInfo)
 
-    // 用户已注册
-    if (registered) {
-      // 更新头像
-      const myInfoAndMyUniversityInfo = wx.getStorageSync('myInfoAndMyUniversityInfo')
-      const avatarUrl = userInfo.avatarUrl
-      params = {
-        avatar_url: avatarUrl
-      }
-      res = await api.updateMyInfo(params)
-
-      wx.redirectTo({
-        url: `../commodity_list/commodity_list?uid=${myInfoAndMyUniversityInfo.uid}`,
-      })
-    } else {
-      // 用户未注册
-      wx.redirectTo({
-        url: '../index_register/index_register',
-      })
-    }
-
+    // 用户未注册
+    wx.redirectTo({
+      url: '../index_register/index_register',
+    })
   },
 
   onCancelLoginPopup() {
@@ -97,5 +53,4 @@ Page({
       showLoginPopup: false
     })
   },
-
 })
