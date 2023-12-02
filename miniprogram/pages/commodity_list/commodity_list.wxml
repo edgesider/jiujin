@@ -40,23 +40,13 @@
 </view>
 
 <view class="list">
-  <!-- TODO 使用 list -->
-  <view class="row" wx:for="{{commodityListRows}}" wx:key="_id" wx:for-item="row">
-    <CommodityCard
-      class="card"
-      wx:if="{{row[0]}}"
-      commodity="{{row[0]}}"
-      ridToRegion="{{ridToRegion}}"
-      qualitiesMap="{{qualitiesMap}}"
-    />
-    <CommodityCard
-      class="card"
-      wx:if="{{row[1]}}"
-      commodity="{{row[1]}}"
-      ridToRegion="{{ridToRegion}}"
-      qualitiesMap="{{qualitiesMap}}"
-    />
-  </view>
+  <CommodityCard
+    wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
+    class="card"
+    commodity="{{item}}"
+    ridToRegion="{{ridToRegion}}"
+    qualitiesMap="{{qualitiesMap}}"
+  />
 </view>
 
   <!--<view wx:if="{{commodityList.length!=0}}">-->

@@ -192,91 +192,14 @@ Page({
 
   // 刷新商品列表
   async onPullDownRefresh() {
-    // wx.showLoading({
-    //   title: '加载中',
-    // })
-    //
-    // params = {
-    //   uid,
-    //   cid,
-    //   keyword: "",
-    //   start: 0,
-    //   count: MAX_COMMODITY_LIMIT_SIZE,
-    //   is_mine: false
-    // }
-    // res = await api.getCommodityListByUidAndCid(params)
-    // if (res.errno == -1) {
-    //   console.log("刷新商品列表失败！")
-    //   return
-    // }
-    // const commodityList = res.data
-    // start = commodityList.length
-    //
-    // params = {
-    //   cid,
-    //   commodityList
-    // }
-    // res = await cache.setCommodityListByCid(params)
-    // if (res.errno == -1) {
-    //   console.log("新数据写入缓存失败")
-    //   return
-    // }
-    // this.setData({
-    //   commodityList,
-    //   hasMore: true,
-    //   isLoading: false
-    // })
-    // wx.hideLoading()
+    await this.refreshList(undefined, true);
+    await wx.stopPullDownRefresh();
   },
 
   // 到底加载更多数据
   async onReachBottom() {
-    // if (!this.data.hasMore) {
-    //   return
-    // }
-    // this.setData({
-    //   isLoading: true
-    // })
-    //
-    // params = {
-    //   uid,
-    //   cid,
-    //   keyword: "",
-    //   start: start,
-    //   count: MAX_COMMODITY_LIMIT_SIZE,
-    //   is_mine: false
-    // }
-    // res = await api.getCommodityListByUidAndCid(params)
-    // if (res.errno == -1) {
-    //   console.log("加载更多商品列表失败！")
-    //   return
-    // }
-    // const moreCommodityList = res.data
-    // if (moreCommodityList.length == 0) {
-    //   console.log("没有更多数据了！")
-    //   this.setData({
-    //     isLoading: false,
-    //     hasMore: false
-    //   })
-    //   return
-    // }
-    // start += moreCommodityList.length
-    // const newCommodityList = this.data.commodityList.concat(moreCommodityList)
-    // params = {
-    //   cid,
-    //   commodityList: newCommodityList
-    // }
-    // res = await cache.setCommodityListByCid(params)
-    // if (res.errno == -1) {
-    //   console.log("新数据写入缓存失败")
-    //   return
-    // }
-    // this.setData({
-    //   commodityList: newCommodityList
-    // })
-
+    // TODO 分页
   },
-
 
   async onEnterCommodityDetail(event) {
     const id = event.currentTarget.dataset.id
