@@ -353,7 +353,7 @@ const api = {
   async uploadImg(path, suffix) {
     try {
       res = await wx.cloud.uploadFile({
-        cloudPath: 'commodity/' + Date.now() + '-' + Math.random() * 10000000 + suffix,
+        cloudPath: 'commodity/' + Date.now() + '-' + Math.random() * 10000000 + suffix, // TODO UUID
         filePath: path
       })
       return new RespSuccess(res)

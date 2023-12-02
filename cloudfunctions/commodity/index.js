@@ -22,11 +22,12 @@ exports.main = async (event, context) => {
 
   // 上传商品详细信息
   app.router('createCommodity', async (ctx, next) => {
-    const {rid, cid, content, price, quality, img_urls, sex} = event.params
+    const { rid, cid, content, price, quality, img_urls, sex } = event.params
+    // TODO 检查一下参数
     // 创建事务
     const transaction = await db.startTransaction()
     try {
-      res = await cloud.openapi.security.msgSecCheck({
+      await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
       await transaction
@@ -77,7 +78,7 @@ exports.main = async (event, context) => {
   // 获取商品列表
   app.router('getCommodityList', async (ctx, next) => {
     if (Object.entries(regionCache).length === 0) {
-      const {data: regions} = await db.collection('region').get() ?? []
+      const { data: regions } = await db.collection('region').get() ?? []
       const regionMap = {}
       for (const region of regions) {
         regionMap[region._id] = region
@@ -98,7 +99,7 @@ exports.main = async (event, context) => {
         regionCache[r._id] = result
       }
     }
-    const {rid, cid, keyword, sell_id, buyer_id, sex, status, start, count} = event.params
+    const { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
     const _ = db.command
     let w = {}
     rids = regionCache[rid]
@@ -150,7 +151,7 @@ exports.main = async (event, context) => {
 
   // 更新商品状态
   app.router('updateCommodityStatus', async (ctx, next) => {
-    const {_id, status} = event.params
+    const { _id, status } = event.params
     if (status != 0 && status != 1 && status != 2) {
       ctx.body = {
         error: '不合法的状态',
@@ -210,7 +211,7 @@ exports.main = async (event, context) => {
 
   // 更新商品
   app.router('updateCommodity', async (ctx, next) => {
-    const {rid, cid, content, price, quality, img_urls, sex} = event.params
+    const { rid, cid, content, price, quality, img_urls, sex } = event.params
     try {
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
@@ -247,7 +248,7 @@ exports.main = async (event, context) => {
 
   // 擦亮商品
   app.router('polishCommodity', async (ctx, next) => {
-    const {_id} = event.params
+    const { _id } = event.params
     try {
       ctx.body = await commodityCollection.where({
         sell_id: wxContext.OPENID,
@@ -302,7 +303,7 @@ exports.main = async (event, context) => {
 
   // 删除商品
   app.router('deleteCommodity', async (ctx, next) => {
-    const {_id} = event.params
+    const { _id } = event.params
     // 创建事务
     const transaction = await db.startTransaction()
     try {
@@ -351,7 +352,7 @@ exports.main = async (event, context) => {
   // 先查到所有相关主键。。。再传过来一个个删除。。。???
   // 有无更好的解决方法？？？
   app.router('delCommodity', async (ctx, next) => {
-    const {cid, tids, qids, aids, fileIDs} = event.params
+    const { cid, tids, qids, aids, fileIDs } = event.params
     // 创建事务
     const transaction = await db.startTransaction()
 

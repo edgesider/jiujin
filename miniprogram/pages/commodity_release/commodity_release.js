@@ -6,7 +6,9 @@ const cache = require("../../cache/cache")
 const rules = require('../../utils/rules')
 const { RespSuccess, RespError } = require('../../utils/resp')
 const { sleep } = require('../../utils/time');
-const { getQualitiesMap, getQualityName } = require('../../utils/strings');
+const { getQualitiesMap } = require('../../utils/strings');
+const { setNeedRefresh } = require('../commodity_list/commodity_list');
+import Dialog from '@vant/weapp/dialog/dialog';
 
 Page({
 
@@ -14,19 +16,11 @@ Page({
    * 页面的初始数据
    */
   data: {
-    thumbnail: [],
     commodityImg: [],
-    commodityNumber: 1,
-    columns: [],
     categoryIndex: 0,
-    categories: [
-      { _id: 0, name: '其他' }
-    ],
-    commodityTitle: "",
+    categories: [{ _id: 0, name: '其他' }],
     commodityContent: "",
-    commodityPurchaseUrl: "",
-    commodityOriginPrice: "",
-    commodityCurrentPrice: "",
+    commodityCurrentPrice: null,
     commodityRemark: "",
     qualityIndex: 0,
     // 成色，1-10
@@ -61,14 +55,14 @@ Page({
     })
   },
   onChangeCommodityCurrentPrice(event) {
-    this.setData({
-      commodityCurrentPrice: event.detail.value
-    })
-  },
-  onChangeCommodityPurchaseUrl(event) {
-    this.setData({
-      commodityPurchaseUrl: event.detail.value
-    })
+    try {
+      const price = parseFloat(event.detail.value);
+      this.setData({
+        commodityCurrentPrice: price
+      })
+    } catch (e) {
+      console.error('invalid price');
+    }
   },
   onChangeCommodityCategory(event) {
     this.setData({
@@ -80,8 +74,7 @@ Page({
   onUpdateCommodityImg(e) {
     wx.chooseImage({
       count: 9, //默认9
-      sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-      sourceType: ['album'], //从相册选择
+      sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
       success: (res) => {
         if (this.data.commodityImg.length != 0) {
           this.setData({
@@ -115,32 +108,63 @@ Page({
   },
 
   // 验证表单格式
-  isValid(params) {
-    console.log(params)
-    if (!rules.required(params.price_now)) {
-      return new RespError("商品现价不能为空！")
-    }
+  checkForm(params) {
     if (!rules.required(params.content)) {
-      return new RespError("商品详情不能为空！")
+      return '请填写商品描述';
     }
     if (!rules.required(params.img_urls)) {
-      return new RespError("商品详情图不能为空！")
+      return '请至少上传一张商品图片';
     }
     if (!rules.required(params.cid)) {
-      return new RespError("商品分类不能为空！")
+      return '请选择商品分类';
     }
     if (!rules.required(params.quality)) {
-      return new RespError("商品成色不能为空！")
+      return '请选择成色';
     }
-    if (params.price_now < 0) {
-      return new RespError("商品现价至少为0")
+    if (typeof params.price !== 'number' || params.price < 0) {
+      return '无效的价格';
     }
-    return new RespSuccess()
+    return null;
+  },
+
+  /**
+   * 上传本地图片到云存储
+   * TODO 压缩上传
+   * TODO 合规检验
+   *
+   * @param path 本地路径（如wx.chooseImage得到的临时路径）
+   * @returns {Promise<Resp>} 上传结果，其中包含云存储中的fileID
+   */
+  async uploadImage(path) {
+    const { self: selfInfo } = app.globalData;
+    if (!selfInfo) {
+      return new RespError(null, 'need login');
+    }
+    const res = await wx.cloud.uploadFile({
+      filePath: path,
+      cloudPath: `commodity/${selfInfo._id}_${Date.now()}_${Math.random() * 10000000}`,
+    });
+    if (!res.fileID) {
+      return new RespError(res, 'upload failed');
+    }
+    return new RespSuccess(res.fileID);
+  },
+
+  async uploadImages(paths) {
+    const fileIDs = [];
+    for (const path of paths) {
+      const resp = await this.uploadImage(path);
+      if (resp.isError) {
+        throw resp.message;
+      }
+      fileIDs.push(resp.data);
+    }
+    return fileIDs;
   },
 
   // 上传商品信息
   async onCommodityRelease() {
-    const resp = await api.createCommodity({
+    const info = {
       rid: app.globalData.self.rid,
       cid: this.data.categories[this.data.categoryIndex]._id,
       content: this.data.commodityContent,
@@ -148,129 +172,35 @@ Page({
       quality: this.data.qualities[this.data.qualityIndex].value,
       img_urls: this.data.commodityImg,
       sex: 0,
-    });
+    };
+    const error = this.checkForm(info);
+    if (error) {
+      Dialog.alert({ title: error, })
+      return;
+    }
+    console.log('creating commodity', info);
+    console.log('uploading images', info.img_urls);
+    await wx.showLoading({ title: '正在上传图片', mask: true });
+    try {
+      info.img_urls = await this.uploadImages(info.img_urls);
+    } catch (e) {
+      console.error('upload failed', e);
+      await wx.showToast({ title: '图片上传失败', mask: true, icon: 'error' });
+      return;
+    } finally {
+      await wx.hideLoading();
+    }
+    console.log('uploaded images', info.img_urls);
+    await wx.showLoading({ title: '正在发布', mask: true });
+    const resp = await api.createCommodity(info);
+    await wx.hideLoading();
     if (resp.isError) {
       await wx.showToast({ title: '创建失败', });
       return;
     }
+    setNeedRefresh();
     await wx.showToast({ title: '发布成功！', duration: 1500, mask: true });
     await sleep(1500);
-    await wx.navigateBack({ delta: 1, });
-// // 订阅消息：当有人购买用户发布的商品时，推送消息给此用户
-// const tmplId = 's9MweXoRKb_IWTm0edo6Ztso2BLcWSrYuTcNT1cDTME'
-// wx.requestSubscribeMessage({
-//   tmplIds: [tmplId],
-//   complete: async (res) => {
-//     res = await cache.getMyInfoAndMyUniversityInfo()
-//     if (res.errno == -1) {
-//       console.log("获取我的信息和我的大学信息失败！")
-//     }
-//     console.log(res)
-//     const myInfoAndMyUniversityInfo = res.data
-//     const userPrimaryKey = myInfoAndMyUniversityInfo._id
-//     uid = myInfoAndMyUniversityInfo.uid
-//     let uploadParams = {
-//       cid: cid,
-//       content: this.data.commodityContent,
-//       title: this.data.commodityTitle,
-//       number: parseInt(this.data.commodityNumber),
-//       origin_url: this.data.commodityPurchaseUrl ? this.data.commodityPurchaseUrl : "",
-//       price_origin: parseFloat(this.data.commodityOriginPrice),
-//       price_now: parseFloat(this.data.commodityCurrentPrice),
-//       remark: this.data.commodityRemark ? this.data.commodityRemark : "",
-//       uid: uid,
-//       userPrimaryKey
-//     }
-//     res = this.isValid(uploadParams)
-
-//     if (res.errno == -1) {
-//       Dialog.alert({
-//         title: '格式错误',
-//         message: res.message,
-//       })
-//       return
-//     }
-
-//     // 上传图片到云存储，获取fileId
-//     if (this.data.thumbnail.length == 0 || this.data.commodityImg.length == 0) {
-//       wx.hideLoading()
-//       Dialog.alert({
-//         title: '格式错误',
-//         message: "至少上传一张缩略图和一张详情图！",
-//       })
-//       return
-//     }
-
-//     wx.showLoading({
-//       title: '上传中',
-//     })
-
-//     params = {
-//       thumbnail: this.data.thumbnail,
-//       commodityImg: this.data.commodityImg,
-//     }
-//     res = await api.uploadImgAndGetFileID(params)
-//     if (res.errno != 0) {
-//       wx.hideLoading()
-//       console.log("上传信息失败！")
-//       wx.showToast({
-//         title: res.message,
-//         icon: 'none',
-//         duration: 2000,
-//         success(res) {
-//           setTimeout(() => {
-//           }, 1500)
-//         }
-//       })
-//       return
-//     }
-
-//     const fileIDs = res.data
-
-//     // 上传数据到云数据库
-//     const thumbnailFileID = fileIDs.splice(0, 1)
-//     const commodityImgFileID = fileIDs
-//     uploadParams["thumbnail_url"] = thumbnailFileID
-//     uploadParams["img_url"] = commodityImgFileID
-
-//     res = await api.setCommodityDetail(uploadParams)
-//     if (res.errno != 0) {
-//       wx.hideLoading()
-//       console.log("上传信息失败！")
-//       wx.showToast({
-//         title: res.message,
-//         icon: 'none',
-//         duration: 2000,
-//         success(res) {
-//           setTimeout(() => {
-//           }, 1500)
-//         }
-//       })
-
-//       // 若数据上传失败，需要删除已经上传的图片
-//       res = await api.delImg({ fileIDs })
-//       if (res.errno != 0) {
-//         console.log(res.message)
-//       }
-//       return
-//     }
-//     // 清空缓存
-//     wx.clearStorageSync()
-//     wx.hideLoading()
-
-//     wx.showToast({
-//       title: '上传成功！',
-//       icon: 'success',
-//       duration: 2000,
-//       success(res) {
-//         setTimeout(() => {
-//           wx.redirectTo({
-//             url: `../commodity_list/commodity_list?uid=${uid}`,
-//           })
-//         }, 1500)
-//       }
-//     })
-//   }
-// })
+    await wx.navigateBack();
   }
 })

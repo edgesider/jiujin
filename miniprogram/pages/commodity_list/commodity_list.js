@@ -3,6 +3,11 @@ const api = require("../../api/api")
 const { getQualitiesMap } = require("../../utils/strings");
 const SIZE_PER_PAGE = 10
 
+let needRefresh = false;
+module.exports.setNeedRefresh = () => {
+  needRefresh = true;
+}
+
 Page({
 
   /**
@@ -63,7 +68,12 @@ Page({
     wx.hideLoading();
   },
 
-  async onShow() {},
+  async onShow() {
+    if (needRefresh) {
+      needRefresh = false;
+      await this.refreshList(undefined, true);
+    }
+  },
 
   async refreshList(rid, loading) {
     if (rid === undefined) {
@@ -75,14 +85,13 @@ Page({
       wx.showLoading({ mask: true });
     }
     try {
-      console.log(`get list rid=${rid}`);
       const list = await api.getCommodityList(rid, {
         start: 0,
         count: SIZE_PER_PAGE,
         is_mine: false,
         status: 0 // TODO enum
       });
-      console.log(`list data for rid=${rid}`, list.data);
+      console.log(`commodity for rid=${rid}`, list.data);
       this.setListData(list.data);
     } catch (e) {
       console.error(e);

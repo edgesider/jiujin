@@ -21,7 +21,7 @@
             <text class="cuIcon-close"></text>
           </view>
         </view>
-        <view class="solids" bindtap="onUpdateCommodityImg" wx:if="{{commodityImg.length<9}}">
+        <view class="solids" bindtap="onUpdateCommodityImg" wx:if="{{commodityImg.length < 9}}">
           <text class="cuIcon-cameraadd"></text>
         </view>
       </view>
