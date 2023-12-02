@@ -15,6 +15,7 @@ const commodityCollection = db.collection('commodity')
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
+  var regionCache
   const app = new TcbRouter({
     event
   })
@@ -75,10 +76,37 @@ exports.main = async (event, context) => {
 
   // 获取商品列表
   app.router('getCommodityList', async (ctx, next) => {
+    if (!regionCache) {
+      const{data:regions}= await db.collection('region').get()??[]
+      regionCache = {}
+      regionMap = {}
+      for(const region of regions){
+        regionMap[region._id] = region
+      }
+      for(r of regions){
+        queue = [r]
+        result = []
+        while(queue.length>0){
+          tmp = queue.shift()
+          if(tmp.children){
+            for(c of tmp.children){
+              queue.push(regionMap[c])
+            }
+          }else{
+            result.push(tmp._id)
+          }
+        }
+        regionCache[r._id] = result
+      }
+    }
     const { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
     const _ = db.command
     let w = {}
-    w["rid"] = rid
+    rids = regionCache[rid]
+    w["rid"] = _.eq(rids[0])
+    for(i=1;i<rids.length;i++){
+      w["rid"] = w["rid"].or(eq(rids[i]))
+    }
     if (cid) {
       w["cid"] = cid
     }
