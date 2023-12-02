@@ -39,9 +39,9 @@
   <van-empty description="暂时没有商品哦，快去发布吧" />
 </view>
 
-<view class="list" wx:for="{{commodityListRows}}" wx:key="_id" wx:for-item="row">
+<view class="list">
   <!-- TODO 使用 list -->
-  <view class="row">
+  <view class="row" wx:for="{{commodityListRows}}" wx:key="_id" wx:for-item="row">
     <CommodityCard
       class="card"
       wx:if="{{row[0]}}"
