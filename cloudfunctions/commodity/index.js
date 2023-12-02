@@ -11,18 +11,18 @@ const db = cloud.database()
 const _ = db.command
 
 const commodityCollection = db.collection('commodity')
+const regionCache = {}
 
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  var regionCache
   const app = new TcbRouter({
     event
   })
 
   // 上传商品详细信息
   app.router('createCommodity', async (ctx, next) => {
-    const { rid, cid, content, price, quality, img_urls, sex } = event.params
+    const {rid, cid, content, price, quality, img_urls, sex} = event.params
     // 创建事务
     const transaction = await db.startTransaction()
     try {
@@ -76,36 +76,35 @@ exports.main = async (event, context) => {
 
   // 获取商品列表
   app.router('getCommodityList', async (ctx, next) => {
-    if (!regionCache) {
-      const{data:regions}= await db.collection('region').get()??[]
-      regionCache = {}
-      regionMap = {}
-      for(const region of regions){
+    if (Object.entries(regionCache).length === 0) {
+      const {data: regions} = await db.collection('region').get() ?? []
+      const regionMap = {}
+      for (const region of regions) {
         regionMap[region._id] = region
       }
-      for(r of regions){
+      for (r of regions) {
         queue = [r]
         result = []
-        while(queue.length>0){
+        while (queue.length > 0) {
           tmp = queue.shift()
-          if(tmp.children){
-            for(c of tmp.children){
+          if (tmp.children && tmp.children.length > 0) {
+            for (c of tmp.children) {
               queue.push(regionMap[c])
             }
-          }else{
+          } else {
             result.push(tmp._id)
           }
         }
         regionCache[r._id] = result
       }
     }
-    const { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
+    const {rid, cid, keyword, sell_id, buyer_id, sex, status, start, count} = event.params
     const _ = db.command
     let w = {}
     rids = regionCache[rid]
     w["rid"] = _.eq(rids[0])
-    for(i=1;i<rids.length;i++){
-      w["rid"] = w["rid"].or(eq(rids[i]))
+    for (i = 1; i < rids.length; i++) {
+      w["rid"] = w["rid"].or(_.eq(rids[i]))
     }
     if (cid) {
       w["cid"] = cid
@@ -151,14 +150,13 @@ exports.main = async (event, context) => {
 
   // 更新商品状态
   app.router('updateCommodityStatus', async (ctx, next) => {
-    const { _id, status } = event.params
+    const {_id, status} = event.params
     if (status != 0 && status != 1 && status != 2) {
       ctx.body = {
         error: '不合法的状态',
         errno: -2,
       }
-    }
-    else {
+    } else {
       try {
         ctx.body = await commodityCollection.where({
           sell_id: wxContext.OPENID,
@@ -189,8 +187,7 @@ exports.main = async (event, context) => {
             })
             ctx.body.errno = 0
           }
-        }
-        else {
+        } else {
           ctx.body = {
             error: "unknown status",
             errno: -1,
@@ -213,7 +210,7 @@ exports.main = async (event, context) => {
 
   // 更新商品
   app.router('updateCommodity', async (ctx, next) => {
-    const { rid, cid, content, price, quality, img_urls, sex } = event.params
+    const {rid, cid, content, price, quality, img_urls, sex} = event.params
     try {
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
@@ -250,7 +247,7 @@ exports.main = async (event, context) => {
 
   // 擦亮商品
   app.router('polishCommodity', async (ctx, next) => {
-    const { _id} = event.params
+    const {_id} = event.params
     try {
       ctx.body = await commodityCollection.where({
         sell_id: wxContext.OPENID,
@@ -305,7 +302,7 @@ exports.main = async (event, context) => {
 
   // 删除商品
   app.router('deleteCommodity', async (ctx, next) => {
-    const { _id } = event.params
+    const {_id} = event.params
     // 创建事务
     const transaction = await db.startTransaction()
     try {
@@ -354,7 +351,7 @@ exports.main = async (event, context) => {
   // 先查到所有相关主键。。。再传过来一个个删除。。。???
   // 有无更好的解决方法？？？
   app.router('delCommodity', async (ctx, next) => {
-    const { cid, tids, qids, aids, fileIDs } = event.params
+    const {cid, tids, qids, aids, fileIDs} = event.params
     // 创建事务
     const transaction = await db.startTransaction()
 
