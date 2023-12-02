@@ -1,4 +1,3 @@
-const cache = require("./cache/cache")
 const api = require('./api/api');
 import { debugRegister } from './utils/debug';
 

@@ -1,4 +1,4 @@
-<view class="root">
+<view class="root" bind:tap="gotoDetail">
   <image class="bg" mode="aspectFill" wx:if="{{commodity.img_urls[0]}}" src="{{commodity.img_urls[0]}}" />
   <view wx:else class="bg bg-placeholder" />
 
