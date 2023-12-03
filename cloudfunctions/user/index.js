@@ -28,10 +28,11 @@ exports.main = async (event, context) => {
       if(!_id){
         _id = wxContext.OPENID
       }
-      ctx.body  = await userCollection.where({
+      const data  = await userCollection.where({
         _id: _id,
         is_deleted: false
       }).get()
+      ctx.boyd = {data:data?.[0]}
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
