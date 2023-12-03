@@ -1,11 +1,4 @@
-// miniprogram/pages/index/index.js
-import { debugRegister } from '../../utils/debug';
 const app = getApp()
-const api = require("../../api/api")
-const cache = require("../../cache/cache")
-let params = {}
-let res = {}
-let myInfoAndMyUniversityInfo = {}
 
 Page({
 

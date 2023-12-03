@@ -2,21 +2,25 @@ const { RespSuccess, RespError } = require('../utils/resp')
 let res = {}
 
 function wrapResponse(resp) {
-    if (resp.result.errno !== 0) {
-      return new RespError(resp.result);
-    }
-    return new RespSuccess(resp.result.data);
+  if (resp.result.errno !== 0) {
+    return new RespError(resp.result);
+  }
+  return new RespSuccess(resp.result.data);
 }
 
 const api = {
   async getSelfInfo() {
-    const res = await wx.cloud.callFunction({
+    return this.getUserInfo(undefined);
+  },
+
+  async getUserInfo(uid) {
+    return wrapResponse(await wx.cloud.callFunction({
       name: 'user',
       data: {
-        $url: 'getSelfInfo',
+        $url: 'getUserInfo',
+        params: { _id: uid }
       }
-    });
-    return wrapResponse(res);
+    }));
   },
 
   async getRegions() {
@@ -373,7 +377,6 @@ const api = {
       return new RespError("删除图片失败！")
     }
   },
-
 
 
   // 获取对商品的部分提问及相应的用户信息，参数见调用处

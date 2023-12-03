@@ -2,6 +2,7 @@ const app = getApp()
 const api = require("../../api/api")
 const { getQualitiesMap } = require("../../utils/strings");
 const SIZE_PER_PAGE = 10
+import Dialog from '@vant/weapp/dialog/dialog';
 
 let needRefresh = false;
 module.exports.setNeedRefresh = () => {
@@ -38,11 +39,33 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    wx.showLoading({
-      title: '加载中',
-    })
+    await wx.showLoading({ title: '加载中', })
 
+    try {
+      await this.loadRegions();
+      await this.refreshList(undefined, false);
+    } catch (e) {
+      Dialog.alert({
+        message: e,
+      });
+      console.error(e);
+    } finally {
+      await wx.hideLoading();
+    }
+  },
+
+  async onShow() {
+    if (needRefresh) {
+      needRefresh = false;
+      await this.refreshList(undefined, true);
+    }
+  },
+
+  async loadRegions() {
     const { data: selfInfo } = await api.getSelfInfo();
+    if (!selfInfo || !selfInfo._id) {
+      throw Error('未登录');
+    }
     const { rid } = selfInfo;
 
     const { data: regions } = await api.getRegions() ?? [];
@@ -63,16 +86,6 @@ Page({
       regions: regionPath,
       selectedRegionIndex: 0,
     });
-
-    await this.refreshList(rid, false);
-    wx.hideLoading();
-  },
-
-  async onShow() {
-    if (needRefresh) {
-      needRefresh = false;
-      await this.refreshList(undefined, true);
-    }
   },
 
   async refreshList(rid, loading) {

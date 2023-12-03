@@ -14,16 +14,16 @@
     <view class="header">
       <image
         class="avatar"
-        src="https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+        src="{{seller.avatar_url || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"
       />
       <view class="info">
         <view class="line1">
-          <text class="name">用户名</text>
-          <text class="sex-icon cuIcon-people"></text>
-          <text class="region">22公寓</text>
+          <text class="name">{{seller.name || '未知'}}</text>
+          <text wx:if="{{seller.sex !== 0}}" class="sex-icon cuIcon-people">{{seller.sex === 1 ? '男' : '女'}}</text>
+          <text class="region">{{seller.rid}}</text>
         </view>
         <view class="line2">
-          <text class="time">11-11 18:20</text>
+          <text class="time">{{commodity.create_time}}</text>
         </view>
       </view>
     </view>

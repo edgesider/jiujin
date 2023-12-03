@@ -20,11 +20,6 @@
 	</view>
 </view>
 
-
-
-
-
-
 <view class="cu-modal bottom-modal {{showLoginPopup?'show':''}}">
 	<view class="cu-dialog" catchtap>
 		<view class="cu-bar bg-white">
