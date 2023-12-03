@@ -22,13 +22,16 @@ exports.main = async (event, context) => {
   })
 
   // 获取用户信息
-  app.router('getSelfInfo', async (ctx, next) => {
+  app.router('getUserInfo', async (ctx, next) => {
     try{
-      const { data } = await userCollection.where({
-        _id: wxContext.OPENID,
+      const {_id} =event.params
+      if(!_id){
+        _id = wxContext.OPENID
+      }
+      ctx.body  = await userCollection.where({
+        _id: _id,
         is_deleted: false
       }).get()
-      ctx.body = { data: data?.[0] }
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
