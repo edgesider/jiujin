@@ -32,7 +32,7 @@ exports.main = async (event, context) => {
         _id: _id,
         is_deleted: false
       }).get()
-      ctx.boyd = {data:data?.[0]}
+      ctx.body = {data:data?.[0]}
       ctx.body.errno = 0
     }catch(e){
       ctx.body = {
