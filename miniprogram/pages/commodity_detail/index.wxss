@@ -112,7 +112,6 @@
   width: 100%;
   height: 200px;
   flex-shrink: 0;
-  margin-bottom: 10px;
 }
 
 .body .images .image {
@@ -121,8 +120,18 @@
 }
 
 .body .content {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.body .content .paragraph {
   font-size: 16px;
   line-height: 28px;
+  margin-top: 12px;
   user-select: text;
 }
 
@@ -143,11 +152,23 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
-.footer .left text {
+.footer .left .button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+}
+
+.footer .left .button .icon {
   font-size: 20px;
+}
+
+.footer .left .button .text {
+  font-size: 12px;
 }
 
 .footer .right {

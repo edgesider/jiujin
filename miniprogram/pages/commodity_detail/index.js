@@ -7,14 +7,15 @@ Page({
     CustomBar: app.globalData.CustomBar,
     loading: true,
     commodity: null,
+    contentParagraphs: [],
   },
   onLoad: function (options) {
     const { commodity: commodityJson } = options;
     const commodity = tryJsonParse(decodeURIComponent(commodityJson));
     setTimeout(() => {
-      console.log(commodity);
       this.setData({
         commodity,
+        contentParagraphs: commodity.content.split('\n'),
         loading: false,
       });
     }, 500);

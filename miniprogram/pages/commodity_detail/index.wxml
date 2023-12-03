@@ -1,6 +1,6 @@
-<view class="root" >
+<view class="root">
   <view class="top" style="height: {{CustomBar - StatusBar}}px; margin-top: {{StatusBar}}px;">
-    <text class="back" bind:tap="back">《</text>
+    <text class="back cuIcon-back" bind:tap="back"></text>
     <text class="title">详情</text>
   </view>
 
@@ -33,13 +33,24 @@
           <image mode="aspectFill" src="{{img}}" class="image"></image>
         </swiper-item>
       </swiper>
-      <text class="content">{{commodity.content}}</text>
+      <view class="content">
+        <text class="paragraph" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+      </view>
     </view>
     <view class="footer">
       <view class="left">
-        <text class="cuIcon-comment"></text>
-        <text class="cuIcon-like"></text>
-        <text class="cuIcon-warn"></text>
+        <view class="button">
+          <text class="icon cuIcon-comment"></text>
+          <text class="text">评论</text>
+        </view>
+        <view class="button">
+          <text class="icon cuIcon-like"></text>
+          <text class="text">收藏</text>
+        </view>
+        <view class="button">
+          <text class="icon cuIcon-warn"></text>
+          <text class="text">举报</text>
+        </view>
       </view>
       <view class="right">
         <text>私聊</text>

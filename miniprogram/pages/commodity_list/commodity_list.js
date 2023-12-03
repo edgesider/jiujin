@@ -82,7 +82,7 @@ Page({
     loading = Boolean(loading);
 
     if (loading) {
-      wx.showLoading({ mask: true });
+      await wx.showLoading({ mask: true });
     }
     try {
       const list = await api.getCommodityList(rid, {
