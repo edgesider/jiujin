@@ -1,0 +1,49 @@
+<view class="root" >
+  <view class="top" style="height: {{CustomBar - StatusBar}}px; margin-top: {{StatusBar}}px;">
+    <text class="back" bind:tap="back">《</text>
+    <text class="title">详情</text>
+  </view>
+
+  <view wx:if="{{loading}}">
+    <text style="width: 100%; height: 100%; text-align: center;">Loading</text>
+  </view>
+  <view wx:elif="{{!commodity}}">
+    <text style="width: 100%; height: 100%; text-align: center;">商品走丢了</text>
+  </view>
+  <block wx:else>
+    <view class="header">
+      <image
+        class="avatar"
+        src="https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132"
+      />
+      <view class="info">
+        <view class="line1">
+          <text class="name">用户名</text>
+          <text class="sex-icon cuIcon-people"></text>
+          <text class="region">22公寓</text>
+        </view>
+        <view class="line2">
+          <text class="time">11-11 18:20</text>
+        </view>
+      </view>
+    </view>
+    <view class="body">
+      <swiper class="images" indicator-dots="true" circular="true">
+        <swiper-item wx:for="{{commodity.img_urls}}" wx:for-item="img" wx:key="*this">
+          <image mode="aspectFill" src="{{img}}" class="image"></image>
+        </swiper-item>
+      </swiper>
+      <text class="content">{{commodity.content}}</text>
+    </view>
+    <view class="footer">
+      <view class="left">
+        <text class="cuIcon-comment"></text>
+        <text class="cuIcon-like"></text>
+        <text class="cuIcon-warn"></text>
+      </view>
+      <view class="right">
+        <text>私聊</text>
+      </view>
+    </view>
+  </block>
+</view>

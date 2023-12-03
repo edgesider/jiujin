@@ -3,6 +3,16 @@ input{
   text-align: right;
 }
 
+.desc {
+  width: 100%;
+  height: 100%;
+}
+
+.desc-textarea {
+  width: 100%;
+  height: 100%;
+}
+
 .commodity-number-wrapper{
   display: flex;
   align-items: center;
