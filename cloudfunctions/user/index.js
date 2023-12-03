@@ -24,7 +24,7 @@ exports.main = async (event, context) => {
   // 获取用户信息
   app.router('getUserInfo', async (ctx, next) => {
     try{
-      const {_id} =event.params
+      let {_id} =event.params
       if(!_id){
         _id = wxContext.OPENID
       }
