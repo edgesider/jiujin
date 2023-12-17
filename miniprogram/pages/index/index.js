@@ -16,7 +16,7 @@ Page({
   async onLoad(options) {
     if (app.isRegistered()) {
       wx.redirectTo({
-        url: `../commodity_list/commodity_list`,
+        url: `../home/index`,
       })
     }
   },
@@ -26,7 +26,7 @@ Page({
     wx.setStorageSync('userInfo', userInfo)
 
     wx.redirectTo({
-      url: `../commodity_list/commodity_list`,
+      url: `../home/index`,
     })
   },
 
@@ -37,7 +37,7 @@ Page({
 
     // 用户未注册
     wx.redirectTo({
-      url: '../index_register/index_register',
+      url: '../register/index',
     })
   },
 
