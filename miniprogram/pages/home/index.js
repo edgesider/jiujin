@@ -4,6 +4,7 @@ const { getQualitiesMap } = require("../../utils/strings");
 const SIZE_PER_PAGE = 10
 import Dialog from '@vant/weapp/dialog/dialog';
 
+const DEFAULT_REGION_ID = 1;
 let needRefresh = false;
 module.exports.setNeedRefresh = () => {
   needRefresh = true;
@@ -21,6 +22,7 @@ Page({
     pageIndex: 0,
     searchInput: "",
 
+    self: null,
     ridToRegion: null,
     regions: [],
     selectedRegionIndex: 0, // 选中的区域
@@ -40,7 +42,6 @@ Page({
    */
   async onLoad(options) {
     await wx.showLoading({ title: '加载中', })
-
     try {
       await this.loadRegions();
       await this.refreshList(undefined, false);
@@ -62,30 +63,33 @@ Page({
   },
 
   async loadRegions() {
-    const { data: selfInfo } = await api.getSelfInfo();
-    if (!selfInfo || !selfInfo._id) {
-      throw Error('未登录');
-    }
-    const { rid } = selfInfo;
+    await app.waitForReady();
+    const { self, ridToRegion } = app.globalData;
+    if (self) {
+      // 已登录
+      const { rid } = self;
 
-    const { data: regions } = await api.getRegions() ?? [];
-    const ridToRegion = {};
-    for (const region of regions) {
-      ridToRegion[region._id] = region;
+      let lastRegion = ridToRegion[rid];
+      const regionPath = []; // 自己所在的区域，以及所有父区域
+      while (lastRegion !== undefined) {
+        regionPath.push(lastRegion);
+        lastRegion = ridToRegion[lastRegion.parents?.[0]];
+      }
+      this.setData({
+        self,
+        ridToRegion,
+        regions: regionPath,
+        selectedRegionIndex: 0,
+      });
+    } else {
+      // 未登录，展示默认的区域
+      this.setData({
+        self,
+        ridToRegion,
+        regions: [ridToRegion[DEFAULT_REGION_ID]],
+        selectedRegionIndex: 0,
+      });
     }
-    app.globalData.ridToRegion = ridToRegion;
-
-    let lastRegion = ridToRegion[rid];
-    const regionPath = []; // 自己所在的区域，以及所有父区域
-    while (lastRegion !== undefined) {
-      regionPath.push(lastRegion);
-      lastRegion = ridToRegion[lastRegion.parents?.[0]];
-    }
-    this.setData({
-      ridToRegion,
-      regions: regionPath,
-      selectedRegionIndex: 0,
-    });
   },
 
   async refreshList(rid, loading) {

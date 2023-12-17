@@ -7,8 +7,8 @@ const placeholderUser = {
   avatar_url: 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132',
   create_time: 0,
   is_deleted: false,
-  name: "微信用户",
-  rid: 0,
+  name: "点击登录",
+  rid: -1,
   sex: 0,
   total_release: 0,
   total_transaction: 0,
@@ -23,15 +23,19 @@ Page({
   data: {
     pageIndex: 1,
     selfInfo: placeholderUser,
+    ridToRegion: null,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    if (app.globalData.registered) {
-      const { data: selfInfo } = await api.getSelfInfo();
-      this.setData({ selfInfo });
+    const { self, ridToRegion } = app.globalData;
+    if (app.globalData.self) {
+      this.setData({
+        selfInfo: self,
+        ridToRegion,
+      });
     }
   },
 
