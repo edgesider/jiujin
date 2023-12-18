@@ -1,5 +1,5 @@
-<cu-custom style="background: linear-gradient(#00000084, #00000000); position: fixed;" isBack="{{false}}">
-  <view slot="backText" style="font-size: 20px; color: white; font-weight: bold;">旧近</view>
+<cu-custom style="background: linear-gradient(#00000084, #00000000); position: fixed; z-index: 15" isBack="{{false}}">
+  <view slot="backText" style="font-size: 20px; color: green; font-weight: bold;">旧近</view>
   <view slot="content" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
     <view class="search-form round" bindtap="onTitleClick">
       <input type="text" placeholder="搜索" confirm-type="search" bindinput="onSearchInput"
@@ -9,7 +9,7 @@
   </view>
 </cu-custom>
 
-<swiper indicator-dots autoplay circular style="z-index: -1; width: 100%; height: 184px;">
+<swiper indicator-dots autoplay circular style="z-index: -1; width: 100%; height: 184px;" class="top-swiper">
   <swiper-item>
     <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
            style="width: 100%; height: 100%;" />
@@ -24,7 +24,10 @@
   </swiper-item>
 </swiper>
 
-<view class="regions-filter">
+  <!--顶部的遮盖-->
+<view class="top-mask" style="height: {{CustomBar}}px; opacity: {{(scrollTop / CustomBar)}}" />
+
+<view class="regions-filter" style="top: {{CustomBar}}px">
   <view
     wx:for="{{regions}}" wx:key="_id" wx:for-index="idx"
     class="region {{selectedRegionIndex === idx ? 'region-selected' : ''}}"

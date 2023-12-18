@@ -1,6 +1,5 @@
 /* miniprogram/pages/commodity_list/index.wxss */
 
-
 .bar-wrapper {
   position: fixed;
   left: 0;
@@ -12,7 +11,20 @@
   margin-bottom: 120rpx;
 }
 
+.top-mask {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: white;
+}
+
 .regions-filter {
+  position: sticky;
+  background: white;
+  z-index: 1;
   width: 100%;
   display: flex;
   overflow-x: scroll;

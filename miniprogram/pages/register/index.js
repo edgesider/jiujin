@@ -155,7 +155,7 @@ Page({
       success(res) {
         setTimeout(() => {
           wx.redirectTo({
-            url: `../commodity_list/commodity_list`,
+            url: `../home/index`,
           })
         }, 1500)
       }

@@ -32,8 +32,8 @@ exports.main = async (event, context) => {
         _id: _id,
         is_deleted: false
       }).get()
-      ctx.body = {data:data?.[0]}
-      ctx.body.errno = 0
+      ctx.body = {data:data?.data?.[0]}
+      ctx.body.errno = ctx.body.data ? 0 : -1
     }catch(e){
       ctx.body = {
         error: e?.toString() ?? 'unknown',

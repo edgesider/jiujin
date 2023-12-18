@@ -18,6 +18,7 @@ Page({
   data: {
     StatusBar: app.globalData.StatusBar,
     CustomBar: app.globalData.CustomBar,
+    scrollTop: 0,
     showLoginPopup: false,
     pageIndex: 0,
     searchInput: "",
@@ -46,13 +47,16 @@ Page({
       await this.loadRegions();
       await this.refreshList(undefined, false);
     } catch (e) {
-      Dialog.alert({
-        message: e,
-      });
+      Dialog.alert({ message: e, });
       console.error(e);
     } finally {
       await wx.hideLoading();
     }
+  },
+
+  onPageScroll(options) {
+    const { scrollTop } = options;
+    this.setData({ scrollTop });
   },
 
   async onShow() {
@@ -228,7 +232,7 @@ Page({
       showLoginPopup: false
     })
     wx.redirectTo({
-      url: '../index_register/index_register',
+      url: '../register/index',
     })
 
   },

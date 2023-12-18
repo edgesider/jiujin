@@ -162,7 +162,7 @@ Page({
       success(res){
         setTimeout(() => {
           wx.redirectTo({
-            url: '../home/home',
+            url: '../home/index',
           })
         }, 2000)
       }

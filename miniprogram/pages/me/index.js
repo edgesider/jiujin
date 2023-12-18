@@ -155,7 +155,7 @@ Page({
       showLoginPopup: false
     })
     wx.redirectTo({
-      url: '../index_register/index_register',
+      url: '../register/index',
     })
 
   },
