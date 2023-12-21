@@ -1,0 +1,18 @@
+<view class="root" data-url="{{url}}">
+  <view class="tab-bar">
+    <view
+      class="tab-bar-item"
+      wx:for="{{list}}" wx:key="index"
+      data-path="{{item.pagePath}}" data-index="{{index}}"
+      data-use-navigate-to="{{item.useNavigateTo}}"
+      bindtap="switchTab"
+    >
+      <view
+        class="{{selected === index ? item.selectedIconClass : item.iconClass}} icon"
+        style="color: {{selected === index ? selectedColor: color}}"
+      />
+      <view class="text" style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
+    </view>
+  </view>
+  <view class="safe-area" />
+</view>

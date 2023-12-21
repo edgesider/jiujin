@@ -1,3 +1,5 @@
+import { setTabBar } from "../../utils/other";
+
 const app = getApp()
 const api = require('../../api/api')
 import Dialog from '@vant/weapp/dialog/dialog';
@@ -30,6 +32,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
+    setTabBar(this);
     const { self, ridToRegion } = app.globalData;
     if (app.globalData.self) {
       this.setData({

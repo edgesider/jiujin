@@ -26,7 +26,6 @@ Page({
       seller,
       ridToRegion: app.globalData.ridToRegion
     });
-    console.log(seller)
   },
 
   back() {

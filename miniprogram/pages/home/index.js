@@ -1,3 +1,5 @@
+import { setTabBar } from "../../utils/other";
+
 const app = getApp()
 const api = require("../../api/api")
 const { getQualitiesMap } = require("../../utils/strings");
@@ -42,6 +44,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
+    setTabBar(this);
     await wx.showLoading({ title: '加载中', })
     try {
       await this.loadRegions();

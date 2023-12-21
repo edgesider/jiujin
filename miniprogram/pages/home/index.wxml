@@ -52,6 +52,8 @@
   />
 </view>
 
+<view class="safe-area" />
+
   <!--<view wx:if="{{commodityList.length!=0}}">-->
   <!--  <view class="cu-load margin-top {{isLoading?'loading':'over'}}"></view>-->
   <!--</view>-->
@@ -68,24 +70,5 @@
         注册后可进行更多操作
       </button>
     </view>
-  </view>
-</view>
-
-<view class="cu-bar tabbar bg-white bar-wrapper">
-  <view class="action {{pageIndex==0?'text-orange':'text-grey'}}" bind:tap="onCommodityListTab">
-    <view class="cuIcon-homefill"></view>
-    首页
-  </view>
-
-  <view class="action text-gray add-action" bind:tap="onCommodityReleaseTab">
-    <button class="cu-btn cuIcon-add bg-yellow shadow"></button>
-    发布
-  </view>
-
-  <view class="action {{pageIndex==1?'text-orange':'text-grey'}}" bind:tap="onHomeTab">
-    <view class="cuIcon-my">
-      <!-- <view class="cu-tag badge"></view> -->
-    </view>
-    我的
   </view>
 </view>
