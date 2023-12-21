@@ -1,74 +1,76 @@
-<cu-custom style="background: linear-gradient(#00000084, #00000000); position: fixed; z-index: 15" isBack="{{false}}">
-  <view slot="backText" style="font-size: 20px; color: green; font-weight: bold;">旧近</view>
-  <view slot="content" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-    <view class="search-form round" bindtap="onTitleClick">
-      <input type="text" placeholder="搜索" confirm-type="search" bindinput="onSearchInput"
-             bindconfirm="onSearchCommodity"></input>
+<view class="root">
+  <view class="top" style="height: {{CustomBar}}px; padding-top: {{StatusBar}}px;">
+    <!--顶部的遮盖-->
+    <view class="mask" style="height: {{CustomBar}}px; opacity: {{(scrollTop / CustomBar)}}" />
+    <view class="app-name">旧近</view>
+    <view class="search" bindtap="onTitleClick">
+      <input
+        type="text"
+        placeholder="搜索"
+        confirm-type="search"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchCommodity" />
       <text class="cuIcon-search"></text>
     </view>
   </view>
-</cu-custom>
 
-<swiper indicator-dots autoplay circular style="z-index: -1; width: 100%; height: 184px;" class="top-swiper">
-  <swiper-item>
-    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
-           style="width: 100%; height: 100%;" />
-  </swiper-item>
-  <swiper-item>
-    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg"
-           style="width: 100%; height: 100%;" />
-  </swiper-item>
-  <swiper-item>
-    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
-           style="width: 100%; height: 100%;" />
-  </swiper-item>
-</swiper>
 
-  <!--顶部的遮盖-->
-<view class="top-mask" style="height: {{CustomBar}}px; opacity: {{(scrollTop / CustomBar)}}" />
+  <swiper indicator-dots autoplay circular style="z-index: -1; width: 100%; height: 184px;" class="top-swiper">
+    <swiper-item>
+      <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
+             style="width: 100%; height: 100%;" />
+    </swiper-item>
+    <swiper-item>
+      <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg"
+             style="width: 100%; height: 100%;" />
+    </swiper-item>
+    <swiper-item>
+      <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
+             style="width: 100%; height: 100%;" />
+    </swiper-item>
+  </swiper>
 
-<view class="regions-filter" style="top: {{CustomBar}}px">
-  <view
-    wx:for="{{regions}}" wx:key="_id" wx:for-index="idx"
-    class="region {{selectedRegionIndex === idx ? 'region-selected' : ''}}"
-    bind:tap="onChangeRegion"
-    data-idx="{{idx}}"
-  >
-    <text class="name">{{item.name}}</text>
+  <view class="regions-filter" style="top: {{CustomBar}}px">
+    <view
+      wx:for="{{regions}}" wx:key="_id" wx:for-index="idx"
+      class="region {{selectedRegionIndex === idx ? 'region-selected' : ''}}"
+      bind:tap="onChangeRegion"
+      data-idx="{{idx}}"
+    >
+      <text class="name">{{item.name}}</text>
+    </view>
   </view>
-</view>
 
-<view wx:if="{{commodityList.length === 0}}">
-  <van-empty description="暂时没有商品哦，快去发布吧" />
-</view>
+  <view wx:if="{{commodityList.length === 0}}">
+    <van-empty description="暂时没有商品哦，快去发布吧" />
+  </view>
 
-<view class="list">
-  <CommodityCard
-    wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
-    class="card"
-    commodity="{{item}}"
-    ridToRegion="{{ridToRegion}}"
-    qualitiesMap="{{qualitiesMap}}"
-  />
-</view>
-
-<view class="safe-area" />
+  <view class="list">
+    <CommodityCard
+      wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
+      class="card"
+      commodity="{{item}}"
+      ridToRegion="{{ridToRegion}}"
+      qualitiesMap="{{qualitiesMap}}"
+    />
+  </view>
 
   <!--<view wx:if="{{commodityList.length!=0}}">-->
   <!--  <view class="cu-load margin-top {{isLoading?'loading':'over'}}"></view>-->
   <!--</view>-->
-<view class="hline"></view>
+  <view class="hline"></view>
 
-<view class="cu-modal bottom-modal {{showLoginPopup?'show':''}}">
-  <view class="cu-dialog">
-    <view class="cu-bar bg-white">
-      <view class="action text-blue"></view>
-      <view class="action text-green" catch:tap="onCancelLoginPopup">取消</view>
-    </view>
-    <view class="padding">
-      <button class="cu-btn block bg-green margin-tb-sm lg" open-type="getUserInfo" bindgetuserinfo="onAuth">
-        注册后可进行更多操作
-      </button>
+  <view class="cu-modal bottom-modal {{showLoginPopup?'show':''}}">
+    <view class="cu-dialog">
+      <view class="cu-bar bg-white">
+        <view class="action text-blue"></view>
+        <view class="action text-green" catch:tap="onCancelLoginPopup">取消</view>
+      </view>
+      <view class="padding">
+        <button class="cu-btn block bg-green margin-tb-sm lg" open-type="getUserInfo" bindgetuserinfo="onAuth">
+          注册后可进行更多操作
+        </button>
+      </view>
     </view>
   </view>
 </view>
