@@ -1,7 +1,7 @@
-// miniprogram/pages/commodity_search/index.js
+import api from "../../api/api";
+import cache from "../../cache/cache";
+
 const app = getApp()
-const api = require("../../api/api")
-const cache = require("../../cache/cache")
 const MAX_COMMODITY_LIMIT_SIZE = 10
 let res = {}
 let params = {}

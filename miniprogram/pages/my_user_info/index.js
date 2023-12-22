@@ -1,8 +1,7 @@
-// miniprogram/pages/home_user_info/index.js
+import api from "../../api/api";
+import rules from "../../utils/rules";
 import Dialog from '@vant/weapp/dialog/dialog';
-const api = require('../../api/api')
-const cache = require('../../cache/cache')
-const rules = require('../../utils/rules')
+
 let res = {}
 let params = {}
 let uid = 0

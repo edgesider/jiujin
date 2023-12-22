@@ -11,15 +11,10 @@ const qualitiesMap = Object.freeze({
   // 1: {name: '1成新', value: 1},
 });
 
-function getQualitiesMap() {
+export function getQualitiesMap() {
   return qualitiesMap;
 }
 
-function getQualityName(quality) {
+export function getQualityName(quality) {
   return qualitiesMap[quality]?.name;
-}
-
-module.exports = {
-  getQualitiesMap,
-  getQualityName,
 }

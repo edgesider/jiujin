@@ -1,12 +1,12 @@
-const app = getApp()
-const api = require('../../api/api')
-const cache = require("../../cache/cache")
-const rules = require('../../utils/rules')
-const { RespSuccess, RespError } = require('../../utils/resp')
-const { sleep } = require('../../utils/time');
-const { getQualitiesMap } = require('../../utils/strings');
-const { setNeedRefresh } = require('../home/index');
+import api from "../../api/api";
 import Dialog from '@vant/weapp/dialog/dialog';
+import rules from "../../utils/rules";
+import { RespError, RespSuccess } from "../../utils/resp";
+import { sleep } from "../../utils/time";
+import { getQualitiesMap } from "../../utils/strings";
+import { setNeedRefresh } from "../home/index";
+
+const app = getApp()
 
 Page({
 

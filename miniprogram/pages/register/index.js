@@ -1,8 +1,8 @@
-import Toast from '@vant/weapp/toast/toast';
 import Dialog from '@vant/weapp/dialog/dialog';
+import api from "../../api/api";
+import rules from "../../utils/rules";
+
 const app = getApp()
-const api = require("../../api/api")
-const rules = require('../../utils/rules')
 
 Page({
   data: {

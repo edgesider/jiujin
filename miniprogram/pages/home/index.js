@@ -1,12 +1,13 @@
 import { setTabBar } from "../../utils/other";
+import { COMMODITY_STATUS_SELLING } from '../../constants';
+import Dialog from '@vant/weapp/dialog/dialog';
+import { getQualitiesMap } from "../../utils/strings";
+import api from "../../api/api";
 
 const app = getApp()
-const api = require("../../api/api")
-const { getQualitiesMap } = require("../../utils/strings");
 const SIZE_PER_PAGE = 10
-import Dialog from '@vant/weapp/dialog/dialog';
-
 const DEFAULT_REGION_ID = 1;
+
 let needRefresh = false;
 module.exports.setNeedRefresh = () => {
   needRefresh = true;
@@ -113,9 +114,8 @@ Page({
         start: 0,
         count: SIZE_PER_PAGE,
         is_mine: false,
-        status: 0 // TODO enum
+        status: COMMODITY_STATUS_SELLING
       });
-      console.log(`commodity for rid=${rid}`, list.data);
       this.setListData(list.data);
     } catch (e) {
       console.error(e);

@@ -1,7 +1,6 @@
 import { setTabBar } from "../../utils/other";
 
 const app = getApp()
-const api = require('../../api/api')
 import Dialog from '@vant/weapp/dialog/dialog';
 
 const placeholderUser = {

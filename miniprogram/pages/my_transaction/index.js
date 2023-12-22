@@ -1,7 +1,6 @@
-// miniprogram/pages/home_transaction/index.js
+import api from "../../api/api";
+
 const MAX_TRANSACTION_LIMIT_SIZE = 10
-const api = require('../../api/api')
-const cache = require('../../cache/cache')
 let res = {}
 let params = {}
 let start = 0

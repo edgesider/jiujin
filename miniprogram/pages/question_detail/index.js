@@ -1,7 +1,7 @@
-// miniprogram/pages/question_detail/index.js
+import api from "../../api/api";
+import fmt from "../../utils/formatTime";
+
 const app = getApp()
-const api = require('../../api/api')
-const fmt = require('../../utils/formatTime')
 const MAX_ANSWER_LIMIT_SIZE = 10
 let res = {}
 let params = {}
