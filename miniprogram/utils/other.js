@@ -5,3 +5,7 @@ export function tryJsonParse(str) {
     return null
   }
 }
+
+export function setTabBar(page) {
+  page.getTabBar().updateTo(page.route)
+}

@@ -1,32 +1,39 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/commodity_list/commodity_list",
-    "pages/index_register/index_register",
-    "pages/home/home",
-    "pages/transaction_detail/transaction_detail",
-    "pages/commodity_transaction/commodity_transaction",
-    "pages/commodity_search/commodity_search",
-    "pages/commodity_release/commodity_release",
-    "pages/index_auth/index_auth",
-    "pages/home_transaction/home_transaction",
-    "pages/home_release/home_release",
-    "pages/home_user_info/home_user_info",
-    "pages/question_detail/question_detail",
-    "pages/home_about/home_about",
+    "pages/home/index",
+    "pages/me/index",
+    "pages/register/index",
+    "pages/search/index",
+    "pages/commodity_publish/index",
+    "pages/my_transaction/index",
+    "pages/my_commodity/index",
+    "pages/my_user_info/index",
+    "pages/question_detail/index",
     "pages/commodity_detail/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云开发 QuickStart",
+    "navigationBarTitleText": "旧近",
     "navigationBarTextStyle": "black",
     "navigationStyle": "custom",
-    "enablePullDownRefresh": true
+    "enablePullDownRefresh": false,
+    "onReachBottomDistance": 200
   },
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"
+  },
+  "tabBar": {
+    "custom": true,
+    "list": [
+      {
+        "pagePath": "pages/home/index"
+      },
+      {
+        "pagePath": "pages/me/index"
+      }
+    ]
   },
   "sitemapLocation": "sitemap.json"
 }
