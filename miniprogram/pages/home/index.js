@@ -165,8 +165,9 @@ Page({
       selectedRegionIndex: targetIdx,
       cursor: 0,
       hasMore: true,
-    }, () => {
-      this.refreshList();
+      commodityList: [],
+    }, async () => {
+      await this.refreshList();
     });
   },
 
