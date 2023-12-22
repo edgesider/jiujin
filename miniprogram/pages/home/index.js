@@ -5,8 +5,8 @@ import { getQualitiesMap } from "../../utils/strings";
 import api from "../../api/api";
 
 const app = getApp()
-const SIZE_PER_PAGE = 10
-const DEFAULT_REGION_ID = 1;
+const SIZE_PER_PAGE = 8
+const DEFAULT_REGION_ID = 1
 
 let needRefresh = false;
 module.exports.setNeedRefresh = () => {
@@ -28,15 +28,14 @@ Page({
 
     self: null,
     ridToRegion: null,
+    // 可选的区域，按照层级排列L4、L3、L2、L1
     regions: [],
     selectedRegionIndex: 0, // 选中的区域
 
     commodityList: [],
-    commodityListRows: [],
-
     qualitiesMap: getQualitiesMap(),
 
-    start: 0,
+    cursor: 0,
     isLoading: false,
     hasMore: true,
   },
@@ -46,15 +45,15 @@ Page({
    */
   async onLoad(options) {
     setTabBar(this);
-    await wx.showLoading({ title: '加载中', })
+    this.setData({ isLoading: true })
     try {
-      await this.loadRegions();
-      await this.refreshList(undefined, false);
+      await this.loadRegions(); // TODO cache
+      await this.refreshList();
     } catch (e) {
       Dialog.alert({ message: e, });
       console.error(e);
     } finally {
-      await wx.hideLoading();
+      this.setData({ isLoading: false })
     }
   },
 
@@ -66,7 +65,7 @@ Page({
   async onShow() {
     if (needRefresh) {
       needRefresh = false;
-      await this.refreshList(undefined, true);
+      await this.refreshList();
     }
   },
 
@@ -100,37 +99,37 @@ Page({
     }
   },
 
-  async refreshList(rid, loading) {
-    if (rid === undefined) {
-      rid = this.data.regions[this.data.selectedRegionIndex]._id;
-    }
-    loading = Boolean(loading);
+  async refreshList(append) {
+    const rid = this.data.regions[this.data.selectedRegionIndex]._id;
 
-    if (loading) {
-      await wx.showLoading({ mask: true });
-    }
+    this.setData({
+      isLoading: true
+    });
     try {
       const list = await api.getCommodityList(rid, {
-        start: 0,
+        start: this.data.cursor,
         count: SIZE_PER_PAGE,
         is_mine: false,
         status: COMMODITY_STATUS_SELLING
       });
-      this.setListData(list.data);
+      const data = append ? this.data.commodityList.concat(list.data) : list.data;
+      const hasMore = list.data.length !== 0;
+      const cursor = data.length;
+      this.setData({
+        isLoading: false,
+        hasMore,
+        cursor,
+        commodityList: data,
+      });
     } catch (e) {
       console.error(e);
     } finally {
-      wx.hideLoading()
+      if (this.data.isLoading) {
+        this.setData({
+          isLoading: false,
+        })
+      }
     }
-  },
-
-  setListData(commodityList) {
-    // const first = commodityList.data[0];
-    // commodityList = [...new Array(40)].map(() => first);
-    this.setData({
-      commodityList,
-      commodityListRows: this.splitListToRows(commodityList)
-    });
   },
 
   splitListToRows(list) {
@@ -162,20 +161,27 @@ Page({
     if (typeof targetIdx !== 'number' || targetIdx === this.data.selectedRegionIndex) {
       return;
     }
-    this.setData({ selectedRegionIndex: targetIdx }, () => {
-      this.refreshList(undefined, true);
+    this.setData({
+      selectedRegionIndex: targetIdx,
+      cursor: 0,
+      hasMore: true,
+    }, () => {
+      this.refreshList();
     });
+  },
+
+  async loadMore() {
+    await this.refreshList(true);
   },
 
   // 刷新商品列表
   async onPullDownRefresh() {
-    await this.refreshList(undefined, true);
+    await this.refreshList();
     await wx.stopPullDownRefresh();
   },
 
-  // 到底加载更多数据
   async onReachBottom() {
-    // TODO 分页
+    await this.loadMore();
   },
 
   async onEnterCommodityDetail(event) {
@@ -185,8 +191,6 @@ Page({
     })
   },
 
-
-  //底部Tab相关
   async onCommodityReleaseTab() {
     const registered = app.globalData.registered
     if (registered) {
@@ -217,7 +221,6 @@ Page({
   },
 
   onTitleClick() {
-    console.log('click')
   },
 
   onCancelLoginPopup() {

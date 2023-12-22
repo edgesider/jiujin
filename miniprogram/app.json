@@ -18,7 +18,8 @@
     "navigationBarTitleText": "旧近",
     "navigationBarTextStyle": "black",
     "navigationStyle": "custom",
-    "enablePullDownRefresh": false
+    "enablePullDownRefresh": false,
+    "onReachBottomDistance": 200
   },
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"
