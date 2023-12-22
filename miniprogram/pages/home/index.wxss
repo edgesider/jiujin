@@ -67,6 +67,8 @@ page {
   display: flex;
   overflow-x: scroll;
   padding: 6px;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .regions-filter .region {
