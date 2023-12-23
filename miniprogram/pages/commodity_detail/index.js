@@ -72,4 +72,12 @@ Page({
     await sleep(500);
     this.back();
   },
+
+  async previewImages(param) {
+    const { curr } = param.currentTarget.dataset;
+    await wx.previewImage({
+      current: curr,
+      urls: this.data.commodity.img_urls
+    });
+  },
 });

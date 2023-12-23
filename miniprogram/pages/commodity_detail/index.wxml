@@ -29,7 +29,7 @@
     </view>
     <view class="body">
       <swiper wx:if="{{commodity.img_urls.length > 0}}" class="images" indicator-dots="true">
-        <swiper-item wx:for="{{commodity.img_urls}}" wx:for-item="img" wx:key="*this">
+        <swiper-item wx:for="{{commodity.img_urls}}" wx:for-item="img" wx:key="*this" bindtap="previewImages" data-curr="{{img}}">
           <image mode="aspectFill" src="{{img}}" class="image"></image>
         </swiper-item>
       </swiper>
