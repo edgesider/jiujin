@@ -23,7 +23,7 @@
           <text class="region" wx:if="{{(seller.rid || -1) !== -1}}">{{ridToRegion[seller.rid].name}}</text>
         </view>
         <view class="line2">
-          <text class="time">{{commodity.create_time}}</text>
+          <text class="time">发布于{{createTime}}</text>
         </view>
       </view>
     </view>
@@ -34,7 +34,7 @@
         </swiper-item>
       </swiper>
       <view class="content">
-        <text class="paragraph" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+        <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
       </view>
     </view>
     <view class="footer">
@@ -53,7 +53,13 @@
         </view>
       </view>
       <view class="right">
-        <text>私聊</text>
+        <block wx:if="{{isMine}}">
+          <text class="remain-time">{{remainTime}}\n<text class="remain-time-hint">剩余推广时间</text></text>
+          <view class="button" bindtap="polish">擦亮</view>
+        </block>
+        <block wx:else>
+          <view class="button">私聊</view>
+        </block>
       </view>
     </view>
   </block>

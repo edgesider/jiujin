@@ -250,7 +250,7 @@ exports.main = async (event, context) => {
   app.router('polishCommodity', async (ctx, next) => {
     const { _id } = event.params
     try {
-      ctx.body = await commodityCollection.where({
+      await commodityCollection.where({
         sell_id: wxContext.OPENID,
         _id: _id,
         is_deleted: false

@@ -154,7 +154,7 @@
 }
 
 .footer .left {
-  flex-grow: 1;
+  flex-shrink: 0;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -179,12 +179,32 @@
 }
 
 .footer .right {
-  flex-grow: 0;
-  flex-shrink: 0;
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin-left: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 
-.footer .right text {
-  border-radius: calc((1em + 12px) / 2);
+.footer .right .remain-time {
+  margin-right: 8px;
+  flex-shrink: 1;
+  font-size: 12px;
+  text-align: right;
+}
+
+.footer .right .remain-time-hint {
+  flex-shrink: 1;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.5);
+  text-align: right;
+}
+
+.footer .right .button {
+  flex-shrink: 0;
+  border-radius: calc((1em + 16px) / 2);
   padding: 6px 16px;
   background: aquamarine;
   font-size: 14px;

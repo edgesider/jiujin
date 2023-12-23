@@ -61,6 +61,7 @@ page {
 .regions-filter {
   position: sticky;
   background: white;
+  height: 48px;
   z-index: 1;
   flex: 0;
   width: 100%;

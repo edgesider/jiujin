@@ -185,6 +185,17 @@ const api = {
     }
   },
 
+  // 擦亮商品
+  async polishCommodity({ id }) {
+    const res = await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'polishCommodity',
+        params: { _id: id }
+      }
+    });
+    return wrapResponse(res);
+  },
 
   // 删除商品(soft-del)
   // 需要获取与商品相关的问题，回答，交易的主键，以及图片的fileIDs
@@ -349,8 +360,6 @@ const api = {
       console.log({ "图片fileID": fileIDs })
       return new RespSuccess(fileIDs)
     }
-
-
   },
 
   // 上传图片
@@ -637,7 +646,6 @@ const api = {
     return new RespSuccess()
   },
 
-
   // 消息推送，参数见调用处
   async sendNewTransactionMsg(params) {
     res = await wx.cloud.callFunction({
@@ -654,22 +662,6 @@ const api = {
     }
     console.log("发送推送消息成功！")
     return new RespSuccess()
-  },
-
-  async getCommodityListByRegion(rid) {
-    const res = await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'getCommodityListByRegion',
-        params: {
-          rid
-        }
-      }
-    })
-    if (res.result.errno !== 0) {
-      return new RespError(res);
-    }
-    return res.result;
   },
 }
 

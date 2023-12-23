@@ -9,7 +9,8 @@ const SIZE_PER_PAGE = 8
 const DEFAULT_REGION_ID = 1
 
 let needRefresh = false;
-module.exports.setNeedRefresh = () => {
+
+export function setNeedRefresh() {
   needRefresh = true;
 }
 
