@@ -43,12 +43,12 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  async onLoad(options) {
+  async onLoad() {
     setTabBar(this);
     this.setData({ isLoading: true })
     try {
       await this.loadRegions(); // TODO cache
-      await this.refreshList();
+      await this.fetchList();
     } catch (e) {
       Dialog.alert({ message: e, });
       console.error(e);
@@ -65,7 +65,7 @@ Page({
   async onShow() {
     if (needRefresh) {
       needRefresh = false;
-      await this.refreshList();
+      await this.fetchList();
     }
   },
 
@@ -99,15 +99,22 @@ Page({
     }
   },
 
-  async refreshList(append) {
+  async fetchList({ append } = {}) {
     const rid = this.data.regions[this.data.selectedRegionIndex]._id;
 
+    const start = append ? this.data.cursor : 0;
+    if (!append) {
+      wx.pageScrollTo({ scrollTop: 0, smooth: true });
+    }
     this.setData({
-      isLoading: true
+      cursor: start,
+      isLoading: true,
+      commodityList: append ? this.data.commodityList : [],
+      hasMore: true,
     });
     try {
       const list = await api.getCommodityList(rid, {
-        start: this.data.cursor,
+        start,
         count: SIZE_PER_PAGE,
         is_mine: false,
         status: COMMODITY_STATUS_SELLING
@@ -130,6 +137,24 @@ Page({
         })
       }
     }
+  },
+
+  async loadMore() {
+    await this.fetchList({ append: true });
+  },
+
+  async refreshCurrentTab() {
+    await this.fetchList();
+  },
+
+  // 刷新商品列表
+  async onPullDownRefresh() {
+    await this.fetchList();
+    await wx.stopPullDownRefresh();
+  },
+
+  async onReachBottom() {
+    await this.loadMore();
   },
 
   splitListToRows(list) {
@@ -163,26 +188,9 @@ Page({
     }
     this.setData({
       selectedRegionIndex: targetIdx,
-      cursor: 0,
-      hasMore: true,
-      commodityList: [],
     }, async () => {
-      await this.refreshList();
+      await this.fetchList();
     });
-  },
-
-  async loadMore() {
-    await this.refreshList(true);
-  },
-
-  // 刷新商品列表
-  async onPullDownRefresh() {
-    await this.refreshList();
-    await wx.stopPullDownRefresh();
-  },
-
-  async onReachBottom() {
-    await this.loadMore();
   },
 
   async onEnterCommodityDetail(event) {

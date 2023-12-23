@@ -59,7 +59,7 @@
     <view wx:else class="no-more">
       <view class="actions">
         <view>到底啦~</view>
-        <view class="action" bindtap="loadMore">点击刷新</view>
+        <view class="action" bindtap="refreshCurrentTab">回到顶部</view>
         <block wx:if="{{selectedRegionIndex < regions.length - 1}}">
           <view>或</view>
           <view
