@@ -99,7 +99,7 @@ exports.main = async (event, context) => {
         regionCache[r._id] = result
       }
     }
-    const { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
+    let { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
     const _ = db.command
     let w = {}
     rids = regionCache[rid]
@@ -134,10 +134,16 @@ exports.main = async (event, context) => {
     if (status) {
       w["status"] = status
     }
+    if (!count || count <= 0) {
+      count = 10;
+    }
+    if (!start || start < 0) {
+      start = 0;
+    }
     try {
       ctx.body = await commodityCollection.where(w)
         .orderBy('update_time', 'desc')
-        .skip(start)
+        .skip(start || 0)
         .limit(count)
         .get()
       ctx.body.errno = 0

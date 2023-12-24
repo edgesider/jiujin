@@ -32,6 +32,7 @@ Page({
    */
   async onLoad(options) {
     setTabBar(this);
+    await app.waitForReady();
     const { self, ridToRegion } = app.globalData;
     if (app.globalData.self) {
       this.setData({

@@ -45,8 +45,6 @@
     wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
     class="card"
     commodity="{{item}}"
-    ridToRegion="{{ridToRegion}}"
-    qualitiesMap="{{qualitiesMap}}"
   />
 </view>
 

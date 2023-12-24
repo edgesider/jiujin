@@ -5,7 +5,7 @@ import { getQualitiesMap } from "../../utils/strings";
 import api from "../../api/api";
 
 const app = getApp()
-const SIZE_PER_PAGE = 8
+const COUNT_PER_PAGE = 8
 const DEFAULT_REGION_ID = 1
 
 let needRefresh = false;
@@ -34,11 +34,8 @@ Page({
     selectedRegionIndex: 0, // 选中的区域
 
     commodityList: [],
-    qualitiesMap: getQualitiesMap(),
-
     cursor: 0,
     isLoading: false,
-    hasMore: true,
   },
 
   /**
@@ -111,21 +108,18 @@ Page({
       cursor: start,
       isLoading: true,
       commodityList: append ? this.data.commodityList : [],
-      hasMore: true,
     });
     try {
       const list = await api.getCommodityList(rid, {
         start,
-        count: SIZE_PER_PAGE,
+        count: COUNT_PER_PAGE,
         is_mine: false,
         status: COMMODITY_STATUS_SELLING
       });
       const data = append ? this.data.commodityList.concat(list.data) : list.data;
-      const hasMore = list.data.length !== 0;
       const cursor = data.length;
       this.setData({
         isLoading: false,
-        hasMore,
         cursor,
         commodityList: data,
       });

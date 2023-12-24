@@ -1,6 +1,7 @@
 {
   "usingComponents": {
     "Comments": "/components/Comments/index",
-    "CommodityCard": "/components/CommodityCard/index"
+    "CommodityCard": "/components/CommodityCard/index",
+    "TitleBar": "/components/TitleBar/index"
   }
 }

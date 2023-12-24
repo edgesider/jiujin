@@ -11,8 +11,9 @@ Component({
   },
   data: {
     desc: '',
+    createTime: '',
     ridToRegion: app.globalData.ridToRegion,
-    qualitiesMap: getQualitiesMap()
+    qualitiesMap: getQualitiesMap(),
   },
   methods: {
     async gotoDetail() {
@@ -25,7 +26,7 @@ Component({
     }
   },
   attached() {
-    let { content } = this.properties.commodity
+    let { content, create_time } = this.properties.commodity
     // 处理content
     content = content.substring(0, 8); // 最多十个
     const firstLR = content.indexOf('\n');
@@ -34,6 +35,7 @@ Component({
     }
     this.setData({
       desc: content,
+      createTime: new Date(create_time).toLocaleDateString(),
       ridToRegion: app.globalData.ridToRegion,
     })
   }
