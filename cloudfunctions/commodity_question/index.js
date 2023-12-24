@@ -50,7 +50,7 @@ exports.main = async (event, context) => {
   app.router('getCommodityQuestions', async (ctx, next) => {
     const { cid, start, count } = event.params
     try {
-      ctx.body = await commodityQuestionCollection.aggregate()
+      const { list } = await commodityQuestionCollection.aggregate()
         .match({
           cid: cid,
           is_deleted: false
@@ -71,7 +71,10 @@ exports.main = async (event, context) => {
         .skip(start)
         .limit(count)
         .end()
-      ctx.body.errno = 0
+      ctx.body = {
+        data: list,
+        errno: 0,
+      }
     } catch (e) {
       ctx.body = {
         errno: -1

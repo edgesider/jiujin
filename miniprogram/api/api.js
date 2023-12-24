@@ -665,4 +665,77 @@ const api = {
   },
 }
 
-module.exports = api;
+export default api;
+
+export const CommentAPI = {
+  async createQuestion(coid, content) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity_question',
+      data: {
+        $url: 'createQuestion',
+        params: {
+          cid: coid,
+          content
+        }
+      }
+    }));
+  },
+  async createAnswer(qid, content) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity_answer',
+      data: {
+        $url: 'createAnswer',
+        params: {
+          question_id: qid,
+          content,
+        }
+      }
+    }));
+  },
+  async getQuestions(coid, start, count) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity_question',
+      data: {
+        $url: 'getCommodityQuestions',
+        params: {
+          cid: coid,
+          start, count
+        }
+      }
+    }));
+  },
+  async getAnswers(qid, start, count) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity_answer',
+      data: {
+        $url: 'getQuestionAnswers',
+        params: {
+          question_id: qid,
+          start, count
+        }
+      }
+    }));
+  },
+  async delQuestion(qid) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity_question',
+      data: {
+        $url: 'deleteQuestion',
+        params: {
+          question_id: qid,
+        }
+      }
+    }))
+  },
+  async delAnswer(answer_id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity_answer',
+      data: {
+        $url: 'deleteAnswer',
+        params: {
+          answer_id
+        }
+      }
+    }))
+  },
+}

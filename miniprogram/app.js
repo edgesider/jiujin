@@ -1,4 +1,4 @@
-const api = require('./api/api');
+import api from './api/api';
 
 App({
   _ready: false,
@@ -26,7 +26,6 @@ App({
       success: e => {
         this.globalData.StatusBar = e.statusBarHeight;
         let custom = wx.getMenuButtonBoundingClientRect();
-        this.globalData.Custom = custom; // TODO 移除？
         this.globalData.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
       }
     })

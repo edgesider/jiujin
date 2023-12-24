@@ -5,7 +5,7 @@
   </view>
 
   <view wx:if="{{loading}}" class="loading">
-    <text>Loading</text>
+    <text>加载中...</text>
   </view>
   <view wx:elif="{{!commodity}}" class="loading">
     <text>商品走丢了</text>
@@ -28,14 +28,21 @@
       </view>
     </view>
     <view class="body">
-      <swiper wx:if="{{commodity.img_urls.length > 0}}" class="images" indicator-dots="true">
-        <swiper-item wx:for="{{commodity.img_urls}}" wx:for-item="img" wx:key="*this" bindtap="previewImages" data-curr="{{img}}">
-          <image mode="aspectFill" src="{{img}}" class="image"></image>
-        </swiper-item>
-      </swiper>
       <view class="content">
+        <swiper wx:if="{{commodity.img_urls.length > 0}}" class="images" indicator-dots="true">
+          <swiper-item
+            wx:for="{{commodity.img_urls}}" wx:for-item="img" wx:key="*this"
+            data-curr="{{img}}"
+            bindtap="previewImages"
+          >
+            <image mode="aspectFill" src="{{img}}" class="image"></image>
+          </swiper-item>
+        </swiper>
         <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
       </view>
+      <view class="part-space"></view>
+      <Comments class="comments" commodity="{{commodity}}" />
+      <view class="part-space"></view>
     </view>
     <view class="footer">
       <view class="left">

@@ -1,4 +1,6 @@
 {
   "usingComponents": {
+    "Comments": "/components/Comments/index",
+    "CommodityCard": "/components/CommodityCard/index"
   }
 }

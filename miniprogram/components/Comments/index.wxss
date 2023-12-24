@@ -1,0 +1,138 @@
+.root {
+  background: white;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 12px 16px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.input-area {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: center;
+}
+
+.input-area .my-avatar {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.input-area .input {
+  flex-grow: 1;
+  background: rgba(0, 0, 0, 0.05);
+  height: 28px;
+  border-radius: 14px;
+  margin-left: 12px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+.input-area .send-btn {
+  height: 28px;
+  border-radius: 14px;
+  margin-left: 8px;
+  font-size: 12px;
+  background: aquamarine;
+  padding: 6px 14px 0;
+}
+
+.comments {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.comment {
+  font-size: 14px;
+}
+
+.question {
+  margin: 20px 0 0;
+  width: 100%;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.question .avatar {
+  background: green;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-top: 4px;
+  margin-right: 8px;
+  flex: 0 0 auto;
+}
+
+.question .right {
+  flex-grow: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.question .right .username {
+  max-width: 80%;
+  color: rgba(0, 0, 0, 0.5);
+  height: 1.2em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: keep-all;
+}
+
+.question .right .content {
+  margin-top: 4px;
+  width: 100%;
+  word-break: break-all;
+  user-select: text;
+  line-height: 1.5em;
+}
+
+.answer {
+  width: 100%;
+  flex-grow: 0;
+  overflow: hidden;
+  margin-top: 8px;
+  padding-left: 36px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+  font-size: 12px;
+}
+
+.answer .username {
+  color: rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  word-break: keep-all;
+  max-width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.answer .colon {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.answer .content {
+  word-break: break-all;
+  flex-grow: 0;
+  user-select: text;
+  line-height: 1.4em;
+}

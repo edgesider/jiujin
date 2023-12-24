@@ -22,7 +22,7 @@ exports.main = async (event, context) => {
   app.router('createAnswer', async (ctx, next) => {
     const { question_id, content } = event.params
     try {
-      ctx.body = await commodityQuestionCollection.add({
+      ctx.body = await commodityAnswerCollection.add({
         data: {
           question_id: question_id,
           content: content,
@@ -37,7 +37,7 @@ exports.main = async (event, context) => {
       ctx.body = {
         errno: -1
       }
-      if (e.errCode.toString() === '87014') {
+      if ((e.errCode && e.errCode.toString()) === '87014') {
         ctx.body = {
           errno: 87014
         }
@@ -50,7 +50,7 @@ exports.main = async (event, context) => {
     const { question_id, start, count } = event.params
 
     try {
-      ctx.body = await commodityAnswerCollection.aggregate()
+      const { list } = await commodityAnswerCollection.aggregate()
         .match({
           question_id,
           is_deleted: false
@@ -71,7 +71,10 @@ exports.main = async (event, context) => {
         .skip(start)
         .limit(count)
         .end()
-      ctx.body.errno = 0
+      ctx.body = {
+        data: list,
+        errno: 0
+      }
     } catch (e) {
       ctx.body = {
         errno: -1
