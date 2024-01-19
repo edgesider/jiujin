@@ -2,14 +2,19 @@
   <view class="title">{{comments.length}}条留言</view>
   <view class="input-area">
     <image src="{{selfInfo.avatar_url}}" class="my-avatar" />
-    <input class="input" placeholder="{{selfInfo._id === commodity.sell_id ? '补充点信息吧~' : '问问更多细节~'}}" model:value="{{input}}" bindinput="nop" />
-    <view class="send-btn" bindtap="sendQuestion">发送</view>
+    <view
+      class="fake-input"
+      bindtap="startComment"
+    >
+      {{selfInfo._id === commodity.sell_id ? '补充点信息吧~' : '问问更多细节~'}}
+    </view>
   </view>
   <view class="comments" wx:if="{{comments.length > 0}}">
-    <block
+    <view
       wx:for="{{comments}}"
       wx:for-item="comment"
       wx:key="_id"
+      bindtap="startComment" data-comment="{{comment}}"
     >
       <view wx:if="{{comment.type === 'question'}}" class="comment question">
         <image src="{{comment.user.avatar_url}}" class="avatar" />
@@ -27,6 +32,24 @@
         <view class="colon">：</view>
         <view class="content">{{comment.content}}</view>
       </view>
-    </block>
+    </view>
+  </view>
+  <view wx:if="{{commenting}}" class="popup-input">
+    <view class="mask" bindtap="endComment" />
+    <view
+      class="input-line"
+      style="margin-bottom: {{keyboardHeight}}px"
+    >
+      <view class="hint">{{commentingTo ? '回复@' + commentingTo.user.name : '留言'}}：</view>
+      <input
+        class="input"
+        value="{{commentingText}}"
+        focus="{{true}}"
+        adjust-position="{{false}}"
+        confirm-type="send"
+        bindinput="onPopupInput"
+        bindconfirm="confirmComment"
+      />
+    </view>
   </view>
 </view>

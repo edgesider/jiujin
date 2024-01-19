@@ -51,20 +51,17 @@
 <view class="bottom">
   <view wx:if="{{isLoading}}" class="loading">加载中...</view>
   <block wx:else>
-    <view wx:if="{{commodityList.length === 0}}">
-      <van-empty description="暂时没有商品哦，快去发布吧" />
-    </view>
-    <view wx:else class="no-more">
+    <view class="no-more">
       <view class="actions">
         <view>到底啦~</view>
-        <view class="action" bindtap="refreshCurrentTab">回到顶部</view>
+        <view class="action" bindtap="refreshCurrentTab">刷新</view>
         <block wx:if="{{selectedRegionIndex < regions.length - 1}}">
           <view>或</view>
           <view
             class="action"
             bind:tap="onChangeRegion"
             data-idx="{{selectedRegionIndex + 1}}"
-          >切换到“{{regions[selectedRegionIndex + 1].name}}”
+          >去“{{regions[selectedRegionIndex + 1].name}}”看看
           </view>
         </block>
       </view>

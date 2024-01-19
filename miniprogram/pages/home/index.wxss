@@ -151,4 +151,5 @@ page {
 
 .bottom .no-more .actions .action {
   color: rgb(76, 136, 255);
+  font-weight: bold;
 }
