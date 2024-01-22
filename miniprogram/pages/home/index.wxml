@@ -1,7 +1,7 @@
 <view class="top" style="height: {{CustomBar}}px; padding-top: {{StatusBar}}px;">
   <!--顶部的遮盖-->
-  <view class="mask" style="height: {{CustomBar}}px; opacity: {{(scrollTop / CustomBar)}}" />
-  <view class="app-name">旧近</view>
+  <view class="mask" style="height: {{CustomBar}}px;" />
+  <image class="app-logo" src="../../res/logo.png" mode="aspectFit" />
   <view class="search" bindtap="onTitleClick">
     <input
       type="text"
@@ -14,18 +14,31 @@
 </view>
 
 
-<swiper indicator-dots autoplay circular class="top-swiper">
+<swiper
+  indicator-dots autoplay circular
+  class="top-swiper"
+  style="padding-top: {{CustomBar}}px"
+>
   <swiper-item>
-    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
-           style="width: 100%; height: 100%;" />
+    <image
+      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
+      style="width: 100%; height: 100%;"
+      mode="aspectFill"
+    />
   </swiper-item>
   <swiper-item>
-    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg"
-           style="width: 100%; height: 100%;" />
+    <image
+      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg"
+      style="width: 100%; height: 100%;"
+      mode="aspectFill"
+    />
   </swiper-item>
   <swiper-item>
-    <image src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
-           style="width: 100%; height: 100%;" />
+    <image
+      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
+      style="width: 100%; height: 100%;"
+      mode="aspectFill"
+    />
   </swiper-item>
 </swiper>
 
