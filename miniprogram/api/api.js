@@ -95,14 +95,13 @@ const api = {
     }))
   },
 
-  async getCommodityList(rid, filter) {
+  async getCommodityList(filter) {
     // const { cid, keyword, seller_id, buyer_id, sex, status, start, count } = filter ?? {};
     const res = await wx.cloud.callFunction({
       name: 'commodity',
       data: {
         $url: 'getCommodityList',
         params: {
-          rid,
           ...filter
         }
       }

@@ -102,10 +102,12 @@ exports.main = async (event, context) => {
     let { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
     const _ = db.command
     let w = {}
-    rids = regionCache[rid]
-    w["rid"] = _.eq(rids[0])
-    for (i = 1; i < rids.length; i++) {
-      w["rid"] = w["rid"].or(_.eq(rids[i]))
+    if (typeof rid === 'number') {
+      const rids = regionCache[rid]
+      w["rid"] = _.eq(rids[0])
+      for (i = 1; i < rids.length; i++) {
+        w["rid"] = w["rid"].or(_.eq(rids[i]))
+      }
     }
     if (cid) {
       w["cid"] = cid

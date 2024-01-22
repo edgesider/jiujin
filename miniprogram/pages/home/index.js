@@ -110,7 +110,8 @@ Page({
       commodityList: append ? this.data.commodityList : [],
     });
     try {
-      const list = await api.getCommodityList(rid, {
+      const list = await api.getCommodityList({
+        rid,
         start,
         count: COUNT_PER_PAGE,
         is_mine: false,

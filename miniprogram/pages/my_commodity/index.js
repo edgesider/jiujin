@@ -27,8 +27,8 @@ Page({
       isLoading: true,
     })
     const { self } = app.globalData;
-    const resp = await api.getCommodityList(self.rid, {
-      seller_id: self._id,
+    const resp = await api.getCommodityList({
+      sell_id: self._id,
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
     })
