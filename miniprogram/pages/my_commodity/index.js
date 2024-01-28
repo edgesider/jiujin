@@ -1,4 +1,6 @@
 import api from "../../api/api";
+import { sleep } from "../../utils/time";
+import { setNeedRefresh } from "../home/index";
 
 const app = getApp();
 const COUNT_PER_PAGE = 8
@@ -49,18 +51,91 @@ Page({
     })
   },
 
+  async fetchSingle(idx) {
+    const commodity = this.data.commodityList[idx];
+    const resp = await api.getCommodityInfo({ id: commodity._id });
+    if (resp.isError) {
+      return;
+    }
+    this.data.commodityList[idx] = resp.data;
+    this.setData({
+      commodityList: this.data.commodityList
+    });
+  },
+
   // 加载更多
   async onReachBottom() {
-    this.fetchMore();
+    await this.fetchMore();
+  },
+
+  async onPolish(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const commodity = this.data.commodityList[idx];
+    console.log(idx, this.data.commodityList);
+    await wx.showLoading({ mask: true, title: '擦亮中...' });
+    const resp = await api.polishCommodity({ id: commodity._id });
+    await wx.hideLoading();
+    if (resp.isError) {
+      await wx.showToast({
+        title: '擦亮太频繁啦',
+        icon: 'error',
+        mask: true,
+      });
+      return;
+    }
+    await wx.showToast({
+      title: '擦亮成功',
+      icon: 'success',
+      mask: true,
+      duration: 500,
+    });
+    await this.fetchSingle(idx);
+  },
+  // 下架
+  async onCancel(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const commodity = this.data.commodityList[idx];
+    await wx.showLoading({ mask: true, title: '正在下架...' });
+    const resp = await api.cancelCommodity({ id: commodity._id });
+    await wx.hideLoading();
+    if (resp.isError) {
+      await wx.showToast({ title: '下架失败', icon: 'error' });
+      return;
+    }
+    await this.fetchSingle(idx);
+  },
+  async onEdit(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const commodity = this.data.commodityList[idx];
+    await wx.navigateTo({
+      url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
+      events: {
+        afterEdited: async () => {
+          await this.fetchSingle(idx);
+        }
+      },
+    })
+  },
+  async onRepublish(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const commodity = this.data.commodityList[idx];
+    await wx.navigateTo({
+      url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}`,
+      events: {
+        afterEdited: async () => {
+          this.setData({
+            cursor: 0,
+            commodityList: [],
+          })
+          await this.fetchMore(idx);
+        }
+      },
+    })
   },
 
   onNavigateBack() {
     wx.navigateBack({
       delta: 1
     })
-  },
-
-  // 标签选择
-  async tabSelect(e) {
   },
 })

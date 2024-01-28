@@ -7,7 +7,6 @@
     "pages/commodity_publish/index",
     "pages/my_commodity/index",
     "pages/my_user_info/index",
-    "pages/question_detail/index",
     "pages/commodity_detail/index"
   ],
   "window": {

@@ -2,7 +2,7 @@
 <!--  <view slot="backText" bind:tap="onNavigateBack">返回</view>-->
 <!--  <view slot="content">发布商品</view>-->
 <!--</cu-custom>-->
-<TitleBar title="发布商品" />
+<TitleBar title="{{buttonText}}商品" />
 
 <form>
   <view class="cu-item shadow margin-top">
@@ -53,4 +53,4 @@
 
 <van-dialog id="van-dialog" />
 
-<button bind:tap="onCommodityRelease" class="release-button">点击上传</button>
+<button bind:tap="onCommodityRelease" class="release-button">{{buttonText}}</button>

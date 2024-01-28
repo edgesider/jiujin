@@ -9,35 +9,69 @@ import { setNeedRefresh } from "../home/index";
 const app = getApp()
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
+    // 可选分类
+    categories: [{ _id: 0, name: '其他' }],
+    // 可选成色，1-10
+    qualities: Object.values(getQualitiesMap()).sort((a, b) => b.value - a.value),
+    // 编辑模式下正在编辑的商品，如果是新建则为null
+    editingCommodity: null,
+    // 按钮文案
+    buttonText: '',
+
     commodityImg: [],
     categoryIndex: 0,
-    categories: [{ _id: 0, name: '其他' }],
     commodityContent: "",
     commodityCurrentPrice: null,
-    commodityRemark: "",
     qualityIndex: 0,
-    // 成色，1-10
-    qualities: Object.values(getQualitiesMap()).sort((a, b) => b.value - a.value),
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    // 读取商品分类信息
+    await this.getCategories();
+
+    const {
+      isEdit = false, // 是否是编辑
+      commodity: commodityJson = null // 编辑或重新发布时，要填充的数据
+    } = options;
+    const commodity = commodityJson ? JSON.parse(commodityJson) : null;
+    if (isEdit) {
+      if (!commodity) {
+        await wx.showToast({ icon: 'error', title: '无法编辑不存在的商品' });
+        throw Error('无法编辑不存在的商品')
+      }
+    }
+
+    const data = {
+      editingCommodity: isEdit ? commodity : null,
+    };
+    if (commodity) {
+      Object.assign(data, {
+        commodityImg: commodity.img_urls,
+        commodityContent: commodity.content,
+        commodityCurrentPrice: commodity.price,
+        categoryIndex: this.data.categories.findIndex(c => c._id === commodity.cid),
+        qualityIndex: this.data.qualities.findIndex(q => q.value === commodity.quality),
+      });
+    }
+    data.buttonText = isEdit ? '保存' : '发布';
+    this.setData(data);
+  },
+
+  // 读取商品分类信息
+  async getCategories() {
     const resp = await api.getCategory();
     if (resp.isError) {
-      wx.showToast({
+      await wx.showToast({
         title: '获取分类失败',
       });
       return;
     }
-    this.setData({ categories: resp.data, })
+    this.setData({
+      categories: resp.data,
+    })
   },
 
   onNavigateBack() {
@@ -151,32 +185,43 @@ Page({
   async uploadImages(paths) {
     const fileIDs = [];
     for (const path of paths) {
-      const resp = await this.uploadImage(path);
-      if (resp.isError) {
-        throw resp.message;
+      if (/^(cloud|http|https):\/\//.test(path) && !/http:\/\/tmp\//.test(path)) {
+        fileIDs.push(path);
+      } else {
+        const resp = await this.uploadImage(path);
+        if (resp.isError) {
+          throw resp.message;
+        }
+        fileIDs.push(resp.data);
       }
-      fileIDs.push(resp.data);
     }
     return fileIDs;
   },
 
   // 上传商品信息
   async onCommodityRelease() {
-    const info = {
-      rid: app.globalData.self.rid,
+    const { editingCommodity: editing } = this.data;
+    const info = editing // 编辑商品时的初始值
+      ?? {
+        // 新建商品时的默认值
+        rid: app.globalData.self.rid,
+        sex: 0,
+      };
+    Object.assign(info, {
+      // 从表单中更新
       cid: this.data.categories[this.data.categoryIndex]._id,
       content: this.data.commodityContent,
       price: this.data.commodityCurrentPrice,
       quality: this.data.qualities[this.data.qualityIndex].value,
       img_urls: this.data.commodityImg,
-      sex: 0,
-    };
+    });
     const error = this.checkForm(info);
     if (error) {
       Dialog.alert({ title: error, })
       return;
     }
-    console.log('creating commodity', info);
+    console.log(editing ? 'editing commodity' : 'creating commodity', info);
+
     console.log('uploading images', info.img_urls);
     await wx.showLoading({ title: '正在上传图片', mask: true });
     try {
@@ -189,15 +234,32 @@ Page({
       await wx.hideLoading();
     }
     console.log('uploaded images', info.img_urls);
-    await wx.showLoading({ title: '正在发布', mask: true });
-    const resp = await api.createCommodity(info);
+
+    await wx.showLoading({
+      title: editing ? '正在保存' : '正在发布',
+      mask: true
+    });
+    const resp =
+      editing
+        ? await api.updateCommodity(editing._id, info)
+        : await api.createCommodity(info);
     await wx.hideLoading();
     if (resp.isError) {
-      await wx.showToast({ title: '创建失败', });
+      await wx.showToast({
+        title: editing ? '保存失败' : '发布失败',
+      });
       return;
     }
-    setNeedRefresh();
-    await wx.showToast({ title: '发布成功！', duration: 1500, mask: true });
+    this.getOpenerEventChannel().emit(editing ? 'afterEdited' : 'afterPublished');
+    if (!editing) {
+      // TODO 使用Channel
+      setNeedRefresh();
+    }
+    await wx.showToast({
+      title: editing ? '已保存' : '发布成功！',
+      duration: 1500, mask: true
+    });
+
     await sleep(1500);
     await wx.navigateBack();
   }

@@ -40,6 +40,15 @@ Page({
         ridToRegion,
       });
     }
+    app.userChangedSubject.subscribe(user => {
+      this.setData({
+        selfInfo: user
+      })
+    })
+  },
+
+  async onShow() {
+    await app.fetchSelfInfo();
   },
 
   onEnterHomeUserInfo() {

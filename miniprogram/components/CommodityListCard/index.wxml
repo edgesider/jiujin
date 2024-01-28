@@ -1,16 +1,26 @@
-<view class="root" bind:tap="gotoDetail">
-  <view class="left">
+<view class="root">
+  <view class="left" bind:tap="gotoDetail">
     <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}" />
   </view>
 
-  <view class="middle">
+  <view class="middle" bind:tap="gotoDetail">
     <view class="title">{{desc}}</view>
-    <view class="create-time">{{createTime}}</view>
+    <view>
+      <view class="create-time">{{createTime}}</view>
+      <view class="polish-at">{{polishAt}}</view>
+    </view>
     <view class="price">￥{{commodity.price}}</view>
   </view>
   <view class="right">
-    <view class="button" bindtap="polish">擦亮</view>
-    <view class="button" bindtap="cancel">下架</view>
-    <view class="button" bindtap="edit">编辑</view>
+    <view
+      wx:if="{{commodity.is_deleted}}"
+      class="button"
+      bind:tap="republish"
+    >重新发布</view>
+    <block wx:else>
+      <view class="button" bind:tap="polish">擦亮</view>
+      <view class="button" bind:tap="gotoEdit">编辑</view>
+      <view class="button" bind:tap="cancel">下架</view>
+    </block>
   </view>
 </view>

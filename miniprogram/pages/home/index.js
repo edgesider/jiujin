@@ -195,20 +195,25 @@ Page({
       url: `../commodity_detail/index?id=${id}&enteredFrom=1`,
     })
   },
-
-  async onCommodityReleaseTab() {
-    const registered = app.globalData.registered
-    if (registered) {
-      wx.navigateTo({
-        url: '../commodity_publish/index',
-      })
-    } else {
-      this.setData({
-        showLoginPopup: true
-      })
-    }
-
-  },
+  //
+  // async onCommodityReleaseTab() {
+  //   const registered = app.globalData.registered
+  //   if (registered) {
+  //     await wx.navigateTo({
+  //       url: '../commodity_publish/index',
+  //       events: {
+  //         afterPublished() {
+  //           console.log('afterPublished');
+  //           this.fetchList();
+  //         }
+  //       }
+  //     })
+  //   } else {
+  //     this.setData({
+  //       showLoginPopup: true
+  //     })
+  //   }
+  // },
 
   async onHomeTab() {
     wx.redirectTo({

@@ -109,6 +109,23 @@ const api = {
     return wrapResponse(res);
   },
 
+  // 获取单个商品
+  async getCommodityInfo({ id }) {
+    const res = wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'getCommodityList',
+        params: {
+          _id: id
+        }
+      }
+    }));
+    if (res.isError || !res.data[0]) {
+      return null
+    }
+    return new RespSuccess(res.data[0]);
+  },
+
   async createCommodity(commodityInfo) {
     const res = await wx.cloud.callFunction({
       name: 'commodity',
@@ -120,80 +137,36 @@ const api = {
     return wrapResponse(res);
   },
 
-  // 获取商品列表，使用分页查询，参数见调用处
-  // cid = -1 说明是全部分类
-  async getCommodityListByUidAndCid(params) {
-    res = await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'getCommodityListByUidAndCid',
-        params
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("获取商品列表失败！")
-      return new RespError("获取商品列表失败！")
-    }
-    const commodityList = res.result.data
-    console.log({ "获取商品列表成功": commodityList })
-    return new RespSuccess(commodityList)
-
-  },
-
-  // 获取商品详情信息，参数见调用处
-  async getCommodityDetail(params) {
-    res = await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'getCommodityDetail',
-        params
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("获取商品详情失败！")
-      return new RespError("获取商品详情失败！")
-    }
-    if (res.result.data.length == 0) {
-      console.log("商品不存在！")
-      return new RespError("商品不存在！")
-    }
-    const commodityDetail = res.result.data[0]
-    console.log({ "获取商品详情成功": commodityDetail })
-    return new RespSuccess(commodityDetail)
-
-  },
-
-  // 上传商品详细信息，参数见调用处
-  async setCommodityDetail(params) {
-    res = await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'setCommodityDetail',
-        params
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("上传商品信息失败！")
-      return new RespError("上传商品信息失败！")
-    } else if (res.result.errno == 87014) {
-      console.log("上传信息包含敏感内容！")
-      return new RespError("包含敏感内容！")
-    } else {
-      console.log("上传商品信息成功！")
-      return new RespSuccess()
-    }
-  },
-
   // 擦亮商品
   async polishCommodity({ id }) {
-    const res = await wx.cloud.callFunction({
+    return wrapResponse(await wx.cloud.callFunction({
       name: 'commodity',
       data: {
         $url: 'polishCommodity',
         params: { _id: id }
       }
-    });
-    return wrapResponse(res);
+    }));
+  },
+
+  async updateCommodity(id, info) {
+    Object.assign(info, { _id: id });
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'updateCommodity',
+        params: info
+      }
+    }));
+  },
+
+  async cancelCommodity({ id }) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'deleteCommodity',
+        params: { _id: id }
+      }
+    }));
   },
 
   // 删除商品(soft-del)

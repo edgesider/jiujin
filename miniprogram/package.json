@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/wechat-miniprogram": "^3.4.7",
     "@vant/weapp": "^1.5.0",
-    "@types/wechat-miniprogram": "^3.4.7"
+    "moment": "^2.30.1",
+    "rxjs": "^7.8.1"
   }
 }

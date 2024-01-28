@@ -1,4 +1,6 @@
 import api from './api/api';
+import { BehaviorSubject } from "rxjs";
+import moment from "moment";
 
 App({
   _ready: false,
@@ -10,6 +12,8 @@ App({
     StatusBar: 0,
     CustomBar: 0,
   },
+
+  userChangedSubject: new BehaviorSubject(null),
 
   async onLaunch() {
     if (!wx.cloud) {
@@ -30,6 +34,8 @@ App({
       }
     })
 
+    moment.locale('zh-cn');
+
     // 清空缓存
     wx.clearStorageSync()
     // TODO 存到storage中
@@ -46,6 +52,7 @@ App({
     const registered = !!res.data?._id;
     this.globalData.registered = registered;
     if (registered) {
+      this.userChangedSubject.next(res.data)
       this.globalData.self = res.data;
     }
   },

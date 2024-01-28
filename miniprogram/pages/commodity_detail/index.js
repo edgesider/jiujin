@@ -54,6 +54,7 @@ Page({
     await wx.showLoading({ mask: true, title: '擦亮中...' });
     const resp = await api.polishCommodity({ id: this.data.commodity._id });
     await wx.hideLoading();
+    this.polishing = false;
     if (resp.isError) {
       await wx.showToast({
         title: '擦亮太频繁啦',
@@ -62,7 +63,6 @@ Page({
       });
       return;
     }
-    setNeedRefresh();
     await wx.showToast({
       title: '擦亮成功',
       icon: 'success',
@@ -70,6 +70,7 @@ Page({
       duration: 500,
     });
     await sleep(500);
+    setNeedRefresh();
     this.back();
   },
 

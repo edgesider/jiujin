@@ -67,7 +67,7 @@ exports.main = async (event, context) => {
       ctx.body = {
         errno: -1
       }
-      if (e.errCode.toString() === '87014') {
+      if (e?.errCode?.toString() === '87014') {
         ctx.body = {
           errno: 87014
         }
@@ -99,7 +99,7 @@ exports.main = async (event, context) => {
         regionCache[r._id] = result
       }
     }
-    let { rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
+    let { _id, rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
     const _ = db.command
     let w = {}
     if (typeof rid === 'number') {
@@ -112,6 +112,9 @@ exports.main = async (event, context) => {
     if (cid) {
       w["cid"] = cid
     }
+    if (_id) {
+      w['_id'] = _id
+    }
     if (keyword && keyword.trim() != '') {
       w = {
         title: new db.RegExp({
@@ -120,10 +123,10 @@ exports.main = async (event, context) => {
         }),
       }
     }
-    //如果卖方不是自己的话，需要过滤删除
-    if (!sell_id || sell_id != wxContext.OPENID) {
-      w["is_deleted"] = false
-    }
+    // //如果卖方不是自己的话，需要过滤删除
+    // if (!sell_id || sell_id != wxContext.OPENID) {
+    //   w["is_deleted"] = false
+    // }
     if (sell_id) {
       w["sell_id"] = sell_id
     }
@@ -139,12 +142,13 @@ exports.main = async (event, context) => {
     if (!count || count <= 0) {
       count = 10;
     }
+    count = Math.max(count, 100);
     if (!start || start < 0) {
       start = 0;
     }
     try {
       ctx.body = await commodityCollection.where(w)
-        .orderBy('update_time', 'desc')
+        .orderBy('create_time', 'desc')
         .skip(start || 0)
         .limit(count)
         .get()
@@ -208,7 +212,7 @@ exports.main = async (event, context) => {
           error: e ?? 'unknown',
           errno: -1,
         }
-        if (e.errCode.toString() === '87014') {
+        if (e?.errCode?.toString() === '87014') {
           ctx.body = {
             errno: 87014
           }
@@ -219,7 +223,7 @@ exports.main = async (event, context) => {
 
   // 更新商品
   app.router('updateCommodity', async (ctx, next) => {
-    const { rid, cid, content, price, quality, img_urls, sex } = event.params
+    const { _id, rid, cid, content, price, quality, img_urls, sex } = event.params
     try {
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
@@ -240,13 +244,19 @@ exports.main = async (event, context) => {
           update_time: db.serverDate(),
         }
       })
-      ctx.body.errno = 0
+      if (updated !== 1) {
+        ctx.body = {
+          error: `No such commodity: id=${_id}`,
+          errno: -1,
+        };
+      }
+      ctx.body = { errno: 0 };
     } catch (e) {
       ctx.body = {
         error: e ?? 'unknown',
         errno: -1,
       }
-      if (e.errCode.toString() === '87014') {
+      if (e?.errCode?.toString() === '87014') {
         ctx.body = {
           errno: 87014
         }
@@ -267,13 +277,13 @@ exports.main = async (event, context) => {
           update_time: db.serverDate(),
         }
       })
-      ctx.body.errno = 0
+      ctx.body = { errno: 0 };
     } catch (e) {
       ctx.body = {
         error: e ?? 'unknown',
         errno: -1,
       }
-      if (e.errCode.toString() === '87014') {
+      if (e?.errCode?.toString() === '87014') {
         ctx.body = {
           errno: 87014
         }
@@ -313,35 +323,38 @@ exports.main = async (event, context) => {
   app.router('deleteCommodity', async (ctx, next) => {
     const { _id } = event.params
     // 创建事务
-    const transaction = await db.startTransaction()
+    // const transaction = await db.startTransaction()
     try {
-      await transaction
+      const { stats: { updated } } = await db
         .collection("commodity")
         .where({
-          openid: wxContext.OPENID,
+          sell_id: wxContext.OPENID,
           _id: _id,
           is_deleted: false
-        }).update({
+        })
+        .update({
           data: {
             is_deleted: true
           }
-        })
+        });
 
-      await transaction
-        .collection("user")
-        .doc(wxContext.OPENID)
-        .update({
-          data: {
-            total_release: _.inc(-1),
-            update_time: db.serverDate(),
-          }
-        })
-      transaction.commit()
+      if (updated > 0) {
+        await db
+          .collection("user")
+          .doc(wxContext.OPENID)
+          .update({
+            data: {
+              total_release: _.inc(-1),
+              update_time: db.serverDate(),
+            }
+          })
+      }
+      // transaction.commit()
       ctx.body = {
         errno: 0
       }
     } catch (e) {
-      transaction.rollback()
+      // transaction.rollback()
       ctx.body = {
         errno: -1
       }

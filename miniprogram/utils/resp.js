@@ -14,8 +14,8 @@ class Resp {
 }
 
 class RespSuccess extends Resp {
-  constructor(data, message) {
-      super(data, message)
+  constructor(data) {
+      super(data, '')
       this.errno = 0
   }
 }

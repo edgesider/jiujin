@@ -4,8 +4,15 @@
   <CommodityListCard
     wx:for="{{commodityList}}"
     wx:for-item="commodity"
+    wx:for-index="idx"
+    wx:key="_id"
     class="card"
     commodity="{{commodity}}"
+    bind:onPolish="onPolish"
+    bind:onCancel="onCancel"
+    bind:onEdit="onEdit"
+    bind:onRepublish="onRepublish"
+    data-idx="{{idx}}"
   />
 </view>
 
