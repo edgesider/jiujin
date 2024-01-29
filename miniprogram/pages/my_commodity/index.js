@@ -1,5 +1,5 @@
 import api from "../../api/api";
-import getConstants from "../../constants";
+import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
 
 const app = getApp();
 const COUNT_PER_PAGE = 8
@@ -8,24 +8,28 @@ Page({
   data: {
     ...getConstants(),
     cursor: 0,
-    isLoading: true,
+    isLoading: false,
     commodityList: [],
-    tab: 'bought', // 'bought' | 'sells'
+    currTab: 'selling', // 'selling' | 'off' | 'sale'
+    tabs: [
+      { key: 'selling', text: '正在出售' },
+      { key: 'off', text: '已下架' },
+      { key: 'sale', text: '已售出' },
+    ],
   },
   async onLoad() {
     await this.fetchMore();
   },
 
-  async onShow() {
-  },
-
   async fetchMore() {
+    if (this.data.isLoading) {
+      return;
+    }
     this.setData({
       isLoading: true,
     })
-    const { self } = app.globalData;
     const resp = await api.getCommodityList({
-      sell_id: self._id,
+      ...this.getListFilter(),
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
     })
@@ -79,7 +83,6 @@ Page({
   async onPolish(ev) {
     const { currentTarget: { dataset: { idx } } } = ev;
     const commodity = this.data.commodityList[idx];
-    console.log(idx, this.data.commodityList);
     await wx.showLoading({ mask: true, title: '擦亮中...' });
     const resp = await api.polishCommodity({ id: commodity._id });
     await wx.hideLoading();
@@ -161,6 +164,31 @@ Page({
         }
       },
     })
+  },
+
+  async onSwitchTab(ev) {
+    if (this.data.isLoading) {
+      return;
+    }
+    const { currentTarget: { dataset: { tabKey } } } = ev;
+    this.setData({
+      currTab: tabKey,
+    });
+    await this.reload();
+  },
+
+  getListFilter() {
+    const { currTab } = this.data;
+    const statusMap = {
+      selling: COMMODITY_STATUS_SELLING,
+      off: COMMODITY_STATUS_OFF,
+      sale: COMMODITY_STATUS_SALE,
+    };
+    const { self } = app.globalData;
+    return {
+      status: statusMap[currTab],
+      sell_id: self._id,
+    };
   },
 
   onNavigateBack() {

@@ -1,6 +1,21 @@
 <TitleBar title="我的商品" class="title-bar" />
 
-<view style="margin-top: {{CustomBar}}px" class="list">
+<view style="width: 100%; height: {{CustomBar}}px" />
+
+<view class="tabs">
+  <view
+    class="tab {{currTab === tab.key ? 'selected' : ''}}"
+    bind:tap="onSwitchTab"
+    wx:for="{{tabs}}"
+    wx:for-item="tab"
+    wx:key="key"
+    data-tab-key="{{tab.key}}"
+  >
+    {{tab.text}}
+  </view>
+</view>
+
+<view class="list">
   <CommodityListCard
     wx:for="{{commodityList}}"
     wx:for-item="commodity"

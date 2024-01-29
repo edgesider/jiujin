@@ -1,7 +1,5 @@
 import getConstants from "../../constants";
 
-const app = getApp();
-
 Component({
   properties: {
     title: {
