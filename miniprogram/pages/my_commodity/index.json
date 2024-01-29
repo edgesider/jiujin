@@ -10,5 +10,6 @@
     "van-empty": "@vant/weapp/empty/index",
     "TitleBar": "/components/TitleBar/index",
     "CommodityListCard": "/components/CommodityListCard/index"
-  }
+  },
+  "enablePullDownRefresh": true
 }

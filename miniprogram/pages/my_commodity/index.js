@@ -1,17 +1,12 @@
 import api from "../../api/api";
-import { sleep } from "../../utils/time";
-import { setNeedRefresh } from "../home/index";
+import getConstants from "../../constants";
 
 const app = getApp();
 const COUNT_PER_PAGE = 8
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    CustomBar: app.globalData.CustomBar,
+    ...getConstants(),
     cursor: 0,
     isLoading: true,
     commodityList: [],
@@ -63,9 +58,22 @@ Page({
     });
   },
 
+  async reload() {
+    this.setData({
+      cursor: 0,
+      commodityList: [],
+    });
+    await this.fetchMore();
+  },
+
   // 加载更多
   async onReachBottom() {
     await this.fetchMore();
+  },
+
+  async onPullDownRefresh() {
+    await this.reload();
+    await wx.stopPullDownRefresh();
   },
 
   async onPolish(ev) {
@@ -92,16 +100,20 @@ Page({
     await this.fetchSingle(idx);
   },
   // 下架
-  async onCancel(ev) {
+  async onOff(ev) {
     const { currentTarget: { dataset: { idx } } } = ev;
     const commodity = this.data.commodityList[idx];
     await wx.showLoading({ mask: true, title: '正在下架...' });
-    const resp = await api.cancelCommodity({ id: commodity._id });
+    const resp = await api.offCommodity({
+      id: commodity._id,
+    });
     await wx.hideLoading();
     if (resp.isError) {
-      await wx.showToast({ title: '下架失败', icon: 'error' });
+      console.error(resp)
+      await wx.showToast({ title: '下架失败', icon: 'error', mask: true });
       return;
     }
+    await wx.showToast({ title: '下架成功', icon: 'success', mask: true });
     await this.fetchSingle(idx);
   },
   async onEdit(ev) {
@@ -116,18 +128,36 @@ Page({
       },
     })
   },
+  async onDelete(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const commodity = this.data.commodityList[idx];
+    await wx.showModal({
+      title: '提示',
+      content: `确认删除`,
+      success: async (res) => {
+        if (res.confirm) {
+          await wx.showLoading({ title: '删除中...', mask: true })
+          const resp = await api.deleteCommodity({ id: commodity._id })
+          if (resp.isError) {
+            await wx.showToast({ title: '删除失败', icon: 'error', mask: true });
+          } else {
+            await wx.hideLoading();
+            await this.reload();
+          }
+        } else if (res.cancel) {
+          // pass
+        }
+      }
+    })
+  },
   async onRepublish(ev) {
     const { currentTarget: { dataset: { idx } } } = ev;
     const commodity = this.data.commodityList[idx];
     await wx.navigateTo({
       url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}`,
       events: {
-        afterEdited: async () => {
-          this.setData({
-            cursor: 0,
-            commodityList: [],
-          })
-          await this.fetchMore(idx);
+        afterPublished: async () => {
+          await this.reload();
         }
       },
     })

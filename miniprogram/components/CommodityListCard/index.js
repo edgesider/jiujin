@@ -1,5 +1,6 @@
 import { getQualitiesMap } from "../../utils/strings";
 import moment from "moment";
+import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
 
 const app = getApp();
 
@@ -11,6 +12,9 @@ Component({
     },
   },
   data: {
+    COMMODITY_STATUS_SELLING,
+    COMMODITY_STATUS_OFF,
+    COMMODITY_STATUS_SALE,
     desc: '',
     createTime: '',
     polishAt: '',
@@ -26,13 +30,18 @@ Component({
         url: `../commodity_detail/index?commodity=${encodeURIComponent(JSON.stringify(this.properties.commodity))}`
       })
     },
+    delete() {
+      this.triggerEvent('onDelete', {
+        commodity: this.properties.commodity,
+      })
+    },
     polish() {
       this.triggerEvent('onPolish', {
         commodity: this.properties.commodity,
       })
     },
-    cancel() {
-      this.triggerEvent('onCancel', {
+    off() {
+      this.triggerEvent('onOff', {
         commodity: this.properties.commodity,
       })
     },
@@ -55,6 +64,8 @@ Component({
       if (firstLR !== -1) {
         content = content.substring(0, content.indexOf('\n')) // 从第一个回车截断
       }
+      // console.log(moment.locales())
+      moment.locale('zh-cn')
       this.setData({
         desc: content,
         createTime: new Date(create_time).toLocaleDateString(),

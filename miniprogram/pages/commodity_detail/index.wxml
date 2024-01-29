@@ -54,8 +54,16 @@
       </view>
       <view class="right">
         <block wx:if="{{isMine}}">
-          <text class="remain-time">{{remainTime}}\n<text class="remain-time-hint">剩余推广时间</text></text>
-          <view class="button" bindtap="polish">擦亮</view>
+          <block wx:if="{{commodity.status === COMMODITY_STATUS_SELLING}}">
+            <text class="remain-time">{{remainTime}}\n<text class="remain-time-hint">剩余推广时间</text></text>
+            <view class="button" bindtap="polish">擦亮</view>
+          </block>
+          <block wx:elif="{{commodity.status === COMMODITY_STATUS_OFF}}">
+            <view class="button" bindtap="polish">重新上架</view>
+          </block>
+          <block wx:elif="{{commodity.status === COMMODITY_STATUS_SALE}}">
+            <view class="button button-disabled">交易已完成</view>
+          </block>
         </block>
         <block wx:else>
           <view class="button">私聊</view>

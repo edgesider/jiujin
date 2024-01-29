@@ -101,7 +101,9 @@ exports.main = async (event, context) => {
     }
     let { _id, rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
     const _ = db.command
-    let w = {}
+    let w = {
+      is_deleted: false,
+    }
     if (typeof rid === 'number') {
       const rids = regionCache[rid]
       w["rid"] = _.eq(rids[0])
@@ -136,7 +138,7 @@ exports.main = async (event, context) => {
     if (sell_id != wxContext.OPENID && buyer_id != wxContext.OPENID) {
       w["sex"] = _.eq(0).or(_.eq(sex))
     }
-    if (status) {
+    if (typeof status === 'number') {
       w["status"] = status
     }
     if (!count || count <= 0) {
@@ -181,31 +183,23 @@ exports.main = async (event, context) => {
           }
         ).get()
         const before_status = ctx.body.data.status;
-        if (!status) {
-          if ((before_status == 1 && status == 2) || (before_status == 2 && status != 2)) {
-            ctx.body = {
-              error: "无效的状态切换",
-              errno: -1,
-            }
-          } else {
-            ctx.body = await commodityCollection.where({
-              sell_id: wxContext.OPENID,
-              _id: _id,
-              is_deleted: false
-            }).update({
-              data: {
-                status,
-                update_time: db.serverDate(),
-              }
-            })
-            ctx.body.errno = 0
-          }
-        } else {
+        if ((before_status == 1 && status == 2) || (before_status == 2 && status != 2)) {
           ctx.body = {
-            error: "unknown status",
+            error: "无效的状态切换",
             errno: -1,
           }
-
+        } else {
+          ctx.body = await commodityCollection.where({
+            sell_id: wxContext.OPENID,
+            _id: _id,
+            is_deleted: false
+          }).update({
+            data: {
+              status,
+              update_time: db.serverDate(),
+            }
+          })
+          ctx.body.errno = 0
         }
       } catch (e) {
         ctx.body = {
@@ -228,7 +222,7 @@ exports.main = async (event, context) => {
       res = await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
-      ctx.body = await commodityCollection.where({
+      const { stats: { updated } } = await commodityCollection.where({
         sell_id: wxContext.OPENID,
         _id: _id,
         is_deleted: false
@@ -246,7 +240,7 @@ exports.main = async (event, context) => {
       })
       if (updated !== 1) {
         ctx.body = {
-          error: `No such commodity: id=${_id}`,
+          error: `no such commodity: id=${_id}`,
           errno: -1,
         };
       }
@@ -274,6 +268,7 @@ exports.main = async (event, context) => {
         is_deleted: false
       }).update({
         data: {
+          status: 0,
           update_time: db.serverDate(),
         }
       })
@@ -324,6 +319,13 @@ exports.main = async (event, context) => {
     const { _id } = event.params
     // 创建事务
     // const transaction = await db.startTransaction()
+    if (!_id) {
+      ctx.body = {
+        error: 'must specify commodity id',
+        errno: -1,
+      }
+      return;
+    }
     try {
       const { stats: { updated } } = await db
         .collection("commodity")
@@ -338,7 +340,13 @@ exports.main = async (event, context) => {
           }
         });
 
-      if (updated > 0) {
+      if (updated === 0) {
+        ctx.body = {
+          error: `no such commodity: id=${_id}`,
+          errno: -1,
+        }
+        return;
+      } else {
         await db
           .collection("user")
           .doc(wxContext.OPENID)

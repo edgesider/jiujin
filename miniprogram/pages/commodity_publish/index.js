@@ -245,8 +245,10 @@ Page({
         : await api.createCommodity(info);
     await wx.hideLoading();
     if (resp.isError) {
+      console.error(resp);
       await wx.showToast({
         title: editing ? '保存失败' : '发布失败',
+        icon: 'error',
       });
       return;
     }

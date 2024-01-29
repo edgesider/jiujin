@@ -2,14 +2,14 @@ import api from "../../api/api";
 import { tryJsonParse } from "../../utils/other";
 import { sleep, splitMillisecondsToString } from "../../utils/time";
 import { setNeedRefresh } from "../home/index";
+import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
 
 const app = getApp();
 const DURATION_IN_FEED = 1000 * 60 * 60 * 24 * 2;
 
 Page({
   data: {
-    StatusBar: app.globalData.StatusBar,
-    CustomBar: app.globalData.CustomBar,
+    ...getConstants(),
     ridToRegion: {},
     loading: true,
     isMine: false,
@@ -35,6 +35,7 @@ Page({
       ridToRegion: app.globalData.ridToRegion,
       isMine: app.globalData.self._id === commodity.sell_id,
     });
+    console.log(commodity);
   },
   calcRemainTimeStr(commodity) {
     const updateTime = new Date(commodity.update_time);

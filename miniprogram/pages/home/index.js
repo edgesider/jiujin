@@ -1,5 +1,5 @@
 import { setTabBar } from "../../utils/other";
-import { COMMODITY_STATUS_SELLING } from '../../constants';
+import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
 import Dialog from '@vant/weapp/dialog/dialog';
 import { getQualitiesMap } from "../../utils/strings";
 import api from "../../api/api";
@@ -20,8 +20,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    StatusBar: app.globalData.StatusBar,
-    CustomBar: app.globalData.CustomBar,
+    ...getConstants(),
     scrollTop: 0,
     showLoginPopup: false,
     pageIndex: 0,
