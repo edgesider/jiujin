@@ -22,6 +22,7 @@ Page({
     commodityImg: [],
     categoryIndex: 0,
     commodityContent: "",
+    commodityCurrentPriceText: '0',
     commodityCurrentPrice: 0,
     qualityIndex: 0,
   },
@@ -86,15 +87,20 @@ Page({
       commodityContent: event.detail.value
     })
   },
+  onPriceInputBlur(event) {
+    let price = parseFloat(this.data.commodityCurrentPriceText) || 0;
+    price = Math.max(Math.min(price, 99999.9), 0)
+    this.setData({
+      commodityCurrentPrice: price,
+      commodityCurrentPriceText: price.toString(10),
+    })
+  },
   onChangeCommodityCurrentPrice(event) {
-    try {
-      const price = parseFloat(event.detail.value);
-      this.setData({
-        commodityCurrentPrice: Math.max(Math.min(price, 99999.9), 0)
-      })
-    } catch (e) {
-      console.error('invalid price');
-    }
+    const text = event.detail.value;
+    const valid = /^\d*(\.\d{0,2})?$/.test(text);
+    this.setData({
+      commodityCurrentPriceText: valid ? text : this.data.commodityCurrentPriceText
+    })
   },
   onChangeCommodityCategory(event) {
     this.setData({
