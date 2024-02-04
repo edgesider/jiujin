@@ -135,17 +135,6 @@
   align-items: stretch;
 }
 
-.body .images {
-  width: 100%;
-  flex: 160px 0 0;
-}
-
-.body .images .image {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-}
-
 .body .content .images {
   width: 100%;
   overflow: hidden;
@@ -154,7 +143,7 @@
 
 .body .content .images-single {
   width: 100%;
-  flex: 200px 0 0;
+  flex: 0 0 200px;
 }
 
 .body .content .images-single image {
@@ -166,7 +155,7 @@
 .body .content .images-multi {
   --gap: 16rpx;
   width: 100%;
-  flex: 160px 0 0;
+  flex: 1 0;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
