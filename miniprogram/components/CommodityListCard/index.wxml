@@ -27,6 +27,6 @@
     <block wx:elif="{{commodity.status === COMMODITY_STATUS_SALE}}">
       <view class="button" bind:tap="republish">重新发布</view>
     </block>
-    <view class="button" bind:tap="delete">删除</view>
+<!--    <view class="button" bind:tap="delete">删除</view>-->
   </view>
 </view>

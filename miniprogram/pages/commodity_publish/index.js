@@ -22,7 +22,7 @@ Page({
     commodityImg: [],
     categoryIndex: 0,
     commodityContent: "",
-    commodityCurrentPrice: null,
+    commodityCurrentPrice: 0,
     qualityIndex: 0,
   },
 
@@ -90,7 +90,7 @@ Page({
     try {
       const price = parseFloat(event.detail.value);
       this.setData({
-        commodityCurrentPrice: price
+        commodityCurrentPrice: Math.max(Math.min(price, 99999.9), 0)
       })
     } catch (e) {
       console.error('invalid price');
