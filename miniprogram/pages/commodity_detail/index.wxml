@@ -68,7 +68,7 @@
           </block>
         </block>
         <block wx:else>
-          <view class="button">私聊</view>
+          <view class="button" bind:tap="onPrivateMessage">私聊</view>
         </block>
       </view>
     </view>
