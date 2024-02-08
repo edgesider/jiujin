@@ -14,7 +14,7 @@ const cache = {
       console.log({ "获取我的信息和我的大学信息缓存": myInfoAndMyUniversityInfo })
       return new RespSuccess(myInfoAndMyUniversityInfo)
     }
-    res = await api.getMyInfoAndMyUniversityInfo()
+    res = await api.getMyInfoAndMyUniversityInfo();
     if (res.errno == -1) {
       return res;
     }

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tencentcloud/chat-uikit-wechat": "^2.0.2",
     "@types/wechat-miniprogram": "^3.4.7",
     "@vant/weapp": "^1.5.0",
     "moment": "^2.30.1",

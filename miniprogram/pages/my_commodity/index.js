@@ -19,6 +19,7 @@ Page({
   },
   async onLoad() {
     await this.fetchMore();
+    console.log(this.data.commodityList);
   },
 
   async fetchMore() {

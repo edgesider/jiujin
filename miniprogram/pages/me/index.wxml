@@ -45,6 +45,20 @@
         <text class="text-grey">意见反馈</text>
       </button>
     </view>
+
+    <view class="cu-item arrow" bindtap="onEnterPrivateMessage">
+      <view class="content" hover-class="none">
+        <text class="cuIcon-messagefill text-blue"></text>
+        <text class="text-grey">我的私信</text>
+      </view>
+    </view>
+
+    <view class="cu-item arrow" bindtap="onEnterCustomerService">
+      <view class="content" hover-class="none">
+        <text class="cuIcon-notification text-blue"></text>
+        <text class="text-grey">商品回复</text>
+      </view>
+    </view>
   </view>
   <view class="cu-tabbar-height"></view>
 </scroll-view>
