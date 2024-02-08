@@ -62,7 +62,6 @@ Page({
         showLoginPopup: true
       })
     }
-
   },
 
   onEnterHomeTransaction() {
@@ -76,7 +75,6 @@ Page({
         showLoginPopup: true
       })
     }
-
   },
 
   onEnterHomeRelease() {
@@ -90,7 +88,38 @@ Page({
         showLoginPopup: true
       })
     }
+  },
 
+  onEnterPrivateMessage(){
+    const registered = app.globalData.registered
+    if (registered){
+      app.globalData.commodity = null;
+      app.loginIMWithID('USER' + app.globalData.self._id).then(() => {
+        wx.navigateTo({
+          url: '../../TUIService/pages/tim_index/tim_index',
+        })
+      }).catch((e) => {
+        console.error("私信登录错误： " + e);
+      });
+    } else {
+      this.setData({
+        showLoginPopup: true
+      })
+    }
+  },
+
+  // 客服消息
+  onEnterCustomerService(){
+    const registered = app.globalData.registered
+    if (registered){
+      wx.navigateTo({
+        url: '../customer_service/index',
+      })
+    } else {
+      this.setData({
+        showLoginPopup: true
+      })
+    }
   },
 
   copyLink(e) {
@@ -130,7 +159,6 @@ Page({
       }
     })
   },
-
 
   onCommodityReleaseTab() {
     const registered = app.globalData.registered

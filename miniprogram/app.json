@@ -7,7 +7,18 @@
     "pages/commodity_publish/index",
     "pages/my_commodity/index",
     "pages/my_user_info/index",
-    "pages/commodity_detail/index"
+    "pages/commodity_detail/index",
+    "pages/customer_service/index"
+  ],
+  "subPackages": [
+    {
+      "root": "TUIService",
+      "name": "TUIService",
+      "pages": [
+        "pages/tim_index/tim_index"
+      ],
+      "independent": false
+    }
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
