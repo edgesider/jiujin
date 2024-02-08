@@ -70,6 +70,7 @@ Component({
     },
     ready() {
       const commodity = app.globalData.config.commodity;
+      if (!commodity) return;
       var order = [];
       order.push({
         orderNum: commodity._id,

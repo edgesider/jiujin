@@ -35,7 +35,6 @@ Page({
       ridToRegion: app.globalData.ridToRegion,
       isMine: app.globalData.self._id === commodity.sell_id,
     });
-    console.log(commodity);
   },
   calcRemainTimeStr(commodity) {
     const updateTime = new Date(commodity.update_time);
@@ -81,5 +80,27 @@ Page({
       current: curr,
       urls: this.data.commodity.img_urls
     });
+  },
+
+  async onPrivateMessage() {
+    const registered = app.globalData.registered;
+    if (registered){
+      app.globalData.commodity = null;
+      app.loginIMWithID('USER' + app.globalData.self._id).then(() => {
+        const sell_id = 'REPY' + this.data.commodity.sell_id + this.data.commodity._id;
+        const conversation_id = encodeURIComponent('C2C' + sell_id);
+        wx.navigateTo({
+          url: `../../TUIService/pages/tim_index/tim_index?id=${conversation_id}`,
+        });
+      }).catch((e) => {
+        console.error("私信登录错误： " + e);
+      });
+    } else {
+      await wx.showToast({
+        title: '登录后可使用私聊功能',
+        icon: 'error',
+        mask: true,
+      });
+    }
   },
 });
