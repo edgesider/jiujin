@@ -231,7 +231,18 @@ Component({
           })
         }
       }
-    }
+    },
+    onCopyUserID(event){
+      wx.setClipboardData({
+        data: this.data.conversation.userProfile.userID,
+        success(res) {
+          wx.showToast({
+            title: '已复制到剪贴板',
+            icon: 'success',
+            mask: true,
+          });
+        }
+      });
+    },
   },
-
 });
