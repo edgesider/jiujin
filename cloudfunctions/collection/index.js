@@ -59,10 +59,8 @@ exports.main = async (event, context) => {
     try {
       const { cid } = event.params;
       ctx.body = await collectionCollection.where({
-        data: {
-          uid: wxContext.OPENID,
-          cid: cid,
-        }
+        uid: wxContext.OPENID,
+        cid: cid,
       }).update({
         data: {
           is_deleted: true

@@ -114,29 +114,28 @@ exports.main = async (event, context) => {
           _id: _id,
           is_deleted: false
         }).get()
-        ctx.body = { data: data?.data?.[0] }
+        const commodity = data?.[0];
+        if (!commodity) {
+          throw Error('no such commodity');
+        }
         // Check if the item with given cid is already collected
         const queryResult = await collectionCollection.where({
-          data: {
-            uid: wxContext.OPENID,
-            cid: cid,
-            is_deleted: false
-          }
+          uid: wxContext.OPENID,
+          cid: _id,
+          is_deleted: false
         }).get();
-        if (queryResult.data.length > 0) {
-          ctx.body.data.is_collect = true
-        } else {
-          ctx.body.data.is_collect = false
+        commodity.is_collected = queryResult.data.length > 0
+        ctx.body = {
+          errno: 0,
+          data: [commodity],
         }
-        ctx.body.data = [ctx.body.data]
-        ctx.body.errno = ctx.body.data.length == 0 ? -100 : 0
       } catch (e) {
         ctx.body = {
-          errno: -1
+          errno: -1,
+          error: e?.message
         }
       }
-    }
-    else {
+    } else {
       let w = {
         is_deleted: false,
       }

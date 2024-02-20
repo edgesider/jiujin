@@ -45,9 +45,9 @@
     </view>
     <view class="footer">
       <view class="left">
-        <view class="button">
-          <text class="icon cuIcon-like"></text>
-          <text class="text">收藏</text>
+        <view class="button" bind:tap="onToggleCollect">
+          <text class="icon {{commodity.is_collected ? 'cuIcon-likefill' : 'cuIcon-like'}}"></text>
+          <text class="text">{{commodity.is_collected ? '已收藏' : '收藏'}}</text>
         </view>
         <view class="button">
           <text class="icon cuIcon-warn"></text>
