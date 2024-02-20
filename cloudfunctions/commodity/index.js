@@ -123,13 +123,8 @@ exports.main = async (event, context) => {
         } else {
           ctx.body.data.is_collect = false
         }
+        ctx.body.data = [ctx.body.data]
         ctx.body.errno = ctx.body.data ? 0 : -1
-        ctx.body = await commodityCollection.where(w)
-          .orderBy('create_time', 'desc')
-          .skip(start || 0)
-          .limit(count)
-          .get()
-        ctx.body.errno = 0
       } catch (e) {
         ctx.body = {
           errno: -1
