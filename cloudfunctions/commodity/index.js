@@ -197,44 +197,88 @@ exports.main = async (event, context) => {
   })
 
 
-// 更新商品状态
-app.router('updateCommodityStatus', async (ctx, next) => {
-  const { _id, status } = event.params
-  if (status != 0 && status != 1 && status != 2) {
-    ctx.body = {
-      error: '不合法的状态',
-      errno: -2,
-    }
-  } else {
-    try {
-      ctx.body = await commodityCollection.where({
-        sell_id: wxContext.OPENID,
-        _id: _id,
-        is_deleted: false
-      }).field(
-        {
-          status: true,
-        }
-      ).get()
-      const before_status = ctx.body.data.status;
-      if ((before_status == 1 && status == 2) || (before_status == 2 && status != 2)) {
-        ctx.body = {
-          error: "无效的状态切换",
-          errno: -1,
-        }
-      } else {
+  // 更新商品状态
+  app.router('updateCommodityStatus', async (ctx, next) => {
+    const { _id, status } = event.params
+    if (status != 0 && status != 1 && status != 2) {
+      ctx.body = {
+        error: '不合法的状态',
+        errno: -2,
+      }
+    } else {
+      try {
         ctx.body = await commodityCollection.where({
           sell_id: wxContext.OPENID,
           _id: _id,
           is_deleted: false
-        }).update({
-          data: {
-            status,
-            update_time: db.serverDate(),
+        }).field(
+          {
+            status: true,
           }
-        })
-        ctx.body.errno = 0
+        ).get()
+        const before_status = ctx.body.data.status;
+        if ((before_status == 1 && status == 2) || (before_status == 2 && status != 2)) {
+          ctx.body = {
+            error: "无效的状态切换",
+            errno: -1,
+          }
+        } else {
+          ctx.body = await commodityCollection.where({
+            sell_id: wxContext.OPENID,
+            _id: _id,
+            is_deleted: false
+          }).update({
+            data: {
+              status,
+              update_time: db.serverDate(),
+            }
+          })
+          ctx.body.errno = 0
+        }
+      } catch (e) {
+        ctx.body = {
+          error: e ?? 'unknown',
+          errno: -1,
+        }
+        if (e?.errCode?.toString() === '87014') {
+          ctx.body = {
+            errno: 87014
+          }
+        }
       }
+    }
+  })
+
+  // 更新商品
+  app.router('updateCommodity', async (ctx, next) => {
+    const { _id, rid, cid, content, price, quality, img_urls, sex } = event.params
+    try {
+      res = await cloud.openapi.security.msgSecCheck({
+        content: JSON.stringify(event.params)
+      })
+      const { stats: { updated } } = await commodityCollection.where({
+        sell_id: wxContext.OPENID,
+        _id: _id,
+        is_deleted: false
+      }).update({
+        data: {
+          rid,
+          cid,
+          content,
+          price,
+          quality,
+          img_urls,
+          sex,
+          update_time: db.serverDate(),
+        }
+      })
+      if (updated !== 1) {
+        ctx.body = {
+          error: `no such commodity: id=${_id}`,
+          errno: -1,
+        };
+      }
+      ctx.body = { errno: 0 };
     } catch (e) {
       ctx.body = {
         error: e ?? 'unknown',
@@ -246,252 +290,208 @@ app.router('updateCommodityStatus', async (ctx, next) => {
         }
       }
     }
-  }
-})
+  })
 
-// 更新商品
-app.router('updateCommodity', async (ctx, next) => {
-  const { _id, rid, cid, content, price, quality, img_urls, sex } = event.params
-  try {
-    res = await cloud.openapi.security.msgSecCheck({
-      content: JSON.stringify(event.params)
-    })
-    const { stats: { updated } } = await commodityCollection.where({
-      sell_id: wxContext.OPENID,
-      _id: _id,
-      is_deleted: false
-    }).update({
-      data: {
-        rid,
-        cid,
-        content,
-        price,
-        quality,
-        img_urls,
-        sex,
-        update_time: db.serverDate(),
-      }
-    })
-    if (updated !== 1) {
-      ctx.body = {
-        error: `no such commodity: id=${_id}`,
-        errno: -1,
-      };
-    }
-    ctx.body = { errno: 0 };
-  } catch (e) {
-    ctx.body = {
-      error: e ?? 'unknown',
-      errno: -1,
-    }
-    if (e?.errCode?.toString() === '87014') {
-      ctx.body = {
-        errno: 87014
-      }
-    }
-  }
-})
-
-// 擦亮商品
-app.router('polishCommodity', async (ctx, next) => {
-  const { _id } = event.params
-  try {
-    await commodityCollection.where({
-      sell_id: wxContext.OPENID,
-      _id: _id,
-      is_deleted: false
-    }).update({
-      data: {
-        status: 0,
-        update_time: db.serverDate(),
-      }
-    })
-    ctx.body = { errno: 0 };
-  } catch (e) {
-    ctx.body = {
-      error: e ?? 'unknown',
-      errno: -1,
-    }
-    if (e?.errCode?.toString() === '87014') {
-      ctx.body = {
-        errno: 87014
-      }
-    }
-  }
-})
-
-// 图片安全校验
-app.router('imgSecCheck', async (ctx, next) => {
-  params = event.params
-  buffer = params.buffer
-  suffix = params.suffix.substring(1).toLowerCase()
-  try {
-    res = await cloud.openapi.security.imgSecCheck({
-      media: {
-        contentType: 'image/' + suffix,
-        value: buffer
-      }
-    })
-
-    ctx.body = {
-      errno: 0
-    }
-  } catch (e) {
-    ctx.body = {
-      errno: -1
-    }
-    if (e.errCode.toString() === '87014') {
-      ctx.body = {
-        errno: 87014
-      }
-    }
-  }
-})
-
-// 删除商品
-app.router('deleteCommodity', async (ctx, next) => {
-  const { _id } = event.params
-  // 创建事务
-  // const transaction = await db.startTransaction()
-  if (!_id) {
-    ctx.body = {
-      error: 'must specify commodity id',
-      errno: -1,
-    }
-    return;
-  }
-  try {
-    const { stats: { updated } } = await db
-      .collection("commodity")
-      .where({
+  // 擦亮商品
+  app.router('polishCommodity', async (ctx, next) => {
+    const { _id } = event.params
+    try {
+      await commodityCollection.where({
         sell_id: wxContext.OPENID,
         _id: _id,
         is_deleted: false
-      })
-      .update({
+      }).update({
         data: {
-          is_deleted: true
+          status: 0,
+          update_time: db.serverDate(),
         }
-      });
-
-    if (updated === 0) {
+      })
+      ctx.body = { errno: 0 };
+    } catch (e) {
       ctx.body = {
-        error: `no such commodity: id=${_id}`,
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e?.errCode?.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
+  // 图片安全校验
+  app.router('imgSecCheck', async (ctx, next) => {
+    params = event.params
+    buffer = params.buffer
+    suffix = params.suffix.substring(1).toLowerCase()
+    try {
+      res = await cloud.openapi.security.imgSecCheck({
+        media: {
+          contentType: 'image/' + suffix,
+          value: buffer
+        }
+      })
+
+      ctx.body = {
+        errno: 0
+      }
+    } catch (e) {
+      ctx.body = {
+        errno: -1
+      }
+      if (e.errCode.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
+  // 删除商品
+  app.router('deleteCommodity', async (ctx, next) => {
+    const { _id } = event.params
+    // 创建事务
+    // const transaction = await db.startTransaction()
+    if (!_id) {
+      ctx.body = {
+        error: 'must specify commodity id',
         errno: -1,
       }
       return;
-    } else {
-      await db
-        .collection("user")
-        .doc(wxContext.OPENID)
+    }
+    try {
+      const { stats: { updated } } = await db
+        .collection("commodity")
+        .where({
+          sell_id: wxContext.OPENID,
+          _id: _id,
+          is_deleted: false
+        })
         .update({
           data: {
-            total_release: _.inc(-1),
-            update_time: db.serverDate(),
+            is_deleted: true
           }
-        })
-    }
-    // transaction.commit()
-    ctx.body = {
-      errno: 0
-    }
-  } catch (e) {
-    // transaction.rollback()
-    ctx.body = {
-      errno: -1
-    }
-    if (e.errCode.toString() === '87014') {
-      ctx.body = {
-        errno: 87014
-      }
-    }
-  }
-})
+        });
 
-
-// 通过_id删除商品(soft-del)，涉及多张表，使用事务
-// !!!!! 在事务中仅能进行单记录操作，也就是不能使用 where、aggregate 接口 ???  !!!
-// 不能用事务怎么保证ACID?
-// 先查到所有相关主键。。。再传过来一个个删除。。。???
-// 有无更好的解决方法？？？
-app.router('delCommodity', async (ctx, next) => {
-  const { cid, tids, qids, aids, fileIDs } = event.params
-  // 创建事务
-  const transaction = await db.startTransaction()
-
-  try {
-
-    let res = {}
-
-    // 判断该商品是否有相关联的交易，若还有状态处于进行中的交易，则禁止删除
-    for (let i = 0; i < tids.length; i++) {
-      res = await transaction
-        .collection("transaction")
-        .doc(tids[i])
-        .get()
-      console.log(res)
-      const transactionDetail = res.data
-      if (transactionDetail.status == 0) {
+      if (updated === 0) {
         ctx.body = {
-          errno: -2
+          error: `no such commodity: id=${_id}`,
+          errno: -1,
         }
-        return
+        return;
+      } else {
+        await db
+          .collection("user")
+          .doc(wxContext.OPENID)
+          .update({
+            data: {
+              total_release: _.inc(-1),
+              update_time: db.serverDate(),
+            }
+          })
+      }
+      // transaction.commit()
+      ctx.body = {
+        errno: 0
+      }
+    } catch (e) {
+      // transaction.rollback()
+      ctx.body = {
+        errno: -1
+      }
+      if (e.errCode.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
       }
     }
-    // 删除相关提问
-    for (let i = 0; i < qids.length; i++) {
-      res = await transaction
-        .collection("commodity_question")
-        .doc(qids[i])
-        .update({
-          data: {
-            is_deleted: true
-          }
-        })
-      console.log(res)
-    }
+  })
 
-    // 删除相关回答
-    for (let i = 0; i < aids.length; i++) {
-      res = await transaction
-        .collection("commodity_answer")
-        .doc(aids[i])
-        .update({
-          data: {
-            is_deleted: true
-          }
-        })
-      console.log(res)
-    }
 
-    // 删除商品信息
-    res = await transaction
-      .collection("commodity")
-      .doc(cid)
-      .update({
-        data: {
-          is_deleted: true
+  // 通过_id删除商品(soft-del)，涉及多张表，使用事务
+  // !!!!! 在事务中仅能进行单记录操作，也就是不能使用 where、aggregate 接口 ???  !!!
+  // 不能用事务怎么保证ACID?
+  // 先查到所有相关主键。。。再传过来一个个删除。。。???
+  // 有无更好的解决方法？？？
+  app.router('delCommodity', async (ctx, next) => {
+    const { cid, tids, qids, aids, fileIDs } = event.params
+    // 创建事务
+    const transaction = await db.startTransaction()
+
+    try {
+
+      let res = {}
+
+      // 判断该商品是否有相关联的交易，若还有状态处于进行中的交易，则禁止删除
+      for (let i = 0; i < tids.length; i++) {
+        res = await transaction
+          .collection("transaction")
+          .doc(tids[i])
+          .get()
+        console.log(res)
+        const transactionDetail = res.data
+        if (transactionDetail.status == 0) {
+          ctx.body = {
+            errno: -2
+          }
+          return
         }
+      }
+      // 删除相关提问
+      for (let i = 0; i < qids.length; i++) {
+        res = await transaction
+          .collection("commodity_question")
+          .doc(qids[i])
+          .update({
+            data: {
+              is_deleted: true
+            }
+          })
+        console.log(res)
+      }
+
+      // 删除相关回答
+      for (let i = 0; i < aids.length; i++) {
+        res = await transaction
+          .collection("commodity_answer")
+          .doc(aids[i])
+          .update({
+            data: {
+              is_deleted: true
+            }
+          })
+        console.log(res)
+      }
+
+      // 删除商品信息
+      res = await transaction
+        .collection("commodity")
+        .doc(cid)
+        .update({
+          data: {
+            is_deleted: true
+          }
+        })
+
+      // 删除相关图片
+      // 不在事务内，但是最后一步执行，若删除图片出错，事务仍然会回滚
+      res = await cloud.deleteFile({
+        fileList: fileIDs,
       })
+      transaction.commit()
+      ctx.body = {
+        errno: 0
+      }
 
-    // 删除相关图片
-    // 不在事务内，但是最后一步执行，若删除图片出错，事务仍然会回滚
-    res = await cloud.deleteFile({
-      fileList: fileIDs,
-    })
-    transaction.commit()
-    ctx.body = {
-      errno: 0
+    } catch (e) {
+      transaction.rollback()
+      ctx.body = {
+        errno: -1
+      }
     }
-
-  } catch (e) {
-    transaction.rollback()
-    ctx.body = {
-      errno: -1
-    }
-  }
-})
+  })
 
 
-return app.serve()
+  return app.serve()
 }
