@@ -268,6 +268,9 @@ Page({
       duration: 1500, mask: true
     });
 
+    // 注册私信账号
+    await app.loginIMWithID('REPY' + app.globalData.self._id + info._id);
+
     await sleep(1500);
     await wx.navigateBack();
   }
