@@ -1,4 +1,13 @@
-/* miniprogram/pages/index_register/index.wxss */
+.title-bar {
+  width: 100%;
+  height: auto;
+  flex: 0 0 auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+
 .avatar{
   display: flex;
   align-items: center;

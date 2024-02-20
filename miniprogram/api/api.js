@@ -56,6 +56,17 @@ const api = {
     return wrapResponse(res);
   },
 
+  async updateUser(params) {
+    const res = await wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        $url: 'updateUser',
+        params
+      }
+    })
+    return wrapResponse(res);
+  },
+
   // 更新自己的信息，参数是所有字段的子集
   async updateMyInfo(params) {
     res = await wx.cloud.callFunction({
