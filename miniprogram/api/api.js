@@ -25,6 +25,16 @@ const api = {
     }));
   },
 
+  async genUserSig(id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        $url: 'genUserSig',
+        params: { id }
+      }
+    }));
+  },
+
   async getRegions() {
     const res = await wx.cloud.callFunction({
       name: 'region',

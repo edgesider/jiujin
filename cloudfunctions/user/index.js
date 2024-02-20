@@ -6,6 +6,7 @@ cloud.init({
 })
 
 const TcbRouter = require('tcb-router')
+const TLSSigAPIv2 = require('./TLSSigAPIv2');
 
 const db = cloud.database()
 
@@ -32,7 +33,7 @@ exports.main = async (event, context) => {
         _id: _id,
         is_deleted: false
       }).get()
-      ctx.body = {data:data?.data?.[0]}
+      ctx.body = {data:data?.[0]}
       ctx.body.errno = ctx.body.data ? 0 : -1
     }catch(e){
       ctx.body = {
@@ -95,6 +96,35 @@ exports.main = async (event, context) => {
         }
       })
       ctx.body.errno = 0
+    } catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e.errCode.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
+  // 获取用户IM聊天sig
+  app.router('genUserSig', async (ctx, next) => {
+    const SECRETKEY = '0e3f256c7f3e15d4f1d29ea274d8f5e1572a73f4ef2ab9e8d8d7e6c2525f737c';
+    const SDKAPPID = 1600012697;
+    const EXPIRETIME = 604800;
+    try {
+      const { id } = event.params;
+      var api = new TLSSigAPIv2.Api(SDKAPPID, SECRETKEY);
+      var sig = api.genUserSig(id, EXPIRETIME);
+
+      ctx.body = {
+        errno: 0,
+        data: {
+          userSig: sig
+        }
+      };
     } catch (e) {
       ctx.body = {
         error: e ?? 'unknown',
