@@ -6,7 +6,6 @@ import moment from "moment";
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
-import { genTestUserSig } from './debug/GenerateTestUserSig';
 
 App({
   _ready: false,
@@ -35,9 +34,7 @@ App({
       config: {
         userID: '', // User ID
         commodity: null,
-        SECRETKEY: '0e3f256c7f3e15d4f1d29ea274d8f5e1572a73f4ef2ab9e8d8d7e6c2525f737c', // Your secretKey
         SDKAPPID: 1600012697, // Your SDKAppID
-        EXPIRETIME: 604800, // 60 * 60 * 180
       },
       TUIEnabled: false,
       TUISDKReady: false,
@@ -113,16 +110,14 @@ App({
     this.globalData.TUISDKReady = false;
     this.globalData.config.userID = id;
 
-    // console.log("生成用户聊天ID")
-    // var result = await api.genUserSig(this.globalData.config);
-    // console.log('result', result)
-    // if (result.errno == -1) {
-    //   console.log("生成用户聊天ID失败！")
-    //   return new RespError("生成用户聊天ID失败！")
-    // }
-    // const userSig = result.message;
-
-    const userSig = genTestUserSig(this.globalData.config).userSig;
+    console.log("生成用户聊天ID");
+    var result = await api.genUserSig(id);
+    console.log('result', result);
+    if (result.errno == -1) {
+      console.log("生成用户聊天ID失败！")
+      return new RespError("生成用户聊天ID失败！")
+    }
+    const userSig = result.data.userSig;
     console.log("用户SIG：", userSig);
     
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
@@ -145,6 +140,7 @@ App({
     this.globalData.TUISDKReady = true;
   },
 
+  /*
   getAccessToken() {
     let appid = 'wxc89ea56f592e89c4';
     let secret = ''; // 小程序唯一凭证密钥，即 AppSecret
@@ -207,14 +203,15 @@ App({
       });
     });
   },
+  */
 
   async fetchSelfInfo() {
     // 查询用户是否已经注册
-    const res = await api.getSelfInfo()
+    const res = await api.getSelfInfo();
     const registered = !!res.data?._id;
     this.globalData.registered = registered;
     if (registered) {
-      this.userChangedSubject.next(res.data)
+      this.userChangedSubject.next(res.data);
       this.globalData.self = res.data;
     }
   },

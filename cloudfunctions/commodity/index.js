@@ -31,7 +31,8 @@ exports.main = async (event, context) => {
       await cloud.openapi.security.msgSecCheck({
         content: JSON.stringify(event.params)
       })
-      await transaction
+
+      var res = await transaction
         .collection("commodity")
         .add({
           data: {
@@ -48,7 +49,8 @@ exports.main = async (event, context) => {
             update_time: db.serverDate(),
             is_deleted: false,
           }
-        })
+        });
+      const comm_id = res._id;
 
       await transaction
         .collection("user")
@@ -61,7 +63,10 @@ exports.main = async (event, context) => {
         })
       transaction.commit()
       ctx.body = {
-        errno: 0
+        errno: 0,
+        data: {
+          _id: comm_id
+        }
       }
     } catch (e) {
       transaction.rollback()

@@ -249,6 +249,7 @@ Page({
       editing
         ? await api.updateCommodity(editing._id, info)
         : await api.createCommodity(info);
+    const comm_id = editing ? editing._id : resp.data._id;
     await wx.hideLoading();
     if (resp.isError) {
       console.error(resp);
@@ -269,7 +270,7 @@ Page({
     });
 
     // 注册私信账号
-    await app.loginIMWithID('REPY' + app.globalData.self._id + info._id);
+    await app.loginIMWithID('REPY' + app.globalData.self._id + comm_id);
 
     await sleep(1500);
     await wx.navigateBack();
