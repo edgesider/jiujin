@@ -124,7 +124,7 @@ exports.main = async (event, context) => {
           ctx.body.data.is_collect = false
         }
         ctx.body.data = [ctx.body.data]
-        ctx.body.errno = ctx.body.data ? 0 : -1
+        ctx.body.errno = ctx.body.data.length==0 ? -100 : 0
       } catch (e) {
         ctx.body = {
           errno: -1
@@ -142,7 +142,6 @@ exports.main = async (event, context) => {
           w["rid"] = w["rid"].or(_.eq(rids[i]))
         }
       }
-    }
     if (cid) {
       w["cid"] = cid
     }
@@ -188,6 +187,7 @@ exports.main = async (event, context) => {
       ctx.body = {
         errno: -1
       }
+    }
     }
   })
 
