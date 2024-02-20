@@ -113,7 +113,7 @@ exports.main = async (event, context) => {
         // Check if the item with given cid is already collected
         const queryResult = await collectionCollection.where({
           data: {
-            _id: wxContext.OPENID,
+            uid: wxContext.OPENID,
             cid: cid,
             is_deleted: false
           }
