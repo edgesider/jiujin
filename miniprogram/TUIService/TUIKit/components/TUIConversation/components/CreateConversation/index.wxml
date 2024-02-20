@@ -9,7 +9,7 @@
       <input class="tui-search-bar-input" value="{{userID}}" placeholder="请输入用户ID" bindinput='userIDInput' bindconfirm="getuserProfile"  bindblur="getuserProfile"/>
 
     </view>
-    <text class="tui-showID" selectable>您的用户ID  {{myID}}</text>
+    <text class="tui-showID" bind:longpress="onCopyUserID">您的用户ID  {{myID}}</text>
   </view>
   <view class="tui-person-to-invite" wx:if="{{searchUser.userID}}" bindtap="handleChoose" >
     <image  class="tui-normal-choose" src="{{searchUser.isChoose ? '../../../../static/assets/single-choice-hover.svg' : '../../../../static/assets/single-choice-normal.svg'}}" />
