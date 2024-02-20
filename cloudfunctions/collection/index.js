@@ -24,8 +24,7 @@ exports.main = async (event, context) => {
       const { cid } = event.params;
       const countResult = await commodityCollection.where({
         is_deleted: false,
-        uid: wxContext.OPENID,
-        cid: cid
+        _id: wxContext.OPENID,
       }).count()
       if (countResult.total === 0) {
         ctx.body = {
