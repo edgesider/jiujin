@@ -85,6 +85,10 @@ exports.main = async (event, context) => {
 
   app.router('getCollection', async (ctx, next) => {
     try {
+      let{start,count}=event.params
+      if (!start || start < 0) {
+        start = 0;
+      }
       ctx.body = await collectionCollection.aggregate()
         .match({
           _id: wxContext.OPENID,
@@ -96,6 +100,8 @@ exports.main = async (event, context) => {
           foreignField: '_id',
           as: 'commodityInfoList'
         })
+        .skip(start)
+        .limit(count)
         .end()
       ctx.body.errno = 0
     } catch (e) {

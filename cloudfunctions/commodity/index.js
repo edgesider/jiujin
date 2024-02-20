@@ -124,7 +124,7 @@ exports.main = async (event, context) => {
           ctx.body.data.is_collect = false
         }
         ctx.body.data = [ctx.body.data]
-        ctx.body.errno = ctx.body.data.length==0 ? -100 : 0
+        ctx.body.errno = ctx.body.data.length == 0 ? -100 : 0
       } catch (e) {
         ctx.body = {
           errno: -1
@@ -142,52 +142,52 @@ exports.main = async (event, context) => {
           w["rid"] = w["rid"].or(_.eq(rids[i]))
         }
       }
-    if (cid) {
-      w["cid"] = cid
-    }
-    if (keyword && keyword.trim() != '') {
-      w = {
-        title: new db.RegExp({
-          regexp: keyword,
-          options: 'i'
-        }),
+      if (cid) {
+        w["cid"] = cid
       }
-    }
-    // //如果卖方不是自己的话，需要过滤删除
-    // if (!sell_id || sell_id != wxContext.OPENID) {
-    //   w["is_deleted"] = false
-    // }
-    if (sell_id) {
-      w["sell_id"] = sell_id
-    }
-    if (buyer_id) {
-      w["buyer_id"] = buyer_id
-    }
-    if (sell_id != wxContext.OPENID && buyer_id != wxContext.OPENID) {
-      w["sex"] = _.eq(0).or(_.eq(sex))
-    }
-    if (typeof status === 'number') {
-      w["status"] = status
-    }
-    if (!count || count <= 0) {
-      count = 10;
-    }
-    count = Math.max(count, 100);
-    if (!start || start < 0) {
-      start = 0;
-    }
-    try {
-      ctx.body = await commodityCollection.where(w)
-        .orderBy('create_time', 'desc')
-        .skip(start || 0)
-        .limit(count)
-        .get()
-      ctx.body.errno = 0
-    } catch (e) {
-      ctx.body = {
-        errno: -1
+      if (keyword && keyword.trim() != '') {
+        w = {
+          title: new db.RegExp({
+            regexp: keyword,
+            options: 'i'
+          }),
+        }
       }
-    }
+      // //如果卖方不是自己的话，需要过滤删除
+      // if (!sell_id || sell_id != wxContext.OPENID) {
+      //   w["is_deleted"] = false
+      // }
+      if (sell_id) {
+        w["sell_id"] = sell_id
+      }
+      if (buyer_id) {
+        w["buyer_id"] = buyer_id
+      }
+      if (sell_id != wxContext.OPENID && buyer_id != wxContext.OPENID) {
+        w["sex"] = _.eq(0).or(_.eq(sex))
+      }
+      if (typeof status === 'number') {
+        w["status"] = status
+      }
+      if (!count || count <= 0) {
+        count = 10;
+      }
+      count = Math.max(count, 100);
+      if (!start || start < 0) {
+        start = 0;
+      }
+      try {
+        ctx.body = await commodityCollection.where(w)
+          .orderBy('create_time', 'desc')
+          .skip(start || 0)
+          .limit(count)
+          .get()
+        ctx.body.errno = 0
+      } catch (e) {
+        ctx.body = {
+          errno: -1
+        }
+      }
     }
   })
 
