@@ -1,32 +1,31 @@
 import Dialog from '@vant/weapp/dialog/dialog';
 import api from "../../api/api";
 import rules from "../../utils/rules";
+import getConstants from "../../constants";
 
 const app = getApp()
 
 Page({
   data: {
+    ...getConstants(),
+    isEdit: false,
     name: "",
     avatarUrl: "",
-    contactInfoQQ: "",
-    contactInfoWX: "",
     regions: [],
     l1ToL4: {},
     indexes: [0, 0],
     l1L4Pair: [[], []],
-
-    objectMultiArray: [[], []],
-    multiIndex: [0, 0]
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    wx.showLoading({
+    const { isEdit } = options;
+    await wx.showLoading({
       title: '加载中',
     })
-    // 获取用户头像，性别等信息
+    // TODO 获取用户头像，性别等信息
     const userInfo = wx.getStorageSync('userInfo')
     const { avatarUrl, nickName, gender } = userInfo;
 
@@ -65,15 +64,34 @@ Page({
       }
       l1ToL4[l1._id] = tillL4(l1._id).map(rid => ridToRegion[rid]);
     }
-    this.setData({
-      l1ToL4,
-      l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
-      indexes: [0, 0],
-      avatarUrl,
-      name: nickName,
-      gender,
-    });
-    wx.hideLoading()
+    if (isEdit) {
+      const self = app.globalData.self;
+      let [idxL1, idxL4] = [0, 0];
+      const l1 = Object.entries(l1ToL4).find(([l1, l4s]) => l4s.findIndex(l4 => l4._id === self.rid) >= 0)[0];
+      if (l1) {
+        idxL1 = l1Regions.findIndex(l => l._id === parseInt(l1));
+        idxL4 = l1ToL4[l1].findIndex(l => l._id === self.rid);
+      }
+      this.setData({
+        l1ToL4,
+        l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
+        indexes: [idxL1, idxL4],
+        isEdit: true,
+        avatarUrl: self.avatar_url,
+        name: self.name,
+        gender: self.sex,
+      });
+    } else {
+      this.setData({
+        l1ToL4,
+        l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
+        indexes: [0, 0],
+        avatarUrl,
+        name: nickName,
+        gender,
+      });
+    }
+    await wx.hideLoading()
   },
 
   // 导航栏
@@ -113,7 +131,7 @@ Page({
 
   // 提交注册信息
   async onRegister() {
-    const { avatarUrl: avatar_url, name, gender: sex } = this.data;
+    const { isEdit, avatarUrl: avatar_url, name, gender: sex } = this.data;
     const params = {
       avatar_url, name, sex, rid: this.getSelectedRegion()._id
     }
@@ -129,34 +147,25 @@ Page({
       title: '正在提交中',
     })
 
-    const res = await api.registerUser(params);
-    if (res.errno != 0) {
-      wx.hideLoading()
+    const resp = isEdit ? await api.updateUser(params) : await api.registerUser(params);
+    if (resp.isError) {
+      await wx.hideLoading()
       console.log("上传用户信息失败！")
-      wx.showToast({
-        title: res.message,
-        icon: 'none',
-        duration: 2000,
-        success(res) {
-          setTimeout(() => {
-          }, 1500)
-        }
+      await wx.showToast({
+        title: (isEdit ? '保存' : '注册') + '失败\n' + resp.message,
+        icon: 'error',
       })
-      return
+      return;
     }
-    console.log("注册成功！")
-    wx.hideLoading()
+    wx.hideLoading();
 
     app.globalData.registered = true
     wx.showToast({
-      title: '注册成功！',
+      title: (isEdit ? '已保存' : '注册成功'),
       icon: 'success',
-      duration: 2000,
       success(res) {
         setTimeout(() => {
-          wx.redirectTo({
-            url: `../home/index`,
-          })
+          wx.navigateBack()
         }, 1500)
       }
     })

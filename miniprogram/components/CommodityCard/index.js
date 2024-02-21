@@ -20,7 +20,7 @@ Component({
         return;
       }
       await wx.navigateTo({
-        url: `../commodity_detail/index?commodity=${encodeURIComponent(JSON.stringify(this.properties.commodity))}`
+        url: `../commodity_detail/index?id=${this.properties.commodity._id}`
       })
     }
   },

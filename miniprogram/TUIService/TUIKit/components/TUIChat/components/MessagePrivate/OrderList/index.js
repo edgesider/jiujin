@@ -78,7 +78,7 @@ Component({
         title: commodity.content,
         description: '',
         imageUrl: commodity.img_urls[0],
-        link: `/pages/commodity_detail/index?commodity=${encodeURIComponent(JSON.stringify(commodity))}`,
+        link: `/pages/commodity_detail/index?id=${commodity._id}}`,
         imageWidth: 135,
         imageHeight: 135,
         price: '￥' + commodity.price,

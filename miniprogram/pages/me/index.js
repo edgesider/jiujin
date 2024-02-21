@@ -51,11 +51,11 @@ Page({
     await app.fetchSelfInfo();
   },
 
-  onEnterHomeUserInfo() {
+  onEditMyInfo() {
     const registered = app.globalData.registered
     if (registered) {
       wx.navigateTo({
-        url: '../my_user_info/index',
+        url: '../register/index?isEdit=true',
       })
     } else {
       this.setData({
