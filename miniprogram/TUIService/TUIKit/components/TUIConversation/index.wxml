@@ -18,10 +18,10 @@
         {{item.name}}
       </view>
     </view>
-    <view class="bottom-area">
+    <!-- <view class="bottom-area">
       <image bindtap="showSelectedTag" class="btn-show-more" src="../../static/assets/add.svg" />
       <view bindtap="learnMore" class="im-link">了解更多IM功能</view>
-    </view>
+    </view> -->
   </view>
   <CreateConversation wx:if="{{showCreateConversation}}" bind:showConversation="toggleConversationList" bind:searchUserID="searchUserID" ></CreateConversation>
   <CreateGroup wx:if="{{showCreateGroup}}" bind:showConversation="toggleConversationList" bind:createGroupID="createGroupID"></CreateGroup>
