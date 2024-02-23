@@ -151,7 +151,7 @@ exports.main = async (event, context) => {
       }
       if (keyword && keyword.trim() != '') {
         w = {
-          title: new db.RegExp({
+          content: new db.RegExp({
             regexp: keyword,
             options: 'i'
           }),
@@ -355,7 +355,7 @@ exports.main = async (event, context) => {
         sell_id: wxContext.OPENID,
         _id: _id,
         is_deleted: false,
-        status:3
+        status: 3
       }).update({
         data: {
           status: 0,
