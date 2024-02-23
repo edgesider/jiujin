@@ -157,6 +157,7 @@ Page({
       })
       return;
     }
+    await Promise.all([app.fetchSelfInfo(), app.fetchRegions()]);
     wx.hideLoading();
 
     app.globalData.registered = true

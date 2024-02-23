@@ -64,6 +64,10 @@ Page({
       needRefresh = false;
       await this.fetchList();
     }
+    if (this.data.self && app.globalData.self && this.data.self.rid !== app.globalData.self.rid) {
+      await this.loadRegions();
+      await this.fetchList();
+    }
   },
 
   async loadRegions() {

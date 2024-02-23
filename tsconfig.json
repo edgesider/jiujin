@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "noLib": true,
+//    "noLib": true,
     "target": "es5",
     "sourceMap": true
   },

@@ -86,8 +86,8 @@ exports.main = async (event, context) => {
         content: JSON.stringify(event.params)
       })
       const { name, rid } = event.params;
-      ctx.body = await userCollection.where({
-        openid: wxContext.OPENID
+      const res = await userCollection.where({
+        _id: wxContext.OPENID
       }).update({
         data: {
           name: name,
@@ -95,6 +95,11 @@ exports.main = async (event, context) => {
           update_time: db.serverDate()
         }
       })
+      if (!res?.stats?.updated) {
+        throw Error('no such user');
+      } else {
+        ctx.body = {}
+      }
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {
