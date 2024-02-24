@@ -1,4 +1,4 @@
-<TitleBar title="我的商品" class="title-bar" />
+<TitleBar title="{{isEdit ? '我的信息' : '注册'}}" class="title-bar" />
 <view style="width: 100%; height: {{CustomBar}}px" />
 
 <form>
