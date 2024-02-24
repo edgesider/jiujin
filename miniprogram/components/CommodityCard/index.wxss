@@ -21,7 +21,7 @@
   font-size: 16px;
   font-weight: bold;
   color: red;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255);
   border-radius: 8px;
   padding: 6px 8px;
 
@@ -35,7 +35,7 @@
   font-size: 16px;
   font-style: italic;
   color: black;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255);
   border-radius: 8px;
   padding: 6px 8px;
 
@@ -64,7 +64,7 @@
   height: calc(1em + 4px);
   font-size: 12px;
   color: white;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0);
   border-radius: 4px;
   padding: 2px 4px;
   flex-grow: 1;
@@ -76,7 +76,7 @@
 .bottom .region {
   font-size: 12px;
   color: white;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0);
   border-radius: 4px;
   flex-shrink: 0;
   padding: 2px 4px;
