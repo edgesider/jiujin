@@ -6,12 +6,25 @@
     <view class="cu-item shadow margin-top">
       <view class="cu-form-group">
         <view class="title">头像</view>
-        <image class="cu-avatar radius bg-gray" src="{{avatarUrl}}"></image>
+        <button
+          open-type="chooseAvatar"
+          plain="true"
+          class="cu-avatar"
+          style="border: none; background-color: transparent"
+          bindchooseavatar="onChooseAvatar"
+        >
+          <image class="cu-avatar radius bg-gray" src="{{avatarUrl}}"></image>
+        </button>
       </view>
 
       <view class="cu-form-group">
         <view class="title">昵称</view>
-        <input class="text-right" value="{{name}}" placeholder="请输入昵称" bindinput="onChangeName"></input>
+        <input
+          class="text-right"
+          value="{{name}}"
+          placeholder="请输入昵称"
+          type="nickname"
+          bindinput="onChangeName"/>
       </view>
       <!-- <view class="cu-form-group">
 				<view class="title">微信联系方式</view>
@@ -23,7 +36,8 @@
 			</view> -->
       <view class="cu-form-group">
         <view class="title">常用位置</view>
-        <picker mode="multiSelector" bindcolumnchange="onRegionPickerChange" value="{{indexes}}" range="{{l1L4Pair}}" range-key="{{'name'}}">
+        <picker mode="multiSelector" bindcolumnchange="onRegionPickerChange" value="{{indexes}}" range="{{l1L4Pair}}"
+                range-key="{{'name'}}">
           <view class="picker">
             {{l1L4Pair[0][indexes[0]].name}}，{{l1L4Pair[1][indexes[1]].name}}
           </view>
