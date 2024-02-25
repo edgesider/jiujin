@@ -21,7 +21,7 @@
     </view>
   </view>
   <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
-    <view class="cu-item arrow" bindtap="onEnterHomeUserInfo">
+    <view class="cu-item arrow" bindtap="onEditMyInfo">
       <view class="content" hover-class="none">
         <text class="cuIcon-peoplefill text-orange"></text>
         <text class="text-grey">我的信息</text>

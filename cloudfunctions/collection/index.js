@@ -24,7 +24,7 @@ exports.main = async (event, context) => {
       const { cid } = event.params;
       const countResult = await commodityCollection.where({
         is_deleted: false,
-        _id: cid
+        _id: cid,
       }).count()
       if (countResult.total === 0) {
         ctx.body = {
@@ -35,7 +35,7 @@ exports.main = async (event, context) => {
       }
       ctx.body = await collectionCollection.add({
         data: {
-          _id: wxContext.OPENID,
+          uid: wxContext.OPENID,
           cid: cid,
           is_deleted: false
         }
@@ -59,10 +59,8 @@ exports.main = async (event, context) => {
     try {
       const { cid } = event.params;
       ctx.body = await collectionCollection.where({
-        data: {
-          _id: wxContext.OPENID,
-          cid: cid,
-        }
+        uid: wxContext.OPENID,
+        cid: cid,
       }).update({
         data: {
           is_deleted: true
@@ -85,9 +83,13 @@ exports.main = async (event, context) => {
 
   app.router('getCollection', async (ctx, next) => {
     try {
+      let { start, count } = event.params
+      if (!start || start < 0) {
+        start = 0;
+      }
       ctx.body = await collectionCollection.aggregate()
         .match({
-          _id: wxContext.OPENID,
+          uid: wxContext.OPENID,
           is_deleted: false
         })
         .lookup({
@@ -96,6 +98,8 @@ exports.main = async (event, context) => {
           foreignField: '_id',
           as: 'commodityInfoList'
         })
+        .skip(start)
+        .limit(count)
         .end()
       ctx.body.errno = 0
     } catch (e) {

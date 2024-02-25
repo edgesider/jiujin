@@ -1,4 +1,4 @@
-import api from "../../api/api";
+import api, { CollectApi } from "../../api/api";
 import { tryJsonParse } from "../../utils/other";
 import { sleep, splitMillisecondsToString } from "../../utils/time";
 import { setNeedRefresh } from "../home/index";
@@ -20,11 +20,19 @@ Page({
     remainTime: '',
   },
   onLoad: async function (options) {
-    // TODO 路由可能有长度限制，后续考虑使用其他方案
-    const { commodity: commodityJson } = options;
-    const commodity = tryJsonParse(decodeURIComponent(commodityJson));
-    const resp = await api.getUserInfo(commodity.sell_id);
-    const seller = resp.isError ? null : resp.data;
+    const { id } = options;
+    const commResp = await api.getCommodityInfo({ id });
+    if (commResp.isError) {
+      await wx.showToast({
+        icon: 'error',
+        title: '网络错误'
+      });
+      return;
+    }
+    const commodity = commResp.data;
+
+    const sellerResp = await api.getUserInfo(commodity.sell_id);
+    const seller = sellerResp.isError ? null : sellerResp.data;
     this.setData({
       loading: false,
       commodity,
@@ -82,9 +90,47 @@ Page({
     });
   },
 
+  togglingCollect: false,
+  async onToggleCollect() {
+    if (this.togglingCollect) {
+      return;
+    }
+    this.togglingCollect = true;
+    try {
+      if (this.data.commodity.is_collected) {
+        const resp = await CollectApi.cancel(this.data.commodity._id);
+        if (resp.isError) {
+          await wx.showToast({
+            title: '取消收藏失败',
+            icon: 'error',
+          });
+          return;
+        }
+      } else {
+        const resp = await CollectApi.collect(this.data.commodity._id);
+        if (resp.isError) {
+          await wx.showToast({
+            title: '收藏失败',
+            icon: 'error',
+          });
+          return;
+        }
+      }
+      this.setData({
+        commodity: Object.assign(
+          {},
+          this.data.commodity,
+          { is_collected: !this.data.commodity.is_collected }
+        )
+      })
+    } finally {
+      this.togglingCollect = false;
+    }
+  },
+
   async onPrivateMessage() {
     const registered = app.globalData.registered;
-    if (registered){
+    if (registered) {
       app.globalData.commodity = null;
       const user_id = 'USER' + app.globalData.self._id;
       const sell_id = 'REPY' + this.data.commodity.sell_id + this.data.commodity._id;

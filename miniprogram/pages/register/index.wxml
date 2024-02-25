@@ -1,8 +1,5 @@
-<cu-custom bgColor="bg-yellow">
-  <!-- <view slot="backText" catch:tap="onNavigateBack">返回</view> -->
-  <view slot="content">新用户注册</view>
-  <!-- <view solt="backText">返回</view> -->
-</cu-custom>
+<TitleBar title="我的商品" class="title-bar" />
+<view style="width: 100%; height: {{CustomBar}}px" />
 
 <form>
   <view class="cu-card">
@@ -37,7 +34,9 @@
 </form>
 
 <view class="padding">
-  <button bind:tap="onRegister" class="cu-btn block bg-gradual-green shadow margin-tb-sm lg">注册</button>
+  <button bind:tap="onRegister" class="cu-btn block bg-gradual-green shadow margin-tb-sm lg">
+    {{isEdit ? '保存' : '注册'}}
+  </button>
 </view>
 
 <van-dialog id="van-dialog" />
