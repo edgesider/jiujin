@@ -364,14 +364,14 @@ export const CollectApi = {
       }
     }))
   },
-  async sellCommodity(id, buyid){
+  async sellCommodity(id, buyer_id){
     return wrapResponse(await wx.cloud.callFunction({
       name: 'commodity',
       data: {
         $url: 'sellCommodity',
         params: {
           _id: id,
-          buyid
+          buyer_id
         },
       }
     }))
