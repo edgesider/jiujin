@@ -1,5 +1,6 @@
 import logger from '../../../../utils/logger';
 import constant from '../../../../utils/constant';
+import api from '../../../../../../api/api';
 // eslint-disable-next-line no-undef
 Component({
   /**
@@ -47,8 +48,11 @@ Component({
     isShow: true,
     commonFunction: [
       { name: '常用语', key: '0' },
-      { name: '发送订单', key: '1' },
+      // { name: '发送订单', key: '1' },
       { name: '服务评价', key: '2' },
+      { name: '锁定', key: '3' },
+      { name: '解锁', key: '4' },
+      { name: '售出', key: '5' },
     ],
     displayServiceEvaluation: false,
     showErrorImageFlag: 0,
@@ -331,6 +335,13 @@ Component({
           this.setData({
             displayServiceEvaluation: true,
           });
+          break;
+        case '3': // 锁定
+          
+          break;
+        case '4': // 解锁
+          break;
+        case '5': // 售出
           break;
         default:
           break;

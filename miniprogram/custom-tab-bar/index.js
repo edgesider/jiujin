@@ -22,6 +22,18 @@ Component({
         selectedIconClass: 'cuIcon-myfill',
         text: '我的'
       },
+      {
+        pagePath: "/TUIService/pages/tim_index/tim_index",
+        iconClass: "cuIcon-message",
+        selectedIconClass: "cuIcon-messagefill",
+        text: "私信"
+      },
+      {
+        pagePath: "/pages/customer_service/index",
+        iconClass: "cuIcon-notification",
+        selectedIconClass: "cuIcon-notificationfill",
+        text: "商品回复"
+      },
     ],
     url: '',
   },

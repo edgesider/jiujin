@@ -25,6 +25,7 @@ Page({
     pageIndex: 1,
     selfInfo: placeholderUser,
     ridToRegion: null,
+    totalUnread: 0,
   },
 
   /**
@@ -45,6 +46,7 @@ Page({
         selfInfo: user
       })
     })
+    this.data.totalUnread = app.globalData.totalUnread;
   },
 
   async onShow() {
@@ -91,7 +93,7 @@ Page({
   },
 
   onEnterPrivateMessage(){
-    const registered = app.globalData.registered
+    const registered = app.globalData.registered;
     if (registered){
       app.globalData.commodity = null;
       app.loginIMWithID('USER' + app.globalData.self._id).then(() => {
@@ -104,7 +106,7 @@ Page({
     } else {
       this.setData({
         showLoginPopup: true
-      })
+      });
     }
   },
 

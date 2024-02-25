@@ -16,6 +16,15 @@ App({
     ridToRegion: null,
     StatusBar: 0,
     CustomBar: 0,
+    config: {
+      userID: '', // User ID
+      commodity: null,
+      SDKAPPID: 1600012697, // Your SDKAppID
+    },
+    TUIEnabled: false,
+    TUISDKReady: false,
+    totalUnread: 0,
+    currentUser: null,
   },
 
   userChangedSubject: new BehaviorSubject(null),
@@ -28,16 +37,6 @@ App({
         env: 'jj-4g1ndtns7f1df442',
         // traceUser: true,
       })
-    }
-
-    this.globalData = {
-      config: {
-        userID: '', // User ID
-        commodity: null,
-        SDKAPPID: 1600012697, // Your SDKAppID
-      },
-      TUIEnabled: false,
-      TUISDKReady: false,
     }
 
     // Color UI: 获得系统信息
@@ -58,6 +57,7 @@ App({
 
     // 登录腾讯IM
     await this.initTIM();
+    this.globalData.totalUnread = wx.$TUIKit.getTotalUnreadMessageCount();
 
     console.log('initialized. globalData=', this.globalData);
     this._ready = true;
@@ -95,10 +95,13 @@ App({
 
     // 监听系统级事件
     wx.$TUIKit.on(wx.TencentCloudChat.EVENT.SDK_READY, this.onSDKReady, this);
+    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
     this.globalData.TUIEnabled = true;
   },
 
   async loginIMWithID(id) {
+    console.warn('用户登录ID: ' + id);
+
     if (wx.$TUIKit.getLoginUser() == id){
       return;
     }
@@ -138,6 +141,12 @@ App({
     // 监听到此事件后可调用 SDK 发送消息等 API，使用 SDK 的各项功能。
     console.log("TencentCloudChat SDK_READY");
     this.globalData.TUISDKReady = true;
+  },
+
+  onTotalUnreadMessageCountUpdated(event) {
+    console.log("TencentCloudChat TOTAL_UNREAD_MESSAGE_COUNT_UPDATED");
+    console.log(event.data);
+    this.globalData.totalUnread = event.data;
   },
 
   /*

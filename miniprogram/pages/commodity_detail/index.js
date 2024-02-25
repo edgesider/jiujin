@@ -86,14 +86,11 @@ Page({
     const registered = app.globalData.registered;
     if (registered){
       app.globalData.commodity = null;
-      app.loginIMWithID('USER' + app.globalData.self._id).then(() => {
-        const sell_id = 'REPY' + this.data.commodity.sell_id + this.data.commodity._id;
-        const conversation_id = encodeURIComponent('C2C' + sell_id);
-        wx.navigateTo({
-          url: `../../TUIService/pages/tim_index/tim_index?id=${conversation_id}`,
-        });
-      }).catch((e) => {
-        console.error("私信登录错误： " + e);
+      const user_id = 'USER' + app.globalData.self._id;
+      const sell_id = 'REPY' + this.data.commodity.sell_id + this.data.commodity._id;
+      const conversation_id = encodeURIComponent('C2C' + sell_id);
+      wx.navigateTo({
+        url: `../../TUIService/pages/tim_index/tim_index?id=${conversation_id}&user=${user_id}`,
       });
     } else {
       await wx.showToast({
