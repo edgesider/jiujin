@@ -8,7 +8,7 @@
   z-index: 1;
 }
 
-.avatar{
+.avatar {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,8 +17,8 @@
   margin-bottom: 50rpx;
 }
 
-.wrapper{
-  position:fixed;
-  bottom:0;
+.wrapper {
+  position: fixed;
+  bottom: 0;
   width: 100%
 }

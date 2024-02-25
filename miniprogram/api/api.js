@@ -4,8 +4,8 @@ const { RespSuccess, RespError } = require('../utils/resp')
 let res = {}
 
 function wrapResponse(resp) {
-  if (resp.result.errno !== 0) {
-    return new RespError(resp.result);
+  if (resp.result?.errno !== 0) {
+    return new RespError(resp.result ?? 'no such api');
   }
   return new RespSuccess(resp.result.data);
 }
@@ -13,6 +13,15 @@ function wrapResponse(resp) {
 const api = {
   async getSelfInfo() {
     return this.getUserInfo(undefined);
+  },
+
+  async getOpenId() {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        $url: 'getOpenId'
+      }
+    }));
   },
 
   async getUserInfo(uid) {
@@ -205,6 +214,26 @@ const api = {
         }
       }
     }));
+  },
+
+  /**
+   * 上传本地图片到云存储
+   * TODO 压缩上传
+   * TODO 合规检验
+   *
+   * @param path 本地路径（如wx.chooseImage得到的临时路径）
+   * @param cloudPath 云存储的路径
+   * @returns {Promise<Resp>} 上传结果，其中包含云存储中的fileID
+   */
+  async uploadImage(path, cloudPath) {
+    const res = await wx.cloud.uploadFile({
+      filePath: path,
+      cloudPath: cloudPath,
+    });
+    if (!res.fileID) {
+      return new RespError(res, 'upload failed');
+    }
+    return new RespSuccess(res.fileID);
   },
 }
 

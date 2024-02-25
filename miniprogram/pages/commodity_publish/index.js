@@ -165,36 +165,16 @@ Page({
     return null;
   },
 
-  /**
-   * 上传本地图片到云存储
-   * TODO 压缩上传
-   * TODO 合规检验
-   *
-   * @param path 本地路径（如wx.chooseImage得到的临时路径）
-   * @returns {Promise<Resp>} 上传结果，其中包含云存储中的fileID
-   */
-  async uploadImage(path) {
-    const { self: selfInfo } = app.globalData;
-    if (!selfInfo) {
-      return new RespError(null, 'need login');
-    }
-    const res = await wx.cloud.uploadFile({
-      filePath: path,
-      cloudPath: `commodity/${selfInfo._id}_${Date.now()}_${Math.random() * 10000000}`,
-    });
-    if (!res.fileID) {
-      return new RespError(res, 'upload failed');
-    }
-    return new RespSuccess(res.fileID);
-  },
-
   async uploadImages(paths) {
     const fileIDs = [];
     for (const path of paths) {
       if (/^(cloud|http|https):\/\//.test(path) && !/http:\/\/tmp\//.test(path)) {
         fileIDs.push(path);
       } else {
-        const resp = await this.uploadImage(path);
+        const resp = await api.uploadImage(
+          path,
+          `\`commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}\``
+        );
         if (resp.isError) {
           throw resp.message;
         }
