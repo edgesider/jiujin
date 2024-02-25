@@ -1,5 +1,5 @@
 page {
-  overflow-y: scroll;
+  overflow-y: hidden;
   overflow-x: hidden;
   padding-bottom: calc(env(safe-area-inset-bottom) + 48px);
 }

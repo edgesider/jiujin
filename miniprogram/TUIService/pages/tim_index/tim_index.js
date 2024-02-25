@@ -33,6 +33,7 @@ Page({
     } else {
       const user_id = 'USER' + self._id;
       await app.loginIMWithID(user_id);
+      app.globalData.config.commodity = null;
     }
   },
 

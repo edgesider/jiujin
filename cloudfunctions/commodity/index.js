@@ -378,7 +378,7 @@ exports.main = async (event, context) => {
 
   // 售出商品
   app.router('sellCommodity', async (ctx, next) => {
-    const { _id } = event.params
+    const { _id, buyid } = event.params
     try {
       await commodityCollection.where({
         sell_id: wxContext.OPENID,

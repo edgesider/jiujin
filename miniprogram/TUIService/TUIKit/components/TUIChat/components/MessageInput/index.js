@@ -1,6 +1,9 @@
 import logger from '../../../../utils/logger';
 import constant from '../../../../utils/constant';
 import api from '../../../../../../api/api';
+
+var app = getApp();
+
 // eslint-disable-next-line no-undef
 Component({
   /**
@@ -99,6 +102,27 @@ Component({
           text: '按住说话',
         });
       });
+
+      const { commodity } = app.globalData.config;
+      console.warn('attached', commodity);
+      if (commodity !== null){
+        this.setData({
+          commonFunction: [
+            { name: '常用语', key: '0' },
+            { name: '服务评价', key: '2' },
+            { name: '锁定', key: '3' },
+            { name: '解锁', key: '4' },
+            { name: '售出', key: '5' },
+          ]
+        });
+      } else {
+        this.setData({
+          commonFunction: [
+            { name: '常用语', key: '0' },
+            { name: '服务评价', key: '2' },
+          ]
+        });
+      }
     },
   },
 
@@ -320,7 +344,7 @@ Component({
     },
 
     handleCommonFunctions(e) {
-      const commodity = app.globalData.config.commodity;
+      const { commodity } = app.globalData.config;
       switch (e.target.dataset.function.key) {
         case '0':
           this.setData({
@@ -338,11 +362,13 @@ Component({
           });
           break;
         case '3': // 锁定
-          
+          api.lockCommodity(commodity._id);
           break;
         case '4': // 解锁
+          api.unlockCommodity(commodity._id);
           break;
         case '5': // 售出
+          this.triggerEvent('sellCommodity');
           break;
         default:
           break;
