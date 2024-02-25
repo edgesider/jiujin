@@ -39,6 +39,25 @@ App({
       })
     }
 
+    this.globalData = {
+      openId: '',
+      config: {
+        userID: '', // User ID
+        commodity: null,
+        SDKAPPID: 1600012697, // Your SDKAppID
+      },
+      TUIEnabled: false,
+      TUISDKReady: false,
+    }
+
+    api.getOpenId().then(resp => {
+      if (resp.isError) {
+        console.error('getOpenId failed', resp);
+      } else {
+        this.globalData.openId = resp.data.openId
+      }
+    })
+
     // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
@@ -75,7 +94,7 @@ App({
     wx.$TUIKit = TencentCloudChat.create({
       SDKAppID: this.globalData.config.SDKAPPID,
     });
-    
+
     wx.$TUIKit.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
     wx.$TUIKit.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
 
@@ -122,7 +141,7 @@ App({
     }
     const userSig = result.data.userSig;
     console.log("用户SIG：", userSig);
-    
+
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
     wx.TencentCloudChat = TencentCloudChat;
     wx.$chat_userID = this.globalData.config.userID;

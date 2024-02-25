@@ -22,6 +22,15 @@ exports.main = async (event, context) => {
     event
   })
 
+  app.router('getOpenId', async (ctx) => {
+    ctx.body = {
+      errno: 0,
+      data: {
+        openId: wxContext.OPENID
+      }
+    }
+  })
+
   // 获取用户信息
   app.router('getUserInfo', async (ctx, next) => {
     try {
@@ -79,29 +88,34 @@ exports.main = async (event, context) => {
     }
   })
 
-  //更新学生信息
   app.router('updateUser', async (ctx, next) => {
     try {
-      res = await cloud.openapi.security.msgSecCheck({
-        content: JSON.stringify(event.params)
-      })
-      const { name, rid } = event.params;
-      ctx.body = await userCollection.where({
-        openid: wxContext.OPENID
+      const { name, rid, avatar_url, sex } = event.params;
+      // await cloud.openapi.security.msgSecCheck({
+      //   content: name
+      // })
+      const res = await userCollection.where({
+        _id: wxContext.OPENID
       }).update({
         data: {
           name: name,
           rid: rid,
+          avatar_url,
+          sex,
           update_time: db.serverDate()
         }
       })
-      ctx.body.errno = 0
+      if (!res?.stats?.updated) {
+        throw Error('no such user');
+      } else {
+        ctx.body = { errno: 0 }
+      }
     } catch (e) {
       ctx.body = {
         error: e ?? 'unknown',
         errno: -1,
       }
-      if (e.errCode.toString() === '87014') {
+      if (e?.errCode?.toString() === '87014') {
         ctx.body = {
           errno: 87014
         }

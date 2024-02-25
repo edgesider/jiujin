@@ -101,12 +101,19 @@ Page({
     })
   },
 
-  // 表单相关
   onChangeName(event) {
     this.setData({
       name: event.detail.value
     })
   },
+
+  onChooseAvatar(ev) {
+    const { detail: { avatarUrl } } = ev;
+    this.setData({
+      avatarUrl
+    });
+  },
+
   onRegionPickerChange(event) {
     const columnIndex = event.detail.column; // 被更新的列
     const index = event.detail.value; // 更新的值
@@ -129,12 +136,33 @@ Page({
     return l1L4Pair[1][indexes[1]];
   },
 
+  async uploadAvatar() {
+    const user = await wx.getUserInfo();
+    user.cloudID
+  },
+
   // 提交注册信息
   async onRegister() {
-    const { isEdit, avatarUrl: avatar_url, name, gender: sex } = this.data;
-    const params = {
-      avatar_url, name, sex, rid: this.getSelectedRegion()._id
+    const { isEdit, name, gender: sex } = this.data;
+    let avatar_url = this.data.avatarUrl;
+    if (!/^(cloud|http|https):\/\//.test(avatar_url) || /http:\/\/tmp\//.test(avatar_url)) {
+      const resp = await api.uploadImage(
+        avatar_url,
+        `avatar/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}`
+      );
+      console.log('uploaded', resp.data);
+      if (resp.isError) {
+        await wx.hideLoading();
+        await wx.showToast(({
+          title: '头像上传失败',
+          icon: 'error',
+        }));
+        return;
+      }
+      avatar_url = resp.data;
     }
+
+    const params = { avatar_url, name, sex, rid: this.getSelectedRegion()._id }
     if (!rules.required(params.name)) {
       Dialog.alert({
         title: '格式错误',
@@ -152,11 +180,12 @@ Page({
       await wx.hideLoading()
       console.log("上传用户信息失败！")
       await wx.showToast({
-        title: (isEdit ? '保存' : '注册') + '失败\n' + resp.message,
+        title: (isEdit ? '保存' : '注册') + '失败\n' + JSON.stringify(resp),
         icon: 'error',
       })
       return;
     }
+    await Promise.all([app.fetchSelfInfo(), app.fetchRegions()]);
     wx.hideLoading();
 
     app.globalData.registered = true

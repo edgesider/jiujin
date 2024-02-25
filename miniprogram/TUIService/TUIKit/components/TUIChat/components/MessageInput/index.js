@@ -320,6 +320,7 @@ Component({
     },
 
     handleCommonFunctions(e) {
+      const commodity = app.globalData.config.commodity;
       switch (e.target.dataset.function.key) {
         case '0':
           this.setData({

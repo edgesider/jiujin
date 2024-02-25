@@ -151,7 +151,7 @@ exports.main = async (event, context) => {
       }
       if (keyword && keyword.trim() != '') {
         w = {
-          title: new db.RegExp({
+          content: new db.RegExp({
             regexp: keyword,
             options: 'i'
           }),
@@ -302,6 +302,91 @@ exports.main = async (event, context) => {
       }).update({
         data: {
           status: 0,
+          update_time: db.serverDate(),
+        }
+      })
+      ctx.body = { errno: 0 };
+    } catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e?.errCode?.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
+  // 锁定商品
+  app.router('lockCommodity', async (ctx, next) => {
+    const { _id } = event.params
+    try {
+      await commodityCollection.where({
+        sell_id: wxContext.OPENID,
+        _id: _id,
+        is_deleted: false
+      }).update({
+        data: {
+          status: 3,
+          update_time: db.serverDate(),
+        }
+      })
+      ctx.body = { errno: 0 };
+    } catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e?.errCode?.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
+  // 解锁商品
+  app.router('unlockCommodity', async (ctx, next) => {
+    const { _id } = event.params
+    try {
+      await commodityCollection.where({
+        sell_id: wxContext.OPENID,
+        _id: _id,
+        is_deleted: false,
+        status: 3
+      }).update({
+        data: {
+          status: 0,
+          update_time: db.serverDate(),
+        }
+      })
+      ctx.body = { errno: 0 };
+    } catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e?.errCode?.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
+  // 售出商品
+  app.router('sellCommodity', async (ctx, next) => {
+    const { _id } = event.params
+    try {
+      await commodityCollection.where({
+        sell_id: wxContext.OPENID,
+        _id: _id,
+        is_deleted: false,
+      }).update({
+        data: {
+          status: 2,
           update_time: db.serverDate(),
         }
       })
