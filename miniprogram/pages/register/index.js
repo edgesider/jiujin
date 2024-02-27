@@ -1,7 +1,7 @@
 import Dialog from '@vant/weapp/dialog/dialog';
 import api from "../../api/api";
 import rules from "../../utils/rules";
-import getConstants from "../../constants";
+import getConstants, { GENDER } from "../../constants";
 
 const app = getApp()
 
@@ -185,6 +185,16 @@ Page({
       })
       return;
     }
+    await wx.$TUIKit.updateMyProfile({
+      nick: name,
+      avatar: avatar_url,
+      gender: {
+        [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      }[sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+      allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
+    });
     await Promise.all([app.fetchSelfInfo(), app.fetchRegions()]);
     wx.hideLoading();
 

@@ -54,11 +54,6 @@ Component({
 
   lifetimes: {
     attached() {
-      if (app.globalData && app.globalData.reportType === constant.OPERATING_ENVIRONMENT) {
-        this.setData({
-          showTips: true,
-        });
-      }
       if (app.globalData.config.commodity !== null){
         this.setData({
           showSell: true,

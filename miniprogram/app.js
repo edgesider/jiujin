@@ -6,6 +6,7 @@ import moment from "moment";
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
+import { GENDER } from "./constants";
 
 import axios from 'axios';
 import adapter from 'axios-wechat-adapter';
@@ -50,14 +51,6 @@ App({
       })
     }
 
-    api.getOpenId().then(resp => {
-      if (resp.isError) {
-        console.error('getOpenId failed', resp);
-      } else {
-        this.globalData.openId = resp.data.openId
-      }
-    })
-
     // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
@@ -68,6 +61,9 @@ App({
     })
 
     moment.locale('zh-cn');
+
+    const { data: { openId } } = await api.getOpenId();
+    this.globalData.openId = openId;
 
     // 清空缓存
     wx.clearStorageSync();
@@ -83,12 +79,12 @@ App({
     this._readyWaiters.forEach(waiter => waiter());
   },
 
-  async initTIM(){
-    if (this.globalData.TUIEnabled){
+  async initTIM() {
+    if (this.globalData.TUIEnabled) {
       console.error('私信重复登录！');
       return { errno: -1 };
     }
-    this.globalData.config.userID = 'USER' + this.globalData.self._id;
+    this.globalData.config.userID = 'USER' + this.globalData.openId;
     console.log('私信登录ID: ', this.globalData.config.userID);
 
     wx.TencentCloudChat = TencentCloudChat;
@@ -106,13 +102,16 @@ App({
 
     await this.loginIMWithID(this.globalData.config.userID);
 
-    let promise = wx.$TUIKit.updateMyProfile({
+    wx.$TUIKit.updateMyProfile({
       nick: this.globalData.self.name,
       avatar: this.globalData.self.avatar_url,
-      gender: this.globalData.self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      gender: {
+        [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      }[this.globalData.self.sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
       allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-    });
-    promise.then((imResponse) => {
+    }).then((imResponse) => {
       console.log(imResponse.data); // 更新资料成功
     }).catch((imError) => {
       console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
@@ -124,11 +123,11 @@ App({
   async loginIMWithID(id) {
     console.warn('用户登录ID: ' + id);
 
-    if (wx.$TUIKit.getLoginUser() == id){
+    if (wx.$TUIKit.getLoginUser() == id) {
       return;
     }
 
-    if (wx.$TUIKit.getLoginUser() != ''){
+    if (wx.$TUIKit.getLoginUser() != '') {
       await wx.$TUIKit.logout();
     }
 
