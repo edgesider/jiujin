@@ -125,7 +125,6 @@ exports.main = async (event, context) => {
           }).update({
             data: {
               rid: rid,
-              update_time: db.serverDate()
             }
           })
         }
