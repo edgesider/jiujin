@@ -182,7 +182,7 @@ exports.main = async (event, context) => {
       }
       try {
         ctx.body = await commodityCollection.where(w)
-          .orderBy('create_time', 'desc')
+          .orderBy('update_time', 'desc')
           .skip(start || 0)
           .limit(count)
           .get()
