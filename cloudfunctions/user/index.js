@@ -42,9 +42,9 @@ exports.main = async (event, context) => {
         _id: _id,
         is_deleted: false
       }).get()
-      ctx.body = {data:data?.[0]}
+      ctx.body = { data: data?.[0] }
       ctx.body.errno = ctx.body.data ? 0 : -1
-    }catch(e){
+    } catch (e) {
       ctx.body = {
         error: e?.toString() ?? 'unknown',
         errno: -1
@@ -91,24 +91,44 @@ exports.main = async (event, context) => {
   app.router('updateUser', async (ctx, next) => {
     try {
       const { name, rid, avatar_url, sex } = event.params;
-      // await cloud.openapi.security.msgSecCheck({
-      //   content: name
-      // })
-      const res = await userCollection.where({
-        _id: wxContext.OPENID
-      }).update({
-        data: {
-          name: name,
-          rid: rid,
-          avatar_url,
-          sex,
-          update_time: db.serverDate()
+      let _id = wxContext.OPENID
+      const { data } = await userCollection.where({
+        _id: _id,
+        is_deleted: false
+      }).get()
+      const body = { data: data?.[0] }
+      if (body.data == null) {
+        ctx.body.errno = -1;
+      }
+      else {
+        pre_rid = body.rid
+        const res = await userCollection.where({
+          _id: wxContext.OPENID
+        }).update({
+          data: {
+            name: name,
+            rid: rid,
+            avatar_url,
+            sex,
+            update_time: db.serverDate()
+          }
+        })
+        if (!res?.stats?.updated) {
+          throw Error('no such user');
+        } else {
+          ctx.body = { errno: 0 }
         }
-      })
-      if (!res?.stats?.updated) {
-        throw Error('no such user');
-      } else {
-        ctx.body = { errno: 0 }
+        if (pre_rid != rid) {
+          const res = await commodityCollection.where({
+            sell_id: wxContext.OPENID,
+            rid: pre_rid
+          }).update({
+            data: {
+              rid: rid,
+              update_time: db.serverDate()
+            }
+          })
+        }
       }
     } catch (e) {
       ctx.body = {
