@@ -342,4 +342,38 @@ export const CollectApi = {
       }
     }))
   },
+  async lockCommodity(id){
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'lockCommodity',
+        params: {
+          _id: id
+        },
+      }
+    }))
+  },
+  async unlockCommodity(id){
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'unlockCommodity',
+        params: {
+          _id: id
+        },
+      }
+    }))
+  },
+  async sellCommodity(id, buyer_id){
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'sellCommodity',
+        params: {
+          _id: id,
+          buyer_id
+        },
+      }
+    }))
+  },
 }

@@ -1,11 +1,20 @@
+import { setTabBar } from "../../../utils/other";
+
+const app = getApp();
+
 Page({
   data: {
+    pageIndex: 2,
+    ridToRegion: null,
     config: {
       // currentConversationID
     }
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    setTabBar(this);
+    await app.waitForReady();
+
     const TUIKit = this.selectComponent('#TUIKit');
     TUIKit.init();
 
@@ -13,6 +22,18 @@ Page({
       var user_id = decodeURIComponent(options.id);
       var conversation = TUIKit.selectComponent('#TUIConversation');
       conversation.searchUserID({ detail: { searchUserID: user_id } });
+    }
+  },
+
+  async onShow(){
+    const { currentUser, self } = app.globalData;
+    if (currentUser){
+      await app.loginIMWithID(currentUser);
+      app.globalData.currentUser = null;
+    } else {
+      const user_id = 'USER' + self._id;
+      await app.loginIMWithID(user_id);
+      app.globalData.config.commodity = null;
     }
   },
 

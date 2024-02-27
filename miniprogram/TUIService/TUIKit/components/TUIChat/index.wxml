@@ -11,7 +11,7 @@
   <view class="list-box {{ showTips && 'list-box-notips'}} || {{ showGroupTips && 'list-box-group'}}  || {{ showAll && 'list-box-group-notips'}} ">
     <view wx:if="{{showTips}}" class="safetytips-box">
     <view class="safetytips">
-      <text>【安全提示】本 APP 仅用于体验腾讯云即时通信 IM 产品功能，不可用于业务洽谈与拓展。请勿轻信汇款、中奖等涉及钱款等信息，勿轻易拨打陌生电话，谨防上当受骗。</text>
+      <text>【安全提示】本 APP 仅用于使用腾讯云即时通信 IM 产品功能，不可用于业务洽谈与拓展。请勿轻信汇款、中奖等涉及钱款等信息，勿轻易拨打陌生电话，谨防上当受骗。</text>
       <span class="report" bindtap="handleReport">点此投诉</span>
     </view>
   </view>
@@ -31,6 +31,7 @@
       bind:showMessageErrorImage="showMessageErrorImage"
       bind:handleCall="handleCall"
       bind:inputHeightChange="inputHeightChange"
+      bind:sellCommodity="sellCommodity"
       ></MessageInput>
   </view>
   </view>

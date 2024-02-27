@@ -1,6 +1,7 @@
 import api from "../../api/api";
 import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
 import moment from "moment";
+import { setTabBar } from "../../utils/other";
 
 const app = getApp();
 const COUNT_PER_PAGE = 8
@@ -11,9 +12,14 @@ Page({
     cursor: 0,
     isLoading: false,
     commodityList: [],
+    pageIndex: 3,
+    ridToRegion: null,
   },
 
   async onLoad() {
+    setTabBar(this);
+    await app.waitForReady();
+
     await this.fetchMore();
   },
 
@@ -22,24 +28,22 @@ Page({
     const commodity = this.data.commodityList[idx];
     const id = commodity._id;
     const desc = commodity.content;
-    app.loginIMWithID('REPY' + app.globalData.self._id + id).then(() => {
-      app.globalData.config.commodity = commodity;
-      let promise = wx.$TUIKit.updateMyProfile({
-        nick: app.globalData.self.name + '-' + desc,
-        avatar: app.globalData.self.avatar_url,
-        gender: app.globalData.self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
-        allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-      });
-      promise.then((imResponse) => {
-        console.log(imResponse.data); // 更新资料成功
-      }).catch((imError) => {
-        console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
-      });
-      wx.navigateTo({
-        url: '../../TUIService/pages/tim_index/tim_index',
-      });
-    }).catch((e) => {
-      console.error("私信登录错误： " + e);
+    const user_id = 'REPY' + app.globalData.self._id + id;
+    app.globalData.config.commodity = commodity;
+    let promise = wx.$TUIKit.updateMyProfile({
+      nick: app.globalData.self.name + '-' + desc,
+      avatar: app.globalData.self.avatar_url,
+      gender: app.globalData.self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
+    });
+    promise.then((imResponse) => {
+      console.log(imResponse.data); // 更新资料成功
+    }).catch((imError) => {
+      console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
+    });
+    app.globalData.currentUser = user_id;
+    wx.switchTab({
+      url: `../../TUIService/pages/tim_index/tim_index`,
     });
   },
 

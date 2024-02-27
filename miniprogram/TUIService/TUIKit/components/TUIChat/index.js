@@ -1,6 +1,7 @@
 // TUIKit-WChat/Chat/index.js
 import logger from '../../utils/logger';
 import constant from '../../utils/constant';
+import api from '../../../../api/api';
 // eslint-disable-next-line no-undef
 const app = getApp();
 
@@ -58,6 +59,11 @@ Component({
           showTips: true,
         });
       }
+      if (app.globalData.config.commodity !== null){
+        this.setData({
+          showSell: true,
+        });
+      }
     },
     ready() {
       const query = wx.createSelectorQuery().in(this);
@@ -78,6 +84,7 @@ Component({
     isShow: false,
     showImage: false,
     showChat: true,
+    showSell: false,
     conversationID: '',
     config: {
       sdkAppID: '',
@@ -244,5 +251,18 @@ Component({
         }
       });
     },
+    sellCommodity(event){
+      const { commodity } = app.globalData.config;
+      const user_id = this.data.conversation.userProfile.userID;
+      if (user_id.substr(0, 4) !== 'USER'){
+        wx.showToast({
+          title: '对方不是个人用户，售出失败',
+          icon: 'error',
+          mask: true,
+        });
+        return;
+      }
+      api.sellCommodity(commodity._id, user_id.substr(4));
+    }
   },
 });

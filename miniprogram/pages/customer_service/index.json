@@ -11,5 +11,6 @@
     "TitleBar": "/components/TitleBar/index",
     "CommodityListCard": "/components/CommodityListCard/index"
   },
-  "enablePullDownRefresh": true
+  "enablePullDownRefresh": true,
+  "navigationStyle": "custom"
 }
