@@ -4,7 +4,10 @@
      <image class="tui-navigatorbar-back" bindtap="goBack" src="../../static/assets/ic_back_white.svg" />
      <view class="conversation-title">{{conversationName}}</view>
      <text wx:if="{{conversation.type === 'C2C'}}" class="conversation-user-id" bind:longpress="onCopyUserID">用户ID： {{conversation.userProfile.userID}}</text>
-    </view>
+  </view>
+  <view wx:if="{{showSell}}" class="conversation-commodity" bind:tap="sendCommodityMessage">
+    发送商品：{{commodity.content}}
+  </view>
   <view class="group-profile" wx:if="{{isShow}}">
     <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall" bind:showConversationList="showConversationList"></TUIGroup>
   </view>

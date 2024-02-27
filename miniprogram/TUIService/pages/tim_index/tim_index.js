@@ -17,16 +17,10 @@ Page({
 
     const TUIKit = this.selectComponent('#TUIKit');
     TUIKit.init();
-
-    if (options.id){
-      var user_id = decodeURIComponent(options.id);
-      var conversation = TUIKit.selectComponent('#TUIConversation');
-      conversation.searchUserID({ detail: { searchUserID: user_id } });
-    }
   },
 
   async onShow(){
-    const { currentUser, self } = app.globalData;
+    const { currentUser, targetID, self } = app.globalData;
     if (currentUser){
       await app.loginIMWithID(currentUser);
       app.globalData.currentUser = null;
@@ -34,6 +28,14 @@ Page({
       const user_id = 'USER' + self._id;
       await app.loginIMWithID(user_id);
       app.globalData.config.commodity = null;
+    }
+
+    if (targetID){
+      var user_id = decodeURIComponent(targetID);
+      const TUIKit = this.selectComponent('#TUIKit');
+      var conversation = TUIKit.selectComponent('#TUIConversation');
+      conversation.searchUserID({ detail: { searchUserID: user_id } });
+      app.globalData.targetID = null;
     }
   },
 
