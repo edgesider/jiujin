@@ -135,8 +135,10 @@ Page({
       const user_id = 'USER' + app.globalData.self._id;
       const sell_id = 'REPY' + this.data.commodity.sell_id + this.data.commodity._id;
       const conversation_id = encodeURIComponent('C2C' + sell_id);
-      wx.navigateTo({
-        url: `../../TUIService/pages/tim_index/tim_index?id=${conversation_id}&user=${user_id}`,
+      app.globalData.targetID = conversation_id;
+      app.globalData.currentUser = user_id;
+      wx.switchTab({
+        url: `../../TUIService/pages/tim_index/tim_index`,
       });
     } else {
       await wx.showToast({

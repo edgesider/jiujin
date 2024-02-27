@@ -25,6 +25,7 @@ App({
     TUISDKReady: false,
     totalUnread: 0,
     currentUser: null,
+    targetID: null,
   },
 
   userChangedSubject: new BehaviorSubject(null),
@@ -37,17 +38,6 @@ App({
         env: 'jj-4g1ndtns7f1df442',
         // traceUser: true,
       })
-    }
-
-    this.globalData = {
-      openId: '',
-      config: {
-        userID: '', // User ID
-        commodity: null,
-        SDKAPPID: 1600012697, // Your SDKAppID
-      },
-      TUIEnabled: false,
-      TUISDKReady: false,
     }
 
     api.getOpenId().then(resp => {
