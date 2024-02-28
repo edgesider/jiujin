@@ -12,6 +12,7 @@ const _ = db.command
 
 const commodityCollection = db.collection('commodity')
 const collectionCollection = db.collection('collection')
+const viewedCollection = db.collection('viewed')
 const regionCache = {}
 
 // 云函数入口函数
@@ -378,6 +379,35 @@ exports.main = async (event, context) => {
 
   // 售出商品
   app.router('sellCommodity', async (ctx, next) => {
+    const { _id, buyer_id } = event.params
+    try {
+      await commodityCollection.where({
+        sell_id: wxContext.OPENID,
+        _id: _id,
+        buyer_id: buyer_id,
+        is_deleted: false,
+      }).update({
+        data: {
+          status: 2,
+          selled_time: db.serverDate(),
+        }
+      })
+      ctx.body = { errno: 0 };
+    } catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e?.errCode?.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
+  // 增加浏览记录
+  app.router('viewed_', async (ctx, next) => {
     const { _id, buyer_id } = event.params
     try {
       await commodityCollection.where({
