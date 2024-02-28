@@ -432,7 +432,7 @@ exports.main = async (event, context) => {
       if (!start || start < 0) {
         start = 0;
       }
-      ctx.body = await viewedCollection.aggregate()
+      let data = await viewedCollection.aggregate()
         .match({
           uid: wxContext.OPENID,
           is_deleted: false
@@ -446,6 +446,7 @@ exports.main = async (event, context) => {
         .skip(start)
         .limit(count)
         .end()
+      ctx.body = { data }
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {
