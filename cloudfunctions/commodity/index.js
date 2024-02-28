@@ -392,6 +392,25 @@ exports.main = async (event, context) => {
           selled_time: db.serverDate(),
         }
       })
+
+      await db
+        .collection("user")
+        .doc(buyer_id)
+        .update({
+          data: {
+            total_selled: _.inc(1),
+            update_time: db.serverDate(),
+          }
+        })
+      await db
+        .collection("user")
+        .doc(wxContext.OPENID)
+        .update({
+          data: {
+            total_selled: _.inc(1),
+            update_time: db.serverDate(),
+          }
+        })
       ctx.body = { errno: 0 };
     } catch (e) {
       ctx.body = {

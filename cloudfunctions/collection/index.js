@@ -40,6 +40,15 @@ exports.main = async (event, context) => {
           is_deleted: false
         }
       })
+      await db
+        .collection("user")
+        .doc(wxContext.OPENID)
+        .update({
+          data: {
+            total_release: _.inc(1),
+            update_time: db.serverDate(),
+          }
+        })
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {
@@ -66,6 +75,15 @@ exports.main = async (event, context) => {
           is_deleted: true
         }
       })
+      await db
+        .collection("user")
+        .doc(wxContext.OPENID)
+        .update({
+          data: {
+            total_release: _.inc(-1),
+            update_time: db.serverDate(),
+          }
+        })
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {
