@@ -66,8 +66,10 @@ exports.main = async (event, context) => {
           name: name,
           sex: sex,
           rid: rid,
-          total_transaction: 0,
+          total_selled: 0,
           total_release: 0,
+          total_bought: 0,
+          total_collect: 0,
           create_time: db.serverDate(),
           update_time: db.serverDate(),
           is_deleted: false
