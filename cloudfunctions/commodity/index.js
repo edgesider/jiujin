@@ -409,7 +409,7 @@ exports.main = async (event, context) => {
   // 增加浏览记录
   app.router('viewed_commodity', async (ctx, next) => {
     try {
-      const { cid} = event.params;
+      const { cid } = event.params;
       ctx.body = await userCollection.add({
         data: {
           uid: wxContext.OPENID,
