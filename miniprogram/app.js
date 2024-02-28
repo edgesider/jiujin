@@ -6,6 +6,17 @@ import moment from "moment";
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
+import { GENDER } from "./constants";
+
+import axios from 'axios';
+import adapter from 'axios-wechat-adapter';
+
+const IMAxios = axios.create({
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  },
+});
 
 App({
   _ready: false,
@@ -25,6 +36,7 @@ App({
     TUISDKReady: false,
     totalUnread: 0,
     currentUser: null,
+    targetID: null,
   },
 
   userChangedSubject: new BehaviorSubject(null),
@@ -39,25 +51,6 @@ App({
       })
     }
 
-    this.globalData = {
-      openId: '',
-      config: {
-        userID: '', // User ID
-        commodity: null,
-        SDKAPPID: 1600012697, // Your SDKAppID
-      },
-      TUIEnabled: false,
-      TUISDKReady: false,
-    }
-
-    api.getOpenId().then(resp => {
-      if (resp.isError) {
-        console.error('getOpenId failed', resp);
-      } else {
-        this.globalData.openId = resp.data.openId
-      }
-    })
-
     // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
@@ -68,6 +61,9 @@ App({
     })
 
     moment.locale('zh-cn');
+
+    const { data: { openId } } = await api.getOpenId();
+    this.globalData.openId = openId;
 
     // 清空缓存
     wx.clearStorageSync();
@@ -83,14 +79,15 @@ App({
     this._readyWaiters.forEach(waiter => waiter());
   },
 
-  async initTIM(){
-    if (this.globalData.TUIEnabled){
+  async initTIM() {
+    if (this.globalData.TUIEnabled) {
       console.error('私信重复登录！');
       return { errno: -1 };
     }
-    this.globalData.config.userID = 'USER' + this.globalData.self._id;
+    this.globalData.config.userID = 'USER' + this.globalData.openId;
     console.log('私信登录ID: ', this.globalData.config.userID);
 
+    wx.TencentCloudChat = TencentCloudChat;
     wx.$TUIKit = TencentCloudChat.create({
       SDKAppID: this.globalData.config.SDKAPPID,
     });
@@ -98,34 +95,39 @@ App({
     wx.$TUIKit.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
     wx.$TUIKit.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
 
+    // 监听系统级事件
+    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.SDK_READY, this.onSDKReady, this);
+    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
+    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
+
     await this.loginIMWithID(this.globalData.config.userID);
 
-    let promise = wx.$TUIKit.updateMyProfile({
+    wx.$TUIKit.updateMyProfile({
       nick: this.globalData.self.name,
       avatar: this.globalData.self.avatar_url,
-      gender: this.globalData.self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      gender: {
+        [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      }[this.globalData.self.sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
       allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-    });
-    promise.then((imResponse) => {
+    }).then((imResponse) => {
       console.log(imResponse.data); // 更新资料成功
     }).catch((imError) => {
       console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
     });
 
-    // 监听系统级事件
-    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.SDK_READY, this.onSDKReady, this);
-    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
     this.globalData.TUIEnabled = true;
   },
 
   async loginIMWithID(id) {
     console.warn('用户登录ID: ' + id);
 
-    if (wx.$TUIKit.getLoginUser() == id){
+    if (wx.$TUIKit.getLoginUser() == id) {
       return;
     }
 
-    if (wx.$TUIKit.getLoginUser() != ''){
+    if (wx.$TUIKit.getLoginUser() != '') {
       await wx.$TUIKit.logout();
     }
 
@@ -143,7 +145,6 @@ App({
     console.log("用户SIG：", userSig);
 
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
-    wx.TencentCloudChat = TencentCloudChat;
     wx.$chat_userID = this.globalData.config.userID;
     wx.$chat_userSig = userSig;
     wx.$TUIKit.login({
@@ -168,11 +169,15 @@ App({
     this.globalData.totalUnread = event.data;
   },
 
-  /*
+  onMessageReceived(event) {
+    console.log(event.data);
+  },
+
   getAccessToken() {
-    let appid = 'wxc89ea56f592e89c4';
-    let secret = ''; // 小程序唯一凭证密钥，即 AppSecret
-    let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`;
+    let APPID = 'wxc89ea56f592e89c4';
+    // 注意：仅用于测试，上线时需要转移至后端
+    const SECRETKEY = '0e3f256c7f3e15d4f1d29ea274d8f5e1572a73f4ef2ab9e8d8d7e6c2525f737c';
+    let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRETKEY}`;
     return new Promise(function(resolve, reject) {
       IMAxios({
         url: url,
@@ -212,26 +217,32 @@ App({
       pushToUser({
         access_token: accessToken,
         touser: this.self._id,
-        template_id: '',
+        template_id: 'IHHmCTUl9XTY1PKLbQ9KBcrtuGEy836_8OqBAeZyuqg',
         // 模板数据格式跟用户选择的模板有关，以下数据结构仅供参考
         data: {
-          thing16: {
-            value: msg.fromAccount,
-          },
-          time3: {
-            value: msg.datetime,
-          },
-          phrase8: {
-            value: msg.type,
+          name1: {
+            value: msg.name,
           },
           thing2: {
-            value: msg.content,
+            value: msg.message,
+          },
+          time3: {
+            value: msg.time,
+          },
+          thing10: {
+            value: msg.commodity,
           },
         }
       });
     });
   },
-  */
+
+  decodeReplyID(replyID){
+    return {
+      openid: replyID.substr(4, 32),
+      commodity: replyID.substr(32),
+    }
+  },
 
   async fetchSelfInfo() {
     // 查询用户是否已经注册

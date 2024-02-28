@@ -31,13 +31,13 @@
         "pagePath": "pages/home/index"
       },
       {
-        "pagePath": "pages/me/index"
-      },
-      {
         "pagePath": "TUIService/pages/tim_index/tim_index"
       },
       {
         "pagePath": "pages/customer_service/index"
+      },
+      {
+        "pagePath": "pages/me/index"
       }
     ]
   },

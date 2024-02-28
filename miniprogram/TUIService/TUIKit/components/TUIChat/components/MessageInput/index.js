@@ -104,7 +104,7 @@ Component({
       });
 
       const { commodity } = app.globalData.config;
-      console.warn('attached', commodity);
+      //console.warn('attached', commodity);
       if (commodity !== null){
         this.setData({
           commonFunction: [
