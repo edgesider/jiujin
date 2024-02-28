@@ -1,5 +1,4 @@
 import api from './api/api';
-import cache from "./cache/cache"
 import { BehaviorSubject } from "rxjs";
 import moment from "moment";
 
@@ -9,7 +8,6 @@ import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
 import { GENDER } from "./constants";
 
 import axios from 'axios';
-import adapter from 'axios-wechat-adapter';
 
 const IMAxios = axios.create({
   timeout: 10000,
