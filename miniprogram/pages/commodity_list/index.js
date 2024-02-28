@@ -12,7 +12,6 @@ Page({
     commodityList: [],
 
     title: '',
-    cardType: 'mine',
     currTab: '',
     tabs: [],
   },
@@ -21,7 +20,7 @@ Page({
   async onLoad() {
     this.getOpenerEventChannel().on(
       'onParams',
-      async ({ title, tabs, defaultTab, cardType, fetcher, onClick } = {}) => {
+      async ({ title, tabs, defaultTab, fetcher, onClick } = {}) => {
         if (!fetcher) {
           throw Error('fetcher is required');
         }
@@ -31,7 +30,6 @@ Page({
         this.fetcher = fetcher;
         this.setData({
           tabs, title, currTab: defaultTab || tabs?.[0]?.key,
-          cardType,
         });
         await this.fetchMore();
       });

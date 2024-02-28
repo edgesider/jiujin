@@ -85,7 +85,6 @@ Page({
             { key: 'sold', text: '已售出' },
           ],
           currTab: 'selling',
-          cardType: 'mine',
           fetcher: async ({ start, count, currTab }) => {
             const statusMap = {
               selling: COMMODITY_STATUS_SELLING,
@@ -206,7 +205,6 @@ Page({
       success: res => {
         res.eventChannel.emit('onParams', {
           title: '我买到的',
-          cardType: 'bought',
           api: 'starred',
           fetcher: async ({ start, count }) => {
             const resp = await api.getCommodityList({

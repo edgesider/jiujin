@@ -22,7 +22,6 @@
     wx:key="_id"
     class="card"
     commodity="{{commodity}}"
-    type="{{cardType || 'mine'}}"
     bind:onClickCard="onClickCard"
     bind:onPolish="onPolish"
     bind:onOff="onOff"

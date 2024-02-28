@@ -49,10 +49,10 @@
           <text class="icon {{commodity.is_collected ? 'cuIcon-likefill' : 'cuIcon-like'}}"></text>
           <text class="text">收藏</text>
         </view>
-        <view class="button">
-          <text class="icon cuIcon-warn"></text>
-          <text class="text">举报</text>
-        </view>
+        <!--        <view class="button">-->
+        <!--          <text class="icon cuIcon-warn"></text>-->
+        <!--          <text class="text">举报</text>-->
+        <!--        </view>-->
       </view>
       <view class="right">
         <block wx:if="{{isMine}}">

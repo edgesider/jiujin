@@ -19,6 +19,7 @@ Component({
     COMMODITY_STATUS_SELLING,
     COMMODITY_STATUS_OFF,
     COMMODITY_STATUS_SOLD,
+    self: null,
     desc: '',
     createTime: '',
     soldTime: '',
@@ -67,6 +68,7 @@ Component({
         content = content.substring(0, content.indexOf('\n')) // 从第一个回车截断
       }
       this.setData({
+        self: app.globalData.self,
         desc: content,
         createTime: new Date(create_time).toLocaleString(),
         soldTime: selled_time && new Date(selled_time).toLocaleString() || '',
