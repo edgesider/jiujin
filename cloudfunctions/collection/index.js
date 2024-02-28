@@ -24,7 +24,7 @@ exports.main = async (event, context) => {
       const { cid } = event.params;
       const countResult = await commodityCollection.where({
         is_deleted: false,
-        cid: cid,
+        _id: cid,
       }).count()
       if (countResult.total === 0) {
         ctx.body = {
@@ -37,7 +37,8 @@ exports.main = async (event, context) => {
         data: {
           uid: wxContext.OPENID,
           cid: cid,
-          is_deleted: false
+          create_time: db.serverDate(),
+          is_deleted: false,
         }
       })
       await db
@@ -45,7 +46,7 @@ exports.main = async (event, context) => {
         .doc(wxContext.OPENID)
         .update({
           data: {
-            total_: _.inc(1),
+            total_collect: _.inc(1),
             update_time: db.serverDate(),
           }
         })
@@ -54,12 +55,6 @@ exports.main = async (event, context) => {
       ctx.body = {
         error: e ?? 'unknown',
         errno: -1
-      }
-      if (e.errCode.toString() === '87014') {
-        ctx.body = {
-          error: e ?? 'unknown',
-          errno: 87014
-        }
       }
     }
   })
@@ -80,7 +75,7 @@ exports.main = async (event, context) => {
         .doc(wxContext.OPENID)
         .update({
           data: {
-            total_release: _.inc(-1),
+            total_collect: _.inc(-1),
             update_time: db.serverDate(),
           }
         })
@@ -89,12 +84,6 @@ exports.main = async (event, context) => {
       ctx.body = {
         error: e ?? 'unknown',
         errno: -1
-      }
-      if (e.errCode.toString() === '87014') {
-        ctx.body = {
-          error: e ?? 'unknown',
-          errno: 87014
-        }
       }
     }
   })
@@ -115,6 +104,9 @@ exports.main = async (event, context) => {
           localField: 'cid',
           foreignField: '_id',
           as: 'commodityInfoList'
+        })
+        .sort({
+          create_time: -1
         })
         .skip(start)
         .limit(count)

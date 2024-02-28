@@ -8,19 +8,19 @@
   </view>
   <view class="padding flex text-center text-grey bg-white shadow-warp">
     <view class="flex flex-sub flex-direction solid-right" bindtap="onClickMyBought">
-      <view class="text-xxl text-blue">{{selfInfo.total_transaction}}</view>
+      <view class="text-xxl text-blue">{{selfInfo.total_bought || 0}}</view>
       <view class="margin-top-sm">
         我买到的
       </view>
     </view>
     <view class="flex flex-sub flex-direction" bindtap="onClickMyCommodity">
-      <view class="text-xxl text-green">{{selfInfo.total_release}}</view>
+      <view class="text-xxl text-green">{{selfInfo.total_release || 0}}</view>
       <view class="margin-top-sm">
         我发布的
       </view>
     </view>
     <view class="flex flex-sub flex-direction" bindtap="onClickMyStarred">
-      <view class="text-xxl text-green">{{selfInfo.total_starred || 0}}</view>
+      <view class="text-xxl text-green">{{selfInfo.total_collect || 0}}</view>
       <view class="margin-top-sm">
         我收藏的
       </view>
