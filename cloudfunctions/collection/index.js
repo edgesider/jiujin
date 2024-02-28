@@ -8,7 +8,7 @@ cloud.init({
 const TcbRouter = require('tcb-router')
 
 const db = cloud.database()
-
+const _ = db.command
 const collectionCollection = db.collection('collection')
 const commodityCollection = db.collection('commodity')
 
@@ -45,7 +45,7 @@ exports.main = async (event, context) => {
         .doc(wxContext.OPENID)
         .update({
           data: {
-            total_release: _.inc(1),
+            total_: _.inc(1),
             update_time: db.serverDate(),
           }
         })
