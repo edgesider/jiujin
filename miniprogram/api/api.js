@@ -235,6 +235,58 @@ const api = {
     }
     return new RespSuccess(res.fileID);
   },
+
+  async lockCommodity(id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'lockCommodity',
+        params: {
+          _id: id
+        },
+      }
+    }))
+  },
+  async unlockCommodity(id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'unlockCommodity',
+        params: {
+          _id: id
+        },
+      }
+    }))
+  },
+  async sellCommodity(id, buyer_id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'sellCommodity',
+        params: {
+          _id: id,
+          buyer_id
+        },
+      }
+    }))
+  },
+
+  async getMyViewed(start, count) {
+  },
+  async getMyBought(start, count) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'getCommodityList',
+        params: {
+          buyer_id: getApp().globalData.openId,
+          orderBy: 'update_time',
+          order: 'desc',
+          start, count,
+        },
+      }
+    }));
+  },
 }
 
 export default api;
@@ -312,6 +364,9 @@ export const CommentAPI = {
   },
 }
 
+/**
+ * 收藏相关的API
+ */
 export const CollectApi = {
   async collect(cid) {
     return wrapResponse(await wx.cloud.callFunction({
@@ -332,7 +387,7 @@ export const CollectApi = {
     }))
   },
   async getAll(start, count) {
-    return wrapResponse(await wx.cloud.callFunction({
+    const resp = wrapResponse(await wx.cloud.callFunction({
       name: 'collection',
       data: {
         $url: 'getCollection',
@@ -341,39 +396,13 @@ export const CollectApi = {
         },
       }
     }))
-  },
-  async lockCommodity(id){
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'lockCommodity',
-        params: {
-          _id: id
-        },
+    if (!resp.isError) {
+      const list = []
+      for (const item of resp.data.list) {
+        list.push(...item.commodityInfoList);
       }
-    }))
-  },
-  async unlockCommodity(id){
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'unlockCommodity',
-        params: {
-          _id: id
-        },
-      }
-    }))
-  },
-  async sellCommodity(id, buyer_id){
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'sellCommodity',
-        params: {
-          _id: id,
-          buyer_id
-        },
-      }
-    }))
+      resp.data = list;
+    }
+    return resp;
   },
 }

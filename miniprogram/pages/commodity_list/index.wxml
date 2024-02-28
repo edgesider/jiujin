@@ -1,7 +1,7 @@
-<TitleBar title="我的商品" class="title-bar" />
+<TitleBar title="{{title}}" class="title-bar" />
 <view style="width: 100%; height: {{CustomBar}}px" />
 
-<view class="tabs">
+<view class="tabs" wx:if="{{tabs && tabs.length > 0}}">
   <view
     class="tab {{currTab === tab.key ? 'selected' : ''}}"
     bind:tap="onSwitchTab"
@@ -22,6 +22,8 @@
     wx:key="_id"
     class="card"
     commodity="{{commodity}}"
+    type="{{cardType || 'mine'}}"
+    bind:onClickCard="onClickCard"
     bind:onPolish="onPolish"
     bind:onOff="onOff"
     bind:onEdit="onEdit"
