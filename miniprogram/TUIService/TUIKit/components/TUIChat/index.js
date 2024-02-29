@@ -1,7 +1,7 @@
 // TUIKit-WChat/Chat/index.js
 import logger from '../../utils/logger';
 import constant from '../../utils/constant';
-import api from '../../../../api/api';
+import api, { CollectApi } from '../../../../api/api';
 // eslint-disable-next-line no-undef
 const app = getApp();
 
@@ -279,7 +279,7 @@ Component({
         });
         return;
       }
-      api.sellCommodity(commodity._id, user_id.substr(4));
+      CollectApi.sellCommodity(commodity._id, user_id.substr(4));
     }
   },
 });

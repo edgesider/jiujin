@@ -265,6 +265,12 @@ Page({
     return registered;
   },
 
+  onToggleMyCollect(e){
+    wx.navigateTo({
+      url: '../commodity_collect/index',
+    })
+  },
+
   copyLink(e) {
     wx.setClipboardData({
       data: e.currentTarget.dataset.link,

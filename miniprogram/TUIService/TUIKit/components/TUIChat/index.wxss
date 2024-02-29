@@ -116,6 +116,11 @@
   overflow: hidden;
 }
 
+.conversation-commodity image {
+  width: 80rpx;
+  height: 80rpx;
+}
+
 .list-box {
   height: 0;
   flex: 1;

@@ -1,0 +1,29 @@
+<TitleBar title="我的收藏" class="title-bar" />
+
+<view style="width: 100%; height: {{CustomBar}}px" />
+
+<view class="list">
+  <view
+    wx:for="{{commodityList}}"
+    wx:for-item="commodity"
+    wx:for-index="idx"
+    wx:key="_id"
+    class="root"
+    commodity="{{commodity}}">
+
+    <view class="left" bind:tap="gotoDetail">
+      <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}" />
+    </view>
+
+    <view class="middle" bind:tap="gotoDetail" data-idx="{{idx}}">
+      <view class="title">{{commodity.content}}</view>
+      <view>
+        <view class="create-time">发布于：{{commodity.create_time}}</view>
+        <view class="polish-at">上次擦亮：{{commodity.update_time}}</view>
+      </view>
+      <view class="price">￥{{commodity.price}}</view>
+    </view>
+  </view>
+</view>
+
+<view class="cu-load {{isLoading ? 'loading' : 'over'}}"></view>

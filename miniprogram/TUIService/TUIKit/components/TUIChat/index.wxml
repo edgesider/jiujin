@@ -8,6 +8,7 @@
     </text>
   </view>
   <view wx:if="{{showSell}}" class="conversation-commodity" bind:tap="sendCommodityMessage">
+    <image src="{{commodity.img_urls[0]}}"></image>
     发送商品：{{commodity.content}}
   </view>
   <view class="group-profile" wx:if="{{isShow}}">

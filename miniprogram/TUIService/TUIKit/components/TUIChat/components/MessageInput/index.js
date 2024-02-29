@@ -1,6 +1,6 @@
 import logger from '../../../../utils/logger';
 import constant from '../../../../utils/constant';
-import api from '../../../../../../api/api';
+import api, { CollectApi } from '../../../../../../api/api';
 
 var app = getApp();
 
@@ -362,13 +362,28 @@ Component({
           });
           break;
         case '3': // 锁定
-          api.lockCommodity(commodity._id);
+          CollectApi.lockCommodity(commodity._id);
+          wx.showToast({
+            title: '锁定成功',
+            duration: 800,
+            icon: 'success',
+          });
           break;
         case '4': // 解锁
-          api.unlockCommodity(commodity._id);
+          CollectApi.unlockCommodity(commodity._id);
+          wx.showToast({
+            title: '解锁成功',
+            duration: 800,
+            icon: 'success',
+          });
           break;
         case '5': // 售出
           this.triggerEvent('sellCommodity');
+          wx.showToast({
+            title: '售出成功',
+            duration: 800,
+            icon: 'success',
+          });
           break;
         default:
           break;
