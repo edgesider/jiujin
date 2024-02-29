@@ -14,6 +14,7 @@ const userCollection = db.collection('user')
 const commodityCollection = db.collection('commodity')
 const transactionCollection = db.collection('transaction')
 
+const RID_MODIFICATION_MIN_DURATION = 1000 * 60 * 60 * 24; // 修改RID的最小时间
 
 // 云函数入口函数
 exports.main = async (event, context) => {
@@ -42,9 +43,9 @@ exports.main = async (event, context) => {
         _id: _id,
         is_deleted: false
       }).get()
-      ctx.body = {data:data?.[0]}
+      ctx.body = { data: data?.[0] }
       ctx.body.errno = ctx.body.data ? 0 : -1
-    }catch(e){
+    } catch (e) {
       ctx.body = {
         error: e?.toString() ?? 'unknown',
         errno: -1
@@ -66,8 +67,10 @@ exports.main = async (event, context) => {
           name: name,
           sex: sex,
           rid: rid,
-          total_transaction: 0,
+          total_selled: 0,
           total_release: 0,
+          total_bought: 0,
+          total_collect: 0,
           create_time: db.serverDate(),
           update_time: db.serverDate(),
           is_deleted: false
@@ -79,7 +82,7 @@ exports.main = async (event, context) => {
         error: e ?? 'unknown',
         errno: -1
       }
-      if (e.errCode.toString() === '87014') {
+      if (e?.errCode?.toString() === '87014') {
         ctx.body = {
           error: e ?? 'unknown',
           errno: 87014
@@ -91,23 +94,54 @@ exports.main = async (event, context) => {
   app.router('updateUser', async (ctx, next) => {
     try {
       const { name, rid, avatar_url, sex } = event.params;
-      // await cloud.openapi.security.msgSecCheck({
-      //   content: name
-      // })
-      const res = await userCollection.where({
-        _id: wxContext.OPENID
-      }).update({
-        data: {
-          name: name,
-          rid: rid,
-          avatar_url,
-          sex,
-          update_time: db.serverDate()
-        }
-      })
-      if (!res?.stats?.updated) {
-        throw Error('no such user');
+      const { data } = await userCollection.where({
+        _id: wxContext.OPENID,
+        is_deleted: false
+      }).get()
+      const oldUser = data?.[0];
+      if (oldUser == null) {
+        ctx.body = { errno: -1, error: 'no such user' };
+        ctx.body.errno = -1;
       } else {
+        const ridChanged = oldUser.rid !== rid;
+        const ridLastModifiedTime = oldUser._rid_modified_time;
+        if (ridChanged && ridLastModifiedTime && ridLastModifiedTime.getTime() - Date.now() < RID_MODIFICATION_MIN_DURATION) {
+          ctx.body = {
+            errno: -2,
+            error: 'rid modification too frequent',
+          };
+          return;
+        }
+        const res = await userCollection.where({
+          _id: wxContext.OPENID
+        }).update({
+          data: {
+            name: name,
+            rid: rid,
+            avatar_url,
+            sex,
+            _rid_modified_time: ridChanged ? db.serverDate() : oldUser._rid_modified_time,
+            update_time: db.serverDate()
+          }
+        })
+        if (!res?.stats?.updated) {
+          ctx.body = {
+            errno: -1,
+            error: 'no such user'
+          }
+          return;
+        }
+        if (ridChanged) {
+          // 更新所有商品
+          await commodityCollection.where({
+            sell_id: wxContext.OPENID,
+            rid: oldUser.rid
+          }).update({
+            data: {
+              rid: rid,
+            }
+          })
+        }
         ctx.body = { errno: 0 }
       }
     } catch (e) {

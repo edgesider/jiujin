@@ -12,6 +12,7 @@ const _ = db.command
 
 const commodityCollection = db.collection('commodity')
 const collectionCollection = db.collection('collection')
+const viewedCollection = db.collection('viewed')
 const regionCache = {}
 
 // 云函数入口函数
@@ -105,7 +106,7 @@ exports.main = async (event, context) => {
         regionCache[r._id] = result
       }
     }
-    let { _id, rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
+    let { _id, rid, cid, keyword, sell_id, buyer_id, sex, status, start, count, orderBy, order } = event.params
     const _ = db.command
     // 特殊情况，获取商品详情，需要额外一个字段，是否已收藏
     if (_id) {
@@ -180,9 +181,13 @@ exports.main = async (event, context) => {
       if (!start || start < 0) {
         start = 0;
       }
+      orderBy = orderBy || 'update_time';
+      if (!order || order !== 'desc' || order !== 'asc') {
+        order = 'desc';
+      }
       try {
         ctx.body = await commodityCollection.where(w)
-          .orderBy('create_time', 'desc')
+          .orderBy(orderBy, order)
           .skip(start || 0)
           .limit(count)
           .get()
@@ -388,9 +393,28 @@ exports.main = async (event, context) => {
       }).update({
         data: {
           status: 2,
-          update_time: db.serverDate(),
+          selled_time: db.serverDate(),
         }
       })
+
+      await db
+        .collection("user")
+        .doc(buyer_id)
+        .update({
+          data: {
+            total_selled: _.inc(1),
+            update_time: db.serverDate(),
+          }
+        })
+      await db
+        .collection("user")
+        .doc(wxContext.OPENID)
+        .update({
+          data: {
+            total_selled: _.inc(1),
+            update_time: db.serverDate(),
+          }
+        })
       ctx.body = { errno: 0 };
     } catch (e) {
       ctx.body = {
@@ -405,6 +429,54 @@ exports.main = async (event, context) => {
     }
   })
 
+  // 增加浏览记录
+  app.router('viewed_commodity', async (ctx, next) => {
+    try {
+      const { cid } = event.params;
+      ctx.body = await userCollection.add({
+        data: {
+          uid: wxContext.OPENID,
+          cid: cid,
+          viewed_time: db.serverDate(),
+        }
+      })
+      ctx.body.errno = 0
+    } catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1
+      }
+    }
+  })
+
+  app.router('getViewed', async (ctx, next) => {
+    try {
+      let { start, count } = event.params
+      if (!start || start < 0) {
+        start = 0;
+      }
+      let data = await viewedCollection.aggregate()
+        .match({
+          uid: wxContext.OPENID,
+          is_deleted: false
+        })
+        .lookup({
+          from: 'commodity',
+          localField: 'cid',
+          foreignField: '_id',
+          as: 'commodityInfoList'
+        })
+        .skip(start)
+        .limit(count)
+        .end()
+      ctx.body = { data }
+      ctx.body.errno = 0
+    } catch (e) {
+      ctx.body = {
+        errno: -1
+      }
+    }
+  })
   // 图片安全校验
   app.router('imgSecCheck', async (ctx, next) => {
     params = event.params

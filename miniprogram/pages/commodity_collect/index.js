@@ -12,22 +12,22 @@ Page({
     cursor: 0,
     isLoading: false,
     commodityList: [],
-    //pageIndex: 3,
     ridToRegion: null,
   },
 
   async onLoad() {
-    setTabBar(this);
     await app.waitForReady();
-
     await this.fetchMore();
   },
 
-  onEnter(res){
+  gotoDetail(res){
     const idx = res.currentTarget.dataset.idx;
     const commodity = this.data.commodityList[idx];
     const id = commodity._id;
     // 进入商品页面
+    wx.navigateTo({
+      url: `../commodity_detail/index?id=${id}`
+    });
   },
 
   async fetchMore() {

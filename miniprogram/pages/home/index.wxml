@@ -5,7 +5,6 @@
   <view class="search" bindtap="onTitleClick">
     <input
       type="text"
-      placeholder="搜索"
       confirm-type="search"
       bindinput="onSearchInput"
       bindconfirm="onSearchCommodity" />

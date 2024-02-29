@@ -24,7 +24,7 @@
           value="{{name}}"
           placeholder="请输入昵称"
           type="nickname"
-          bindinput="onChangeName"/>
+          bindinput="onChangeName" />
       </view>
       <!-- <view class="cu-form-group">
 				<view class="title">微信联系方式</view>
@@ -36,8 +36,13 @@
 			</view> -->
       <view class="cu-form-group">
         <view class="title">常用位置</view>
-        <picker mode="multiSelector" bindcolumnchange="onRegionPickerChange" value="{{indexes}}" range="{{l1L4Pair}}"
-                range-key="{{'name'}}">
+        <picker
+          mode="multiSelector"
+          bindcolumnchange="onRegionPickerChange"
+          bindchange="onRegionPickerConfirm"
+          value="{{indexes}}"
+          range="{{l1L4Pair}}"
+          range-key="{{'name'}}">
           <view class="picker">
             {{l1L4Pair[0][indexes[0]].name}}，{{l1L4Pair[1][indexes[1]].name}}
           </view>

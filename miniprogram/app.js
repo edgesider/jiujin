@@ -1,14 +1,13 @@
 import api from './api/api';
-import cache from "./cache/cache"
 import { BehaviorSubject } from "rxjs";
 import moment from "moment";
 
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
+import { GENDER } from "./constants";
 
 import axios from 'axios';
-import adapter from 'axios-wechat-adapter';
 
 const IMAxios = axios.create({
   timeout: 10000,
@@ -22,6 +21,7 @@ App({
   _readyWaiters: [],
   globalData: {
     registered: false,
+    openId: null,
     self: null,
     ridToRegion: null,
     StatusBar: 0,
@@ -50,14 +50,6 @@ App({
       })
     }
 
-    api.getOpenId().then(resp => {
-      if (resp.isError) {
-        console.error('getOpenId failed', resp);
-      } else {
-        this.globalData.openId = resp.data.openId
-      }
-    })
-
     // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
@@ -68,6 +60,9 @@ App({
     })
 
     moment.locale('zh-cn');
+
+    const { data: { openId } } = await api.getOpenId();
+    this.globalData.openId = openId;
 
     // 清空缓存
     wx.clearStorageSync();
@@ -83,12 +78,12 @@ App({
     this._readyWaiters.forEach(waiter => waiter());
   },
 
-  async initTIM(){
-    if (this.globalData.TUIEnabled){
+  async initTIM() {
+    if (this.globalData.TUIEnabled) {
       console.error('私信重复登录！');
       return { errno: -1 };
     }
-    this.globalData.config.userID = 'USER' + this.globalData.self._id;
+    this.globalData.config.userID = 'USER' + this.globalData.openId;
     console.log('私信登录ID: ', this.globalData.config.userID);
 
     wx.TencentCloudChat = TencentCloudChat;
@@ -106,13 +101,16 @@ App({
 
     await this.loginIMWithID(this.globalData.config.userID);
 
-    let promise = wx.$TUIKit.updateMyProfile({
+    wx.$TUIKit.updateMyProfile({
       nick: this.globalData.self.name,
       avatar: this.globalData.self.avatar_url,
-      gender: this.globalData.self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      gender: {
+        [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      }[this.globalData.self.sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
       allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-    });
-    promise.then((imResponse) => {
+    }).then((imResponse) => {
       console.log(imResponse.data); // 更新资料成功
     }).catch((imError) => {
       console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
@@ -124,11 +122,11 @@ App({
   async loginIMWithID(id) {
     console.warn('用户登录ID: ' + id);
 
-    if (wx.$TUIKit.getLoginUser() == id){
+    if (wx.$TUIKit.getLoginUser() == id) {
       return;
     }
 
-    if (wx.$TUIKit.getLoginUser() != ''){
+    if (wx.$TUIKit.getLoginUser() != '') {
       await wx.$TUIKit.logout();
     }
 
@@ -177,7 +175,7 @@ App({
   getAccessToken() {
     let APPID = 'wxc89ea56f592e89c4';
     // 注意：仅用于测试，上线时需要转移至后端
-    const SECRETKEY = '0e3f256c7f3e15d4f1d29ea274d8f5e1572a73f4ef2ab9e8d8d7e6c2525f737c';
+    const SECRETKEY = '87c21b1a1e9cfe7e57b32a1ccb9508ac';
     let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRETKEY}`;
     return new Promise(function(resolve, reject) {
       IMAxios({

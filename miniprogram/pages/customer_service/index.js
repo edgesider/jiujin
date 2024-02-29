@@ -1,5 +1,5 @@
 import api from "../../api/api";
-import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
+import getConstants from "../../constants";
 import moment from "moment";
 import { setTabBar } from "../../utils/other";
 
@@ -23,7 +23,7 @@ Page({
     await this.fetchMore();
   },
 
-  onEnter(res){
+  onEnter(res) {
     const idx = res.currentTarget.dataset.idx;
     const commodity = this.data.commodityList[idx];
     const id = commodity._id;
@@ -70,7 +70,7 @@ Page({
       return;
     }
     const { data } = resp;
-    for (var i = 0; i < data.length; i++){
+    for (var i = 0; i < data.length; i++) {
       data[i].status = null;
       data[i].create_time = new Date(data[i].create_time).toLocaleDateString();
       data[i].update_time = moment(data[i].update_time).fromNow();

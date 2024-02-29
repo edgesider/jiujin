@@ -1,8 +1,7 @@
 import api, { CollectApi } from "../../api/api";
-import { tryJsonParse } from "../../utils/other";
 import { sleep, splitMillisecondsToString } from "../../utils/time";
 import { setNeedRefresh } from "../home/index";
-import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
+import getConstants from "../../constants";
 
 const app = getApp();
 const DURATION_IN_FEED = 1000 * 60 * 60 * 24 * 2;

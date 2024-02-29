@@ -1,7 +1,6 @@
 import { setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
 import Dialog from '@vant/weapp/dialog/dialog';
-import { getQualitiesMap } from "../../utils/strings";
 import api from "../../api/api";
 
 const app = getApp()
@@ -50,7 +49,7 @@ Page({
       Dialog.alert({ message: e, });
       console.error(e);
     } finally {
-      this.setData({ isLoading: false })
+      this.setData({ isLoading: false });
     }
   },
 

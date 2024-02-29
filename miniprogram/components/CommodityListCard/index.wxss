@@ -29,13 +29,13 @@
   align-items: stretch;
 }
 
-.middle .create-time {
+.middle .hint-line1 {
   margin: 4px 0 0;
   font-size: 11px;
   color: rgba(0, 0, 0, .5);
 }
 
-.middle .polish-at {
+.middle .hint-line2 {
   font-size: 11px;
   color: rgba(0, 0, 0, .5);
 }

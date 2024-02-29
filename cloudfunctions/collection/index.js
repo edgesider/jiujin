@@ -8,7 +8,7 @@ cloud.init({
 const TcbRouter = require('tcb-router')
 
 const db = cloud.database()
-
+const _ = db.command
 const collectionCollection = db.collection('collection')
 const commodityCollection = db.collection('commodity')
 
@@ -37,20 +37,24 @@ exports.main = async (event, context) => {
         data: {
           uid: wxContext.OPENID,
           cid: cid,
-          is_deleted: false
+          create_time: db.serverDate(),
+          is_deleted: false,
         }
       })
+      await db
+        .collection("user")
+        .doc(wxContext.OPENID)
+        .update({
+          data: {
+            total_collect: _.inc(1),
+            update_time: db.serverDate(),
+          }
+        })
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {
         error: e ?? 'unknown',
         errno: -1
-      }
-      if (e.errCode.toString() === '87014') {
-        ctx.body = {
-          error: e ?? 'unknown',
-          errno: 87014
-        }
       }
     }
   })
@@ -66,17 +70,20 @@ exports.main = async (event, context) => {
           is_deleted: true
         }
       })
+      await db
+        .collection("user")
+        .doc(wxContext.OPENID)
+        .update({
+          data: {
+            total_collect: _.inc(-1),
+            update_time: db.serverDate(),
+          }
+        })
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {
         error: e ?? 'unknown',
         errno: -1
-      }
-      if (e.errCode.toString() === '87014') {
-        ctx.body = {
-          error: e ?? 'unknown',
-          errno: 87014
-        }
       }
     }
   })
@@ -87,7 +94,7 @@ exports.main = async (event, context) => {
       if (!start || start < 0) {
         start = 0;
       }
-      ctx.body = await collectionCollection.aggregate()
+      let data = await collectionCollection.aggregate()
         .match({
           uid: wxContext.OPENID,
           is_deleted: false
@@ -98,9 +105,13 @@ exports.main = async (event, context) => {
           foreignField: '_id',
           as: 'commodityInfoList'
         })
+        .sort({
+          create_time: -1
+        })
         .skip(start)
         .limit(count)
         .end()
+      ctx.body = { data }
       ctx.body.errno = 0
     } catch (e) {
       ctx.body = {

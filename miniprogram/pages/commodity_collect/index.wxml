@@ -9,15 +9,13 @@
     wx:for-index="idx"
     wx:key="_id"
     class="root"
-    commodity="{{commodity}}"
-    bind:tap="onEnter"
-    data-idx="{{idx}}">
+    commodity="{{commodity}}">
 
     <view class="left" bind:tap="gotoDetail">
       <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}" />
     </view>
 
-    <view class="middle" bind:tap="gotoDetail">
+    <view class="middle" bind:tap="gotoDetail" data-idx="{{idx}}">
       <view class="title">{{commodity.content}}</view>
       <view>
         <view class="create-time">发布于：{{commodity.create_time}}</view>

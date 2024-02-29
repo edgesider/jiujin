@@ -1,41 +1,43 @@
 <!--TUIKit-WChat/Chat/index.wxml-->
 <view class="container enter">
-   <view class="tui-navigatorbar">
-     <image class="tui-navigatorbar-back" bindtap="goBack" src="../../static/assets/ic_back_white.svg" />
-     <view class="conversation-title">{{conversationName}}</view>
-     <text wx:if="{{conversation.type === 'C2C'}}" class="conversation-user-id" bind:longpress="onCopyUserID">用户ID： {{conversation.userProfile.userID}}</text>
+  <view class="tui-navigatorbar">
+    <image class="tui-navigatorbar-back" bindtap="goBack" src="../../static/assets/ic_back_white.svg" />
+    <view class="conversation-title">{{conversationName}}</view>
+    <text wx:if="{{conversation.type === 'C2C'}}" class="conversation-user-id" bind:longpress="onCopyUserID">
+      会话ID：{{conversation.userProfile.userID}}
+    </text>
   </view>
   <view wx:if="{{showSell}}" class="conversation-commodity" bind:tap="sendCommodityMessage">
+    <image src="{{commodity.img_urls[0]}}"></image>
     发送商品：{{commodity.content}}
   </view>
   <view class="group-profile" wx:if="{{isShow}}">
-    <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall" bind:showConversationList="showConversationList"></TUIGroup>
+    <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall"
+              bind:showConversationList="showConversationList"></TUIGroup>
   </view>
-  <view class="list-box {{ showTips && 'list-box-notips'}} || {{ showGroupTips && 'list-box-group'}}  || {{ showAll && 'list-box-group-notips'}} ">
-    <view wx:if="{{showTips}}" class="safetytips-box">
-    <view class="safetytips">
-      <text>【安全提示】本 APP 仅用于使用腾讯云即时通信 IM 产品功能，不可用于业务洽谈与拓展。请勿轻信汇款、中奖等涉及钱款等信息，勿轻易拨打陌生电话，谨防上当受骗。</text>
-      <span class="report" bindtap="handleReport">点此投诉</span>
-    </view>
-  </view>
-    <scroll-view  class="message-list" bindtap="triggerClose" scroll-y="true">
-      <MessageList id="MessageList" conversation="{{conversation}}" unreadCount="{{unreadCount}}" chatContainerHeight="{{chatContainerHeight}}" bind:changeMemberCount="changeMemberCount" bind:resendMessage="resendMessage" bind:typing="typing" bind:handleNewGroupProfile="handleNewGroupProfile"></MessageList>
+  <view
+    class="list-box {{ showTips && 'list-box-notips'}} || {{ showGroupTips && 'list-box-group'}}  || {{ showAll && 'list-box-group-notips'}} ">
+    <scroll-view class="message-list" bindtap="triggerClose" scroll-y="true">
+      <MessageList id="MessageList" conversation="{{conversation}}" unreadCount="{{unreadCount}}"
+                   chatContainerHeight="{{chatContainerHeight}}" bind:changeMemberCount="changeMemberCount"
+                   bind:resendMessage="resendMessage" bind:typing="typing"
+                   bind:handleNewGroupProfile="handleNewGroupProfile"></MessageList>
     </scroll-view>
   </view>
   <view class="input-area">
-  <view class="message-input" style="{{viewData.style}}" wx:if="{{showChat}}">
-    <MessageInput
-      id="MessageInput"
-      conversation="{{conversation}}"
-      hasCallKit="{{hasCallKit}}"
-      bind:sendMessage="sendMessage"
-      bind:downKeysBoards="downKeysBoards"
-      bind:pullKeysBoards="pullKeysBoards"
-      bind:showMessageErrorImage="showMessageErrorImage"
-      bind:handleCall="handleCall"
-      bind:inputHeightChange="inputHeightChange"
-      bind:sellCommodity="sellCommodity"
+    <view class="message-input" style="{{viewData.style}}" wx:if="{{showChat}}">
+      <MessageInput
+        id="MessageInput"
+        conversation="{{conversation}}"
+        hasCallKit="{{hasCallKit}}"
+        bind:sendMessage="sendMessage"
+        bind:downKeysBoards="downKeysBoards"
+        bind:pullKeysBoards="pullKeysBoards"
+        bind:showMessageErrorImage="showMessageErrorImage"
+        bind:handleCall="handleCall"
+        bind:inputHeightChange="inputHeightChange"
+        bind:sellCommodity="sellCommodity"
       ></MessageInput>
-  </view>
+    </view>
   </view>
 </view>

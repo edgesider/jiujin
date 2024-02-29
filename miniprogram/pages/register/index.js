@@ -1,7 +1,6 @@
-import Dialog from '@vant/weapp/dialog/dialog';
 import api from "../../api/api";
 import rules from "../../utils/rules";
-import getConstants from "../../constants";
+import getConstants, { GENDER } from "../../constants";
 
 const app = getApp()
 
@@ -113,7 +112,12 @@ Page({
       avatarUrl
     });
   },
-
+  onRegionPickerConfirm(event) {
+    const { detail: { value } } = event;
+    this.setData({
+      indexes: value
+    });
+  },
   onRegionPickerChange(event) {
     const columnIndex = event.detail.column; // 被更新的列
     const index = event.detail.value; // 更新的值
@@ -126,7 +130,6 @@ Page({
     const l1 = l1L4Pair[0][indexes[0]]; // 获取新的l1
     const l4List = l1ToL4[l1._id]; // 获取新的l4
     this.setData({
-      indexes,
       l1L4Pair: [l1L4Pair[0], l4List]
     })
   },
@@ -164,9 +167,9 @@ Page({
 
     const params = { avatar_url, name, sex, rid: this.getSelectedRegion()._id }
     if (!rules.required(params.name)) {
-      Dialog.alert({
-        title: '格式错误',
-        message: "昵称不能为空！",
+      await wx.showToast({
+        title: "昵称不能为空！",
+        icon: 'error',
       })
       return
     }
@@ -178,13 +181,26 @@ Page({
     const resp = isEdit ? await api.updateUser(params) : await api.registerUser(params);
     if (resp.isError) {
       await wx.hideLoading()
-      console.log("上传用户信息失败！")
+      let msg = (isEdit ? '保存' : '注册') + '失败\n' + JSON.stringify(resp);
+      if (isEdit && resp.errno === -2) {
+        msg = '位置修改得太频繁啦！';
+      }
       await wx.showToast({
-        title: (isEdit ? '保存' : '注册') + '失败\n' + JSON.stringify(resp),
+        title: msg,
         icon: 'error',
       })
       return;
     }
+    await wx.$TUIKit.updateMyProfile({
+      nick: name,
+      avatar: avatar_url,
+      gender: {
+        [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+      }[sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+      allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
+    });
     await Promise.all([app.fetchSelfInfo(), app.fetchRegions()]);
     wx.hideLoading();
 
