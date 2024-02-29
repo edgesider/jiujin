@@ -1,9 +1,10 @@
-<view class="top" style="height: {{CustomBar}}px; padding-top: {{StatusBar}}px;">
-  <!--顶部的遮盖-->
-  <view class="mask" style="height: {{CustomBar}}px;" />
-  <image class="app-logo" src="../../res/logo.png" mode="aspectFit" />
-  <view class="search" bindtap="onSearchClick">
-    <text class="cuIcon-search"></text>
+<view class="top-container">
+  <view style="width: 100%; background: white; height: {{StatusBar}}px" />
+  <view class="top" style="height: {{CustomBar}}px">
+    <image class="app-logo" src="../../res/logo.png" mode="aspectFit" />
+    <view class="search" bindtap="onSearchClick">
+      <text class="cuIcon-search"></text>
+    </view>
   </view>
 </view>
 
@@ -11,7 +12,7 @@
 <swiper
   indicator-dots autoplay circular
   class="top-swiper"
-  style="padding-top: {{CustomBar}}px"
+  style="padding-top: {{CustomBar + StatusBar}}px"
 >
   <swiper-item>
     <image
@@ -36,7 +37,7 @@
   </swiper-item>
 </swiper>
 
-<view class="regions-filter" style="top: {{CustomBar}}px">
+<view class="regions-filter" style="top: {{CustomBar + StatusBar}}px">
   <view
     wx:for="{{regions}}" wx:key="_id" wx:for-index="idx"
     class="region {{selectedRegionIndex === idx ? 'region-selected' : ''}}"
