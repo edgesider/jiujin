@@ -1,11 +1,10 @@
 import { COMMODITY_STATUS_OFF } from "../constants";
 
 const { RespSuccess, RespError } = require('../utils/resp')
-let res = {}
 
 function wrapResponse(resp) {
   if (resp.result?.errno !== 0) {
-    return new RespError(resp.result ?? 'no such api');
+    return new RespError(resp.result, resp.result?.error ?? 'unknown error', resp.result?.errno ?? -1);
   }
   return new RespSuccess(resp.result.data);
 }
@@ -75,49 +74,7 @@ const api = {
     })
     return wrapResponse(res);
   },
-
-  // 更新自己的信息，参数是所有字段的子集
-  async updateMyInfo(params) {
-    res = await wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        $url: 'updateMyInfo',
-        params
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("上传用户信息失败！")
-      return new RespError("上传失败！")
-    } else if (res.result.errno == 87014) {
-      console.log("上传信息包含敏感内容！")
-      return new RespError("包含敏感内容！")
-    } else if (res.result.errno == -2) {
-      console.log("有未删除的商品或进行中的交易！")
-      return new RespError("有未删除的商品或进行中的交易！")
-    } else {
-      console.log("上传用户信息成功！")
-      return new RespSuccess()
-    }
-  },
-
-  // 获取商品分类信息
-  async getCommodityCategory() {
-    res = await wx.cloud.callFunction({
-      name: 'category',
-      data: {
-        $url: 'getCommodityCategory',
-      }
-    })
-    if (res.result.errno == -1) {
-      console.log("获取商品分类信息失败！")
-      return new RespError("获取商品分类信息失败！")
-    }
-    const commodityCategory = res.result.data
-    console.log({ "获取商品分类信息成功": commodityCategory })
-    return new RespSuccess(commodityCategory)
-
-  },
-
+// 获取商品分类信息
   async getCategory() {
     return wrapResponse(await wx.cloud.callFunction({
       name: 'category',
@@ -235,6 +192,58 @@ const api = {
     }
     return new RespSuccess(res.fileID);
   },
+
+  async lockCommodity(id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'lockCommodity',
+        params: {
+          _id: id
+        },
+      }
+    }))
+  },
+  async unlockCommodity(id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'unlockCommodity',
+        params: {
+          _id: id
+        },
+      }
+    }))
+  },
+  async sellCommodity(id, buyer_id) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'sellCommodity',
+        params: {
+          _id: id,
+          buyer_id
+        },
+      }
+    }))
+  },
+
+  async getMyViewed(start, count) {
+  },
+  async getMyBought(start, count) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'commodity',
+      data: {
+        $url: 'getCommodityList',
+        params: {
+          buyer_id: getApp().globalData.openId,
+          orderBy: 'update_time',
+          order: 'desc',
+          start, count,
+        },
+      }
+    }));
+  },
 }
 
 export default api;
@@ -312,6 +321,9 @@ export const CommentAPI = {
   },
 }
 
+/**
+ * 收藏相关的API
+ */
 export const CollectApi = {
   async collect(cid) {
     return wrapResponse(await wx.cloud.callFunction({
@@ -332,7 +344,7 @@ export const CollectApi = {
     }))
   },
   async getAll(start, count) {
-    return wrapResponse(await wx.cloud.callFunction({
+    const resp = wrapResponse(await wx.cloud.callFunction({
       name: 'collection',
       data: {
         $url: 'getCollection',
@@ -341,39 +353,13 @@ export const CollectApi = {
         },
       }
     }))
-  },
-  async lockCommodity(id){
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'lockCommodity',
-        params: {
-          _id: id
-        },
+    if (!resp.isError) {
+      const list = []
+      for (const item of resp.data.list) {
+        list.push(...item.commodityInfoList);
       }
-    }))
-  },
-  async unlockCommodity(id){
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'unlockCommodity',
-        params: {
-          _id: id
-        },
-      }
-    }))
-  },
-  async sellCommodity(id, buyer_id){
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'sellCommodity',
-        params: {
-          _id: id,
-          buyer_id
-        },
-      }
-    }))
+      resp.data = list;
+    }
+    return resp;
   },
 }

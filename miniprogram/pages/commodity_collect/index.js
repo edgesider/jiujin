@@ -1,5 +1,5 @@
-import api from "../../api/api";
-import getConstants from "../../constants";
+import api, { CollectApi } from "../../api/api";
+import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
 import moment from "moment";
 import { setTabBar } from "../../utils/other";
 
@@ -12,38 +12,21 @@ Page({
     cursor: 0,
     isLoading: false,
     commodityList: [],
-    pageIndex: 3,
     ridToRegion: null,
   },
 
   async onLoad() {
-    setTabBar(this);
     await app.waitForReady();
-
     await this.fetchMore();
   },
 
-  onEnter(res) {
+  gotoDetail(res){
     const idx = res.currentTarget.dataset.idx;
     const commodity = this.data.commodityList[idx];
     const id = commodity._id;
-    const desc = commodity.content;
-    const user_id = 'REPY' + app.globalData.self._id + id;
-    app.globalData.config.commodity = commodity;
-    let promise = wx.$TUIKit.updateMyProfile({
-      nick: app.globalData.self.name + '-' + desc,
-      avatar: app.globalData.self.avatar_url,
-      gender: app.globalData.self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
-      allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-    });
-    promise.then((imResponse) => {
-      console.log(imResponse.data); // 更新资料成功
-    }).catch((imError) => {
-      console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
-    });
-    app.globalData.currentUser = user_id;
-    wx.switchTab({
-      url: `../../TUIService/pages/tim_index/tim_index`,
+    // 进入商品页面
+    wx.navigateTo({
+      url: `../commodity_detail/index?id=${id}`
     });
   },
 
@@ -54,12 +37,7 @@ Page({
     this.setData({
       isLoading: true,
     })
-    const resp = await api.getCommodityList({
-      // 不需要status过滤
-      sell_id: app.globalData.self._id,
-      start: this.data.cursor,
-      count: COUNT_PER_PAGE,
-    })
+    const resp = await CollectApi.getAll(this.data.cursor, COUNT_PER_PAGE);
     if (resp.isError) {
       await wx.showToast({
         title: '网络错误',
@@ -70,7 +48,7 @@ Page({
       return;
     }
     const { data } = resp;
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length; i++){
       data[i].status = null;
       data[i].create_time = new Date(data[i].create_time).toLocaleDateString();
       data[i].update_time = moment(data[i].update_time).fromNow();

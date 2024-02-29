@@ -7,7 +7,10 @@
     "van-button": "@vant/weapp/button/index",
     "van-image": "@vant/weapp/image/index",
     "van-toast": "@vant/weapp/toast/index",
-    "van-nav-bar": "@vant/weapp/nav-bar/index",
-    "van-dialog": "@vant/weapp/dialog/index"
-  }
+    "van-empty": "@vant/weapp/empty/index",
+    "TitleBar": "/components/TitleBar/index",
+    "CommodityListCard": "/components/CommodityListCard/index"
+  },
+  "enablePullDownRefresh": true,
+  "navigationStyle": "custom"
 }

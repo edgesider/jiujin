@@ -1,6 +1,6 @@
 import { getQualitiesMap } from "../../utils/strings";
 import moment from "moment";
-import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
+import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
 
 const app = getApp();
 
@@ -10,25 +10,28 @@ Component({
       type: Object,
       default: null
     },
+    type: {
+      type: String,
+      default: 'mine', // mine | bought | viewed
+    }
   },
   data: {
     COMMODITY_STATUS_SELLING,
     COMMODITY_STATUS_OFF,
-    COMMODITY_STATUS_SALE,
+    COMMODITY_STATUS_SOLD,
+    self: null,
     desc: '',
     createTime: '',
+    soldTime: '',
     polishAt: '',
     ridToRegion: app.globalData.ridToRegion,
     qualitiesMap: getQualitiesMap(),
   },
   methods: {
     async gotoDetail() {
-      if (!this.properties.commodity) {
-        return;
-      }
-      await wx.navigateTo({
-        url: `../commodity_detail/index?id=${this.properties.commodity._id}`
-      })
+      this.triggerEvent('onClickCard', {
+        commodity: this.properties.commodity,
+      });
     },
     delete() {
       this.triggerEvent('onDelete', {
@@ -57,18 +60,18 @@ Component({
     },
 
     onUpdate() {
-      let { content, create_time, update_time } = this.properties.commodity
+      let { content, create_time, update_time, selled_time } = this.properties.commodity
       // 处理content
       content = content.substring(0, 8); // 最多十个
       const firstLR = content.indexOf('\n');
       if (firstLR !== -1) {
         content = content.substring(0, content.indexOf('\n')) // 从第一个回车截断
       }
-      // console.log(moment.locales())
-      moment.locale('zh-cn')
       this.setData({
+        self: app.globalData.self,
         desc: content,
-        createTime: new Date(create_time).toLocaleDateString(),
+        createTime: new Date(create_time).toLocaleString(),
+        soldTime: selled_time && new Date(selled_time).toLocaleString() || '',
         polishAt: moment(update_time).fromNow(),
         ridToRegion: app.globalData.ridToRegion,
       })

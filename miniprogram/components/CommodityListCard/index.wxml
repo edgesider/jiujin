@@ -5,14 +5,19 @@
 
   <view class="middle" bind:tap="gotoDetail">
     <view class="title">{{desc}}</view>
-    <view>
-      <view class="create-time">发布于：{{createTime}}</view>
-      <view class="polish-at">上次擦亮：{{polishAt}}</view>
+    <view wx:if="{{ commodity.status === COMMODITY_STATUS_SOLD}}">
+      <view class="hint-line1">交易于 {{soldTime}}</view>
+    </view>
+    <view wx:elif='{{commodity.status === COMMODITY_STATUS_SELLING}}'>
+      <view class="hint-line1">发布于 {{createTime}}</view>
+      <view wx:if="{{commodity.sell_id === self._id}}">
+        <view class="hint-line2">上次擦亮于 {{polishAt}}</view>
+      </view>
     </view>
     <view class="price">￥{{commodity.price}}</view>
   </view>
-  <view class="right">
-    <block wx:if="{{commodity.status === COMMODITY_STATUS_OFF}}" >
+  <view class="right" wx:if="{{commodity.sell_id === self._id}}">
+    <block wx:if="{{commodity.status === COMMODITY_STATUS_OFF}}">
       <view class="button" bind:tap="polish">重新上架</view>
       <view class="button" bind:tap="gotoEdit">编辑</view>
     </block>
@@ -21,12 +26,13 @@
       <view
         class="button {{commodity.status === COMMODITY_STATUS_SELLING ? '' : 'button-disabled'}}"
         bind:tap="off"
-      >下架</view>
+      >下架
+      </view>
       <view class="button" bind:tap="gotoEdit">编辑</view>
     </block>
-    <block wx:elif="{{commodity.status === COMMODITY_STATUS_SALE}}">
+    <block wx:elif="{{commodity.status === COMMODITY_STATUS_SOLD}}">
       <view class="button" bind:tap="republish">重新发布</view>
     </block>
-<!--    <view class="button" bind:tap="delete">删除</view>-->
+    <!--    <view class="button" bind:tap="delete">删除</view>-->
   </view>
 </view>

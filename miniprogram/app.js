@@ -1,5 +1,4 @@
 import api from './api/api';
-import cache from "./cache/cache"
 import { BehaviorSubject } from "rxjs";
 import moment from "moment";
 
@@ -9,7 +8,6 @@ import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
 import { GENDER } from "./constants";
 
 import axios from 'axios';
-import adapter from 'axios-wechat-adapter';
 
 const IMAxios = axios.create({
   timeout: 10000,
@@ -23,6 +21,7 @@ App({
   _readyWaiters: [],
   globalData: {
     registered: false,
+    openId: null,
     self: null,
     ridToRegion: null,
     StatusBar: 0,
@@ -176,7 +175,7 @@ App({
   getAccessToken() {
     let APPID = 'wxc89ea56f592e89c4';
     // 注意：仅用于测试，上线时需要转移至后端
-    const SECRETKEY = '0e3f256c7f3e15d4f1d29ea274d8f5e1572a73f4ef2ab9e8d8d7e6c2525f737c';
+    const SECRETKEY = '87c21b1a1e9cfe7e57b32a1ccb9508ac';
     let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRETKEY}`;
     return new Promise(function(resolve, reject) {
       IMAxios({

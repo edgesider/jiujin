@@ -1,5 +1,5 @@
 import api from "../../api/api";
-import cache from "../../cache/cache";
+// import cache from "../../cache/cache";
 
 const app = getApp()
 const MAX_COMMODITY_LIMIT_SIZE = 10

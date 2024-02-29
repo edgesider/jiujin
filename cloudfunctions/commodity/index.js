@@ -106,7 +106,7 @@ exports.main = async (event, context) => {
         regionCache[r._id] = result
       }
     }
-    let { _id, rid, cid, keyword, sell_id, buyer_id, sex, status, start, count } = event.params
+    let { _id, rid, cid, keyword, sell_id, buyer_id, sex, status, start, count, orderBy, order } = event.params
     const _ = db.command
     // 特殊情况，获取商品详情，需要额外一个字段，是否已收藏
     if (_id) {
@@ -181,9 +181,13 @@ exports.main = async (event, context) => {
       if (!start || start < 0) {
         start = 0;
       }
+      orderBy = orderBy || 'update_time';
+      if (!order || order !== 'desc' || order !== 'asc') {
+        order = 'desc';
+      }
       try {
         ctx.body = await commodityCollection.where(w)
-          .orderBy('update_time', 'desc')
+          .orderBy(orderBy, order)
           .skip(start || 0)
           .limit(count)
           .get()
@@ -429,7 +433,7 @@ exports.main = async (event, context) => {
   app.router('viewed_commodity', async (ctx, next) => {
     try {
       const { cid } = event.params;
-      ctx.body = await userCollection.add({
+      ctx.body = await viewdCollection.add({
         data: {
           uid: wxContext.OPENID,
           cid: cid,
