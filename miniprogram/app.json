@@ -36,6 +36,9 @@
         "pagePath": "pages/customer_service/index"
       },
       {
+        "pagePath": "pages/commodity_list/index"
+      },
+      {
         "pagePath": "pages/me/index"
       }
     ]

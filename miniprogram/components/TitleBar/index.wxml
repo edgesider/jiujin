@@ -1,5 +1,5 @@
 <view style="width: 100%; background: white; height: {{StatusBar}}px" />
 <view class="top" style="height: {{CustomBar}}px;">
-  <text class="back cuIcon-back" bind:tap="back"></text>
+  <text wx:if="{{hasBack}}" class="back cuIcon-back" bind:tap="back"></text>
   <text class="title">{{title}}</text>
 </view>

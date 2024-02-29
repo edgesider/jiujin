@@ -5,6 +5,10 @@ Component({
     title: {
       type: String,
       default: '详情'
+    },
+    hasBack: {
+      type: Boolean,
+      default: true
     }
   },
   data: {
