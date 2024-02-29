@@ -34,6 +34,8 @@ Page({
     commodityList: [],
     cursor: 0,
     isLoading: false,
+
+    banners: [],
   },
 
   /**
@@ -43,7 +45,7 @@ Page({
     setTabBar(this);
     this.setData({ isLoading: true })
     try {
-      await this.loadRegions(); // TODO cache
+      await Promise.all([this.loadRegions(), this.loadBanners()]); // TODO cache
       await this.fetchList();
     } catch (e) {
       Dialog.alert({ message: e, });
@@ -97,6 +99,19 @@ Page({
         selectedRegionIndex: 0,
       });
     }
+  },
+
+  async loadBanners() {
+    await app.waitForReady();
+    const rid = app.globalData.self?.rid ?? DEFAULT_REGION_ID;
+    const resp = await api.getBannerList(rid);
+    if (resp.isError) {
+      console.error(resp);
+      return;
+    }
+    this.setData({
+      banners: resp.data,
+    });
   },
 
   async fetchList({ append } = {}) {

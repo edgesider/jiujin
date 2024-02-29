@@ -64,9 +64,6 @@ App({
     const { data: { openId } } = await api.getOpenId();
     this.globalData.openId = openId;
 
-    // 清空缓存
-    wx.clearStorageSync();
-    // TODO 存到storage中
     await Promise.all([this.fetchSelfInfo(), this.fetchRegions()]);
 
     // 登录腾讯IM

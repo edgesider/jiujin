@@ -8,29 +8,14 @@
   </view>
 </view>
 
-
 <swiper
-  indicator-dots autoplay circular
+  autoplay circular
   class="top-swiper"
-  style="padding-top: {{CustomBar + StatusBar}}px"
+  style="margin-top: {{CustomBar + StatusBar}}px"
 >
-  <swiper-item>
+  <swiper-item wx:for="{{banners}}" wx:key="url">
     <image
-      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
-      style="width: 100%; height: 100%;"
-      mode="aspectFill"
-    />
-  </swiper-item>
-  <swiper-item>
-    <image
-      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/index-bg.jpg"
-      style="width: 100%; height: 100%;"
-      mode="aspectFill"
-    />
-  </swiper-item>
-  <swiper-item>
-    <image
-      src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/bg-resources/home-bg.jpg"
+      src="{{item.url}}"
       style="width: 100%; height: 100%;"
       mode="aspectFill"
     />

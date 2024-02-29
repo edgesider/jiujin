@@ -6,6 +6,8 @@ page {
 
 .top-container {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   z-index: 10;
   background-color: white;
@@ -78,7 +80,7 @@ page {
   flex: 0;
   z-index: -1;
   width: 100%;
-  height: 220px;
+  height: 200rpx;
 }
 
 .regions-filter {
