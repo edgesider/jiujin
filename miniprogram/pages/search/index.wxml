@@ -1,4 +1,4 @@
-<view class="top-bar" style="height: {{StatusBar}}px; padding-top: {{CustomBar - StatusBar}}px;">
+<view class="top-bar" style="height: {{CustomBar + StatusBar}}px; padding-top: {{StatusBar}}px;">
   <text class="back cuIcon-back" bind:tap="onBack"></text>
   <view class="input-container" style="width: calc(100% - {{MenuButton.width - 8}}px - 20rpx});">
     <input

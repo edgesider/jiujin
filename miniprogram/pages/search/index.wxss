@@ -5,9 +5,7 @@ page {
 .top-bar {
   z-index: 1;
   width: 100%;
-  box-sizing: content-box;
   background-color: #ddd;
-  padding-bottom: 12rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
