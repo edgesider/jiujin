@@ -2,12 +2,7 @@
   <!--顶部的遮盖-->
   <view class="mask" style="height: {{CustomBar}}px;" />
   <image class="app-logo" src="../../res/logo.png" mode="aspectFit" />
-  <view class="search" bindtap="onTitleClick">
-    <input
-      type="text"
-      confirm-type="search"
-      bindinput="onSearchInput"
-      bindconfirm="onSearchCommodity" />
+  <view class="search" bindtap="onSearchClick">
     <text class="cuIcon-search"></text>
   </view>
 </view>

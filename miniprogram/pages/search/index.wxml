@@ -1,45 +1,36 @@
-<cu-custom bgColor="bg-yellow" isBack="{{true}}">
-	<view slot="backText" bind:tap="onNavigateBack">返回首页</view>
-	<view slot="content">搜索结果</view>
-</cu-custom>
+<view class="top-bar" style="height: {{StatusBar}}px; padding-top: {{CustomBar - StatusBar}}px;">
+  <text class="back cuIcon-back" bind:tap="onBack"></text>
+  <view class="input-container" style="width: calc(100% - {{MenuButton.width - 8}}px - 20rpx});">
+    <input
+      class="input"
+      auto-focus="true"
+      focus="{{isFocused}}"
+      value="{{text}}"
+      bindfocus="onFocus"
+      bindinput="onInput"
+      bindconfirm="onConfirm"
+    />
+  </view>
+  <view style="height: 100%; width: {{MenuButton.width + 16}}px; justify-self: flex-end" />
+</view>
 
-
-  <view class="cu-bar bg-white search margin-bottom">
-	<view class="action">
-      <text class="cuIcon-search text-orange"></text>
-      <text>"{{keyword}}"的搜索结果：</text>
+<view class="content">
+  <block wx:if="{{state === 'inputting'}}">
+    <view class="history">
+      <view class="title"></view>
+    </view>
+  </block>
+  <view wx:elif="{{state === 'shown' || state === 'loading'}}" class="commodity-list-container">
+    <view class="list" wx:if="{{commodityList.length > 0}}">
+      <CommodityCard
+        wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
+        class="item"
+        commodity="{{item}}"
+      />
     </view>
   </view>
-
-
-<view wx:if="{{commodityList.length==0}}">
-<van-empty description="暂无匹配结果" />
+  <view
+    wx:if="{{state === 'shown' || state === 'loading'}}"
+    class="cu-load {{state === 'loading' ? 'loading' : 'over'}}"
+  />
 </view>
-
-<view wx:for="{{commodityList}}" wx:key="_id">
-	<van-card custom-class="commodity-card shadow-warp"
-	thumb-mode="aspectFill"
-	desc-class="text-cut"
-	title-class="text-cut"
-	num="{{item.number}}" 
-	price="{{item.price_now}}" 
-	origin-price="{{item.price_origin}}" 
-	desc="{{item.content}}" 
-	title="{{item.title}}" 
-	thumb="{{item.thumbnail_url[0]}}" 
-	data-id="{{item._id}}" 
-	bind:tap="onEnterCommodityDetail">
-
-
-	<view slot="tags">
-    <view class="cu-tag bg-{{item.status==0?'green':(item.status==1?'red':'grey')}} round">{{item.status==0?'正在出售':(item.status==1?'交易中':'已下架')}}</view>
-  </view>
-	</van-card>
-</view>
-
-<!-- 加载更多 -->
-<view wx:if="{{commodityList.length!=0}}">
-<view class="cu-load margin-top {{isLoading?'loading':'over'}}"></view>
-</view>
-
-

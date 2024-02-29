@@ -170,11 +170,9 @@ Page({
     })
   },
 
-  // 搜索
-  async onSearchCommodity(event) {
-    const keyword = event.detail.value
+  async onSearchClick() {
     wx.navigateTo({
-      url: `../search/index?keyword=${keyword}`,
+      url: `../search/index`,
     })
   },
 
@@ -197,49 +195,6 @@ Page({
       url: `../commodity_detail/index?id=${id}&enteredFrom=1`,
     })
   },
-  //
-  // async onCommodityReleaseTab() {
-  //   const registered = app.globalData.registered
-  //   if (registered) {
-  //     await wx.navigateTo({
-  //       url: '../commodity_publish/index',
-  //       events: {
-  //         afterPublished() {
-  //           console.log('afterPublished');
-  //           this.fetchList();
-  //         }
-  //       }
-  //     })
-  //   } else {
-  //     this.setData({
-  //       showLoginPopup: true
-  //     })
-  //   }
-  // },
-
-  async onHomeTab() {
-    wx.redirectTo({
-      url: '../me/index',
-    })
-  },
-
-  onShowLoginPopup() {
-    const registered = app.globalData.registered
-    if (!registered) {
-      this.setData({
-        showLoginPopup: true
-      })
-    }
-  },
-
-  onTitleClick() {
-  },
-
-  onCancelLoginPopup() {
-    this.setData({
-      showLoginPopup: false
-    })
-  },
 
   // 用户注册
   async onAuth(event) {
@@ -252,6 +207,5 @@ Page({
     wx.redirectTo({
       url: '../register/index',
     })
-
   },
 })

@@ -1,123 +1,107 @@
 import api from "../../api/api";
-// import cache from "../../cache/cache";
+import getConstants from "../../constants";
+import { sleep } from "../../utils/time";
 
-const app = getApp()
-const MAX_COMMODITY_LIMIT_SIZE = 10
-let res = {}
-let params = {}
-let uid = 0
-let cid = -1
-let start = 0
-let keyword = ""
+const COUNT_PER_PAGE = 8
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    universityName: "",
+    ...getConstants(),
     commodityList: [],
-    start: 0,
-    isLoading: false,
-    hasMore: true,
+    cursor: 0,
+    state: 'inputting', // inputting | loading | shown
+    isFocused: false,
+    text: '',
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   async onLoad(options) {
-
-    wx.showLoading({
-      title: '加载中',
-    })
-
-    keyword = options.keyword
-    console.log(keyword)
-
-    // 获取我的信息和大学信息
-    res = await cache.getMyInfoAndMyUniversityInfo()
-    if(res.errno == -1){
-      console.log("获取我的信息和大学信息失败！")
-      return
-    }
-    const myInfoAndMyUniversityInfo = res.data
-    uid = myInfoAndMyUniversityInfo.uid
-
-    // 获取搜索的商品列表
-    start = 0
-    params = {
-      uid,
-      cid,
-      keyword: keyword,
-      start: start,
-      count: MAX_COMMODITY_LIMIT_SIZE,
-      is_mine: false
-    }
-    res = await api.getCommodityListByUidAndCid(params)
-    if(res.errno == -1){
-      console.log("获取商品列表失败！")
-      return
-    }
-    let commodityList = res.data
-    start = commodityList.length
-    this.setData({
-      commodityList,
-      keyword
-    })    
-
-    wx.hideLoading()
-    
   },
 
-  onNavigateBack(){
-    wx.navigateBack({
-      delta: 1
+  onFocus() {
+    this.setData({
+      state: 'inputting',
     })
+  },
+
+  onInput(ev) {
+    const { detail: { value } } = ev;
+    this.setData({
+      text: value
+    });
+  },
+
+  async onConfirm() {
+    const { text } = this.data;
+    if (text.trim() === '') {
+      this.setData({
+        isFocused: true,
+      })
+      return;
+    }
+    await this.fetch(true);
+  },
+
+  async fetch(clear) {
+    if (clear) {
+      this.setData({
+        commodityList: [],
+        cursor: 0,
+        state: 'loading',
+      })
+    }
+    const { text, cursor, commodityList } = this.data;
+    const resp = await api.getCommodityList({
+      keyword: text,
+      orderBy: 'update_time',
+      order: 'desc',
+      start: cursor,
+      count: COUNT_PER_PAGE,
+    });
+    if (resp.isError) {
+      await wx.showToast({
+        title: '网络错误',
+        icon: 'error',
+      });
+      return;
+    }
+    const list = resp.data;
+    if (list.length > 0) {
+      this.setData({
+        state: 'shown',
+        cursor: cursor + list.length,
+        commodityList: [...commodityList, ...list],
+      })
+    } else {
+      this.setData({
+        state: 'shown',
+      })
+    }
   },
 
   // 加载更多
   async onReachBottom() {
-    if(!this.data.hasMore){
-      return
+    if (this.data.state === 'shown') {
+      await this.fetch(false);
     }
-    this.setData({
-      isLoading: true
-    })
-
-    params = {
-      uid,
-      cid,
-      keyword: keyword,
-      start: start,
-      count: MAX_COMMODITY_LIMIT_SIZE,
-      is_mine: false
-    }
-    res = await api.getCommodityListByUidAndCid(params)
-    if(res.errno == -1){
-      console.log("加载更多商品列表失败！")
-      return
-    }
-    const moreCommodityList = res.data
-    if(moreCommodityList.length == 0){
-      console.log("没有更多数据了！")
-      this.setData({
-        isLoading:false,
-        hasMore: false
-      })
-      return
-    }
-    start += moreCommodityList.length
-    const newCommodityList = this.data.commodityList.concat(moreCommodityList)
-    this.setData({
-      commodityList: newCommodityList
-    })  
   },
 
-  onEnterCommodityDetail(event){
+  onBack() {
+    const { state } = this.data;
+    if (state === 'loading' || state === 'shown') {
+      this.setData({
+        state: 'inputting',
+        text: '',
+        isFocused: true,
+      });
+    } else if (state === 'inputting') {
+      wx.navigateBack();
+    }
+  },
+
+  onEnterCommodityDetail(event) {
     const id = event.currentTarget.dataset.id
     wx.navigateTo({
-      url: `../commodity_detail/index?id=${id}&enteredFrom=1`,
+      url: `../commodity_detail/index?id=${id}`,
     })
   },
 })

@@ -1,6 +1,69 @@
-/* miniprogram/pages/commodity_search/index.wxss */
-.commodity-card{
-  background-color: #ffffff !important;
-  border-radius: 20rpx;
-  margin:3px 6px;
+page {
+  background-color: #fff;
+}
+
+.top-bar {
+  z-index: 1;
+  width: 100%;
+  box-sizing: content-box;
+  background-color: #ddd;
+  padding-bottom: 12rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  position: sticky;
+  top: 0;
+}
+
+.top-bar .back {
+  font-size: 42rpx;
+  margin: 0 18rpx;
+}
+
+.top-bar .input-container {
+  flex-grow: 1;
+  height: 64rpx;
+  border-radius: 32rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: center;
+  padding: 0 20rpx;
+  border: 1px rgba(0, 0, 0, .5) solid;
+}
+
+.top-bar .input {
+  flex-grow: 1;
+  font-size: 30rpx;
+}
+
+.content {
+  width: 100%;
+  background-color: #fff;
+}
+
+.commodity-list-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.commodity-list-container .list {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  --gap: 18rpx;
+  padding: var(--gap);
+  gap: var(--gap);
+}
+
+.commodity-list-container .item {
+  width: calc(50% - var(--gap) / 2);
 }

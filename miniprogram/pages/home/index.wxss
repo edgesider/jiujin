@@ -35,23 +35,23 @@ page {
   position: absolute;
   left: 50%;
   bottom: 0;
-  transform: translateX(-50%) translateY(-3px);
+  transform: translateX(-50%) translateY(-6px);
   z-index: inherit;
-  /*border: 0.5px solid rgba(0, 0, 0, 0.3);*/
+  /*border: 1px rgba(0, 0, 0, .5) solid;*/
   background-color: #eee;
   line-height: 24px;
-  height: 36px;
+  height: 64rpx;
   width: 40%;
-  font-size: 12px;
+  border-radius: 32rpx;
+  font-size: 30rpx;
   color: black;
   display: flex;
   align-items: center;
-  border-radius: 24px;
 }
 
 .top .search text {
   position: absolute;
-  top: 6px;
+  top: 4px;
   right: 10px;
 }
 

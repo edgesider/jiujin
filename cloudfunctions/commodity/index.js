@@ -182,7 +182,7 @@ exports.main = async (event, context) => {
         start = 0;
       }
       orderBy = orderBy || 'update_time';
-      if (!order || order !== 'desc' || order !== 'asc') {
+      if (!order || (order !== 'desc' && order !== 'asc')) {
         order = 'desc';
       }
       try {
