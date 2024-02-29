@@ -433,7 +433,7 @@ exports.main = async (event, context) => {
   app.router('viewed_commodity', async (ctx, next) => {
     try {
       const { cid } = event.params;
-      ctx.body = await userCollection.add({
+      ctx.body = await viewdCollection.add({
         data: {
           uid: wxContext.OPENID,
           cid: cid,
