@@ -7,7 +7,7 @@
 <form>
   <view class="cu-item shadow margin-top">
     <view class="cu-form-group margin-top desc">
-      <textarea class="desc-textarea" auto-focus="true" value="{{commodityContent}}" maxlength="-1"
+      <textarea class="desc-textarea" value="{{commodityContent}}" maxlength="-1"
                 bindinput="onChangeCommodityContent" placeholder="物品描述" />
     </view>
     <view class="cu-bar bg-white margin-top">
