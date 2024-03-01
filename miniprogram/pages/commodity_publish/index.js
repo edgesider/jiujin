@@ -1,10 +1,9 @@
 import api from "../../api/api";
 import Dialog from '@vant/weapp/dialog/dialog';
 import rules from "../../utils/rules";
-import { RespError, RespSuccess } from "../../utils/resp";
-import { sleep } from "../../utils/time";
 import { getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
+import { sleep } from "../../utils/other";
 
 const app = getApp()
 

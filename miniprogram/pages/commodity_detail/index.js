@@ -1,7 +1,9 @@
 import api, { CollectApi } from "../../api/api";
-import { sleep, splitMillisecondsToString } from "../../utils/time";
+import { splitMillisecondsToString } from "../../utils/time";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
+import { sleep } from "../../utils/other";
+import moment from "moment";
 
 const app = getApp();
 const DURATION_IN_FEED = 1000 * 60 * 60 * 24 * 2;
@@ -35,7 +37,7 @@ Page({
     this.setData({
       loading: false,
       commodity,
-      createTime: new Date(commodity.create_time).toLocaleDateString(),
+      createTime: moment(commodity.create_time).format('YYYY-MM-DD HH:mm'),
       remainTime: this.calcRemainTimeStr(commodity),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),

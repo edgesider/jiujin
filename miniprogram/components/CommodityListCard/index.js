@@ -1,5 +1,5 @@
 import { getQualitiesMap } from "../../utils/strings";
-import moment from "moment";
+import moment from 'moment';
 import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
 
 const app = getApp();
@@ -8,11 +8,10 @@ Component({
   properties: {
     commodity: {
       type: Object,
-      default: null
     },
     type: {
       type: String,
-      default: 'mine', // mine | bought | viewed
+      value: 'mine', // mine | bought | viewed
     }
   },
   data: {
@@ -70,8 +69,8 @@ Component({
       this.setData({
         self: app.globalData.self,
         desc: content,
-        createTime: new Date(create_time).toLocaleString(),
-        soldTime: selled_time && new Date(selled_time).toLocaleString() || '',
+        createTime: moment(create_time).format('YYYY-MM-DD HH:mm'),
+        soldTime: selled_time && moment(selled_time).format('YYYY-MM-DD HH:mm') || '',
         polishAt: moment(update_time).fromNow(),
         ridToRegion: app.globalData.ridToRegion,
       })

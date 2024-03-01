@@ -1,7 +1,7 @@
 import { setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
 import Dialog from '@vant/weapp/dialog/dialog';
-import api from "../../api/api";
+import api from '../../api/api';
 
 const app = getApp()
 const COUNT_PER_PAGE = 8
@@ -202,6 +202,14 @@ Page({
     }, async () => {
       await this.fetchList();
     });
+  },
+
+  onClickBanner(ev) {
+    const { url } = ev.currentTarget.dataset;
+    wx.previewImage({
+      current: url,
+      urls: [url],
+    })
   },
 
   async onEnterCommodityDetail(event) {

@@ -9,3 +9,7 @@ export function tryJsonParse(str) {
 export function setTabBar(page) {
   page.getTabBar().updateTo(page.route)
 }
+
+export async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

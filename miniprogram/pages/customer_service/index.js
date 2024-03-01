@@ -1,6 +1,6 @@
 import api from "../../api/api";
 import getConstants from "../../constants";
-import moment from "moment";
+import moment from 'moment';
 import { setTabBar } from "../../utils/other";
 
 const app = getApp();

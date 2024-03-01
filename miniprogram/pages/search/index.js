@@ -1,6 +1,5 @@
 import api from "../../api/api";
 import getConstants from "../../constants";
-import { sleep } from "../../utils/time";
 
 const COUNT_PER_PAGE = 8
 
