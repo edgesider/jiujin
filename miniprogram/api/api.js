@@ -1,12 +1,56 @@
 import { COMMODITY_STATUS_OFF } from "../constants";
+import axios from "axios";
+import mpAdapter from 'axios-miniprogram-adapter'
 
 const { RespSuccess, RespError } = require('../utils/resp')
+
+const app = getApp();
+
+axios.defaults.adapter = mpAdapter;
+
+const IMAxios = axios.create({
+  baseURL: "http://59.110.214.108:8080/",
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  },
+});
+
+function getId(){
+  return app.globalData.openId;
+}
+
+function wrapResp(resp) {
+  Object.assign(resp.data, { errno: resp.errCode });
+  if (!resp.succeed) {
+    return new RespError(resp.data, resp.errMsg ?? 'unknown error', resp.errCode ?? -1);
+  }
+  return new RespSuccess(resp.data);
+}
 
 function wrapResponse(resp) {
   if (resp.result?.errno !== 0) {
     return new RespError(resp.result, resp.result?.error ?? 'unknown error', resp.result?.errno ?? -1);
   }
   return new RespSuccess(resp.result.data);
+}
+
+async function callFunction(param){
+  return new Promise(function(resolve, reject) {
+    IMAxios({
+      url: param.path,
+      method: param.method,
+      params: param.data
+    }).then((res) => {
+      if (res.status >= 400){
+        reject({ errCode: -1, errMsg: `${res.status} ${res.statusText}` });
+        return;
+      }
+      resolve(res.data);
+    }).catch((error) => {
+      reject({ errCode: -1, errMsg: error });
+    });
+  });
 }
 
 const api = {
@@ -50,8 +94,19 @@ const api = {
         $url: 'getRegions',
       }
     })
+    console.log(JSON.stringify(res.result.data));
     return wrapResponse(res);
   },
+
+  // async getRegions() {
+  //   const res = await callFunction({
+  //     path: "/region/get",
+  //     method: "GET",
+  //     data: {}
+  //   });
+  //   console.log(wrapResp(res));
+  //   return wrapResp(res);
+  // },
 
   async registerUser(params) {
     const res = await wx.cloud.callFunction({
@@ -74,14 +129,23 @@ const api = {
     })
     return wrapResponse(res);
   },
-// 获取商品分类信息
+  
+  // 获取商品分类信息
+  // async getCategory() {
+  //   return wrapResponse(await wx.cloud.callFunction({
+  //     name: 'category',
+  //     data: {
+  //       $url: 'getCategory',
+  //     }
+  //   }))
+  // },
+
   async getCategory() {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'category',
-      data: {
-        $url: 'getCategory',
-      }
-    }))
+    return wrapResp(await callFunction({
+      path: "/category/get",
+      method: "GET",
+      data: {}
+    }));
   },
 
   async getCommodityList(filter) {

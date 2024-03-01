@@ -71,7 +71,6 @@ Page({
     }
     const { data } = resp;
     for (var i = 0; i < data.length; i++) {
-      data[i].status = null;
       data[i].create_time = new Date(data[i].create_time).toLocaleDateString();
       data[i].update_time = moment(data[i].update_time).fromNow();
     }

@@ -1,6 +1,7 @@
 import logger from '../../../../utils/logger';
 import constant from '../../../../utils/constant';
-import api, { CollectApi } from '../../../../../../api/api';
+import { COMMODITY_STATUS_LOCKED, COMMODITY_STATUS_OFF, COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from '../../../../../../constants';
+import api from '../../../../../../api/api';
 
 var app = getApp();
 
@@ -49,14 +50,7 @@ Component({
     title: ' ',
     notShow: false,
     isShow: true,
-    commonFunction: [
-      { name: '常用语', key: '0' },
-      // { name: '发送订单', key: '1' },
-      { name: '服务评价', key: '2' },
-      { name: '锁定', key: '3' },
-      { name: '解锁', key: '4' },
-      { name: '售出', key: '5' },
-    ],
+    commonFunction: [],
     displayServiceEvaluation: false,
     showErrorImageFlag: 0,
     messageList: [],
@@ -110,7 +104,6 @@ Component({
           commonFunction: [
             { name: '常用语', key: '0' },
             { name: '服务评价', key: '2' },
-            { name: '锁定', key: '3' },
             { name: '解锁', key: '4' },
             { name: '售出', key: '5' },
           ]
@@ -362,7 +355,7 @@ Component({
           });
           break;
         case '3': // 锁定
-          CollectApi.lockCommodity(commodity._id);
+          api.lockCommodity(commodity._id);
           wx.showToast({
             title: '锁定成功',
             duration: 800,
@@ -370,7 +363,15 @@ Component({
           });
           break;
         case '4': // 解锁
-          CollectApi.unlockCommodity(commodity._id);
+          if (commodity.status != COMMODITY_STATUS_LOCKED){
+            wx.showToast({
+              title: '商品不是已锁定',
+              duration: 800,
+              icon: 'error',
+            });
+            return;
+          }
+          api.unlockCommodity(commodity._id);
           wx.showToast({
             title: '解锁成功',
             duration: 800,
@@ -378,12 +379,15 @@ Component({
           });
           break;
         case '5': // 售出
+          if (commodity.status != COMMODITY_STATUS_SELLING && commodity.status != COMMODITY_STATUS_LOCKED){
+            wx.showToast({
+              title: '商品不是可售出',
+              duration: 800,
+              icon: 'error',
+            });
+            return;
+          }
           this.triggerEvent('sellCommodity');
-          wx.showToast({
-            title: '售出成功',
-            duration: 800,
-            icon: 'success',
-          });
           break;
         default:
           break;
@@ -514,6 +518,17 @@ Component({
         sendMessageBtn: false,
       });
       this.$sendTIMMessage(message);
+
+      const commodity = app.globalData.config.commodity;
+      if (commodity.status == COMMODITY_STATUS_SELLING){
+        api.lockCommodity(commodity._id);
+        commodity.status = COMMODITY_STATUS_LOCKED;
+        wx.showToast({
+          title: '商品锁定成功',
+          duration: 800,
+          icon: 'success',
+        });
+      }
     },
 
     // 监听输入框value值变化

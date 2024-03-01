@@ -17,11 +17,18 @@ function getId(){
   return app.globalData.openId;
 }
 
-function wrapResponse(resp) {
+function wrapResp(resp) {
   if (!resp.succeed) {
     return new RespError(resp, resp.errMsg ?? 'unknown error', resp.errCode ?? -1);
   }
   return new RespSuccess(resp);
+}
+
+function wrapResponse(resp) {
+  if (resp.result?.errno !== 0) {
+    return new RespError(resp.result, resp.result?.error ?? 'unknown error', resp.result?.errno ?? -1);
+  }
+  return new RespSuccess(resp.result.data);
 }
 
 async function callFunction(param){
@@ -57,7 +64,7 @@ const api = {
   },
 
   async getUserInfo(uid) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/user/getInfo",
       method: "GET",
       data: {
@@ -77,7 +84,7 @@ const api = {
   },
 
   async getRegions() {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/region/get",
       method: "GET",
       data: {}
@@ -97,7 +104,7 @@ const api = {
 
   // name rid avatar_url sex openid
   async updateUser(params) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/user/update",
       method: "POST",
       data: {
@@ -107,7 +114,7 @@ const api = {
   },
 // 获取商品分类信息
   async getCategory() {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/category/get",
       method: "GET",
       data: {}
@@ -115,7 +122,7 @@ const api = {
   },
 
   async getCommodityList(filter) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/getList",
       method: "POST",
       data: {
@@ -127,23 +134,18 @@ const api = {
 
   // 获取单个商品
   async getCommodityInfo({ id }) {
-    const res = wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+    return wrapResp(await callFunction({
+      path: "/commodity/getList",
+      method: "POST",
       data: {
-        $url: 'getCommodityList',
-        params: {
-          _id: id
-        }
+        _id: id,
+        openid: getId()
       }
     }));
-    if (res.isError || !res.data[0]) {
-      return null
-    }
-    return new RespSuccess(res.data[0]);
   },
 
   async createCommodity(commodityInfo) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/create",
       method: "POST",
       data: {
@@ -155,7 +157,7 @@ const api = {
 
   // 擦亮商品
   async polishCommodity({ id }) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/polish",
       method: "POST",
       data: {
@@ -167,7 +169,7 @@ const api = {
 
   async updateCommodity(id, info) {
     Object.assign(info, { _id: id });
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/modify",
       method: "POST",
       data: {
@@ -178,7 +180,7 @@ const api = {
   },
 
   async offCommodity({ id }) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/updateStatus",
       method: "POST",
       data: {
@@ -190,7 +192,7 @@ const api = {
   },
 
   async deleteCommodity({ id }) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/delete",
       method: "POST",
       data: {
@@ -221,7 +223,7 @@ const api = {
   },
 
   async lockCommodity(id) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/lock",
       method: "POST",
       data: {
@@ -230,7 +232,7 @@ const api = {
     }));
   },
   async unlockCommodity(id) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/unlock",
       method: "POST",
       data: {
@@ -239,7 +241,7 @@ const api = {
     }));
   },
   async sellCommodity(id, buyer_id) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/sell",
       method: "POST",
       data: {
@@ -251,7 +253,7 @@ const api = {
   },
 
   async getViewed(start, count) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/commodity/getViewed",
       method: "POST",
       data: {
@@ -266,7 +268,7 @@ export default api;
 
 export const CommentAPI = {
   async createQuestion(coid, content) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/createQuestion",
       method: "POST",
       data: {
@@ -277,7 +279,7 @@ export const CommentAPI = {
     }));
   },
   async createAnswer(qid, content) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/createAnswer",
       method: "POST",
       data: {
@@ -288,7 +290,7 @@ export const CommentAPI = {
     }));
   },
   async getCommodityQuestionsAndAnswers(coid, start, count){
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/getCommodityQuestionsAndAnswers",
       method: "POST",
       data: {
@@ -309,7 +311,7 @@ export const CommentAPI = {
       }
     });
     res.data = res.data.commodityQuestions;
-    return wrapResponse(res);
+    return wrapResp(res);
   },
   async getAnswers(qid, start, count) {
     var res = await callFunction({
@@ -322,10 +324,10 @@ export const CommentAPI = {
       }
     });
     res.data = res.data.commodityAnswers;
-    return wrapResponse(res);
+    return wrapResp(res);
   },
   async delQuestion(qid) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/deleteQuestion",
       method: "POST",
       data: {
@@ -335,7 +337,7 @@ export const CommentAPI = {
     }));
   },
   async delAnswer(answer_id) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/deleteAnswer",
       method: "POST",
       data: {
@@ -345,7 +347,7 @@ export const CommentAPI = {
     }));
   },
   async modifyQuestion(question_id, content){
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/modifyQuestion",
       method: "POST",
       data: {
@@ -356,7 +358,7 @@ export const CommentAPI = {
     }));
   },
   async modifyAnswer(answer_id, content){
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/modifyAnswer",
       method: "POST",
       data: {
@@ -373,7 +375,7 @@ export const CommentAPI = {
  */
 export const CollectApi = {
   async collect(cid) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/collect/commodity",
       method: "POST",
       data: {
@@ -383,7 +385,7 @@ export const CollectApi = {
     }));
   },
   async cancel(cid) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/collect/cancel",
       method: "POST",
       data: {
@@ -393,7 +395,7 @@ export const CollectApi = {
     }));
   },
   async getAll(start, count) {
-    return wrapResponse(await callFunction({
+    return wrapResp(await callFunction({
       path: "/collect/getInfo",
       method: "GET",
       data: {

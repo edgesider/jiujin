@@ -279,7 +279,20 @@ Component({
         });
         return;
       }
-      CollectApi.sellCommodity(commodity._id, user_id.substr(4));
+      api.sellCommodity(commodity._id, user_id.substr(4)).then((res) =>{
+        wx.showToast({
+          title: '售出成功',
+          duration: 800,
+          icon: 'success',
+        });
+      }).catch((e) => {
+        wx.showToast({
+          title: '售出失败',
+          duration: 800,
+          icon: 'error',
+        });
+        console.error(e);
+      });
     }
   },
 });

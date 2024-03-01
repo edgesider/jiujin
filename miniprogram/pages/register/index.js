@@ -29,6 +29,7 @@ Page({
     const { avatarUrl, nickName, gender } = userInfo;
 
     const { data: regions } = await api.getRegions();
+    console.log(regions);
     // 大学
     const l1Regions = [];
     // 大学 -> 楼号

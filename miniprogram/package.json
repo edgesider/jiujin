@@ -13,6 +13,7 @@
     "@types/wechat-miniprogram": "^3.4.7",
     "@vant/weapp": "^1.5.0",
     "axios": "^0.18.0",
+    "axios-miniprogram-adapter": "^0.3.5",
     "axios-wechat-adapter": "^0.0.9",
     "miniprogram-sm-crypto": "^0.3.13",
     "moment": "^2.30.1",
