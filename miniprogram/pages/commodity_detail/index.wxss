@@ -197,14 +197,14 @@
   align-items: center;
 }
 
-.footer .right .remain-time {
+.footer .right .polish-time {
   margin-right: 16rpx;
   flex-shrink: 1;
   font-size: 24rpx;
   text-align: right;
 }
 
-.footer .right .remain-time-hint {
+.footer .right .polish-time-hint {
   flex-shrink: 1;
   font-size: 20rpx;
   color: rgba(0, 0, 0, 0.5);
