@@ -10,33 +10,31 @@ Page({
     isEdit: false,
     name: "",
     avatarUrl: "",
+
+    gender: GENDER.UNKNOWN,
+    genderMap: {
+      [GENDER.MALE]: '男',
+      [GENDER.FEMALE]: '女',
+      [GENDER.UNKNOWN]: '保密',
+    },
+    genderOptions: ['保密', '男', '女'],
+
     regions: [],
     l1ToL4: {},
     indexes: [0, 0],
     l1L4Pair: [[], []],
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   async onLoad(options) {
     const { isEdit } = options;
-    await wx.showLoading({
-      title: '加载中',
-    })
-    // TODO 获取用户头像，性别等信息
-    const userInfo = wx.getStorageSync('userInfo')
-    const { avatarUrl, nickName, gender } = userInfo;
 
-    const { data: regions } = await api.getRegions();
+    const { regions, ridToRegion } = app.globalData;
     // 大学
     const l1Regions = [];
     // 大学 -> 楼号
     const l1ToL4 = {};
 
-    const ridToRegion = {}
     for (const region of regions) {
-      ridToRegion[region._id] = region;
       if (region.level === 1) {
         l1Regions.push(region);
       }
@@ -63,8 +61,9 @@ Page({
       }
       l1ToL4[l1._id] = tillL4(l1._id).map(rid => ridToRegion[rid]);
     }
+
+    const self = app.globalData.self;
     if (isEdit) {
-      const self = app.globalData.self;
       let [idxL1, idxL4] = [0, 0];
       const l1 = Object.entries(l1ToL4).find(([l1, l4s]) => l4s.findIndex(l4 => l4._id === self.rid) >= 0)[0];
       if (l1) {
@@ -85,12 +84,11 @@ Page({
         l1ToL4,
         l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
         indexes: [0, 0],
-        avatarUrl,
-        name: nickName,
-        gender,
+        avatarUrl: self.avatar_url,
+        name: self.name,
+        gender: self.sex,
       });
     }
-    await wx.hideLoading()
   },
 
   // 导航栏
@@ -112,11 +110,15 @@ Page({
       avatarUrl
     });
   },
+  onGenderPickerConfirm(ev) {
+    const { detail: { value } } = ev;
+    this.setData({ gender: parseInt(value), });
+  },
+
   onRegionPickerConfirm(event) {
     const { detail: { value } } = event;
-    this.setData({
-      indexes: value
-    });
+    console.log(value, typeof value[0]);
+    this.setData({ indexes: value });
   },
   onRegionPickerChange(event) {
     const columnIndex = event.detail.column; // 被更新的列

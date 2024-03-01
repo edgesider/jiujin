@@ -271,6 +271,7 @@ App({
     for (const region of regions) {
       ridToRegion[region._id] = region;
     }
+    this.globalData.regions = regions;
     this.globalData.ridToRegion = ridToRegion;
   },
 
