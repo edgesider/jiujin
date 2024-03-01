@@ -1,35 +1,45 @@
 <TitleBar title="{{title}}" class="title-bar" />
-<view style="width: 100%; height: {{TopBarHeight}}px" />
 
-<view class="tabs" wx:if="{{tabs && tabs.length > 0}}">
-  <view
-    class="tab {{currTab === tab.key ? 'selected' : ''}}"
-    bind:tap="onSwitchTab"
-    wx:for="{{tabs}}"
-    wx:for-item="tab"
-    wx:key="key"
-    data-tab-key="{{tab.key}}"
-  >
-    {{tab.text}}
+<view class="content-container"
+      style="margin-top: {{TopBarHeight}}px; height: calc(100vh - {{TopBarHeight + BottomIndicatorHeight}}px)">
+  <view class="tabs" wx:if="{{tabs && tabs.length > 0}}">
+    <view
+      class="tab {{currTab === tab.key ? 'selected' : ''}}"
+      bind:tap="onSwitchTab"
+      wx:for="{{tabs}}"
+      wx:for-item="tab"
+      wx:key="key"
+      data-tab-key="{{tab.key}}"
+    >
+      {{tab.text}}
+    </view>
   </view>
-</view>
 
-<view class="list">
-  <CommodityListCard
-    wx:for="{{commodityList}}"
-    wx:for-item="commodity"
-    wx:for-index="idx"
-    wx:key="_id"
-    class="card"
-    commodity="{{commodity}}"
-    bind:onClickCard="onClickCard"
-    bind:onPolish="onPolish"
-    bind:onOff="onOff"
-    bind:onEdit="onEdit"
-    bind:onDelete="onDelete"
-    bind:onRepublish="onRepublish"
-    data-idx="{{idx}}"
-  />
-</view>
+  <scroll-view
+    scroll-y
+    refresher-enabled="{{pullDownRefreshing || !isLoading}}"
+    refresher-triggered="{{pullDownRefreshing}}"
+    bindrefresherrefresh="onRefresherRefresh"
+    bindscrolltolower="onReachBottom"
+  >
+    <view class="list">
+      <CommodityListCard
+        wx:for="{{commodityList}}"
+        wx:for-item="commodity"
+        wx:for-index="idx"
+        wx:key="_id"
+        class="card"
+        commodity="{{commodity}}"
+        bind:onClickCard="onClickCard"
+        bind:onPolish="onPolish"
+        bind:onOff="onOff"
+        bind:onEdit="onEdit"
+        bind:onDelete="onDelete"
+        bind:onRepublish="onRepublish"
+        data-idx="{{idx}}"
+      />
+    </view>
 
-<view class="cu-load {{isLoading ? 'loading' : 'over'}}"></view>
+    <view class="cu-load {{isLoading ? 'loading' : 'over'}}"></view>
+  </scroll-view>
+</view>

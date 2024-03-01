@@ -7,6 +7,7 @@ const COUNT_PER_PAGE = 8
 Page({
   data: {
     ...getConstants(),
+    pullDownRefreshing: false,
     isLoading: false,
     cursor: 0,
     commodityList: [],
@@ -81,14 +82,14 @@ Page({
     await this.fetchMore();
   },
 
-  // 加载更多
-  async onReachBottom() {
+  async onRefresherRefresh() {
+    this.setData({ pullDownRefreshing: true, })
     await this.fetchMore();
+    this.setData({ pullDownRefreshing: false, })
   },
 
-  async onPullDownRefresh() {
-    await this.reload();
-    await wx.stopPullDownRefresh();
+  async onReachBottom() {
+    await this.fetchMore();
   },
 
   async onClickCard(ev) {

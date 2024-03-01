@@ -176,8 +176,9 @@ exports.main = async (event, context) => {
       }
       if (!count || count <= 0) {
         count = 10;
+      } else if (count > 100) {
+        count = 100;
       }
-      count = Math.max(count, 100);
       if (!start || start < 0) {
         start = 0;
       }

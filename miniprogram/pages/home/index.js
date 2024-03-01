@@ -161,12 +161,7 @@ Page({
     await this.fetchList();
   },
 
-  // 刷新商品列表
-  async onPullDownRefresh() {
-    await this.fetchList();
-    await wx.stopPullDownRefresh();
-  },
-  async onRefresherRefresh(ev) {
+  async onRefresherRefresh() {
     this.setData({ pullDownRefreshing: true, })
     await this.fetchList();
     this.setData({ pullDownRefreshing: false, })

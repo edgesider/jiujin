@@ -15,6 +15,7 @@
   refresher-enabled="{{pullDownRefreshing || !isLoading}}"
   refresher-triggered="{{pullDownRefreshing}}"
   bindrefresherrefresh="onRefresherRefresh"
+  bindscrolltolower="onReachBottom"
 >
   <view>
     <swiper autoplay circular class="top-swiper">

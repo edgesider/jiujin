@@ -58,6 +58,7 @@ App({
         const StatusBar = e.statusBarHeight;
         const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
         const TabBarHeight = 48;
+        const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
         const constants = Object.freeze({
           StatusBar,
           CustomBar,
@@ -65,7 +66,8 @@ App({
           ScreenSize: [e.screenWidth, e.screenHeight],
           SafeArea: e.safeArea,
           TopBarHeight: StatusBar + CustomBar,
-          BottomBarHeight: (e.screenHeight - e.safeArea?.bottom ?? 0) + TabBarHeight,
+          BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
+          BottomIndicatorHeight,
         });
         Object.assign(this.globalData, constants)
         setConstants(constants)
