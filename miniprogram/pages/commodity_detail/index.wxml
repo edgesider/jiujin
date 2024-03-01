@@ -20,18 +20,21 @@
           <text class="region" wx:if="{{(seller.rid || -1) !== -1}}">{{ridToRegion[seller.rid].name}}</text>
         </view>
         <view class="line2">
-          <text class="time">发布于{{createTime}}</text>
+          <text class="time">发布于 {{createTime}}</text>
         </view>
       </view>
     </view>
     <view class="body">
       <view class="content">
-        <view class="images {{commodity.img_urls.length === 1 ? 'images-single' : 'images-multi'}}">
+        <view
+          class="images {{commodity.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
+          style="height: calc({{firstImageSize[1] / firstImageSize[0]}} * 100vw);"
+        >
           <image
             wx:for="{{commodity.img_urls}}"
             wx:for-item="img"
             wx:key="*this"
-            mode="aspectFill"
+            mode="aspectFit"
             src="{{img}}"
             data-curr="{{img}}"
             bindtap="previewImages"

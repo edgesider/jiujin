@@ -19,6 +19,7 @@ Page({
     seller: null,
     contentParagraphs: [],
     remainTime: '',
+    firstImageSize: [],
   },
   onLoad: async function (options) {
     const { id } = options;
@@ -34,6 +35,13 @@ Page({
 
     const sellerResp = await api.getUserInfo(commodity.sell_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
+
+    let firstImageSize = [0, 0];
+    if (commodity.img_urls.length === 1) {
+      const size = await wx.getImageInfo({ src: commodity.img_urls[0] });
+      firstImageSize = [size.width, size.height];
+    }
+
     this.setData({
       loading: false,
       commodity,
@@ -43,6 +51,7 @@ Page({
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
       ridToRegion: app.globalData.ridToRegion,
       isMine: app.globalData.self._id === commodity.sell_id,
+      firstImageSize,
     });
   },
   calcRemainTimeStr(commodity) {
