@@ -13,10 +13,13 @@ Page({
     text: '',
   },
 
+  fetchToken: 0,
+
   async onLoad(options) {
   },
 
   onFocus() {
+    this.fetchToken++;
     this.setData({
       state: 'inputting',
     })
@@ -42,12 +45,14 @@ Page({
 
   async fetch(clear) {
     if (clear) {
+      this.fetchToken++;
       this.setData({
         commodityList: [],
         cursor: 0,
         state: 'loading',
       })
     }
+    const token = this.fetchToken;
     const { text, cursor, commodityList } = this.data;
     const resp = await api.getCommodityList({
       keyword: text,
@@ -61,6 +66,10 @@ Page({
         title: '网络错误',
         icon: 'error',
       });
+      return;
+    }
+    if (token !== this.fetchToken) {
+      console.log('fetch token mismatch, ignore fetch result')
       return;
     }
     const list = resp.data;

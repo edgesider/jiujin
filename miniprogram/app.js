@@ -63,6 +63,7 @@ App({
           StatusBar,
           CustomBar,
           TabBarHeight,
+          MenuButton: menuBtn,
           ScreenSize: [e.screenWidth, e.screenHeight],
           SafeArea: e.safeArea,
           TopBarHeight: StatusBar + CustomBar,
