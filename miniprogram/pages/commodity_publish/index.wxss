@@ -1,5 +1,4 @@
-/* miniprogram/pages/commodity_release/index.wxss */
-input{
+input {
   text-align: right;
 }
 
@@ -13,56 +12,35 @@ input{
   height: 100%;
 }
 
-.commodity-number-wrapper{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-left: 38rpx;
-  margin-right: 38rpx;
-  padding-top: 20rpx;
-  padding-bottom: 20rpx;
-}
-
-.commodity-expire-time-wrapper{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-left: 38rpx;
-  margin-right: 38rpx;
-  padding-top: 20rpx;
-  padding-bottom: 20rpx;
-}
-
-.thumbnail-wrapper{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-left: 38rpx;
-  margin-right: 38rpx;
-  padding-top: 20rpx;
-  padding-bottom: 20rpx;
-}
-
-.commodity-img-wrapper{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-left: 38rpx;
-  margin-right: 38rpx;
-  padding-top: 20rpx;
-  padding-bottom: 20rpx;
-}
-
-.wrapper{
-  position:fixed;
-  bottom:0;
-  width: 100%
-}
-
-.release-button{
+.release-button {
   font-size: 40rpx;
   height: 100rpx;
   background-color: #d43c33;
   color: #fff;
   margin: 30rpx;
+}
+
+.text-checkbox {
+  padding: 22rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.text-checkbox .items {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.text-checkbox .items .item {
+  font-size: 28rpx;
+}
+
+.text-checkbox .items .item.checked {
+  font-weight: bold;
 }

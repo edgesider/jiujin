@@ -40,13 +40,37 @@
         bindinput="onChangeCommodityCurrentPrice"
       />
     </view>
-    <view class="cu-form-group margin-top">
+    <view class="cu-form-group margin-top text-checkbox">
       <view class="title">成色</view>
-      <picker bindchange="onChangeQuality" value="{{qualityIndex}}" range="{{qualities}}" range-key="name">
-        <view class="picker">
-          {{qualities[qualityIndex].name}}
+      <view class="items">
+        <view
+          class="item {{qualityIndex === idx ? 'checked' : ''}}"
+          wx:for="{{qualities}}" wx:for-index="idx" wx:key="value"
+          data-idx="{{idx}}"
+          bindtap="onChangeQuality"
+        >
+          {{item.name}}
         </view>
-      </picker>
+      </view>
+    </view>
+    <view class="cu-form-group margin-top text-checkbox">
+      <view class="title">谁可见</view>
+      <view class="items">
+        <view
+          class="item {{onlyMyGender ? '' : 'checked'}}"
+          data-value="{{false}}"
+          bindtap="onChangeOnlyMyGender"
+        >不限
+        </view>
+        <view
+          wx:if="{{self !== null && self.sex !== GENDER.UNKNOWN}}"
+          class="item {{onlyMyGender ? 'checked' : ''}}"
+          data-value="{{true}}"
+          bindtap="onChangeOnlyMyGender"
+        >
+          仅{{GENDER_NAME_MAP[self.sex]}}性可见
+        </view>
+      </view>
     </view>
 
     <view class="cu-form-group margin-top">
@@ -63,4 +87,4 @@
 
 <van-dialog id="van-dialog" />
 
-<button bind:tap="onCommodityRelease" class="release-button">{{buttonText}}</button>
+<button bindtap="onSubmit" class="release-button">{{buttonText}}</button>
