@@ -6,7 +6,6 @@
     "pages/search/index",
     "pages/commodity_publish/index",
     "pages/commodity_detail/index",
-    "pages/customer_service/index",
     "TUIService/pages/tim_index/tim_index",
     "pages/commodity_collect/index"
   ],
@@ -31,9 +30,6 @@
       },
       {
         "pagePath": "TUIService/pages/tim_index/tim_index"
-      },
-      {
-        "pagePath": "pages/customer_service/index"
       },
       {
         "pagePath": "pages/me/index"

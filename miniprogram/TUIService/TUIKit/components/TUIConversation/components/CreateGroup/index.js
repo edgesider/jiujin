@@ -55,8 +55,7 @@ Component({
         groupID: this.data.groupID,
       }).then((imResponse) => { // 创建成功
         this.triggerEvent('createGroupID', { createGroupID: `GROUP${imResponse.data.group.groupID}` });
-      })
-        .catch((imError) => {
+      }).catch((imError) => {
           if (imError.code === 10021) {
             wx.showToast({
               title: '该群组ID被使用，请更换群ID',

@@ -34,8 +34,8 @@ App({
     TUIEnabled: false,
     TUISDKReady: false,
     totalUnread: 0,
-    currentUser: null,
-    targetID: null,
+    targetCommodity: null,
+    onUnreadCountUpdate: (count) => {},
   },
 
   userChangedSubject: new BehaviorSubject(null),
@@ -83,7 +83,7 @@ App({
       console.error('私信重复登录！');
       return { errno: -1 };
     }
-    this.globalData.config.userID = 'USER' + this.globalData.openId;
+    this.globalData.config.userID = this.globalData.openId;
     console.log('私信登录ID: ', this.globalData.config.userID);
 
     wx.TencentCloudChat = TencentCloudChat;
@@ -130,11 +130,13 @@ App({
       await wx.$TUIKit.logout();
     }
 
+    const user_id = 'USER' + id;
+
     this.globalData.TUISDKReady = false;
-    this.globalData.config.userID = id;
+    this.globalData.config.userID = user_id;
 
     console.log("生成用户聊天ID");
-    var result = await api.genUserSig(id);
+    var result = await api.genUserSig(user_id);
     console.log('result', result);
     if (result.errno == -1) {
       console.log("生成用户聊天ID失败！")
@@ -144,10 +146,10 @@ App({
     console.log("用户SIG：", userSig);
 
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
-    wx.$chat_userID = this.globalData.config.userID;
+    wx.$chat_userID = user_id;
     wx.$chat_userSig = userSig;
     wx.$TUIKit.login({
-      userID: this.globalData.config.userID,
+      userID: user_id,
       userSig
     });
 
@@ -156,16 +158,19 @@ App({
     });
   },
 
-  onSDKReady(event) {
+  async onSDKReady(event) {
     // 监听到此事件后可调用 SDK 发送消息等 API，使用 SDK 的各项功能。
     console.log("TencentCloudChat SDK_READY");
     this.globalData.TUISDKReady = true;
+    this.globalData.totalUnread = await wx.$TUIKit.getTotalUnreadMessageCount();
+    this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
   onTotalUnreadMessageCountUpdated(event) {
     console.log("TencentCloudChat TOTAL_UNREAD_MESSAGE_COUNT_UPDATED");
     console.log(event.data);
     this.globalData.totalUnread = event.data;
+    this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
   onMessageReceived(event) {

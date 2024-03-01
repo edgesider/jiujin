@@ -20,29 +20,39 @@ Page({
   },
 
   async onShow(){
-    const { currentUser, targetID, self } = app.globalData;
-    if (currentUser){
-      await app.loginIMWithID(currentUser);
-      app.globalData.currentUser = null;
-    } else {
-      const user_id = 'USER' + self._id;
-      await app.loginIMWithID(user_id);
-      app.globalData.config.commodity = null;
-    }
-
-    if (targetID){
-      var user_id = decodeURIComponent(targetID);
-      const TUIKit = this.selectComponent('#TUIKit');
-      var conversation = TUIKit.selectComponent('#TUIConversation');
-      conversation.searchUserID({ detail: { searchUserID: user_id } });
-      app.globalData.targetID = null;
+    const { targetCommodity, self } = app.globalData;
+    const TUIKit = this.selectComponent('#TUIKit');
+    var conversation = TUIKit.selectComponent('#TUIConversation');
+    if (targetCommodity){
+      // 尝试创建群聊
+      const comm_tail = targetCommodity._id.substr(0, 16);
+      const group_id = `${self._id}${comm_tail}`;
+      console.log(targetCommodity);
+      wx.$TUIKit.createGroup({
+        type: wx.TencentCloudChat.TYPES.GRP_MEETING,
+        name: targetCommodity.content,
+        groupID: group_id,
+        avatar: targetCommodity.img_urls[0],
+        memberList: [
+          { userID: 'USER' + self._id },
+          { userID: 'USER' + targetCommodity.sell_id }
+        ]
+      }).then(function(imResponse) {
+        console.log("群聊创建成功：" + imResponse.data.group);
+        // 进入群聊
+        conversation.searchGroupID({ detail: { searchGroupID: "GROUP" + group_id } });
+        app.globalData.targetCommodity = null;
+      }).catch(function(imError) {
+        console.warn('群聊创建失败:', imError);
+        app.globalData.targetCommodity = null;
+      });
     }
   },
 
   async isUserExists(id) {
     resp = await wx.$TUIKit.getUserStatus({ userIDList: [`${id}`] });
     const { users } = imResponse.data;
-    const { userID, statusType, customStatus } = users[0];
+    const { statusType } = users[0];
     if (statusType === wx.TencentCloudChat.TYPES.USER_STATUS_ONLINE || statusType === wx.TencentCloudChat.TYPES.USER_STATUS_OFFLINE)
       return true;
     return false;

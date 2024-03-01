@@ -23,12 +23,6 @@ Component({
         text: '发布'
       },
       {
-        pagePath: "/pages/customer_service/index",
-        iconClass: "cuIcon-notification",
-        selectedIconClass: "cuIcon-notificationfill",
-        text: "商品回复"
-      },
-      {
         pagePath: '/pages/me/index',
         iconClass: 'cuIcon-my',
         selectedIconClass: 'cuIcon-myfill',
@@ -36,6 +30,7 @@ Component({
       },
     ],
     url: '',
+    unreadCount: 0,
   },
   lifetimes: {
     created() {
@@ -43,11 +38,17 @@ Component({
         const i = this.data.list.findIndex(item => item.pagePath === '/' + url);
         this.setData({ selected: i, url })
       }
+      getApp().globalData.onUnreadCountUpdate = (count) => {
+        console.log("未读消息数改变为", count);
+        this.setData({
+          unreadCount: count
+        });
+      }
     },
   },
   methods: {
     switchTab(e) {
-      const data = e.currentTarget.dataset
+      const data = e.currentTarget.dataset;
       const { path, useNavigateTo } = data;
       if (useNavigateTo) {
         wx.navigateTo({ url: path })

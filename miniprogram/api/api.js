@@ -129,7 +129,7 @@ const api = {
     })
     return wrapResponse(res);
   },
-  
+
   // 获取商品分类信息
   // async getCategory() {
   //   return wrapResponse(await wx.cloud.callFunction({
