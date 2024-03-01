@@ -30,11 +30,11 @@
       </swiper-item>
     </swiper>
 
-    <view class="regions-filter" style="top: 0">
+    <view class="regions-filter">
       <view
         wx:for="{{regions}}" wx:key="_id" wx:for-index="idx"
         class="region {{selectedRegionIndex === idx ? 'region-selected' : ''}}"
-        bind:tap="onChangeRegion"
+        bind:tap="onRegionClick"
         data-idx="{{idx}}"
       >
         <text class="name">{{item.name}}</text>
