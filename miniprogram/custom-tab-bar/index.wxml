@@ -1,5 +1,5 @@
 <view class="root" data-url="{{url}}">
-  <view class="tab-bar">
+  <view class="tab-bar" style="{{TabBarHeight}}px">
     <view
       class="tab-bar-item"
       wx:for="{{list}}" wx:key="index"

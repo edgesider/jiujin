@@ -34,6 +34,7 @@ Page({
     commodityList: [],
     cursor: 0,
     isLoading: false,
+    pullDownRefreshing: false,
 
     banners: [],
   },
@@ -164,6 +165,11 @@ Page({
   async onPullDownRefresh() {
     await this.fetchList();
     await wx.stopPullDownRefresh();
+  },
+  async onRefresherRefresh(ev) {
+    this.setData({ pullDownRefreshing: true, })
+    await this.fetchList();
+    this.setData({ pullDownRefreshing: false, })
   },
 
   async onReachBottom() {

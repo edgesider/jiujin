@@ -138,7 +138,7 @@ page {
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: stretch;
+  align-items: flex-start;
   overflow-x: hidden;
 }
 
@@ -150,7 +150,7 @@ page {
 }
 
 .bottom {
-  margin: 0 0 16px;
+  padding: 0 0 16px;
   font-size: 12px;
   color: rgba(0, 0, 0, 0.5);
   display: flex;
