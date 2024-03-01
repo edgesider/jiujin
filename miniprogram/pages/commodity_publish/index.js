@@ -185,7 +185,7 @@ Page({
       } else {
         const resp = await api.uploadImage(
           path,
-          `\`commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}\``
+          `commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}\``
         );
         if (resp.isError) {
           throw resp.message;
