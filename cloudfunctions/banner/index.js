@@ -25,10 +25,10 @@ exports.main = async (event, context) => {
       const { rid } = event.params
       //banner默认是0的话，代表所有rid都可以
       let w = {
-        rid: 0,
+        "rid": _.eq(0)
       }
       w["rid"] = w["rid"].or(_.eq(rid))
-      ctx.body = await bannerCollection.where(w).orderBy('_id', 'asc').get()
+      ctx.body = await bannerCollection.where(w).orderBy('_id', 'desc').get()
       ctx.body.errno = ctx.body.data ? 0 : -1
     } catch (e) {
       ctx.body = {
