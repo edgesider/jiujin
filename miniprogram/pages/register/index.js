@@ -12,11 +12,6 @@ Page({
     avatarUrl: "",
 
     gender: GENDER.UNKNOWN,
-    genderMap: {
-      [GENDER.MALE]: '男',
-      [GENDER.FEMALE]: '女',
-      [GENDER.UNKNOWN]: '保密',
-    },
     genderOptions: ['保密', '男', '女'],
 
     regions: [],

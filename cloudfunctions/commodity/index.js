@@ -168,7 +168,7 @@ exports.main = async (event, context) => {
       if (buyer_id) {
         w["buyer_id"] = buyer_id
       }
-      if (sell_id != wxContext.OPENID && buyer_id != wxContext.OPENID) {
+      if (sell_id !== wxContext.OPENID && buyer_id !== wxContext.OPENID) {
         w["sex"] = _.eq(0).or(_.eq(sex))
       }
       if (typeof status === 'number') {

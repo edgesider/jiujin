@@ -35,7 +35,7 @@
           value="{{gender}}"
           bindchange="onGenderPickerConfirm"
         >
-          <view class="picker">{{genderMap[gender]}}</view>
+          <view class="picker">{{GENDER_NAME_MAP[gender]}}</view>
         </picker>
       </view>
       <view class="cu-form-group">

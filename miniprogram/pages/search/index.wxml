@@ -15,11 +15,31 @@
 </view>
 
 <view class="content">
-  <block wx:if="{{state === 'inputting'}}">
-    <view class="history">
-      <view class="title"></view>
+  <view wx:if="{{state === 'inputting'}}" class="inputting">
+    <view class="title">历史记录
+      <text class="cuIcon-delete histories-clear" bindtap="onHistoriesClear">清除</text>
     </view>
-  </block>
+    <view class="histories">
+      <view
+        wx:for="{{histories}}"
+        wx:key="*this"
+        wx:for-index="idx"
+        class="histories-item"
+        data-idx="{{idx}}"
+        bindtap="onHistoryClick"
+      >
+        <text>{{item}}</text>
+      </view>
+    </view>
+    <view class="title">过滤</view>
+    <view class="filter">
+      <!--      <view-->
+      <!--        wx:if="{{self.sex !== null && self.sex !== GENDER.UNKNOWN}}"-->
+      <!--        class="text-check {{onlyMyGender ? 'checked' : ''}}"-->
+      <!--        bindtap="onOnlyMyGenderClick"-->
+      <!--      >仅{{GENDER_NAME_MAP[self.sex]}}性</view>-->
+    </view>
+  </view>
   <view wx:elif="{{state === 'shown' || state === 'loading'}}" class="commodity-list-container">
     <view class="list" wx:if="{{commodityList.length > 0}}">
       <CommodityCard

@@ -1,7 +1,8 @@
 import api from "../../api/api";
-import getConstants from "../../constants";
+import getConstants, { GENDER } from "../../constants";
 
 const COUNT_PER_PAGE = 8
+const app = getApp();
 
 Page({
   data: {
@@ -9,13 +10,23 @@ Page({
     commodityList: [],
     cursor: 0,
     state: 'inputting', // inputting | loading | shown
-    isFocused: false,
+    isFocused: true,
     text: '',
+
+    self: app.globalData.self,
+    onlyMyGender: false,
+
+    histories: [],
   },
 
   fetchToken: 0,
 
-  async onLoad(options) {
+  async onLoad() {
+    const histories = wx.getStorageSync('searchHistories') ?? [];
+    this.setData({
+      self: app.globalData.self,
+      histories,
+    });
   },
 
   onFocus() {
@@ -40,7 +51,38 @@ Page({
       })
       return;
     }
+    const newHistories = [text, ...this.data.histories];
+    if (newHistories.length > 10) {
+      newHistories.splice(0, newHistories.length - 10);
+    }
+    this.setHistories(newHistories);
     await this.fetch(true);
+  },
+
+  async onHistoryClick(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const { histories } = this.data;
+    const clicked = histories[idx];
+    histories.splice(idx, 1);
+    this.setHistories([clicked, ...histories]);
+    this.setData({
+      isFocused: false,
+      text: clicked
+    });
+    await this.fetch(true);
+  },
+  async onHistoriesClear() {
+    this.setData({ histories: [] });
+    wx.removeStorageSync('searchHistories');
+  },
+
+  setHistories(histories) {
+    this.setData({ histories });
+    wx.setStorageSync('searchHistories', histories);
+  },
+
+  onOnlyMyGenderClick() {
+    this.setData({ onlyMyGender: !this.data.onlyMyGender });
   },
 
   async fetch(clear) {
@@ -57,6 +99,7 @@ Page({
     const resp = await api.getCommodityList({
       keyword: text,
       orderBy: 'update_time',
+      sex: this.data.onlyMyGender ? app.globalData.self.sex : GENDER.UNKNOWN,
       order: 'desc',
       start: cursor,
       count: COUNT_PER_PAGE,
