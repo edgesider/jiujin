@@ -5,7 +5,7 @@ import moment from "moment";
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
-import { GENDER } from "./constants";
+import { GENDER, setConstants } from "./constants";
 
 import axios from 'axios';
 import { initMoment } from "./utils/time";
@@ -54,9 +54,24 @@ App({
     // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
-        this.globalData.StatusBar = e.statusBarHeight;
         const menuBtn = wx.getMenuButtonBoundingClientRect();
-        this.globalData.CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
+        const StatusBar = e.statusBarHeight;
+        const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
+        const TabBarHeight = 48;
+        const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
+        const constants = Object.freeze({
+          StatusBar,
+          CustomBar,
+          TabBarHeight,
+          MenuButton: menuBtn,
+          ScreenSize: [e.screenWidth, e.screenHeight],
+          SafeArea: e.safeArea,
+          TopBarHeight: StatusBar + CustomBar,
+          BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
+          BottomIndicatorHeight,
+        });
+        Object.assign(this.globalData, constants)
+        setConstants(constants)
       }
     })
 
@@ -162,12 +177,10 @@ App({
 
   onTotalUnreadMessageCountUpdated(event) {
     console.log("TencentCloudChat TOTAL_UNREAD_MESSAGE_COUNT_UPDATED");
-    console.log(event.data);
     this.globalData.totalUnread = event.data;
   },
 
   onMessageReceived(event) {
-    console.log(event.data);
   },
 
   getAccessToken() {
@@ -258,6 +271,7 @@ App({
     for (const region of regions) {
       ridToRegion[region._id] = region;
     }
+    this.globalData.regions = regions;
     this.globalData.ridToRegion = ridToRegion;
   },
 

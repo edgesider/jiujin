@@ -11,6 +11,7 @@ const db = cloud.database()
 const _ = db.command
 
 const commodityCollection = db.collection('commodity')
+const userCollection = db.collection('user')
 const collectionCollection = db.collection('collection')
 const viewedCollection = db.collection('viewed')
 const regionCache = {}
@@ -168,16 +169,21 @@ exports.main = async (event, context) => {
       if (buyer_id) {
         w["buyer_id"] = buyer_id
       }
-      if (sell_id != wxContext.OPENID && buyer_id != wxContext.OPENID) {
-        w["sex"] = _.eq(0).or(_.eq(sex))
+      const self = (await userCollection.where({ _id: wxContext.OPENID }).get()).data[0];
+      if (!self) {
+        // 未登录
+        w['sex'] = 0;
+      } else {
+        w["sex"] = _.eq(0).or(_.eq(self.sex))
       }
       if (typeof status === 'number') {
         w["status"] = status
       }
       if (!count || count <= 0) {
         count = 10;
+      } else if (count > 100) {
+        count = 100;
       }
-      count = Math.max(count, 100);
       if (!start || start < 0) {
         start = 0;
       }

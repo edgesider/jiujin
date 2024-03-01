@@ -1,8 +1,7 @@
 <view class="root">
   <TitleBar title="详情" />
 
-  <view wx:if="{{loading}}" class="loading">
-    <text>加载中...</text>
+  <view wx:if="{{loading}}" class="loading cu-load">
   </view>
   <view wx:elif="{{!commodity}}" class="loading">
     <text>商品走丢了</text>

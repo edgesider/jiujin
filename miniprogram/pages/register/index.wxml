@@ -1,5 +1,5 @@
 <TitleBar title="{{isEdit ? '我的信息' : '注册'}}" class="title-bar" />
-<view style="width: 100%; height: {{CustomBar}}px" />
+<view style="width: 100%; height: {{TopBarHeight}}px" />
 
 <form>
   <view class="cu-card">
@@ -24,16 +24,20 @@
           value="{{name}}"
           placeholder="请输入昵称"
           type="nickname"
-          bindinput="onChangeName" />
+          bindinput="onChangeName"
+        />
       </view>
-      <!-- <view class="cu-form-group">
-				<view class="title">微信联系方式</view>
-				<input class="text-right" value="{{contactInfoWX}}" placeholder="选填" bindinput="onChangeContactInfoWX"></input>
-			</view>
-			<view class="cu-form-group">
-				<view class="title"></view>
-				<input class="text-right" value="{{contactInfoQQ}}" placeholder="选填" bindinput="onChangeContactInfoQQ"></input>
-			</view> -->
+      <view class="cu-form-group">
+        <view class="title">性别</view>
+        <picker
+          mode="selector"
+          range="{{genderOptions}}"
+          value="{{gender}}"
+          bindchange="onGenderPickerConfirm"
+        >
+          <view class="picker">{{GENDER_NAME_MAP[gender]}}</view>
+        </picker>
+      </view>
       <view class="cu-form-group">
         <view class="title">常用位置</view>
         <picker

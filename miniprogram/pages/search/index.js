@@ -1,7 +1,8 @@
 import api from "../../api/api";
-import getConstants from "../../constants";
+import getConstants, { GENDER } from "../../constants";
 
 const COUNT_PER_PAGE = 8
+const app = getApp();
 
 Page({
   data: {
@@ -9,14 +10,27 @@ Page({
     commodityList: [],
     cursor: 0,
     state: 'inputting', // inputting | loading | shown
-    isFocused: false,
+    isFocused: true,
     text: '',
+
+    self: app.globalData.self,
+    onlyMyGender: false,
+
+    histories: [],
   },
 
-  async onLoad(options) {
+  fetchToken: 0,
+
+  async onLoad() {
+    const histories = wx.getStorageSync('searchHistories') ?? [];
+    this.setData({
+      self: app.globalData.self,
+      histories,
+    });
   },
 
   onFocus() {
+    this.fetchToken++;
     this.setData({
       state: 'inputting',
     })
@@ -37,21 +51,55 @@ Page({
       })
       return;
     }
+    const newHistories = [text, ...this.data.histories];
+    if (newHistories.length > 10) {
+      newHistories.splice(0, newHistories.length - 10);
+    }
+    this.setHistories(newHistories);
     await this.fetch(true);
+  },
+
+  async onHistoryClick(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const { histories } = this.data;
+    const clicked = histories[idx];
+    histories.splice(idx, 1);
+    this.setHistories([clicked, ...histories]);
+    this.setData({
+      isFocused: false,
+      text: clicked
+    });
+    await this.fetch(true);
+  },
+  async onHistoriesClear() {
+    this.setData({ histories: [] });
+    wx.removeStorageSync('searchHistories');
+  },
+
+  setHistories(histories) {
+    this.setData({ histories });
+    wx.setStorageSync('searchHistories', histories);
+  },
+
+  onOnlyMyGenderClick() {
+    this.setData({ onlyMyGender: !this.data.onlyMyGender });
   },
 
   async fetch(clear) {
     if (clear) {
+      this.fetchToken++;
       this.setData({
         commodityList: [],
         cursor: 0,
         state: 'loading',
       })
     }
+    const token = this.fetchToken;
     const { text, cursor, commodityList } = this.data;
     const resp = await api.getCommodityList({
       keyword: text,
       orderBy: 'update_time',
+      sex: this.data.onlyMyGender ? app.globalData.self.sex : GENDER.UNKNOWN,
       order: 'desc',
       start: cursor,
       count: COUNT_PER_PAGE,
@@ -61,6 +109,10 @@ Page({
         title: '网络错误',
         icon: 'error',
       });
+      return;
+    }
+    if (token !== this.fetchToken) {
+      console.log('fetch token mismatch, ignore fetch result')
       return;
     }
     const list = resp.data;

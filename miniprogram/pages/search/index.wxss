@@ -40,6 +40,61 @@ page {
 .content {
   width: 100%;
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputting {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 18rpx;
+}
+
+.inputting .title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin: 18rpx 0;
+  position: relative;
+}
+
+.histories {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.histories-item {
+  font-size: 24rpx;
+  width: fit-content;
+  background: rgba(0, 0, 0, .1);
+  border-radius: 4rpx;
+  padding: 8rpx 12rpx;
+}
+
+.histories-clear {
+  margin-right: 18rpx;
+  position: absolute;
+  right: 0;
+  font-size: 12rpx;
+  font-weight: normal;
+}
+
+.filter {
+}
+
+.filter .text-check {
+  font-size: 22rpx;
+}
+
+.filter .text-check.checked {
+  font-weight: bold;
 }
 
 .commodity-list-container {

@@ -34,13 +34,13 @@ Page({
     commodityList: [],
     cursor: 0,
     isLoading: false,
+    pullDownRefreshing: false,
 
     banners: [],
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
+  fetchToken: 0,
+
   async onLoad() {
     setTabBar(this);
     this.setData({ isLoading: true })
@@ -48,7 +48,10 @@ Page({
       await Promise.all([this.loadRegions(), this.loadBanners()]); // TODO cache
       await this.fetchList();
     } catch (e) {
-      Dialog.alert({ message: e, });
+      await wx.showToast({
+        title: '加载失败',
+        icon: 'error',
+      });
       console.error(e);
     } finally {
       this.setData({ isLoading: false });
@@ -66,8 +69,7 @@ Page({
       await this.fetchList();
     }
     if (this.data.self && app.globalData.self && this.data.self.rid !== app.globalData.self.rid) {
-      await this.loadRegions();
-      await this.fetchList();
+      await Promise.all([this.loadRegions(), this.fetchList(), this.loadBanners()]);
     }
   },
 
@@ -119,8 +121,11 @@ Page({
 
     const start = append ? this.data.cursor : 0;
     if (!append) {
-      wx.pageScrollTo({ scrollTop: 0, smooth: true });
+      this.fetchToken++;
+      await wx.pageScrollTo({ scrollTop: 0, smooth: true });
+      this.loadBanners().then();
     }
+    const token = this.fetchToken;
     this.setData({
       cursor: start,
       isLoading: true,
@@ -134,6 +139,10 @@ Page({
         is_mine: false,
         status: COMMODITY_STATUS_SELLING
       });
+      if (token !== this.fetchToken) {
+        console.log('fetchList: token mismatch, ignore result')
+        return;
+      }
       const data = append ? this.data.commodityList.concat(list.data) : list.data;
       const cursor = data.length;
       this.setData({
@@ -160,10 +169,10 @@ Page({
     await this.fetchList();
   },
 
-  // 刷新商品列表
-  async onPullDownRefresh() {
+  async onRefresherRefresh() {
+    this.setData({ pullDownRefreshing: true, })
     await this.fetchList();
-    await wx.stopPullDownRefresh();
+    this.setData({ pullDownRefreshing: false, })
   },
 
   async onReachBottom() {
@@ -191,10 +200,9 @@ Page({
     })
   },
 
-  // 切换区域
-  async onChangeRegion(ev) {
+  async onRegionClick(ev) {
     const targetIdx = ev.currentTarget.dataset.idx;
-    if (typeof targetIdx !== 'number' || targetIdx === this.data.selectedRegionIndex) {
+    if (typeof targetIdx !== 'number') {
       return;
     }
     this.setData({
