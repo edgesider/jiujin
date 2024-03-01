@@ -10,24 +10,30 @@ Component({
         selectedIconClass: 'cuIcon-homefill',
         text: '首页'
       },
+      // {
+      //   pagePath: '/pages/commodity_list/index?onTabBar=1',
+      //   iconClass: 'cuIcon-order',
+      //   selectedIconClass: 'cuIcon-orderfill',
+      //   text: '我看过的'
+      // },
+      {
+        pagePath: '/pages/commodity_publish/index',
+        iconClass: 'cuIcon-add',
+        useNavigateTo: true, // 是否使用navigateTo打开新的页面
+        text: '发布',
+      },
       {
         pagePath: "/TUIService/pages/tim_index/tim_index",
         iconClass: "cuIcon-message",
         selectedIconClass: "cuIcon-messagefill",
         text: "私信"
       },
-      {
-        pagePath: '/pages/commodity_publish/index',
-        iconClass: 'cuIcon-add',
-        useNavigateTo: true, // 是否使用navigateTo打开新的页面
-        text: '发布'
-      },
-      {
-        pagePath: "/pages/customer_service/index",
-        iconClass: "cuIcon-notification",
-        selectedIconClass: "cuIcon-notificationfill",
-        text: "商品回复"
-      },
+      // {
+      //   pagePath: "/pages/customer_service/index",
+      //   iconClass: "cuIcon-notification",
+      //   selectedIconClass: "cuIcon-notificationfill",
+      //   text: "商品回复"
+      // },
       {
         pagePath: '/pages/me/index',
         iconClass: 'cuIcon-my',
@@ -54,6 +60,6 @@ Component({
       } else {
         wx.switchTab({ url: path })
       }
-    }
+    },
   },
 })

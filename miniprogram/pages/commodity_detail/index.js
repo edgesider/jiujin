@@ -1,7 +1,9 @@
 import api, { CollectApi } from "../../api/api";
-import { sleep, splitMillisecondsToString } from "../../utils/time";
+import { splitMillisecondsToString } from "../../utils/time";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
+import { sleep } from "../../utils/other";
+import moment from "moment";
 
 const app = getApp();
 const DURATION_IN_FEED = 1000 * 60 * 60 * 24 * 2;
@@ -14,9 +16,11 @@ Page({
     isMine: false,
     commodity: null,
     createTime: '',
+    polishTime: '',
     seller: null,
     contentParagraphs: [],
     remainTime: '',
+    firstImageSize: [],
   },
   onLoad: async function (options) {
     const { id } = options;
@@ -32,15 +36,24 @@ Page({
 
     const sellerResp = await api.getUserInfo(commodity.sell_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
+
+    let firstImageSize = [0, 0];
+    if (commodity.img_urls.length === 1) {
+      const size = await wx.getImageInfo({ src: commodity.img_urls[0] });
+      firstImageSize = [size.width, size.height];
+    }
+
     this.setData({
       loading: false,
       commodity,
-      createTime: new Date(commodity.create_time).toLocaleDateString(),
+      createTime: moment(commodity.create_time).format('YYYY-MM-DD HH:mm'),
       remainTime: this.calcRemainTimeStr(commodity),
+      polishTime: moment(commodity.update_time).fromNow(),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
       ridToRegion: app.globalData.ridToRegion,
       isMine: app.globalData.self._id === commodity.sell_id,
+      firstImageSize,
     });
   },
   calcRemainTimeStr(commodity) {

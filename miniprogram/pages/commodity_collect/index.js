@@ -1,7 +1,6 @@
 import api, { CollectApi } from "../../api/api";
 import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SALE, COMMODITY_STATUS_SELLING } from "../../constants";
-import moment from "moment";
-import { setTabBar } from "../../utils/other";
+import moment from 'moment';
 
 const app = getApp();
 const COUNT_PER_PAGE = 8

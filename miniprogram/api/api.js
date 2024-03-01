@@ -228,22 +228,19 @@ const api = {
     }))
   },
 
+  async setViewed(cid) {
+  },
   async getMyViewed(start, count) {
   },
-  async getMyBought(start, count) {
+  async getBannerList(rid) {
     return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+      name: 'banner',
       data: {
-        $url: 'getCommodityList',
-        params: {
-          buyer_id: getApp().globalData.openId,
-          orderBy: 'update_time',
-          order: 'desc',
-          start, count,
-        },
+        $url: 'getBannerList',
+        params: { rid }
       }
     }));
-  },
+  }
 }
 
 export default api;

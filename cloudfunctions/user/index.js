@@ -19,9 +19,7 @@ const RID_MODIFICATION_MIN_DURATION = 1000 * 60 * 60 * 24; // 修改RID的最小
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  const app = new TcbRouter({
-    event
-  })
+  const app = new TcbRouter({ event })
 
   app.router('getOpenId', async (ctx) => {
     ctx.body = {
@@ -185,18 +183,6 @@ exports.main = async (event, context) => {
       }
     }
   })
-
-
-  // 学生身份验证, 空方法，默认返回true
-  // TODO: 完善学生身份验证
-  // app.router('studentIdAuth', async (ctx, next) => {
-  //   ctx.body = await userCollection.where({
-  //     openid: wxContext.OPENID,
-  //     is_deleted: false
-  //   }).get().then((res) => {
-  //     return true
-  //   })
-  // })
 
   return app.serve()
 }

@@ -4,17 +4,25 @@ page {
   padding-bottom: calc(env(safe-area-inset-bottom) + 48px);
 }
 
+.top-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  background-color: white;
+}
+
 .top {
   flex: 0;
-  position: fixed;
+  position: relative;
   left: 0;
   top: 0;
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  z-index: 10;
 }
 
 .top .app-name {
@@ -26,32 +34,35 @@ page {
 }
 
 .top .app-logo {
-  width: 90px;
-  height: 50px;
-  z-index: inherit;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  --logo-width: 80px;
+  --ratio: calc(50 / 90);
+  width: var(--logo-width);
+  height: calc(var(--ratio) * var(--logo-width));
 }
 
 .top .search {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%) translateY(-3px);
+  position: relative;
   z-index: inherit;
-  /*border: 0.5px solid rgba(0, 0, 0, 0.3);*/
+  /*border: 1px rgba(0, 0, 0, .5) solid;*/
   background-color: #eee;
   line-height: 24px;
-  height: 36px;
+  height: 64rpx;
   width: 40%;
-  font-size: 12px;
+  border-radius: 32rpx;
+  font-size: 30rpx;
   color: black;
   display: flex;
   align-items: center;
-  border-radius: 24px;
 }
 
 .top .search text {
   position: absolute;
-  top: 6px;
+  top: 4px;
   right: 10px;
 }
 
@@ -69,7 +80,7 @@ page {
   flex: 0;
   z-index: -1;
   width: 100%;
-  height: 220px;
+  height: 200rpx;
 }
 
 .regions-filter {

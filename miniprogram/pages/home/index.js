@@ -1,7 +1,7 @@
 import { setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
 import Dialog from '@vant/weapp/dialog/dialog';
-import api from "../../api/api";
+import api from '../../api/api';
 
 const app = getApp()
 const COUNT_PER_PAGE = 8
@@ -34,6 +34,8 @@ Page({
     commodityList: [],
     cursor: 0,
     isLoading: false,
+
+    banners: [],
   },
 
   /**
@@ -43,7 +45,7 @@ Page({
     setTabBar(this);
     this.setData({ isLoading: true })
     try {
-      await this.loadRegions(); // TODO cache
+      await Promise.all([this.loadRegions(), this.loadBanners()]); // TODO cache
       await this.fetchList();
     } catch (e) {
       Dialog.alert({ message: e, });
@@ -97,6 +99,19 @@ Page({
         selectedRegionIndex: 0,
       });
     }
+  },
+
+  async loadBanners() {
+    await app.waitForReady();
+    const rid = app.globalData.self?.rid ?? DEFAULT_REGION_ID;
+    const resp = await api.getBannerList(rid);
+    if (resp.isError) {
+      console.error(resp);
+      return;
+    }
+    this.setData({
+      banners: resp.data,
+    });
   },
 
   async fetchList({ append } = {}) {
@@ -170,11 +185,9 @@ Page({
     })
   },
 
-  // 搜索
-  async onSearchCommodity(event) {
-    const keyword = event.detail.value
+  async onSearchClick() {
     wx.navigateTo({
-      url: `../search/index?keyword=${keyword}`,
+      url: `../search/index`,
     })
   },
 
@@ -191,53 +204,18 @@ Page({
     });
   },
 
+  onClickBanner(ev) {
+    const { url } = ev.currentTarget.dataset;
+    wx.previewImage({
+      current: url,
+      urls: [url],
+    })
+  },
+
   async onEnterCommodityDetail(event) {
     const id = event.currentTarget.dataset.id
     wx.navigateTo({
       url: `../commodity_detail/index?id=${id}&enteredFrom=1`,
-    })
-  },
-  //
-  // async onCommodityReleaseTab() {
-  //   const registered = app.globalData.registered
-  //   if (registered) {
-  //     await wx.navigateTo({
-  //       url: '../commodity_publish/index',
-  //       events: {
-  //         afterPublished() {
-  //           console.log('afterPublished');
-  //           this.fetchList();
-  //         }
-  //       }
-  //     })
-  //   } else {
-  //     this.setData({
-  //       showLoginPopup: true
-  //     })
-  //   }
-  // },
-
-  async onHomeTab() {
-    wx.redirectTo({
-      url: '../me/index',
-    })
-  },
-
-  onShowLoginPopup() {
-    const registered = app.globalData.registered
-    if (!registered) {
-      this.setData({
-        showLoginPopup: true
-      })
-    }
-  },
-
-  onTitleClick() {
-  },
-
-  onCancelLoginPopup() {
-    this.setData({
-      showLoginPopup: false
     })
   },
 
@@ -252,6 +230,5 @@ Page({
     wx.redirectTo({
       url: '../register/index',
     })
-
   },
 })

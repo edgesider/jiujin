@@ -8,6 +8,7 @@ import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
 import { GENDER } from "./constants";
 
 import axios from 'axios';
+import { initMoment } from "./utils/time";
 
 const IMAxios = axios.create({
   timeout: 10000,
@@ -54,19 +55,16 @@ App({
     wx.getSystemInfo({
       success: e => {
         this.globalData.StatusBar = e.statusBarHeight;
-        let custom = wx.getMenuButtonBoundingClientRect();
-        this.globalData.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
+        const menuBtn = wx.getMenuButtonBoundingClientRect();
+        this.globalData.CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
       }
     })
 
-    moment.locale('zh-cn');
+    initMoment();
 
     const { data: { openId } } = await api.getOpenId();
     this.globalData.openId = openId;
 
-    // 清空缓存
-    wx.clearStorageSync();
-    // TODO 存到storage中
     await Promise.all([this.fetchSelfInfo(), this.fetchRegions()]);
 
     // 登录腾讯IM
@@ -177,7 +175,7 @@ App({
     // 注意：仅用于测试，上线时需要转移至后端
     const SECRETKEY = '87c21b1a1e9cfe7e57b32a1ccb9508ac';
     let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRETKEY}`;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       IMAxios({
         url: url,
         method: 'GET'
@@ -236,7 +234,7 @@ App({
     });
   },
 
-  decodeReplyID(replyID){
+  decodeReplyID(replyID) {
     return {
       openid: replyID.substr(4, 32),
       commodity: replyID.substr(32),

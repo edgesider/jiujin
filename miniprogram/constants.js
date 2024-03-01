@@ -14,7 +14,9 @@ export default function getConstants() {
     COMMODITY_STATUS_SELLING,
     COMMODITY_STATUS_OFF,
     COMMODITY_STATUS_SOLD,
+    GENDER,
     CustomBar: app.globalData.CustomBar,
     StatusBar: app.globalData.StatusBar,
+    MenuButton: wx.getMenuButtonBoundingClientRect(),
   };
 };

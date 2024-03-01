@@ -1,5 +1,5 @@
 <TitleBar title="{{title}}" class="title-bar" />
-<view style="width: 100%; height: {{CustomBar}}px" />
+<view style="width: 100%; height: {{CustomBar + StatusBar}}px" />
 
 <view class="tabs" wx:if="{{tabs && tabs.length > 0}}">
   <view
