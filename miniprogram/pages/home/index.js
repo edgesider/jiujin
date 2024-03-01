@@ -69,8 +69,7 @@ Page({
       await this.fetchList();
     }
     if (this.data.self && app.globalData.self && this.data.self.rid !== app.globalData.self.rid) {
-      await this.loadRegions();
-      await this.fetchList();
+      await Promise.all([this.loadRegions(), this.fetchList(), this.loadBanners()]);
     }
   },
 
@@ -124,6 +123,7 @@ Page({
     if (!append) {
       this.fetchToken++;
       await wx.pageScrollTo({ scrollTop: 0, smooth: true });
+      this.loadBanners().then();
     }
     const token = this.fetchToken;
     this.setData({
