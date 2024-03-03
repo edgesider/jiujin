@@ -1,5 +1,8 @@
+import getConstants from "../constants";
+
 Component({
   data: {
+    ...getConstants(),
     selected: 0,
     color: '#7A7E83',
     selectedColor: '#3cc51f',
@@ -10,12 +13,12 @@ Component({
         selectedIconClass: 'cuIcon-homefill',
         text: '首页'
       },
-      // {
-      //   pagePath: '/pages/commodity_list/index?onTabBar=1',
-      //   iconClass: 'cuIcon-order',
-      //   selectedIconClass: 'cuIcon-orderfill',
-      //   text: '我看过的'
-      // },
+      {
+        pagePath: '/pages/commodity_publish/index',
+        iconClass: 'cuIcon-question',
+        toastText: '敬请期待！',
+        text: '互助',
+      },
       {
         pagePath: '/pages/commodity_publish/index',
         iconClass: 'cuIcon-add',
@@ -28,12 +31,6 @@ Component({
         selectedIconClass: "cuIcon-messagefill",
         text: "私信"
       },
-      // {
-      //   pagePath: "/pages/customer_service/index",
-      //   iconClass: "cuIcon-notification",
-      //   selectedIconClass: "cuIcon-notificationfill",
-      //   text: "商品回复"
-      // },
       {
         pagePath: '/pages/me/index',
         iconClass: 'cuIcon-my',
@@ -52,13 +49,20 @@ Component({
     },
   },
   methods: {
-    switchTab(e) {
+    async switchTab(e) {
       const data = e.currentTarget.dataset
-      const { path, useNavigateTo } = data;
+      const { path, useNavigateTo, toastText } = data;
+      if (toastText) {
+        await wx.showToast({
+          title: toastText,
+          icon: 'none'
+        })
+        return;
+      }
       if (useNavigateTo) {
-        wx.navigateTo({ url: path })
+        await wx.navigateTo({ url: path })
       } else {
-        wx.switchTab({ url: path })
+        await wx.switchTab({ url: path })
       }
     },
   },
