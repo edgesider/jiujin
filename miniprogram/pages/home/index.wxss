@@ -17,6 +17,7 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .top .app-logo {
@@ -52,21 +53,12 @@
   right: 20rpx;
 }
 
-.top .mask {
-  position: absolute;
-  width: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: inherit;
-  background: white;
-}
-
 .top-swiper {
   flex: 0;
   z-index: -1;
   width: 100%;
   height: calc(32vw);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .regions-filter {
@@ -80,8 +72,7 @@
   display: flex;
   overflow-x: scroll;
   padding: 12rpx;
-  border-top: 0.10rpx solid rgba(0, 0, 0, 0.3);
-  border-bottom: 0.10rpx solid rgba(0, 0, 0, 0.3);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .regions-filter .region {

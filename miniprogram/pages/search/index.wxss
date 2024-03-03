@@ -29,7 +29,7 @@ page {
   justify-content: stretch;
   align-items: center;
   padding: 0 20rpx;
-  border: 1px rgba(0, 0, 0, .5) solid;
+  border: 2rpx rgba(0, 0, 0, .5) solid;
 }
 
 .top-bar .input {

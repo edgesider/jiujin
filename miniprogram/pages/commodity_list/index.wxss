@@ -16,24 +16,24 @@
 }
 
 .tabs {
-  height: 32px;
+  height: 64rpx;
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  margin: 0 0 4px;
+  margin: 0 0 8rpx;
 }
 
 .tabs .tab {
-  font-size: 14px;
-  border-bottom: 2px solid transparent;
+  font-size: 28rpx;
+  border-bottom: 4rpx solid transparent;
 }
 
 .tabs .tab.selected {
   font-weight: bold;
-  padding: 2px 0;
-  border-bottom: 2px solid green;
+  padding: 4rpx 0;
+  border-bottom: 4rpx solid green;
 }
 
 .list {
@@ -50,7 +50,7 @@ scroll-view {
 
 .card {
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
-  padding: 0 12px;
+  padding: 0 24rpx;
   background: white;
   height: auto;
 }

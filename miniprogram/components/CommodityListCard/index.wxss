@@ -1,10 +1,10 @@
 .root {
-  height: calc(96px + 12px * 2);
+  height: calc(192rpx + 24rpx * 2);
   display: flex;
   flex-direction: row;
   justify-content: stretch;
   align-items: stretch;
-  padding: 12px 0;
+  padding: 24rpx 0;
   background: white;
 }
 
@@ -13,14 +13,14 @@
 }
 
 .left .image {
-  width: 96px;
-  height: 96px;
-  border-radius: 8px;
+  width: 192rpx;
+  height: 192rpx;
+  border-radius: 16rpx;
 }
 
 .middle {
   height: 100%;
-  margin: 0 8px;
+  margin: 0 16rpx;
   flex-grow: 1;
   position: relative;
   display: flex;
@@ -30,24 +30,24 @@
 }
 
 .middle .hint-line1 {
-  margin: 4px 0 0;
-  font-size: 11px;
+  margin: 8rpx 0 0;
+  font-size: 22rpx;
   color: rgba(0, 0, 0, .5);
 }
 
 .middle .hint-line2 {
-  font-size: 11px;
+  font-size: 22rpx;
   color: rgba(0, 0, 0, .5);
 }
 
 .middle .price {
-  font-size: 14px;
+  font-size: 28rpx;
   font-weight: bold;
   color: red;
-  border-radius: 8px;
-  /*padding: 6px 8px;*/
+  border-radius: 16rpx;
+  /*padding: 12rpx 16rpx;*/
 
-  margin: 4px;
+  margin: 8rpx;
   position: absolute;
   right: 0;
   bottom: 0;
@@ -59,16 +59,16 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  gap: 4px;
+  gap: 8rpx;
 }
 
 .right .button {
-  width: 64px;
-  border-radius: 24px;
+  width: 128rpx;
+  border-radius: 48rpx;
   border: 0.5px solid rgba(0, 0, 0, 0.4);
   color: rgba(0, 0, 0, 0.8);
-  padding: 2px 0;
-  font-size: 12px;
+  padding: 4rpx 0;
+  font-size: 24rpx;
   display: flex;
   justify-content: center;
   align-items: center;
