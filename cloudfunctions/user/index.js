@@ -89,6 +89,33 @@ exports.main = async (event, context) => {
     }
   })
 
+
+  app.router('updateUserLastSeenTime', async (ctx, next) => {
+    try {
+      const { last_seen_time } = event.params;
+      const res = await userCollection.where({
+        _id: wxContext.OPENID,
+        is_deleted: false
+      }).update({
+        data: {
+          last_seen_time: last_seen_time
+        }
+      })
+      ctx.body = { errno: 0 }
+    }
+    catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e?.errCode?.toString() === '87014') {
+        ctx.body = {
+          errno: 87014
+        }
+      }
+    }
+  })
+
   app.router('updateUser', async (ctx, next) => {
     try {
       const { name, rid, avatar_url, sex } = event.params;
