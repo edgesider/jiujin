@@ -136,11 +136,6 @@ Page({
     return l1L4Pair[1][indexes[1]];
   },
 
-  async uploadAvatar() {
-    const user = await wx.getUserInfo();
-    user.cloudID
-  },
-
   // 提交注册信息
   async onRegister() {
     const { isEdit, name, gender: sex } = this.data;

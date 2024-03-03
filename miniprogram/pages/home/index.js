@@ -117,19 +117,20 @@ Page({
   },
 
   async fetchList({ append } = {}) {
+    console.log(`fetch: append=${append}, rid=${this.data.regions[this.data.selectedRegionIndex]._id}`);
     const rid = this.data.regions[this.data.selectedRegionIndex]._id;
 
     const start = append ? this.data.cursor : 0;
+    const token = append ? this.fetchToken : ++this.fetchToken;
     if (!append) {
-      this.fetchToken++;
       await wx.pageScrollTo({ scrollTop: 0, smooth: true });
       this.loadBanners().then();
     }
-    const token = this.fetchToken;
+    const oldList = this.data.commodityList;
     this.setData({
       cursor: start,
       isLoading: true,
-      commodityList: append ? this.data.commodityList : [],
+      commodityList: append ? oldList : [],
     });
     try {
       const list = await api.getCommodityList({
@@ -140,10 +141,18 @@ Page({
         status: COMMODITY_STATUS_SELLING
       });
       if (token !== this.fetchToken) {
-        console.log('fetchList: token mismatch, ignore result')
+        console.log(`fetch token mismatch, ignore result: required=${token}, actual=${this.fetchToken}`);
         return;
       }
-      const data = append ? this.data.commodityList.concat(list.data) : list.data;
+      if (rid !== this.data.regions[this.data.selectedRegionIndex]._id) {
+        console.log('rid mismatch, ignore result');
+        return;
+      }
+      if (append && oldList.length !== this.data.commodityList.length) {
+        console.log('list changed, ignore result');
+        return;
+      }
+      const data = append ? oldList.concat(list.data) : list.data;
       const cursor = data.length;
       this.setData({
         isLoading: false,

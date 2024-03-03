@@ -130,7 +130,7 @@ exports.main = async (event, context) => {
       } else {
         const ridChanged = oldUser.rid !== rid;
         const ridLastModifiedTime = oldUser._rid_modified_time;
-        if (ridChanged && ridLastModifiedTime && ridLastModifiedTime.getTime() - Date.now() < RID_MODIFICATION_MIN_DURATION) {
+        if (ridChanged && ridLastModifiedTime && Date.now() - ridLastModifiedTime.getTime() < RID_MODIFICATION_MIN_DURATION) {
           ctx.body = {
             errno: -2,
             error: 'rid modification too frequent',

@@ -1,6 +1,5 @@
 import api from './api/api';
 import { BehaviorSubject } from "rxjs";
-import moment from "moment";
 
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
@@ -47,17 +46,19 @@ App({
     } else {
       wx.cloud.init({
         env: 'jj-4g1ndtns7f1df442',
-        // traceUser: true,
       })
     }
 
-    // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
         const menuBtn = wx.getMenuButtonBoundingClientRect();
+        // 系统状态栏高度
         const StatusBar = e.statusBarHeight;
+        // 自定义顶栏高度
         const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
-        const TabBarHeight = 48;
+        // 底部导航栏高度
+        const TabBarHeight = 52;
+        // 底部指示器高度（小白条）
         const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
         const constants = Object.freeze({
           StatusBar,
