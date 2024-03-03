@@ -240,7 +240,15 @@ const api = {
         params: { rid }
       }
     }));
-  }
+  },
+  async updateLastSeenTime() {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        $url: 'updateUserLastSeenTime',
+      }
+    }));
+  },
 }
 
 export default api;

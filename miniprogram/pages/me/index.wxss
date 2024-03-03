@@ -14,7 +14,7 @@
   align-items: center;
   color: #fff;
   font-weight: 300;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 6rpx rgba(0, 0, 0, 0.3);
 }
 
 .UCenter-bg text {

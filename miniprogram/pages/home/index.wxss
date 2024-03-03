@@ -1,9 +1,3 @@
-page {
-  overflow-y: scroll;
-  overflow-x: hidden;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 48px);
-}
-
 .top-container {
   position: fixed;
   top: 0;
@@ -23,14 +17,7 @@ page {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}
-
-.top .app-name {
-  margin-left: 8px;
-  font-size: 20px;
-  color: green;
-  font-weight: bold;
-  z-index: inherit;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .top .app-logo {
@@ -38,8 +25,9 @@ page {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
+  margin-left: 12rpx;
 
-  --logo-width: 80px;
+  --logo-width: 130rpx;
   --ratio: calc(50 / 90);
   width: var(--logo-width);
   height: calc(var(--ratio) * var(--logo-width));
@@ -48,9 +36,8 @@ page {
 .top .search {
   position: relative;
   z-index: inherit;
-  /*border: 1px rgba(0, 0, 0, .5) solid;*/
   background-color: #eee;
-  line-height: 24px;
+  line-height: 48rpx;
   height: 64rpx;
   width: 40%;
   border-radius: 32rpx;
@@ -62,60 +49,49 @@ page {
 
 .top .search text {
   position: absolute;
-  top: 4px;
-  right: 10px;
-}
-
-.top .mask {
-  position: absolute;
-  width: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: inherit;
-  background: white;
+  top: 8rpx;
+  right: 20rpx;
 }
 
 .top-swiper {
   flex: 0;
   z-index: -1;
   width: 100%;
-  height: 200rpx;
+  height: calc(32vw);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .regions-filter {
   position: sticky;
   top: 0;
   background: white;
-  height: 48px;
+  height: 96rpx;
   z-index: 1;
   flex: 0;
   width: 100%;
   display: flex;
   overflow-x: scroll;
-  padding: 6px;
-  border-top: 0.5px solid rgba(0, 0, 0, 0.3);
+  padding: 12rpx;
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
 .regions-filter .region {
-  margin: 4px;
-  border-radius: 24px;
+  margin: 8rpx;
+  border-radius: 48rpx;
   background: rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6px 14px;
+  padding: 12rpx 28rpx;
 }
 
 .regions-filter .region .name {
-  font-size: 12px;
+  font-size: 24rpx;
   color: black;
   word-break: keep-all;
 }
 
 .regions-filter .region-selected {
-  font-size: 16px;
   font-weight: bold;
   color: black;
   word-break: keep-all;
@@ -132,7 +108,7 @@ page {
   height: 100%;
   flex-shrink: 0;
 
-  --gap: 12px;
+  --gap: 24rpx;
   padding: var(--gap);
   gap: var(--gap);
   display: flex;
@@ -146,15 +122,15 @@ page {
 /* noinspection CssUnresolvedCustomProperty */
 .list .card {
   width: calc((100% - var(--gap)) / 2);
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3)
+  border-radius: 16rpx;
+  box-shadow: 0 0 16rpx rgba(0, 0, 0, 0.3)
 }
 
 .bottom {
   height: 64rpx;
   padding-bottom: 24rpx;
   box-sizing: content-box;
-  font-size: 12px;
+  font-size: 24rpx;
   color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: row;
@@ -174,7 +150,7 @@ page {
   flex-direction: row;
   justify-content: center;
   align-content: center;
-  gap: 4px;
+  gap: 8rpx;
 }
 
 .bottom .no-more .actions .action {

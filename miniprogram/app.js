@@ -8,6 +8,7 @@ import { GENDER, setConstants } from "./constants";
 
 import axios from 'axios';
 import { initMoment } from "./utils/time";
+import { InAppMonitor } from "./monitor/index";
 
 const IMAxios = axios.create({
   timeout: 10000,
@@ -90,6 +91,13 @@ App({
     console.log('initialized. globalData=', this.globalData);
     this._ready = true;
     this._readyWaiters.forEach(waiter => waiter());
+  },
+
+  onShow() {
+    InAppMonitor.start();
+  },
+  onHide() {
+    InAppMonitor.stop();
   },
 
   async initTIM() {
