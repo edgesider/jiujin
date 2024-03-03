@@ -92,13 +92,12 @@ exports.main = async (event, context) => {
 
   app.router('updateUserLastSeenTime', async (ctx, next) => {
     try {
-      const { last_seen_time } = event.params;
       const res = await userCollection.where({
         _id: wxContext.OPENID,
         is_deleted: false
       }).update({
         data: {
-          last_seen_time: last_seen_time
+          last_seen_time: db.serverDate()
         }
       })
       ctx.body = { errno: 0 }
