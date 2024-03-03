@@ -11,7 +11,7 @@
 .content-container {
   display: flex;
   flex-direction: column;
-  justify-content: stretch ;
+  justify-content: stretch;
   align-items: center;
 }
 

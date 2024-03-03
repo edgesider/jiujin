@@ -1,4 +1,3 @@
-<!--miniprogram/components/tui-group/group-profile/index.wxml-->
 <view class="group-information-box" bindshow="getgroupProfile">
     <view class="group-box">
         <text class="group-ID" bind:longpress="copyGroupID" selectable>群ID:{{conversation.groupProfile.groupID}}</text>

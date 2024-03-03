@@ -1,0 +1,52 @@
+<TitleBar title="详情" hasBack="true">
+</TitleBar>
+
+<scroll-view
+  scroll-y
+  enable-flex="true"
+  class="content-container"
+  style="height: calc(100vh - {{TopBarHeight + BottomIndicatorHeight}}px)"
+>
+  <view class="state-container" wx:if="{{userLoadState === 'loading'}}">
+    <view class="cu-load loading" />
+  </view>
+  <view class="state-container" wx:elif="{{userLoadState === 'error' || !user}}">
+    网络错误
+  </view>
+  <block wx:else>
+    <view class="user">
+      <image class="avatar" src="{{user.avatar_url}}" />
+      <view class="infos">
+        <view class="username">{{user.name}}</view>
+        <view class="region-name">{{regionName}}</view>
+        <view class="last-seen">{{lastSeenTime}}来过</view>
+      </view>
+    </view>
+
+    <view class="filters">
+      <view
+        class="filter {{item.key === currFilter ? 'selected' : ''}}"
+        wx:for="{{filters}}"
+        wx:for-index="idx" wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onChangeFilter"
+      >
+        {{item.name}}
+      </view>
+    </view>
+    <view class="list">
+      <view
+        class="commodity-container"
+        wx:for="{{commodityList}}"
+        wx:key="_id"
+        bindtap="onClickCommodity"
+        data-key="{{item._id}}"
+      >
+        <CommodityCard
+          class="commodity"
+          commodity="{{item}}"
+        />
+      </view>
+    </view>
+  </block>
+</scroll-view>

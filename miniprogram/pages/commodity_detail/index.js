@@ -160,4 +160,13 @@ Page({
       });
     }
   },
+
+  async onAvatarClick() {
+    const { seller } = this.data;
+    if (seller) {
+      await wx.navigateTo({
+        url: `../profile/index?user_id=${seller._id}`,
+      });
+    }
+  },
 });

@@ -1,7 +1,9 @@
 <TitleBar title="{{title}}" class="title-bar" />
 
-<view class="content-container"
-      style="margin-top: {{TopBarHeight}}px; height: calc(100vh - {{TopBarHeight + BottomIndicatorHeight}}px)">
+<view
+  class="content-container"
+  style="margin-top: {{TopBarHeight}}px; height: calc(100vh - {{TopBarHeight + BottomIndicatorHeight}}px)"
+>
   <view class="tabs" wx:if="{{tabs && tabs.length > 0}}">
     <view
       class="tab {{currTab === tab.key ? 'selected' : ''}}"
