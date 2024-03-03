@@ -71,6 +71,7 @@ exports.main = async (event, context) => {
           total_collect: 0,
           create_time: db.serverDate(),
           update_time: db.serverDate(),
+          last_seen_time:db.serverDate(),
           is_deleted: false
         }
       })
