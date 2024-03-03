@@ -46,7 +46,7 @@ Page({
       userLoadState: 'loaded',
       user,
       regionName,
-      lastSeenTime: moment(user.lastSeenTime).fromNow(),
+      lastSeenTime: !user.lastSeenTime ? '很久前' : moment(user.lastSeenTime).fromNow(),
     });
   },
 
