@@ -79,7 +79,8 @@ App({
 
     initMoment();
 
-    await Promise.all([this.fetchOpenId(), this.fetchSelfInfo(), this.fetchRegions(), this.fetchCategories()]);
+    this.globalData.openId = await this.userLogin();
+    await Promise.all([this.fetchSelfInfo(), this.fetchRegions(), this.fetchCategories()]);
 
     // 登录腾讯IM
     await this.initTIM();

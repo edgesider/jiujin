@@ -58,8 +58,8 @@ Page({
       l1ToL4[l1._id] = tillL4(l1._id).map(rid => ridToRegion[rid]);
     }
 
-    const self = app.globalData.self;
     if (isEdit) {
+      const self = app.globalData.self;
       let [idxL1, idxL4] = [0, 0];
       const l1 = Object.entries(l1ToL4).find(([l1, l4s]) => l4s.findIndex(l4 => l4._id === self.rid) >= 0)[0];
       if (l1) {
@@ -80,9 +80,6 @@ Page({
         l1ToL4,
         l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
         indexes: [0, 0],
-        avatarUrl: self.avatar_url,
-        name: self.name,
-        gender: self.sex,
       });
     }
   },
