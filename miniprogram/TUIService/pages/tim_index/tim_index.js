@@ -25,12 +25,13 @@ Page({
     var conversation = TUIKit.selectComponent('#TUIConversation');
     if (targetCommodity){
       // 尝试创建群聊
+      const sell_id = targetCommodity.sell_id;
+      const { data: user } = await api.getUserInfo(sell_id);
       const comm_tail = targetCommodity._id.substr(0, 16);
       const group_id = `${self._id}${comm_tail}`;
-      console.log(targetCommodity);
       wx.$TUIKit.createGroup({
         type: wx.TencentCloudChat.TYPES.GRP_MEETING,
-        name: targetCommodity.content,
+        name: user.name,
         groupID: group_id,
         avatar: targetCommodity.img_urls[0],
         memberList: [

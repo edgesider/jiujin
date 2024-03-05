@@ -26,15 +26,12 @@ Component({
         text: '发布',
       },
       {
-<<<<<<< HEAD
-=======
         pagePath: "/TUIService/pages/tim_index/tim_index",
         iconClass: "cuIcon-message",
         selectedIconClass: "cuIcon-messagefill",
         text: "私信"
       },
       {
->>>>>>> ecbea73a193995c32876ef44c23142c61113b9bb
         pagePath: '/pages/me/index',
         iconClass: 'cuIcon-my',
         selectedIconClass: 'cuIcon-myfill',
@@ -59,11 +56,6 @@ Component({
     },
   },
   methods: {
-<<<<<<< HEAD
-    switchTab(e) {
-      const data = e.currentTarget.dataset;
-      const { path, useNavigateTo } = data;
-=======
     async switchTab(e) {
       const data = e.currentTarget.dataset
       const { path, useNavigateTo, toastText } = data;
@@ -74,7 +66,6 @@ Component({
         })
         return;
       }
->>>>>>> ecbea73a193995c32876ef44c23142c61113b9bb
       if (useNavigateTo) {
         await wx.navigateTo({ url: path })
       } else {

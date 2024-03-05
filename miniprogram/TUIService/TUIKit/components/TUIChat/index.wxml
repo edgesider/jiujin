@@ -4,10 +4,10 @@
     <image class="tui-navigatorbar-back" bindtap="goBack" src="../../static/assets/ic_back_white.svg" />
     <view class="conversation-title">{{conversationName}}</view>
   </view>
-  <view class="group-profile" wx:if="{{isShow}}">
+  <view class="group-profile" wx:if="{{showSell}}">
     <!-- <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall"
               bind:showConversationList="showConversationList"></TUIGroup> -->
-    <view class="conversation-commodity" wx:if="{{showSell}}">
+    <view class="conversation-commodity">
       <image src="{{commodity.img_urls[0]}}"></image>
       <text>￥{{commodity.price_now}}</text>
       <button bind:tap="sendCommodityMessage">发送商品：{{commodity.content}}</button>

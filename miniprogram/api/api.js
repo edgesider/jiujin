@@ -4,8 +4,6 @@ import mpAdapter from 'axios-miniprogram-adapter'
 
 const { RespSuccess, RespError } = require('../utils/resp')
 
-const app = getApp();
-
 axios.defaults.adapter = mpAdapter;
 
 const IMAxios = axios.create({
@@ -17,8 +15,7 @@ const IMAxios = axios.create({
 });
 
 function getId(){
-  //return app.globalData.openId;
-  return "1";
+  return getApp().globalData.openId;
 }
 
 function wrapResp(resp) {
@@ -62,7 +59,17 @@ const api = {
     return this.getUserInfo(getId());
   },
   async getOpenId() {
-    return { data: { openId: getId() } };
+    return getId();
+  },
+  async userLogin(code) {
+    const res = wrapResp(await callFunction({
+      path: "/login",
+      method: "POST",
+      data: {
+        code
+      }
+    }));
+    return res;
   },
   async getUserInfo(uid) {
     const res = wrapResp(await callFunction({
@@ -109,7 +116,7 @@ const api = {
       method: "POST",
       data: {
         ...params,
-        open_id: getId()
+        openid: getId()
       }
     });
     return wrapResp(res);
@@ -295,7 +302,7 @@ const api = {
       }
     }));
   },
-  
+
   async setViewed(cid) {
   },
   async getMyViewed(start, count) {
@@ -334,11 +341,12 @@ export const CommentAPI = {
     }));
   },
 
-  async createAnswer(qid, content) {
+  async createAnswer(cid, qid, content) {
     return wrapResp(await callFunction({
       path: "/createAnswer",
       method: "POST",
       data: {
+        cid,
         question_id: qid,
         content,
         openid: getId()
@@ -453,7 +461,7 @@ export const CollectApi = {
     }));
   },
   async getAll(start, count) {
-    return wrapResp(await callFunction({
+    const resp = await callFunction({
       path: "/collect/getInfo",
       method: "POST",
       data: {
@@ -461,6 +469,16 @@ export const CollectApi = {
         count,
         openid: getId()
       }
-    }));
+    });
+    if (!resp.data) resp.data = [];
+    const res = wrapResp(resp);
+    for (var i = 0; i < res.data.length; i++){
+      res.data[i].img_urls = res.data[i].img_urls
+        .replaceAll("\"", "")
+        .replaceAll(" ", "")
+        .split(",");
+      res.data[i].sell_id = res.data[i].seller_id;
+    }
+    return res;
   },
 }

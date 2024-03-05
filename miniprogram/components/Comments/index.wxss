@@ -141,6 +141,17 @@
   line-height: 1.4em;
 }
 
+.delete-btn {
+  width: 48rpx;
+  height: 30rpx;
+  color: white;
+  font-size: 20rpx;
+  background-color: red;
+  text-align: center;
+  border-radius: 20%;
+  right: 0;
+}
+
 .popup-input {
   position: fixed;
   top: 0;

@@ -86,9 +86,6 @@ page {
   font-weight: normal;
 }
 
-.filter {
-}
-
 .filter .text-check {
   font-size: 22rpx;
 }

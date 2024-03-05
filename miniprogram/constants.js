@@ -23,8 +23,8 @@ export default function getConstants() {
     COMMODITY_STATUS_OFF,
     COMMODITY_STATUS_SOLD,
     COMMODITY_STATUS_LOCKED,
-    CustomBar: app.globalData.CustomBar,
-    StatusBar: app.globalData.StatusBar,
+    CustomBar: 0,
+    StatusBar: 0,
     GENDER, GENDER_NAME_MAP,
     ...constants
   };

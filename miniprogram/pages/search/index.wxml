@@ -1,6 +1,6 @@
 <view class="top-bar" style="height: {{TopBarHeight}}px; padding-top: {{StatusBar}}px;">
   <text class="back cuIcon-back" bind:tap="onBack"></text>
-  <view class="input-container" style="width: calc(100% - {{MenuButton.width - 8}}px - 20rpx});">
+  <view class="input-container" style="width: calc(100% - {{MenuButton.width - 8}}px - 20rpx);">
     <input
       class="input"
       auto-focus="true"

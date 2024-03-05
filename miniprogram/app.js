@@ -50,21 +50,6 @@ App({
       })
     }
 
-    wx.login({
-      success: (res) => {
-        const { code } = res;
-      },
-      fail: (res) => {
-        const { errMsg, errno } = res;
-        console.error(`微信登录错误，错误码${errno}：${errMsg}`);
-        wx.showToast({
-          title: "微信登录错误",
-          icon: 'error',
-          mask: true
-        });
-      }
-    });
-
     // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
@@ -95,8 +80,7 @@ App({
 
     initMoment();
 
-    const { data: { openId } } = await api.getOpenId();
-    this.globalData.openId = openId;
+    this.globalData.openId = await this.userLogin();
 
     await Promise.all([this.fetchSelfInfo(), this.fetchRegions()]);
 
@@ -104,7 +88,7 @@ App({
     await this.initTIM();
     this.globalData.totalUnread = wx.$TUIKit.getTotalUnreadMessageCount();
 
-    console.log('initialized. globalData=', this.globalData);
+    console.warn('initialized. globalData=', this.globalData);
     this._ready = true;
     this._readyWaiters.forEach(waiter => waiter());
 
@@ -121,6 +105,31 @@ App({
   },
   onHide() {
     InAppMonitor.stop();
+  },
+
+  async userLogin(){
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          api.userLogin(res.code).then((res) => {
+            resolve(res.data);
+          }).catch((err) => {
+            console.error(`ERROR: ${err}`);
+            reject(err);
+          })
+        },
+        fail: (res) => {
+          const { errMsg, errno } = res;
+          console.error(`微信登录错误，错误码${errno}：${errMsg}`);
+          wx.showToast({
+            title: "微信登录错误",
+            icon: 'error',
+            mask: true
+          });
+          reject(`ERROR${errno}: ${errMsg}`);
+        }
+      });
+    });
   },
 
   async initTIM() {
@@ -311,7 +320,7 @@ App({
   },
 
   async fetchRegions() {
-    const { data: regions } = await api.getRegions() ?? [];
+    const { data: regions } = await api.getRegions();
     const ridToRegion = {};
     for (const region of regions) {
       ridToRegion[region._id] = region;

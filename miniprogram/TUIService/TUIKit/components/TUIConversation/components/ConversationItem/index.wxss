@@ -99,8 +99,8 @@
     font-size: 32rpx;
 }
 .tui-conversation-item-name {
-  line-height: 50rpx;
-  font-size: 36rpx;
+  line-height: 32rpx;
+  font-size: 32rpx;
   font-family: 'PingFangSC-Regular';
   color: #333333;
   max-width: 300rpx;
@@ -155,6 +155,8 @@
 }
 .tui-conversation-box{
   display: flex;
+  line-height: 20rpx;
+  font-size: 20rpx;
 }
 .tui-conversation-lastName{
   line-height: 40rpx;

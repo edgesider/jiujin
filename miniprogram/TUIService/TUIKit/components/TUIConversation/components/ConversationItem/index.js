@@ -14,6 +14,7 @@ Component({
           conversationName: this.getConversationName(conversation),
           setConversationAvatar: this.setConversationAvatar(conversation),
         });
+        this.setUserAvatar(conversation);
         this.setMuteIcon(conversation);
         this.showMuteIconImg(conversation);
         this.$updateTimeAgo(conversation);
@@ -132,6 +133,40 @@ Component({
       if (conversation.type === 'GROUP') {
         return conversation.groupProfile.avatar || '../../../../static/assets/group-avatar.svg';
       }
+    },
+    setUserAvatar(conversation){
+      if (conversation.type === 'GROUP') {
+        console.warn(conversation);
+        wx.$TUIKit.getGroupMemberList({
+          groupID: conversation.groupProfile.groupID,
+          role: wx.TencentCloudChat.GRP_MBR_ROLE_MEMBER,
+          count: 2,
+          offset: 0
+        }).then((imResponse) => {
+          console.warn(imResponse);
+          const list = imResponse.data.memberList;
+          if (list.length < 2){
+            this.setData({
+              setUserAvatar: this.data.setConversationAvatar
+            });
+            return;
+          }
+          const { self } = app.globalData;
+          var avatar = list[0].avatar;
+          if ("USER" + self._id == list[0].userID){
+            avatar = list[1].avatar;
+          }
+          this.setData({
+            setUserAvatar: avatar
+          });
+        }).catch((imError) => {
+          console.warn('getGroupMemberList error:', imError);
+        });
+        return;
+      }
+      this.setData({
+        setUserAvatar: this.data.setConversationAvatar
+      });
     },
     // 删除会话
     deleteConversation() {
