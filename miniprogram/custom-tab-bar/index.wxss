@@ -36,6 +36,24 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  position: relative;
+}
+
+.icon {
+  position: relative;
+}
+
+.unread-count {
+  position: absolute;
+  top: 0rpx;
+  right: 0rpx;
+  width: 26rpx;
+  height: 26rpx;
+  font-size: 14rpx;
+  line-height: 26rpx;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
 }
 
 .icon {

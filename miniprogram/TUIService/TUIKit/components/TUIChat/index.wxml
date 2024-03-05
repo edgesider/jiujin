@@ -3,17 +3,15 @@
   <view class="tui-navigatorbar">
     <image class="tui-navigatorbar-back" bindtap="goBack" src="../../static/assets/ic_back_white.svg" />
     <view class="conversation-title">{{conversationName}}</view>
-    <text wx:if="{{conversation.type === 'C2C'}}" class="conversation-user-id" bind:longpress="onCopyUserID">
-      会话ID：{{conversation.userProfile.userID}}
-    </text>
   </view>
-  <view wx:if="{{showSell}}" class="conversation-commodity" bind:tap="sendCommodityMessage">
-    <image src="{{commodity.img_urls[0]}}"></image>
-    发送商品：{{commodity.content}}
-  </view>
-  <view class="group-profile" wx:if="{{isShow}}">
-    <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall"
-              bind:showConversationList="showConversationList"></TUIGroup>
+  <view class="group-profile" wx:if="{{showSell}}">
+    <!-- <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall"
+              bind:showConversationList="showConversationList"></TUIGroup> -->
+    <view class="conversation-commodity">
+      <image src="{{commodity.img_urls[0]}}"></image>
+      <text>￥{{commodity.price_now}}</text>
+      <button bind:tap="sendCommodityMessage">发送商品：{{commodity.content}}</button>
+    </view>
   </view>
   <view
     class="list-box {{ showTips && 'list-box-notips'}} || {{ showGroupTips && 'list-box-group'}}  || {{ showAll && 'list-box-group-notips'}} ">

@@ -2,7 +2,7 @@ import api from "../../api/api";
 import rules from "../../utils/rules";
 import getConstants, { GENDER } from "../../constants";
 
-const app = getApp()
+const app = getApp();
 
 Page({
   data: {
@@ -24,6 +24,7 @@ Page({
     const { isEdit } = options;
 
     const { regions, ridToRegion } = app.globalData;
+    console.warn(app);
     // 大学
     const l1Regions = [];
     // 大学 -> 楼号

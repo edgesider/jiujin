@@ -13,7 +13,7 @@ import { InAppMonitor } from "./monitor/index";
 const IMAxios = axios.create({
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    'Content-Type': 'application/json;charset=UTF-8',
   },
 });
 
@@ -22,7 +22,7 @@ App({
   _readyWaiters: [],
   globalData: {
     registered: false,
-    openId: null,
+    openId: "1",
     self: null,
     ridToRegion: null,
     StatusBar: 0,
@@ -35,8 +35,8 @@ App({
     TUIEnabled: false,
     TUISDKReady: false,
     totalUnread: 0,
-    currentUser: null,
-    targetID: null,
+    targetCommodity: null,
+    onUnreadCountUpdate: (count) => {},
   },
 
   userChangedSubject: new BehaviorSubject(null),
@@ -50,6 +50,7 @@ App({
       })
     }
 
+    // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
         const menuBtn = wx.getMenuButtonBoundingClientRect();
@@ -79,8 +80,7 @@ App({
 
     initMoment();
 
-    const { data: { openId } } = await api.getOpenId();
-    this.globalData.openId = openId;
+    this.globalData.openId = await this.userLogin();
 
     await Promise.all([this.fetchSelfInfo(), this.fetchRegions()]);
 
@@ -88,9 +88,16 @@ App({
     await this.initTIM();
     this.globalData.totalUnread = wx.$TUIKit.getTotalUnreadMessageCount();
 
-    console.log('initialized. globalData=', this.globalData);
+    console.warn('initialized. globalData=', this.globalData);
     this._ready = true;
     this._readyWaiters.forEach(waiter => waiter());
+
+    // this.sendIMSubscribeMessage({
+    //   name: '哈哈哈',
+    //   message: '信息',
+    //   time: '15:01',
+    //   commodity: '商品'
+    // });
   },
 
   onShow() {
@@ -100,12 +107,37 @@ App({
     InAppMonitor.stop();
   },
 
+  async userLogin(){
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          api.userLogin(res.code).then((res) => {
+            resolve(res.data);
+          }).catch((err) => {
+            console.error(`ERROR: ${err}`);
+            reject(err);
+          })
+        },
+        fail: (res) => {
+          const { errMsg, errno } = res;
+          console.error(`微信登录错误，错误码${errno}：${errMsg}`);
+          wx.showToast({
+            title: "微信登录错误",
+            icon: 'error',
+            mask: true
+          });
+          reject(`ERROR${errno}: ${errMsg}`);
+        }
+      });
+    });
+  },
+
   async initTIM() {
     if (this.globalData.TUIEnabled) {
       console.error('私信重复登录！');
       return { errno: -1 };
     }
-    this.globalData.config.userID = 'USER' + this.globalData.openId;
+    this.globalData.config.userID = this.globalData.openId;
     console.log('私信登录ID: ', this.globalData.config.userID);
 
     wx.TencentCloudChat = TencentCloudChat;
@@ -152,24 +184,26 @@ App({
       await wx.$TUIKit.logout();
     }
 
+    const user_id = 'USER' + id;
+
     this.globalData.TUISDKReady = false;
-    this.globalData.config.userID = id;
+    this.globalData.config.userID = user_id;
 
     console.log("生成用户聊天ID");
-    var result = await api.genUserSig(id);
+    var result = await api.genUserSig(user_id);
     console.log('result', result);
     if (result.errno == -1) {
-      console.log("生成用户聊天ID失败！")
-      return new RespError("生成用户聊天ID失败！")
+      console.log("生成用户聊天ID失败！");
+      return new RespError("生成用户聊天ID失败！");
     }
     const userSig = result.data.userSig;
     console.log("用户SIG：", userSig);
 
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
-    wx.$chat_userID = this.globalData.config.userID;
+    wx.$chat_userID = user_id;
     wx.$chat_userSig = userSig;
     wx.$TUIKit.login({
-      userID: this.globalData.config.userID,
+      userID: user_id,
       userSig
     });
 
@@ -178,37 +212,45 @@ App({
     });
   },
 
-  onSDKReady(event) {
+  async onSDKReady(event) {
     // 监听到此事件后可调用 SDK 发送消息等 API，使用 SDK 的各项功能。
     console.log("TencentCloudChat SDK_READY");
     this.globalData.TUISDKReady = true;
+    this.globalData.totalUnread = await wx.$TUIKit.getTotalUnreadMessageCount();
+    this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
   onTotalUnreadMessageCountUpdated(event) {
     console.log("TencentCloudChat TOTAL_UNREAD_MESSAGE_COUNT_UPDATED");
     this.globalData.totalUnread = event.data;
+    this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
-  onMessageReceived(event) {
+  timeString(){
+    const date = new Date();
+    const hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+    const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+    const secs = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+    return `${hours}:${minutes}:${secs}`;
   },
 
-  getAccessToken() {
-    let APPID = 'wxc89ea56f592e89c4';
-    // 注意：仅用于测试，上线时需要转移至后端
-    const SECRETKEY = '87c21b1a1e9cfe7e57b32a1ccb9508ac';
-    let url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${SECRETKEY}`;
-    return new Promise(function (resolve, reject) {
-      IMAxios({
-        url: url,
-        method: 'GET'
-      }).then((res) => {
-        console.log('getAccessToken res.data ->', res.data);
-        resolve(accessToken);
-      }).catch((error) => {
-        console.log('getAccessToken failed ->', error);
-        reject({ errno: -1, error });
+  async onMessageReceived(event) {
+    console.log(`onMessageReceived: ${event.data}`);
+    const { conversationID } = event.data;
+    const messageList = await wx.$TUIKit.getMessageList({ conversationID });
+    if (messageList.length <= 1){
+      const msg = messageList[0];
+      const { from, payload } = msg;
+      const text = payload.hasOwnProperty("text") ? payload.text : "[消息]";
+      const user_profile = await wx.$TUIKit.getUserProfile({ userIDList: [ from ] });
+      const group_profile = await wx.$TUIKit.getGroupProfile({ groupID: conversationID, groupCustomFieldFilter: ['name'] });
+      this.sendIMSubscribeMessage({
+        name: user_profile[0].nick,
+        message: text,
+        time: this.timeString(),
+        commodity: group_profile.name
       });
-    });
+    }
   },
 
   // 发送订阅消息
@@ -218,9 +260,12 @@ App({
     IMAxios({
       url: `https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}`,
       data: {
-        touser, // 接收者（用户）的 openID
-        template_id, // 所需下发的订阅模板 ID
-        data, // 模板内容，格式形如 { "key1": { "value": any }, "key2": { "value": any } }
+        touser,
+        template_id,
+        data,
+        page: 'index',
+        miniprogram_state: 'developer',
+        lang: 'zh_CN'
       },
       method: 'POST'
     }).then((res) => {
@@ -231,13 +276,13 @@ App({
   },
 
   sendIMSubscribeMessage(msg) {
-    getAccessToken().then((accessToken) => {
+    api.getAccessToken().then((res) => {
+      const { access_token } = res.data;
       // 接入侧需处理腾讯云 IM userID，微信小程序 openID，订阅消息模板 ID 的映射关系
-      pushToUser({
-        access_token: accessToken,
-        touser: this.self._id,
+      this.pushToUser({
+        access_token,
+        touser: this.globalData.self._id,
         template_id: 'IHHmCTUl9XTY1PKLbQ9KBcrtuGEy836_8OqBAeZyuqg',
-        // 模板数据格式跟用户选择的模板有关，以下数据结构仅供参考
         data: {
           name1: {
             value: msg.name,
@@ -275,7 +320,7 @@ App({
   },
 
   async fetchRegions() {
-    const { data: regions } = await api.getRegions() ?? [];
+    const { data: regions } = await api.getRegions();
     const ridToRegion = {};
     for (const region of regions) {
       ridToRegion[region._id] = region;

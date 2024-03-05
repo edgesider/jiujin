@@ -39,12 +39,19 @@ Component({
       },
     ],
     url: '',
+    unreadCount: 0,
   },
   lifetimes: {
     created() {
       this.updateTo = url => {
         const i = this.data.list.findIndex(item => item.pagePath === '/' + url);
         this.setData({ selected: i, url })
+      }
+      getApp().globalData.onUnreadCountUpdate = (count) => {
+        console.log("未读消息数改变为", count);
+        this.setData({
+          unreadCount: count
+        });
       }
     },
   },

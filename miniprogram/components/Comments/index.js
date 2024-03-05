@@ -1,4 +1,4 @@
-import { CommentAPI } from '../../api/api';
+import api, { CommentAPI } from '../../api/api';
 import { openProfile } from "../../router";
 
 const app = getApp();
@@ -31,38 +31,31 @@ Component({
     nop() {},
     async fetchComments() {
       const comments = [];
-      const questions = await CommentAPI.getQuestions(this.properties.commodity._id, 0, 10)
-      if (questions.isError) {
-        return;
-      }
-      for (const question of questions.data) {
-        if (!question.userInfoList || question.userInfoList.length === 0 || question.userInfoList[0].is_deleted) {
-          // 用户可能已经注销
-          continue;
-        }
+      const { data: questions } = await CommentAPI.getCommodityQuestionsAndAnswers(this.properties.commodity._id, 0, 10);
+      for (const question of questions) {
+        const { data: user } = await api.getUserInfo(question.user_id);
         comments.push({
-          _id: question._id,
           type: 'question',
-          user: question.userInfoList?.[0],
+          _id: question._id,
           content: question.content,
-          createTime: question.create_time,
-        })
-        const answers = await CommentAPI.getAnswers(question._id, 0, 10)
-        if (answers.isError) {
-          continue;
-        }
-        for (const answer of answers.data) {
-          if (!answer.userInfoList || answer.userInfoList.length === 0 || answer.userInfoList[0].is_deleted) {
-            // 用户可能已经注销
-            continue;
+          user: {
+            _id: question.user_id,
+            name: user.name,
+            avatar_url: user.avatar_url,
           }
+        })
+        const answers = question.answers;
+        for (const answer of answers) {
+          const { data: user } = await api.getUserInfo(answer.user_id);
           comments.push({
-            _id: answer._id,
-            qid: answer.question_id,
             type: 'answer',
-            user: answer.userInfoList?.[0],
+            _id: answer._id,
             content: answer.content,
-            createTime: answer.create_time,
+            user: {
+              _id: answer.user_id,
+              name: user.name,
+              avatar_url: user.avatar_url,
+            }
           })
         }
       }
@@ -84,7 +77,7 @@ Component({
     },
     async sendAnswer(content, to) {
       const question = to.type === 'answer' ? this.findQuestionByAnswer(to) : to;
-      const resp = await CommentAPI.createAnswer(question._id, content);
+      const resp = await CommentAPI.createAnswer(this.properties.commodity._id, question._id, content);
       if (resp.isError) {
         await wx.showToast({
           title: '发送失败',
@@ -116,6 +109,13 @@ Component({
         commenting: true,
         commentingTo: comment, // 如果是回复则有这个字段
       })
+    },
+    deleteQuestion({ currentTarget: { dataset: { comment } } }) {
+      if (comment.type === 'question') {
+        CommentAPI.delQuestion(comment._id);
+      } else {
+        CommentAPI.delAnswer(comment._id);
+      }
     },
     onPopupInput(ev) {
       this.setData({ commentingText: ev.detail.value });

@@ -5,7 +5,7 @@
         x="{{xScale}}" inertia out-of-bounds
     >
         <view class="avatar-box">
-            <image class="t-conversation-item-avatar" src="{{setConversationAvatar}}" binderror="handleimageerro">
+            <image class="t-conversation-item-avatar" src="{{setUserAvatar}}" binderror="handleimageerro">
             </image>
             <view class="right-box">
                 <view
@@ -40,14 +40,15 @@
                     <text class="lastMessage-payload">{{showMessage}}</text>
                 </view>
             </view>
-        </view>
-        <view class="t-conversation-item-box">
             <view class="t-conversation-item-info">
                 {{conversation.lastMessage.timeago}}
             </view>
-            <view wx:if="{{showMuteIcon}}" class="t-conversation-item-mutenotifications">
+        </view>
+        <view class="t-conversation-item-box">
+            <!-- <view wx:if="{{showMuteIcon}}" class="t-conversation-item-mutenotifications">
                 <image class="t-conversation-mutenotifications-img" src="../../../../static/images/mutenotifications.png"/>
-            </view>
+            </view> -->
+            <image class="t-conversation-item-avatar" src="{{setConversationAvatar}}" binderror="handleimageerro"></image>
         </view>
         <view class="t-conversation-box">
             <view class="t-conversation-mutenotifications" catchtap="muteNotifications">{{showMute}}</view>

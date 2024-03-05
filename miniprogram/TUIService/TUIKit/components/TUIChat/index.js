@@ -54,10 +54,11 @@ Component({
 
   lifetimes: {
     attached() {
-      if (app.globalData.config.commodity !== null){
+      const { commodity } = app.globalData.config;
+      if (commodity !== null){
         this.setData({
           showSell: true,
-          commodity: app.globalData.config.commodity,
+          commodity: commodity,
         });
       }
     },
@@ -110,6 +111,17 @@ Component({
       wx.$TUIKit.setMessageRead({ conversationID: this.data.conversationID }).then(() => {
         logger.log('| TUI-chat | setMessageRead | ok');
       });
+      
+      // 手动发送已读消息回执
+      wx.$TUIKit.getMessageList({conversationID: this.data.conversationID}).then(function(imResponse) {
+        let messageList = imResponse.data.messageList; // 消息列表
+        wx.$TUIKit.sendMessageReadReceipt(messageList).then(function() {
+          logger.log('sendMessageReadReceipt OK');
+        }).catch(function(imError) {
+          logger.warn('sendMessageReadReceipt ERROR: ' + imError);
+        });
+      });
+
       wx.$TUIKit.getConversationProfile(this.data.conversationID).then((res) => {
         const { conversation } = res.data;
         this.setData({
@@ -279,7 +291,20 @@ Component({
         });
         return;
       }
-      CollectApi.sellCommodity(commodity._id, user_id.substr(4));
+      api.sellCommodity(commodity._id, user_id.substr(4)).then((res) =>{
+        wx.showToast({
+          title: '售出成功',
+          duration: 800,
+          icon: 'success',
+        });
+      }).catch((e) => {
+        wx.showToast({
+          title: '售出失败',
+          duration: 800,
+          icon: 'error',
+        });
+        console.error(e);
+      });
     }
   },
 });

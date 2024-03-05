@@ -37,7 +37,7 @@
 .conversation-list-area {
   position: absolute;
   width: 100vw;
-  height: calc(100vh - 190px);
+  height: calc(100vh - 120rpx);
   top: 172rpx;
 }
 
@@ -51,7 +51,6 @@
   width: 160rpx;
   height: 160rpx;
   padding-left: 3rpx;
-
 }
 
 .picker {
@@ -118,5 +117,28 @@
 .conversation-bubble:after{
   bottom: -33px;
   border-color: #fff transparent transparent;
+}
 
+.subscribe-button {
+  position: fixed;
+  right: 40rpx;
+  bottom: 200rpx;
+  height: 120rpx;
+  width: 120rpx;
+  border-radius: 50%;
+  background-color: #006EFF;
+}
+
+.icon {
+  position: relative;
+  color: white;
+  line-height: 120rpx;
+  text-align: center;
+  width: 120rpx;
+  height: 120rpx;
+  font-size: 80rpx !important;
+}
+
+.icon:before {
+	content: "\e709";
 }

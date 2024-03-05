@@ -140,11 +140,7 @@ Page({
     const registered = app.globalData.registered;
     if (registered) {
       app.globalData.commodity = null;
-      const user_id = 'USER' + app.globalData.self._id;
-      const sell_id = 'REPY' + this.data.commodity.sell_id + this.data.commodity._id;
-      const conversation_id = encodeURIComponent('C2C' + sell_id);
-      app.globalData.targetID = conversation_id;
-      app.globalData.currentUser = user_id;
+      app.globalData.targetCommodity = this.data.commodity;
       wx.switchTab({
         url: `../../TUIService/pages/tim_index/tim_index`,
       });

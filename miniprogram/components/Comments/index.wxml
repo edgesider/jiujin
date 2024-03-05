@@ -26,7 +26,7 @@
           bindtap="openProfile"
           data-comment="{{comment}}"
         />
-        <view class="right">
+        <view class="right" bindtap="startComment" data-comment="{{comment}}">
           <view class="username">
             {{comment.user.name}}
           </view>
@@ -38,11 +38,23 @@
             {{comment.content}}
           </view>
         </view>
+        <view class="delete-btn"
+          wx:if="{{ comment.user._id === selfInfo._id }}"
+          bind:tap="deleteQuestion"
+          data-comment="{{comment}}">
+          删除
+        </view>
       </view>
       <view wx:else class="comment answer">
         <view class="username">{{comment.user.name}}</view>
         <view class="colon">：</view>
         <view class="content">{{comment.content}}</view>
+        <view class="delete-btn"
+          wx:if="{{ comment.user._id === selfInfo._id }}"
+          bind:tap="deleteQuestion"
+          data-comment="{{comment}}">
+          删除
+        </view>
       </view>
     </view>
   </view>
