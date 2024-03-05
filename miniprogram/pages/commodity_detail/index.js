@@ -4,9 +4,9 @@ import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
 import { sleep } from "../../utils/other";
 import moment from "moment";
+import { openProfile } from "../../router";
 
 const app = getApp();
-const DURATION_IN_FEED = 1000 * 60 * 60 * 24 * 2;
 
 Page({
   data: {
@@ -19,7 +19,6 @@ Page({
     polishTime: '',
     seller: null,
     contentParagraphs: [],
-    remainTime: '',
     firstImageSize: [],
   },
   onLoad: async function (options) {
@@ -39,15 +38,18 @@ Page({
 
     let firstImageSize = [0, 0];
     if (commodity.img_urls.length === 1) {
-      const size = await wx.getImageInfo({ src: commodity.img_urls[0] });
-      firstImageSize = [size.width, size.height];
+      try {
+        const size = await wx.getImageInfo({ src: commodity.img_urls[0] });
+        firstImageSize = [size.width, size.height];
+      } catch (e) {
+        firstImageSize = [500, 500];
+      }
     }
 
     this.setData({
       loading: false,
       commodity,
       createTime: moment(commodity.create_time).format('YYYY-MM-DD HH:mm'),
-      remainTime: this.calcRemainTimeStr(commodity),
       polishTime: moment(commodity.update_time).fromNow(),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
@@ -55,12 +57,6 @@ Page({
       isMine: app.globalData.self._id === commodity.sell_id,
       firstImageSize,
     });
-  },
-  calcRemainTimeStr(commodity) {
-    const updateTime = new Date(commodity.update_time);
-    const now = new Date();
-    const remainMs = updateTime.getTime() + DURATION_IN_FEED - now.getTime();
-    return splitMillisecondsToString(Math.max(remainMs, 0), true);
   },
   back() {
     wx.navigateBack().then();
@@ -162,11 +158,6 @@ Page({
   },
 
   async onAvatarClick() {
-    const { seller } = this.data;
-    if (seller) {
-      await wx.navigateTo({
-        url: `../profile/index?user_id=${seller._id}`,
-      });
-    }
+    await openProfile(this.data.seller);
   },
 });

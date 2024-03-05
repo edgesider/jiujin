@@ -63,13 +63,21 @@
 }
 
 .list {
-  margin-top: 32rpx;
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
   flex-wrap: wrap;
+
+  --gap: 24rpx;
+  gap: var(--gap);
+  padding: var(--gap);
+}
+
+.list .commodity {
+  width: calc((100% - var(--gap)) / 2);
+  border-radius: 16rpx;
 }
 
 .list .commodity-container {

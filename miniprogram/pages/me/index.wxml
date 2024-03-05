@@ -1,6 +1,6 @@
 <scroll-view scroll-y class="scrollPage">
   <view class="UCenter-bg">
-    <image src="{{selfInfo.avatar_url}}" class="png round" mode="widthFix" bindtap="onEnterHomeUserInfo"></image>
+    <image src="{{selfInfo.avatar_url}}" class="png round" mode="widthFix" bindtap="openProfile"></image>
     <view class="text-xl margin-top text-black" bindtap="onEnterHomeUserInfo">{{selfInfo.name}}</view>
     <view class="margin-top-sm" bindtap="onEnterHomeUserInfo" wx:if="{{selfInfo.rid !== -1}}">
       <text class="text-black">{{selfInfo.rid === -1 ? '未知' : ridToRegion[selfInfo.rid].name}}</text>

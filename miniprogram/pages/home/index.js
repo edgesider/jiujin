@@ -1,10 +1,9 @@
 import { setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
-import Dialog from '@vant/weapp/dialog/dialog';
 import api from '../../api/api';
 
 const app = getApp()
-const COUNT_PER_PAGE = 8
+const COUNT_PER_PAGE = 12
 const DEFAULT_REGION_ID = 1
 
 let needRefresh = false;
@@ -121,7 +120,7 @@ Page({
     const rid = this.data.regions[this.data.selectedRegionIndex]._id;
 
     const start = append ? this.data.cursor : 0;
-    const token = append ? this.fetchToken : ++this.fetchToken;
+    const token = ++this.fetchToken;
     if (!append) {
       await wx.pageScrollTo({ scrollTop: 0, smooth: true });
       this.loadBanners().then();
@@ -133,13 +132,17 @@ Page({
       commodityList: append ? oldList : [],
     });
     try {
-      const list = await api.getCommodityList({
+      const resp = await api.getCommodityList({
         rid,
         start,
         count: COUNT_PER_PAGE,
         is_mine: false,
         status: COMMODITY_STATUS_SELLING
       });
+      if (resp.isError) {
+        await wx.showToast({ title: '网络错误' })
+        return;
+      }
       if (token !== this.fetchToken) {
         console.log(`fetch token mismatch, ignore result: required=${token}, actual=${this.fetchToken}`);
         return;
@@ -152,7 +155,7 @@ Page({
         console.log('list changed, ignore result');
         return;
       }
-      const data = append ? oldList.concat(list.data) : list.data;
+      const data = append ? oldList.concat(resp.data) : resp.data;
       const cursor = data.length;
       this.setData({
         isLoading: false,
@@ -161,12 +164,6 @@ Page({
       });
     } catch (e) {
       console.error(e);
-    } finally {
-      if (this.data.isLoading) {
-        this.setData({
-          isLoading: false,
-        })
-      }
     }
   },
 

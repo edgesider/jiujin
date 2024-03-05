@@ -1,4 +1,5 @@
 import { CommentAPI } from '../../api/api';
+import { openProfile } from "../../router";
 
 const app = getApp();
 
@@ -102,6 +103,13 @@ Component({
           return comments[i];
         }
       }
+    },
+    async openMyProfile() {
+      await openProfile(app.globalData.self);
+    },
+    async openProfile(ev) {
+      const { user } = ev.currentTarget.dataset.comment;
+      await openProfile(user);
     },
     startComment({ currentTarget: { dataset: { comment } } }) {
       this.setData({

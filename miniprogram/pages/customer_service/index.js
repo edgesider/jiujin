@@ -4,7 +4,7 @@ import moment from 'moment';
 import { setTabBar } from "../../utils/other";
 
 const app = getApp();
-const COUNT_PER_PAGE = 8
+const COUNT_PER_PAGE = 12
 
 Page({
   data: {

@@ -1,7 +1,11 @@
 <view class="root">
   <view class="title">{{comments.length}}条留言</view>
   <view class="input-area">
-    <image src="{{selfInfo.avatar_url}}" class="my-avatar" />
+    <image
+      src="{{selfInfo.avatar_url}}"
+      class="my-avatar"
+      bindtap="openMyProfile"
+    />
     <view
       class="fake-input"
       bindtap="startComment"
@@ -14,15 +18,23 @@
       wx:for="{{comments}}"
       wx:for-item="comment"
       wx:key="_id"
-      bindtap="startComment" data-comment="{{comment}}"
     >
       <view wx:if="{{comment.type === 'question'}}" class="comment question">
-        <image src="{{comment.user.avatar_url}}" class="avatar" />
+        <image
+          class="avatar"
+          src="{{comment.user.avatar_url}}"
+          bindtap="openProfile"
+          data-comment="{{comment}}"
+        />
         <view class="right">
           <view class="username">
             {{comment.user.name}}
           </view>
-          <view class="content">
+          <view
+            class="content"
+            bindtap="startComment"
+            data-comment="{{comment}}"
+          >
             {{comment.content}}
           </view>
         </view>
