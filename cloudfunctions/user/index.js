@@ -19,9 +19,7 @@ const RID_MODIFICATION_MIN_DURATION = 1000 * 60 * 60 * 24; // 修改RID的最小
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  const app = new TcbRouter({
-    event
-  })
+  const app = new TcbRouter({ event })
 
   app.router('getOpenId', async (ctx) => {
     ctx.body = {
@@ -73,6 +71,7 @@ exports.main = async (event, context) => {
           total_collect: 0,
           create_time: db.serverDate(),
           update_time: db.serverDate(),
+          last_seen_time:db.serverDate(),
           is_deleted: false
         }
       })
@@ -85,6 +84,32 @@ exports.main = async (event, context) => {
       if (e?.errCode?.toString() === '87014') {
         ctx.body = {
           error: e ?? 'unknown',
+          errno: 87014
+        }
+      }
+    }
+  })
+
+
+  app.router('updateUserLastSeenTime', async (ctx, next) => {
+    try {
+      const res = await userCollection.where({
+        _id: wxContext.OPENID,
+        is_deleted: false
+      }).update({
+        data: {
+          last_seen_time: db.serverDate()
+        }
+      })
+      ctx.body = { errno: 0 }
+    }
+    catch (e) {
+      ctx.body = {
+        error: e ?? 'unknown',
+        errno: -1,
+      }
+      if (e?.errCode?.toString() === '87014') {
+        ctx.body = {
           errno: 87014
         }
       }
@@ -105,7 +130,7 @@ exports.main = async (event, context) => {
       } else {
         const ridChanged = oldUser.rid !== rid;
         const ridLastModifiedTime = oldUser._rid_modified_time;
-        if (ridChanged && ridLastModifiedTime && ridLastModifiedTime.getTime() - Date.now() < RID_MODIFICATION_MIN_DURATION) {
+        if (ridChanged && ridLastModifiedTime && Date.now() - ridLastModifiedTime.getTime() < RID_MODIFICATION_MIN_DURATION) {
           ctx.body = {
             errno: -2,
             error: 'rid modification too frequent',
@@ -185,18 +210,6 @@ exports.main = async (event, context) => {
       }
     }
   })
-
-
-  // 学生身份验证, 空方法，默认返回true
-  // TODO: 完善学生身份验证
-  // app.router('studentIdAuth', async (ctx, next) => {
-  //   ctx.body = await userCollection.where({
-  //     openid: wxContext.OPENID,
-  //     is_deleted: false
-  //   }).get().then((res) => {
-  //     return true
-  //   })
-  // })
 
   return app.serve()
 }

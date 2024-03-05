@@ -295,6 +295,28 @@ const api = {
       }
     }));
   },
+  
+  async setViewed(cid) {
+  },
+  async getMyViewed(start, count) {
+  },
+  async getBannerList(rid) {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'banner',
+      data: {
+        $url: 'getBannerList',
+        params: { rid }
+      }
+    }));
+  },
+  async updateLastSeenTime() {
+    return wrapResponse(await wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        $url: 'updateUserLastSeenTime',
+      }
+    }));
+  },
 }
 
 export default api;

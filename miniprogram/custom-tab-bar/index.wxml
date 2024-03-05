@@ -1,10 +1,12 @@
 <view class="root" data-url="{{url}}">
-  <view class="tab-bar">
+  <view class="tab-bar" style="height: {{TabBarHeight}}px">
     <view
       class="tab-bar-item"
       wx:for="{{list}}" wx:key="index"
-      data-path="{{item.pagePath}}" data-index="{{index}}"
+      data-path="{{item.pagePath}}"
+      data-index="{{index}}"
       data-use-navigate-to="{{item.useNavigateTo}}"
+      data-toast-text="{{item.toastText}}"
       bindtap="switchTab"
     >
       <view

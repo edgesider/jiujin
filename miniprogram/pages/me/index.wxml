@@ -19,7 +19,7 @@
         我发布的
       </view>
     </view>
-    <view class="flex flex-sub flex-direction" bindtap="onToggleMyCollect">
+    <view class="flex flex-sub flex-direction" bindtap="onClickMyStarred">
       <view class="text-xxl text-green">{{selfInfo.total_collect || 0}}</view>
       <view class="margin-top-sm">
         我收藏的

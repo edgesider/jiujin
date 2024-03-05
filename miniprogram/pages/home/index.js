@@ -1,7 +1,7 @@
 import { setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
 import Dialog from '@vant/weapp/dialog/dialog';
-import api from "../../api/api";
+import api from '../../api/api';
 
 const app = getApp()
 const COUNT_PER_PAGE = 8
@@ -34,19 +34,24 @@ Page({
     commodityList: [],
     cursor: 0,
     isLoading: false,
+    pullDownRefreshing: false,
+
+    banners: [],
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
+  fetchToken: 0,
+
   async onLoad() {
     setTabBar(this);
     this.setData({ isLoading: true })
     try {
-      await this.loadRegions(); // TODO cache
+      await Promise.all([this.loadRegions(), this.loadBanners()]); // TODO cache
       await this.fetchList();
     } catch (e) {
-      Dialog.alert({ message: e, });
+      await wx.showToast({
+        title: '加载失败',
+        icon: 'error',
+      });
       console.error(e);
     } finally {
       this.setData({ isLoading: false });
@@ -64,8 +69,7 @@ Page({
       await this.fetchList();
     }
     if (this.data.self && app.globalData.self && this.data.self.rid !== app.globalData.self.rid) {
-      await this.loadRegions();
-      await this.fetchList();
+      await Promise.all([this.loadRegions(), this.fetchList(), this.loadBanners()]);
     }
   },
 
@@ -99,17 +103,34 @@ Page({
     }
   },
 
+  async loadBanners() {
+    await app.waitForReady();
+    const rid = app.globalData.self?.rid ?? DEFAULT_REGION_ID;
+    const resp = await api.getBannerList(rid);
+    if (resp.isError) {
+      console.error(resp);
+      return;
+    }
+    this.setData({
+      banners: resp.data,
+    });
+  },
+
   async fetchList({ append } = {}) {
+    console.log(`fetch: append=${append}, rid=${this.data.regions[this.data.selectedRegionIndex]._id}`);
     const rid = this.data.regions[this.data.selectedRegionIndex]._id;
 
     const start = append ? this.data.cursor : 0;
+    const token = append ? this.fetchToken : ++this.fetchToken;
     if (!append) {
-      wx.pageScrollTo({ scrollTop: 0, smooth: true });
+      await wx.pageScrollTo({ scrollTop: 0, smooth: true });
+      this.loadBanners().then();
     }
+    const oldList = this.data.commodityList;
     this.setData({
       cursor: start,
       isLoading: true,
-      commodityList: append ? this.data.commodityList : [],
+      commodityList: append ? oldList : [],
     });
     try {
       const list = await api.getCommodityList({
@@ -119,7 +140,19 @@ Page({
         is_mine: false,
         status: COMMODITY_STATUS_SELLING
       });
-      const data = append ? this.data.commodityList.concat(list.data) : list.data;
+      if (token !== this.fetchToken) {
+        console.log(`fetch token mismatch, ignore result: required=${token}, actual=${this.fetchToken}`);
+        return;
+      }
+      if (rid !== this.data.regions[this.data.selectedRegionIndex]._id) {
+        console.log('rid mismatch, ignore result');
+        return;
+      }
+      if (append && oldList.length !== this.data.commodityList.length) {
+        console.log('list changed, ignore result');
+        return;
+      }
+      const data = append ? oldList.concat(list.data) : list.data;
       const cursor = data.length;
       this.setData({
         isLoading: false,
@@ -145,10 +178,10 @@ Page({
     await this.fetchList();
   },
 
-  // 刷新商品列表
-  async onPullDownRefresh() {
+  async onRefresherRefresh() {
+    this.setData({ pullDownRefreshing: true, })
     await this.fetchList();
-    await wx.stopPullDownRefresh();
+    this.setData({ pullDownRefreshing: false, })
   },
 
   async onReachBottom() {
@@ -170,18 +203,15 @@ Page({
     })
   },
 
-  // 搜索
-  async onSearchCommodity(event) {
-    const keyword = event.detail.value
+  async onSearchClick() {
     wx.navigateTo({
-      url: `../search/index?keyword=${keyword}`,
+      url: `../search/index`,
     })
   },
 
-  // 切换区域
-  async onChangeRegion(ev) {
+  async onRegionClick(ev) {
     const targetIdx = ev.currentTarget.dataset.idx;
-    if (typeof targetIdx !== 'number' || targetIdx === this.data.selectedRegionIndex) {
+    if (typeof targetIdx !== 'number') {
       return;
     }
     this.setData({
@@ -191,53 +221,18 @@ Page({
     });
   },
 
+  onClickBanner(ev) {
+    const { url } = ev.currentTarget.dataset;
+    wx.previewImage({
+      current: url,
+      urls: [url],
+    })
+  },
+
   async onEnterCommodityDetail(event) {
     const id = event.currentTarget.dataset.id
     wx.navigateTo({
       url: `../commodity_detail/index?id=${id}&enteredFrom=1`,
-    })
-  },
-  //
-  // async onCommodityReleaseTab() {
-  //   const registered = app.globalData.registered
-  //   if (registered) {
-  //     await wx.navigateTo({
-  //       url: '../commodity_publish/index',
-  //       events: {
-  //         afterPublished() {
-  //           console.log('afterPublished');
-  //           this.fetchList();
-  //         }
-  //       }
-  //     })
-  //   } else {
-  //     this.setData({
-  //       showLoginPopup: true
-  //     })
-  //   }
-  // },
-
-  async onHomeTab() {
-    wx.redirectTo({
-      url: '../me/index',
-    })
-  },
-
-  onShowLoginPopup() {
-    const registered = app.globalData.registered
-    if (!registered) {
-      this.setData({
-        showLoginPopup: true
-      })
-    }
-  },
-
-  onTitleClick() {
-  },
-
-  onCancelLoginPopup() {
-    this.setData({
-      showLoginPopup: false
     })
   },
 
@@ -252,6 +247,5 @@ Page({
     wx.redirectTo({
       url: '../register/index',
     })
-
   },
 })

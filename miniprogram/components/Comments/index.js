@@ -6,7 +6,6 @@ Component({
   properties: {
     commodity: {
       type: Object,
-      default: null
     },
   },
   data: {

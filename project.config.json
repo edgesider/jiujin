@@ -27,7 +27,8 @@
     "useIsolateContext": true,
     "useCompilerModule": false,
     "userConfirmedUseCompilerModuleSwitch": false,
-    "ignoreUploadUnusedFiles": true
+    "ignoreUploadUnusedFiles": true,
+    "ignoreDevUnusedFiles": true
   },
   "appid": "wxc89ea56f592e89c4",
   "projectname": "JiuJin",

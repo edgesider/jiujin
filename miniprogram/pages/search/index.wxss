@@ -1,6 +1,122 @@
-/* miniprogram/pages/commodity_search/index.wxss */
-.commodity-card{
-  background-color: #ffffff !important;
-  border-radius: 20rpx;
-  margin:3px 6px;
+page {
+  background-color: #fff;
+}
+
+.top-bar {
+  z-index: 1;
+  width: 100%;
+  background-color: #ddd;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  position: sticky;
+  top: 0;
+}
+
+.top-bar .back {
+  font-size: 42rpx;
+  margin: 0 18rpx;
+}
+
+.top-bar .input-container {
+  flex-grow: 1;
+  height: 64rpx;
+  border-radius: 32rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: center;
+  padding: 0 20rpx;
+  border: 2rpx rgba(0, 0, 0, .5) solid;
+}
+
+.top-bar .input {
+  flex-grow: 1;
+  font-size: 30rpx;
+}
+
+.content {
+  width: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputting {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 18rpx;
+}
+
+.inputting .title {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin: 18rpx 0;
+  position: relative;
+}
+
+.histories {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.histories-item {
+  font-size: 24rpx;
+  width: fit-content;
+  background: rgba(0, 0, 0, .1);
+  border-radius: 4rpx;
+  padding: 8rpx 12rpx;
+}
+
+.histories-clear {
+  margin-right: 18rpx;
+  position: absolute;
+  right: 0;
+  font-size: 12rpx;
+  font-weight: normal;
+}
+
+.filter {
+}
+
+.filter .text-check {
+  font-size: 22rpx;
+}
+
+.filter .text-check.checked {
+  font-weight: bold;
+}
+
+.commodity-list-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.commodity-list-container .list {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  --gap: 18rpx;
+  padding: var(--gap);
+  gap: var(--gap);
+}
+
+.commodity-list-container .item {
+  width: calc(50% - var(--gap) / 2);
 }

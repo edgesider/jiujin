@@ -251,6 +251,15 @@ Page({
             }
             return resp.data;
           },
+          onClick: async ({ type, commodity }) => {
+            return await ({
+              'click-card': async () => {
+                await wx.navigateTo({
+                  url: `../commodity_detail/index?id=${commodity._id}`
+                })
+              },
+            })[type]?.();
+          },
         })
       }
     })
@@ -264,76 +273,6 @@ Page({
       })
     }
     return registered;
-  },
-
-  onToggleMyCollect(e){
-    wx.navigateTo({
-      url: '../commodity_collect/index',
-    })
-  },
-
-  copyLink(e) {
-    wx.setClipboardData({
-      data: e.currentTarget.dataset.link,
-      success: res => {
-        wx.showToast({
-          title: '已复制',
-          duration: 1000,
-        })
-      }
-    })
-  },
-
-  // 订阅消息：当有人购买用户发布的商品时，推送消息给此用户
-  onAuthReceiveMsg() {
-    const registered = app.globalData.registered
-    if (!registered) {
-      this.setData({
-        showLoginPopup: true
-      })
-      return
-    }
-
-    // 模板ID 需要在微信公众平台中配置
-    const tmplId = 's9MweXoRKb_IWTm0edo6Ztso2BLcWSrYuTcNT1cDTME'
-    wx.requestSubscribeMessage({
-      tmplIds: [tmplId],
-      success: async (res) => {
-        console.log(await wx.getSetting({
-          withSubscriptions: true,
-        }))
-        Dialog.alert({
-          message: '当您有新的交易时，将接收到一次推送。若收到后，想要继续接受推送，则需再次点击此按钮。',
-          theme: 'round-button',
-        })
-      }
-    })
-  },
-
-  onCommodityReleaseTab() {
-    const registered = app.globalData.registered
-    if (registered) {
-      wx.navigateTo({
-        url: '../commodity_publish/index',
-      })
-    } else {
-      this.setData({
-        showLoginPopup: true
-      })
-    }
-  },
-
-  onCommodityListTab() {
-    wx.redirectTo({
-      url: '../home/index',
-    })
-  },
-
-
-  onCancelLoginPopup() {
-    this.setData({
-      showLoginPopup: false
-    })
   },
 
   // 用户注册

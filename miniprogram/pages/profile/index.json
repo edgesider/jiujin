@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "TitleBar": "/components/TitleBar/index",
+    "CommodityCard": "/components/CommodityCard/index"
+  },
+  "enablePullDownRefresh": false,
+  "disableScroll": true
+}

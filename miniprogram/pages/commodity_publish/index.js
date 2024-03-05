@@ -1,15 +1,17 @@
 import api from "../../api/api";
 import Dialog from '@vant/weapp/dialog/dialog';
 import rules from "../../utils/rules";
-import { RespError, RespSuccess } from "../../utils/resp";
-import { sleep } from "../../utils/time";
 import { getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
+import { sleep } from "../../utils/other";
+import getConstants, { GENDER } from "../../constants";
 
 const app = getApp()
 
 Page({
   data: {
+    ...getConstants(),
+    self: null,
     // 可选分类
     categories: [{ _id: 0, name: '其他' }],
     // 可选成色，1-10
@@ -25,12 +27,16 @@ Page({
     commodityCurrentPriceText: '0',
     commodityCurrentPrice: 0,
     qualityIndex: 0,
+    onlyMyGender: false,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
+    await app.waitForReady();
+    const { self } = app.globalData;
+    this.setData({ self, })
     await this.getCategories();
 
     const {
@@ -138,10 +144,16 @@ Page({
       commodityImg: this.data.commodityImg
     })
   },
-  onChangeQuality(e) {
-    const idx = e.detail.value;
+  onChangeQuality(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
     this.setData({
       qualityIndex: idx,
+    })
+  },
+  onChangeOnlyMyGender(ev) {
+    const { currentTarget: { dataset: { value } } } = ev;
+    this.setData({
+      onlyMyGender: value,
     })
   },
 
@@ -173,7 +185,11 @@ Page({
       } else {
         const resp = await api.uploadImage(
           path,
+<<<<<<< HEAD
           `commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}`
+=======
+          `commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}\``
+>>>>>>> ecbea73a193995c32876ef44c23142c61113b9bb
         );
         if (resp.isError) {
           throw resp.message;
@@ -185,8 +201,19 @@ Page({
   },
 
   // 上传商品信息
-  async onCommodityRelease() {
-    const { editingCommodity: editing } = this.data;
+  async onSubmit() {
+    const {
+      editingCommodity: editing,
+      onlyMyGender,
+      self,
+      categories,
+      categoryIndex,
+      commodityContent,
+      commodityCurrentPrice,
+      qualityIndex,
+      qualities,
+      commodityImg
+    } = this.data;
     const info = editing // 编辑商品时的初始值
       ?? {
         // 新建商品时的默认值
@@ -195,11 +222,12 @@ Page({
       };
     Object.assign(info, {
       // 从表单中更新
-      cid: this.data.categories[this.data.categoryIndex]._id,
-      content: this.data.commodityContent,
-      price: this.data.commodityCurrentPrice,
-      quality: this.data.qualities[this.data.qualityIndex].value,
-      img_urls: this.data.commodityImg,
+      cid: categories[categoryIndex]._id,
+      content: commodityContent,
+      price: commodityCurrentPrice,
+      quality: qualities[qualityIndex].value,
+      img_urls: commodityImg,
+      sex: onlyMyGender ? self.sex : GENDER.UNKNOWN,
     });
     const error = this.checkForm(info);
     if (error) {

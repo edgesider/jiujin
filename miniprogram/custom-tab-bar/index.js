@@ -1,5 +1,8 @@
+import getConstants from "../constants";
+
 Component({
   data: {
+    ...getConstants(),
     selected: 0,
     color: '#7A7E83',
     selectedColor: '#3cc51f',
@@ -11,18 +14,27 @@ Component({
         text: '首页'
       },
       {
+        pagePath: '/pages/commodity_publish/index',
+        iconClass: 'cuIcon-question',
+        toastText: '敬请期待！',
+        text: '互助',
+      },
+      {
+        pagePath: '/pages/commodity_publish/index',
+        iconClass: 'cuIcon-add',
+        useNavigateTo: true, // 是否使用navigateTo打开新的页面
+        text: '发布',
+      },
+      {
+<<<<<<< HEAD
+=======
         pagePath: "/TUIService/pages/tim_index/tim_index",
         iconClass: "cuIcon-message",
         selectedIconClass: "cuIcon-messagefill",
         text: "私信"
       },
       {
-        pagePath: '/pages/commodity_publish/index',
-        iconClass: 'cuIcon-add',
-        useNavigateTo: true, // 是否使用navigateTo打开新的页面
-        text: '发布'
-      },
-      {
+>>>>>>> ecbea73a193995c32876ef44c23142c61113b9bb
         pagePath: '/pages/me/index',
         iconClass: 'cuIcon-my',
         selectedIconClass: 'cuIcon-myfill',
@@ -47,14 +59,27 @@ Component({
     },
   },
   methods: {
+<<<<<<< HEAD
     switchTab(e) {
       const data = e.currentTarget.dataset;
       const { path, useNavigateTo } = data;
-      if (useNavigateTo) {
-        wx.navigateTo({ url: path })
-      } else {
-        wx.switchTab({ url: path })
+=======
+    async switchTab(e) {
+      const data = e.currentTarget.dataset
+      const { path, useNavigateTo, toastText } = data;
+      if (toastText) {
+        await wx.showToast({
+          title: toastText,
+          icon: 'none'
+        })
+        return;
       }
-    }
+>>>>>>> ecbea73a193995c32876ef44c23142c61113b9bb
+      if (useNavigateTo) {
+        await wx.navigateTo({ url: path })
+      } else {
+        await wx.switchTab({ url: path })
+      }
+    },
   },
 })

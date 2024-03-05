@@ -1,13 +1,14 @@
 import api from './api/api';
 import { BehaviorSubject } from "rxjs";
-import moment from "moment";
 
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
-import { GENDER } from "./constants";
+import { GENDER, setConstants } from "./constants";
 
 import axios from 'axios';
+import { initMoment } from "./utils/time";
+import { InAppMonitor } from "./monitor/index";
 
 const IMAxios = axios.create({
   timeout: 10000,
@@ -46,7 +47,6 @@ App({
     } else {
       wx.cloud.init({
         env: 'jj-4g1ndtns7f1df442',
-        // traceUser: true,
       })
     }
 
@@ -68,20 +68,36 @@ App({
     // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
-        this.globalData.StatusBar = e.statusBarHeight;
-        let custom = wx.getMenuButtonBoundingClientRect();
-        this.globalData.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
+        const menuBtn = wx.getMenuButtonBoundingClientRect();
+        // 系统状态栏高度
+        const StatusBar = e.statusBarHeight;
+        // 自定义顶栏高度
+        const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
+        // 底部导航栏高度
+        const TabBarHeight = 52;
+        // 底部指示器高度（小白条）
+        const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
+        const constants = Object.freeze({
+          StatusBar,
+          CustomBar,
+          TabBarHeight,
+          MenuButton: menuBtn,
+          ScreenSize: [e.screenWidth, e.screenHeight],
+          SafeArea: e.safeArea,
+          TopBarHeight: StatusBar + CustomBar,
+          BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
+          BottomIndicatorHeight,
+        });
+        Object.assign(this.globalData, constants)
+        setConstants(constants)
       }
     })
 
-    moment.locale('zh-cn');
+    initMoment();
 
     const { data: { openId } } = await api.getOpenId();
     this.globalData.openId = openId;
 
-    // 清空缓存
-    wx.clearStorageSync();
-    // TODO 存到storage中
     await Promise.all([this.fetchSelfInfo(), this.fetchRegions()]);
 
     // 登录腾讯IM
@@ -98,6 +114,13 @@ App({
     //   time: '15:01',
     //   commodity: '商品'
     // });
+  },
+
+  onShow() {
+    InAppMonitor.start();
+  },
+  onHide() {
+    InAppMonitor.stop();
   },
 
   async initTIM() {
@@ -190,7 +213,6 @@ App({
 
   onTotalUnreadMessageCountUpdated(event) {
     console.log("TencentCloudChat TOTAL_UNREAD_MESSAGE_COUNT_UPDATED");
-    console.log(event.data);
     this.globalData.totalUnread = event.data;
     this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
@@ -270,7 +292,7 @@ App({
     });
   },
 
-  decodeReplyID(replyID){
+  decodeReplyID(replyID) {
     return {
       openid: replyID.substr(4, 32),
       commodity: replyID.substr(32),
@@ -294,6 +316,7 @@ App({
     for (const region of regions) {
       ridToRegion[region._id] = region;
     }
+    this.globalData.regions = regions;
     this.globalData.ridToRegion = ridToRegion;
   },
 

@@ -9,8 +9,15 @@ export const GENDER = {
   FEMALE: 2,
 }
 
+export const GENDER_NAME_MAP = {
+  [GENDER.MALE]: '男',
+  [GENDER.FEMALE]: '女',
+  [GENDER.UNKNOWN]: '保密',
+}
+
+const constants = {};
+
 export default function getConstants() {
-  const app = getApp();
   return {
     COMMODITY_STATUS_SELLING,
     COMMODITY_STATUS_OFF,
@@ -18,5 +25,11 @@ export default function getConstants() {
     COMMODITY_STATUS_LOCKED,
     CustomBar: app.globalData.CustomBar,
     StatusBar: app.globalData.StatusBar,
+    GENDER, GENDER_NAME_MAP,
+    ...constants
   };
 };
+
+export function setConstants(obj) {
+  Object.assign(constants, obj);
+}
