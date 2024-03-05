@@ -35,9 +35,10 @@ Page({
    */
   async onLoad(options) {
     await app.waitForReady();
-    const { self } = app.globalData;
-    this.setData({ self, })
-    await this.getCategories();
+    const { self, categories } = app.globalData;
+    this.setData({
+      self, categories
+    })
 
     const {
       isEdit = false, // 是否是编辑

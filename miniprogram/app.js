@@ -22,7 +22,7 @@ App({
   _readyWaiters: [],
   globalData: {
     registered: false,
-    openId: "1",
+    openId: null,
     self: null,
     ridToRegion: null,
     StatusBar: 0,
@@ -50,7 +50,6 @@ App({
       })
     }
 
-    // Color UI: 获得系统信息
     wx.getSystemInfo({
       success: e => {
         const menuBtn = wx.getMenuButtonBoundingClientRect();
@@ -80,9 +79,7 @@ App({
 
     initMoment();
 
-    this.globalData.openId = await this.userLogin();
-
-    await Promise.all([this.fetchSelfInfo(), this.fetchRegions()]);
+    await Promise.all([this.fetchOpenId(), this.fetchSelfInfo(), this.fetchRegions(), this.fetchCategories()]);
 
     // 登录腾讯IM
     await this.initTIM();
@@ -91,13 +88,6 @@ App({
     console.warn('initialized. globalData=', this.globalData);
     this._ready = true;
     this._readyWaiters.forEach(waiter => waiter());
-
-    // this.sendIMSubscribeMessage({
-    //   name: '哈哈哈',
-    //   message: '信息',
-    //   time: '15:01',
-    //   commodity: '商品'
-    // });
   },
 
   onShow() {
@@ -308,25 +298,52 @@ App({
     }
   },
 
+  async fetchOpenId() {
+    let openId = wx.getStorageSync('openId');
+    if (!openId) {
+      const { data: { openId } } = await api.getOpenId();
+      wx.setStorageSync('openId', openId);
+    }
+    this.globalData.openId = openId;
+  },
+
   async fetchSelfInfo() {
-    // 查询用户是否已经注册
-    const res = await api.getSelfInfo();
-    const registered = !!res.data?._id;
+    let self = wx.getStorageSync('self');
+    if (!self) {
+      const res = await api.getSelfInfo();
+      self = res.data;
+      wx.setStorageSync('self', self);
+    }
+    const registered = Boolean(self?._id);
     this.globalData.registered = registered;
     if (registered) {
-      this.userChangedSubject.next(res.data);
-      this.globalData.self = res.data;
+      this.globalData.self = self;
+      this.userChangedSubject.next(self);
     }
   },
 
   async fetchRegions() {
-    const { data: regions } = await api.getRegions();
+    let regions = wx.getStorageSync('regions');
+    if (!regions) {
+      regions = (await api.getRegions()).data ?? [];
+      wx.setStorageSync('regions', regions);
+    }
     const ridToRegion = {};
     for (const region of regions) {
       ridToRegion[region._id] = region;
     }
     this.globalData.regions = regions;
     this.globalData.ridToRegion = ridToRegion;
+  },
+
+  async fetchCategories() {
+    let categories = wx.getStorageSync('categories');
+    if (!categories) {
+      const resp = await api.getCategory();
+      categories = resp.data ?? [];
+      wx.setStorageSync('categories', categories);
+    }
+    this.globalData.categories = categories;
   },
 
   async waitForReady() {
