@@ -173,7 +173,7 @@ Page({
       } else {
         const resp = await api.uploadImage(
           path,
-          `\`commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}\``
+          `commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}`
         );
         if (resp.isError) {
           throw resp.message;
@@ -190,7 +190,7 @@ Page({
     const info = editing // 编辑商品时的初始值
       ?? {
         // 新建商品时的默认值
-        rid: app.globalData.self.rid,
+        rid: Number(app.globalData.self.rid),
         sex: 0,
       };
     Object.assign(info, {
@@ -225,6 +225,7 @@ Page({
       title: editing ? '正在保存' : '正在发布',
       mask: true
     });
+
     const resp =
       editing
         ? await api.updateCommodity(editing._id, info)

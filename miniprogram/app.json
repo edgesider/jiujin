@@ -6,6 +6,7 @@
     "pages/search/index",
     "pages/commodity_publish/index",
     "pages/commodity_detail/index",
+    "pages/commodity_list/index",
     "TUIService/pages/tim_index/tim_index",
     "pages/commodity_collect/index"
   ],

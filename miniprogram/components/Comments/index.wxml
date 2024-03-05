@@ -17,19 +17,19 @@
       bindtap="startComment" data-comment="{{comment}}"
     >
       <view wx:if="{{comment.type === 'question'}}" class="comment question">
-        <image src="{{comment.user.avatar_url}}" class="avatar" />
+        <!-- <image src="{{comment.user.avatar_url}}" class="avatar" /> -->
         <view class="right">
-          <view class="username">
+          <!-- <view class="username">
             {{comment.user.name}}
-          </view>
+          </view> -->
           <view class="content">
             {{comment.content}}
           </view>
         </view>
       </view>
       <view wx:else class="comment answer">
-        <view class="username">{{comment.user.name}}</view>
-        <view class="colon">：</view>
+        <!-- <view class="username">{{comment.user.name}}</view>
+        <view class="colon">：</view> -->
         <view class="content">{{comment.content}}</view>
       </view>
     </view>

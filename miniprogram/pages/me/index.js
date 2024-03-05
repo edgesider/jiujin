@@ -192,6 +192,9 @@ Page({
             })[type]?.();
           },
         })
+      },
+      fail: (error) => {
+        console.error(error);
       }
     })
   },
@@ -209,9 +212,7 @@ Page({
           fetcher: async ({ start, count }) => {
             const resp = await api.getCommodityList({
               start, count,
-              buyer_id: app.globalData.openId,
-              orderBy: 'update_time',
-              order: 'desc',
+              buyer_id: app.globalData.openId
             });
             if (resp.isError) {
               console.log(resp);
@@ -256,7 +257,7 @@ Page({
   },
 
   ensureRegistered() {
-    const registered = app.globalData.registered
+    const registered = app.globalData.registered;
     if (!registered) {
       this.setData({
         showLoginPopup: true

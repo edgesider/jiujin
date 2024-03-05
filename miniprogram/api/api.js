@@ -12,19 +12,21 @@ const IMAxios = axios.create({
   baseURL: "http://59.110.214.108:8080/",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    'Content-Type': 'application/json;charset=UTF-8',
   },
 });
 
 function getId(){
-  return app.globalData.openId;
+  //return app.globalData.openId;
+  return "1";
 }
 
 function wrapResp(resp) {
-  Object.assign(resp.data, { errno: resp.errCode });
   if (!resp.succeed) {
+    Object.assign(resp.data, { errno: resp.errCode });
     return new RespError(resp.data, resp.errMsg ?? 'unknown error', resp.errCode ?? -1);
   }
+  Object.assign(resp.data, { errno: 0 });
   return new RespSuccess(resp.data);
 }
 
@@ -37,11 +39,13 @@ function wrapResponse(resp) {
 
 async function callFunction(param){
   return new Promise(function(resolve, reject) {
-    IMAxios({
+    var req = {
       url: param.path,
       method: param.method,
-      params: param.data
-    }).then((res) => {
+      params: param.params,
+      data: param.data,
+    };
+    IMAxios(req).then((res) => {
       if (res.status >= 400){
         reject({ errCode: -1, errMsg: `${res.status} ${res.statusText}` });
         return;
@@ -55,184 +59,176 @@ async function callFunction(param){
 
 const api = {
   async getSelfInfo() {
-    return this.getUserInfo(undefined);
+    return this.getUserInfo(getId());
   },
-
   async getOpenId() {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        $url: 'getOpenId'
-      }
-    }));
+    return { data: { openId: getId() } };
   },
-
   async getUserInfo(uid) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        $url: 'getUserInfo',
-        params: { _id: uid }
+    const res = wrapResp(await callFunction({
+      path: "/user/getInfo",
+      method: "GET",
+      params: {
+        Id: uid
       }
     }));
+    return res;
   },
 
   async genUserSig(id) {
-    return wrapResponse(await wx.cloud.callFunction({
+    const res = await wx.cloud.callFunction({
       name: 'user',
       data: {
         $url: 'genUserSig',
         params: { id }
       }
-    }));
+    });
+    return wrapResponse(res);
   },
 
   async getRegions() {
-    const res = await wx.cloud.callFunction({
-      name: 'region',
-      data: {
-        $url: 'getRegions',
-      }
-    })
-    console.log(JSON.stringify(res.result.data));
-    return wrapResponse(res);
+    return wrapResp(await callFunction({
+      path: "/region/get",
+      method: "GET",
+      params: {}
+    }));
   },
 
-  // async getRegions() {
-  //   const res = await callFunction({
-  //     path: "/region/get",
-  //     method: "GET",
-  //     data: {}
-  //   });
-  //   console.log(wrapResp(res));
-  //   return wrapResp(res);
-  // },
+  async getAccessToken() {
+    const res = await callFunction({
+      path: "/getAccessToken",
+      method: "GET",
+      params: {}
+    });
+    return wrapResp(res);
+  },
 
   async registerUser(params) {
-    const res = await wx.cloud.callFunction({
-      name: 'user',
+    const res = await callFunction({
+      path: "/user/register",
+      method: "POST",
       data: {
-        $url: 'registerUser',
-        params
+        ...params,
+        open_id: getId()
       }
-    })
-    return wrapResponse(res);
+    });
+    return wrapResp(res);
   },
 
   async updateUser(params) {
-    const res = await wx.cloud.callFunction({
-      name: 'user',
+    return wrapResp(await callFunction({
+      path: "/user/update",
+      method: "POST",
       data: {
-        $url: 'updateUser',
-        params
+        ...params,
+        openid: getId()
       }
-    })
-    return wrapResponse(res);
+    }));
   },
-
-  // 获取商品分类信息
-  // async getCategory() {
-  //   return wrapResponse(await wx.cloud.callFunction({
-  //     name: 'category',
-  //     data: {
-  //       $url: 'getCategory',
-  //     }
-  //   }))
-  // },
 
   async getCategory() {
     return wrapResp(await callFunction({
       path: "/category/get",
       method: "GET",
-      data: {}
+      params: {}
     }));
   },
 
   async getCommodityList(filter) {
-    // const { cid, keyword, seller_id, buyer_id, sex, status, start, count } = filter ?? {};
-    const res = await wx.cloud.callFunction({
-      name: 'commodity',
+    const resp = await callFunction({
+      path: "/commodity/getList",
+      method: "POST",
       data: {
-        $url: 'getCommodityList',
-        params: {
-          ...filter
-        }
+        ...filter,
+        openid: getId()
       }
     });
-    return wrapResponse(res);
+    if (!resp.data) resp.data = [];
+    const res = wrapResp(resp);
+    for (var i = 0; i < res.data.length; i++){
+      res.data[i].img_urls = res.data[i].img_urls
+        .replaceAll("\"", "")
+        .replaceAll(" ", "")
+        .split(",");
+      res.data[i].sell_id = res.data[i].seller_id;
+    }
+    return res;
   },
 
   // 获取单个商品
   async getCommodityInfo({ id }) {
-    const res = wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+    var res = wrapResp(await callFunction({
+      path: "/commodity/getList",
+      method: "POST",
       data: {
-        $url: 'getCommodityList',
-        params: {
-          _id: id
-        }
+        _id: id,
+        openid: getId()
       }
     }));
-    if (res.isError || !res.data[0]) {
-      return null
-    }
-    return new RespSuccess(res.data[0]);
+    Object.assign(res, { data: res.data.collectCommodity });
+    Object.assign(res.data, { sell_id: res.data.seller_id });
+    res.data.img_urls = res.data.img_urls
+        .replaceAll("\"", "")
+        .replaceAll(" ", "")
+        .split(",");
+    return res;
   },
 
   async createCommodity(commodityInfo) {
-    const res = await wx.cloud.callFunction({
-      name: 'commodity',
+    commodityInfo.img_urls = commodityInfo.img_urls.join(',');
+    return wrapResp(await callFunction({
+      path: "/commodity/create",
+      method: "POST",
       data: {
-        $url: 'createCommodity',
-        params: commodityInfo
+        ...commodityInfo,
+        openid: getId()
       }
-    });
-    return wrapResponse(res);
+    }));
   },
 
   // 擦亮商品
   async polishCommodity({ id }) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+    return wrapResp(await callFunction({
+      path: "/commodity/polish",
+      method: "POST",
       data: {
-        $url: 'polishCommodity',
-        params: { _id: id }
+        _id: id,
+        openid: getId()
       }
     }));
   },
 
   async updateCommodity(id, info) {
     Object.assign(info, { _id: id });
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+    return wrapResp(await callFunction({
+      path: "/commodity/modify",
+      method: "POST",
       data: {
-        $url: 'updateCommodity',
-        params: info
+        ...info,
+        openid: getId()
       }
     }));
   },
 
   async offCommodity({ id }) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+    return wrapResp(await callFunction({
+      path: "/commodity/updateStatus",
+      method: "POST",
       data: {
-        $url: 'updateCommodityStatus',
-        params: {
-          _id: id,
-          status: COMMODITY_STATUS_OFF,
-        }
+        _id: id,
+        status: COMMODITY_STATUS_OFF,
+        openid: getId()
       }
     }));
   },
 
   async deleteCommodity({ id }) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+    return wrapResp(await callFunction({
+      path: "/commodity/delete",
+      method: "POST",
       data: {
-        $url: 'deleteCommodity',
-        params: {
-          _id: id,
-        }
+        _id: id,
+        openid: getId()
       }
     }));
   },
@@ -258,53 +254,44 @@ const api = {
   },
 
   async lockCommodity(id) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+    return wrapResp(await callFunction({
+      path: "/commodity/lock",
+      method: "POST",
       data: {
-        $url: 'lockCommodity',
-        params: {
-          _id: id
-        },
+        _id: id
       }
-    }))
-  },
-  async unlockCommodity(id) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'unlockCommodity',
-        params: {
-          _id: id
-        },
-      }
-    }))
-  },
-  async sellCommodity(id, buyer_id) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
-      data: {
-        $url: 'sellCommodity',
-        params: {
-          _id: id,
-          buyer_id
-        },
-      }
-    }))
+    }));
   },
 
-  async getMyViewed(start, count) {
-  },
-  async getMyBought(start, count) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity',
+  async unlockCommodity(id) {
+    return wrapResp(await callFunction({
+      path: "/commodity/unlock",
+      method: "POST",
       data: {
-        $url: 'getCommodityList',
-        params: {
-          buyer_id: getApp().globalData.openId,
-          orderBy: 'update_time',
-          order: 'desc',
-          start, count,
-        },
+        _id: id
+      }
+    }));
+  },
+
+  async sellCommodity(id, buyer_id) {
+    return wrapResp(await callFunction({
+      path: "/commodity/sell",
+      method: "POST",
+      data: {
+        _id: id,
+        buyer_id,
+        openid: getId()
+      }
+    }));
+  },
+
+  async getViewed(start, count) {
+    return wrapResp(await callFunction({
+      path: "/commodity/getViewed",
+      method: "POST",
+      data: {
+        start, count,
+        openid: getId()
       }
     }));
   },
@@ -314,74 +301,108 @@ export default api;
 
 export const CommentAPI = {
   async createQuestion(coid, content) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity_question',
+    return wrapResp(await callFunction({
+      path: "/createQuestion",
+      method: "POST",
       data: {
-        $url: 'createQuestion',
-        params: {
-          cid: coid,
-          content
-        }
+        cid: coid,
+        content,
+        openid: getId()
       }
     }));
   },
+
   async createAnswer(qid, content) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity_answer',
+    return wrapResp(await callFunction({
+      path: "/createAnswer",
+      method: "POST",
       data: {
-        $url: 'createAnswer',
-        params: {
-          question_id: qid,
-          content,
-        }
+        question_id: qid,
+        content,
+        openid: getId()
+      }
+    }));
+  },
+
+  async getCommodityQuestionsAndAnswers(coid, start, count){
+    return wrapResp(await callFunction({
+      path: "/getCommodityQuestionsAndAnswers",
+      method: "POST",
+      data: {
+        commodity_id: coid,
+        start, count,
+        openid: getId()
       }
     }));
   },
   async getQuestions(coid, start, count) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity_question',
+    var res = await callFunction({
+      path: "/getCommodityQuestionsAndAnswers",
+      method: "POST",
       data: {
-        $url: 'getCommodityQuestions',
-        params: {
-          cid: coid,
-          start, count
-        }
+        commodity_id: coid,
+        start, count,
+        openid: getId()
       }
-    }));
+    });
+    res.data = res.data.commodityQuestions;
+    return wrapResp(res);
   },
   async getAnswers(qid, start, count) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity_answer',
+    var res = await callFunction({
+      path: "/getCommodityQuestionsAndAnswers",
+      method: "POST",
       data: {
-        $url: 'getQuestionAnswers',
-        params: {
-          question_id: qid,
-          start, count
-        }
+        commodity_id: coid,
+        start, count,
+        openid: getId()
+      }
+    });
+    res.data = res.data.commodityAnswers;
+    return wrapResp(res);
+  },
+
+  async delQuestion(qid) {
+    return wrapResp(await callFunction({
+      path: "/deleteQuestion",
+      method: "POST",
+      data: {
+        question_id: qid,
+        openid: getId()
       }
     }));
   },
-  async delQuestion(qid) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity_question',
-      data: {
-        $url: 'deleteQuestion',
-        params: {
-          question_id: qid,
-        }
-      }
-    }))
-  },
   async delAnswer(answer_id) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'commodity_answer',
+    return wrapResp(await callFunction({
+      path: "/deleteAnswer",
+      method: "POST",
       data: {
-        $url: 'deleteAnswer',
-        params: {
-          answer_id
-        }
+        answer_id,
+        openid: getId()
       }
-    }))
+    }));
+  },
+  async modifyQuestion(question_id, content){
+    return wrapResp(await callFunction({
+      path: "/modifyQuestion",
+      method: "POST",
+      data: {
+        question_id,
+        content,
+        openid: getId()
+      }
+    }));
+  },
+  async modifyAnswer(answer_id, content){
+    return wrapResp(await callFunction({
+      path: "/modifyAnswer",
+      method: "POST",
+      data: {
+        answer_id,
+        content,
+        openid: getId()
+      }
+    }));
   },
 }
 
@@ -390,40 +411,34 @@ export const CommentAPI = {
  */
 export const CollectApi = {
   async collect(cid) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'collection',
+    return wrapResp(await callFunction({
+      path: "/collect/commodity",
+      method: "POST",
       data: {
-        $url: 'collectCommodity',
-        params: { cid },
+        cid,
+        openid: getId()
       }
-    }))
+    }));
   },
   async cancel(cid) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'collection',
+    return wrapResp(await callFunction({
+      path: "/collect/cancel",
+      method: "POST",
       data: {
-        $url: 'cancelCollect',
-        params: { cid },
+        cid,
+        openid: getId()
       }
-    }))
+    }));
   },
   async getAll(start, count) {
-    const resp = wrapResponse(await wx.cloud.callFunction({
-      name: 'collection',
+    return wrapResp(await callFunction({
+      path: "/collect/getInfo",
+      method: "POST",
       data: {
-        $url: 'getCollection',
-        params: {
-          start, count
-        },
+        start,
+        count,
+        openid: getId()
       }
-    }))
-    if (!resp.isError) {
-      const list = []
-      for (const item of resp.data.list) {
-        list.push(...item.commodityInfoList);
-      }
-      resp.data = list;
-    }
-    return resp;
+    }));
   },
 }

@@ -14,7 +14,8 @@ const IMAxios = axios.create({
 });
 
 function getId(){
-  return app.globalData.openId;
+  //return app.globalData.openId;
+  return "1";
 }
 
 function wrapResp(resp) {
@@ -36,7 +37,7 @@ async function callFunction(param){
     IMAxios({
       url: param.path,
       method: param.method,
-      params: param.data
+      data: param.data
     }).then((res) => {
       if (res.status >= 400){
         reject({ errCode: -1, errMsg: res.status });
@@ -55,12 +56,7 @@ const api = {
   },
 
   async getOpenId() {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        $url: 'getOpenId'
-      }
-    }));
+    return getId();
   },
 
   async getUserInfo(uid) {
@@ -91,15 +87,24 @@ const api = {
     }));
   },
 
+  async getAccessToken() {
+    return wrapResp(await callFunction({
+      path: "/getAccessToken",
+      method: "GET",
+      data: {}
+    }));
+  },
+
   async registerUser(params) {
-    const res = await wx.cloud.callFunction({
-      name: 'user',
+    const res = await callFunction({
+      path: "/user/register",
+      method: "POST",
       data: {
-        $url: 'registerUser',
-        params
+        ...params,
+        open_id: getId()
       }
-    })
-    return wrapResponse(res);
+    });
+    return wrapResp(res);
   },
 
   // name rid avatar_url sex openid
@@ -108,7 +113,7 @@ const api = {
       path: "/user/update",
       method: "POST",
       data: {
-        params
+        ...params
       }
     }));
   },

@@ -26,4 +26,7 @@
   <CreateConversation wx:if="{{showCreateConversation}}" bind:showConversation="toggleConversationList" bind:searchUserID="searchUserID" ></CreateConversation>
   <CreateGroup wx:if="{{showCreateGroup}}" bind:showConversation="toggleConversationList" bind:createGroupID="createGroupID"></CreateGroup>
   <JoinGroup wx:if="{{showJoinGroup}}" bind:searchGroupID="searchGroupID" bind:showConversation="toggleConversationList"></JoinGroup>
+  <view class="subscribe-button" bindtap="subscribeMessage">
+    <view class="icon cuIcon-notificationfill"></view>
+  </view>
 </view>

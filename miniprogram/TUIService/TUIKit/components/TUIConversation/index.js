@@ -275,5 +275,16 @@ Component({
         url: '/pages/TUI-User-Center/webview/webview?url=https://cloud.tencent.com/product/im',
       });
     },
+    subscribeMessage() {
+      wx.requestSubscribeMessage({
+        tmplIds: ['IHHmCTUl9XTY1PKLbQ9KBcrtuGEy836_8OqBAeZyuqg'],
+        success: (res) => {
+          console.log("消息订阅成功");
+        },
+        fail: (error) => {
+          console.log('消息订阅失败：', error);
+        }
+      });
+    }
   },
 });
