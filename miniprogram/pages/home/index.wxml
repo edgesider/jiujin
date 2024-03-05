@@ -16,7 +16,7 @@
   refresher-triggered="{{pullDownRefreshing}}"
   bindrefresherrefresh="onRefresherRefresh"
   bindscrolltolower="onReachBottom"
-  lower-threshold="300"
+  lower-threshold="400"
 >
   <view>
     <swiper autoplay circular class="top-swiper">

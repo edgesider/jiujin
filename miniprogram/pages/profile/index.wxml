@@ -2,10 +2,12 @@
 </TitleBar>
 
 <scroll-view
-  scroll-y
-  enable-flex="true"
   class="content-container"
   style="height: calc(100vh - {{TopBarHeight + BottomIndicatorHeight}}px)"
+  scroll-y
+  enable-flex="true"
+  bindscrolltolower="onReachBottom"
+  lower-threshold="400"
 >
   <view class="state-container" wx:if="{{userLoadState === 'loading'}}">
     <view class="cu-load loading" />
@@ -35,18 +37,17 @@
       </view>
     </view>
     <view class="list">
-      <view
-        class="commodity-container"
+      <CommodityCard
         wx:for="{{commodityList}}"
         wx:key="_id"
         bindtap="onClickCommodity"
         data-key="{{item._id}}"
-      >
-        <CommodityCard
-          class="commodity"
-          commodity="{{item}}"
-        />
-      </view>
+        class="commodity"
+        commodity="{{item}}"
+      />
     </view>
+    <view
+      class="cu-load {{listLoading ? 'loading' : 'over'}}"
+    />
   </block>
 </scroll-view>

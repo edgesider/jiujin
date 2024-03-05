@@ -1,7 +1,7 @@
 import api from "../../api/api";
 import getConstants, { GENDER } from "../../constants";
 
-const COUNT_PER_PAGE = 8
+const COUNT_PER_PAGE = 12
 const app = getApp();
 
 Page({
@@ -30,7 +30,6 @@ Page({
   },
 
   onFocus() {
-    this.fetchToken++;
     this.setData({
       state: 'inputting',
     })
@@ -87,14 +86,13 @@ Page({
 
   async fetch(clear) {
     if (clear) {
-      this.fetchToken++;
       this.setData({
         commodityList: [],
         cursor: 0,
         state: 'loading',
       })
     }
-    const token = this.fetchToken;
+    const token = ++this.fetchToken;
     const { text, cursor, commodityList } = this.data;
     const resp = await api.getCommodityList({
       keyword: text,

@@ -1,9 +1,9 @@
 import { setTabBar } from "../../utils/other";
 
 const app = getApp()
-import Dialog from '@vant/weapp/dialog/dialog';
 import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
 import api, { CollectApi } from "../../api/api";
+import { openProfile } from "../../router";
 
 const placeholderUser = {
   _id: "0",
@@ -264,7 +264,9 @@ Page({
       }
     })
   },
-
+  openProfile() {
+    openProfile(app.globalData.self);
+  },
   ensureRegistered() {
     const registered = app.globalData.registered;
     if (!registered) {

@@ -6,6 +6,7 @@
       auto-focus="true"
       focus="{{isFocused}}"
       value="{{text}}"
+      bindtap="onFocus"
       bindfocus="onFocus"
       bindinput="onInput"
       bindconfirm="onConfirm"
@@ -31,14 +32,14 @@
         <text>{{item}}</text>
       </view>
     </view>
-    <view class="title">过滤</view>
-    <view class="filter">
-      <!--      <view-->
-      <!--        wx:if="{{self.sex !== null && self.sex !== GENDER.UNKNOWN}}"-->
-      <!--        class="text-check {{onlyMyGender ? 'checked' : ''}}"-->
-      <!--        bindtap="onOnlyMyGenderClick"-->
-      <!--      >仅{{GENDER_NAME_MAP[self.sex]}}性</view>-->
-    </view>
+    <!--    <view class="title">过滤</view>-->
+    <!--    <view class="filter">-->
+    <!--      <view-->
+    <!--        wx:if="{{self.sex !== null && self.sex !== GENDER.UNKNOWN}}"-->
+    <!--        class="text-check {{onlyMyGender ? 'checked' : ''}}"-->
+    <!--        bindtap="onOnlyMyGenderClick"-->
+    <!--      >仅{{GENDER_NAME_MAP[self.sex]}}性</view>-->
+    <!--    </view>-->
   </view>
   <view wx:elif="{{state === 'shown' || state === 'loading'}}" class="commodity-list-container">
     <view class="list" wx:if="{{commodityList.length > 0}}">

@@ -1,8 +1,10 @@
 import getConstants, { COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from "../../constants";
 import api from "../../api/api";
 import moment from "moment";
+import { getRegionPath } from "../../utils/other";
 
 const app = getApp()
+const COUNT_PER_PAGE = 12
 
 Page({
   data: {
@@ -15,7 +17,9 @@ Page({
       { key: 'sold', name: '已售出' },
     ],
     currFilter: 'all',
+    cursor: 0,
     commodityList: [],
+    listLoading: false,
   },
 
   async onLoad(options) {
@@ -32,21 +36,12 @@ Page({
       return;
     }
     const user = resp.data;
-    const { ridToRegion } = app.globalData;
-    const regionPath = [];
-    for (
-      let region = ridToRegion[user.rid];
-      Boolean(region);
-      region = region.parents[0] ? ridToRegion[region.parents[0]] : null
-    ) {
-      regionPath.push(region);
-    }
-    const regionName = regionPath.reverse().map(r => r.name).join('/');
+    const regionName = getRegionPath(user.rid).reverse().map(r => r.name).join('/');
     this.setData({
       userLoadState: 'loaded',
       user,
       regionName,
-      lastSeenTime: !user.lastSeenTime ? '很久前' : moment(user.lastSeenTime).fromNow(),
+      lastSeenTime: !user.last_seen_time ? '很久前' : moment(user.last_seen_time).fromNow(),
     });
   },
 
@@ -54,10 +49,20 @@ Page({
     console.log('fetch', this.data.currFilter);
     if (!append) {
       this.setData({
+        cursor: 0,
         commodityList: [],
+        listLoading: true
+      });
+    } else {
+      this.setData({
+        listLoading: true
       });
     }
-    const resp = await api.getCommodityList(this.getApiParams());
+    const resp = await api.getCommodityList({
+      ...this.getApiParams(),
+      start: this.data.cursor,
+      count: COUNT_PER_PAGE,
+    });
     if (resp.isError) {
       await wx.showToast({ title: '网络错误' })
       return;
@@ -65,8 +70,14 @@ Page({
     const list = resp.data ?? [];
     const newList = append ? [...this.data.commodityList, ...list] : list;
     this.setData({
+      cursor: newList.length,
       commodityList: newList,
+      listLoading: false,
     })
+  },
+
+  onReachBottom() {
+    this.fetchList(true);
   },
 
   getApiParams() {
