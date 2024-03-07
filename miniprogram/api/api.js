@@ -19,6 +19,7 @@ function getId(){
 }
 
 function wrapResp(resp) {
+  if (!resp.data) resp.data = {};
   if (!resp.succeed) {
     Object.assign(resp.data, { errno: resp.errCode });
     return new RespError(resp.data, resp.errMsg ?? 'unknown error', resp.errCode ?? -1);
@@ -100,6 +101,16 @@ const api = {
       params: {}
     }));
   },
+
+  // async getRegions() { 
+  //   const res = await wx.cloud.callFunction({ 
+  //     name: 'region', 
+  //     data: {
+  //       $url: 'getRegions', 
+  //     } 
+  //   }) 
+  //   return wrapResponse(res);
+  // },
 
   async getAccessToken() {
     const res = await callFunction({

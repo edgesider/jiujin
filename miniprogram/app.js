@@ -146,20 +146,22 @@ App({
 
     await this.loginIMWithID(this.globalData.config.userID);
 
-    wx.$TUIKit.updateMyProfile({
-      nick: this.globalData.self.name,
-      avatar: this.globalData.self.avatar_url,
-      gender: {
-        [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
-        [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
-        [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
-      }[this.globalData.self.sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
-      allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-    }).then((imResponse) => {
-      console.log(imResponse.data); // 更新资料成功
-    }).catch((imError) => {
-      console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
-    });
+    if (this.globalData.registered){
+      wx.$TUIKit.updateMyProfile({
+        nick: this.globalData.self.name,
+        avatar: this.globalData.self.avatar_url,
+        gender: {
+          [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+          [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
+          [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+        }[this.globalData.self.sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
+        allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
+      }).then((imResponse) => {
+        console.log(imResponse.data); // 更新资料成功
+      }).catch((imError) => {
+        console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
+      });
+    }
 
     this.globalData.TUIEnabled = true;
   },
@@ -311,15 +313,19 @@ App({
   async fetchSelfInfo() {
     let self = wx.getStorageSync('self');
     if (!self) {
-      const res = await api.getSelfInfo();
-      self = res.data;
-      wx.setStorageSync('self', self);
+      try{
+        const res = await api.getSelfInfo();
+        self = res.data;
+      }catch (e){
+        console.error(e);
+      }
     }
     const registered = Boolean(self?._id);
     this.globalData.registered = registered;
     if (registered) {
       this.globalData.self = self;
       this.userChangedSubject.next(self);
+      wx.setStorageSync('self', self);
     }
   },
 
