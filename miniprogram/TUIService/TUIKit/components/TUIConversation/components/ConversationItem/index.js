@@ -1,3 +1,4 @@
+import api from '../../../../../../api/api';
 import { caculateTimeago } from '../../../../utils/common';
 const app = getApp();
 // eslint-disable-next-line no-undef
@@ -58,6 +59,7 @@ Component({
     setShowName: '',
     showMuteIcon: false,
     showStatus: false,
+    isSeller: 0,
   },
   lifetimes: {
     attached() {
@@ -134,16 +136,25 @@ Component({
         return conversation.groupProfile.avatar || '../../../../static/assets/group-avatar.svg';
       }
     },
-    setUserAvatar(conversation){
+    onTap(event){
+      if (this.data.isSeller){
+        const resp = api.getCommodityInfo({ id: this.data.commodityID });
+        app.globalData.config.commodity = resp.data;
+      }
+      this.triggerEvent('handleRoute', {});
+    },
+    async setUserAvatar(conversation){
       if (conversation.type === 'GROUP') {
-        console.warn(conversation);
+        const { data: attrs } = await wx.$TUIKit.getGroupAttributes({
+          groupID: conversation.groupProfile.groupID,
+          keyList: [ "commodityID", "sellID" ]
+        });
         wx.$TUIKit.getGroupMemberList({
           groupID: conversation.groupProfile.groupID,
           role: wx.TencentCloudChat.GRP_MBR_ROLE_MEMBER,
           count: 2,
           offset: 0
         }).then((imResponse) => {
-          console.warn(imResponse);
           const list = imResponse.data.memberList;
           if (list.length < 2){
             this.setData({
@@ -152,12 +163,13 @@ Component({
             return;
           }
           const { self } = app.globalData;
-          var avatar = list[0].avatar;
-          if ("USER" + self._id == list[0].userID){
-            avatar = list[1].avatar;
-          }
+          // 取出对方的头像
+          const idx = ("USER" + self._id == list[0].userID ? 1 : 0);
+          const avatar = list[idx].avatar;
           this.setData({
-            setUserAvatar: avatar
+            setUserAvatar: avatar,
+            isSeller: self._id == attrs.sellID,
+            commodityID: attrs.commodityID,
           });
         }).catch((imError) => {
           console.warn('getGroupMemberList error:', imError);
@@ -165,7 +177,8 @@ Component({
         return;
       }
       this.setData({
-        setUserAvatar: this.data.setConversationAvatar
+        setUserAvatar: this.data.setConversationAvatar,
+        isSeller: 0,
       });
     },
     // 删除会话

@@ -28,15 +28,15 @@ Page({
     const commodity = this.data.commodityList[idx];
     const id = commodity._id;
     const desc = commodity.content;
-    const user_id = 'REPY' + app.globalData.self._id + id;
+    const { self } = app.globalData;
+    const user_id = 'REPY' + self._id + id;
     app.globalData.config.commodity = commodity;
-    let promise = wx.$TUIKit.updateMyProfile({
-      nick: app.globalData.self.name + '-' + desc,
-      avatar: app.globalData.self.avatar_url,
-      gender: app.globalData.self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
+    wx.$TUIKit.updateMyProfile({
+      nick: self.name + '-' + desc,
+      avatar: self.avatar_url,
+      gender: self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
       allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-    });
-    promise.then((imResponse) => {
+    }).then((imResponse) => {
       console.log(imResponse.data); // 更新资料成功
     }).catch((imError) => {
       console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息

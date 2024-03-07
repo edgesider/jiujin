@@ -12,6 +12,6 @@
     "van-empty": "@vant/weapp/empty/index",
     "CommodityCard": "/components/CommodityCard/index"
   },
-  "enablePullDownRefresh": false,
+  "enablePullDownRefresh": true,
   "disableScroll": true
 }

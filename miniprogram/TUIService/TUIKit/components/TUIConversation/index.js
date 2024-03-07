@@ -256,6 +256,7 @@ Component({
     },
     // 订阅在线状态
     subscribeOnlineStatus(userIDList) {
+      if (userIDList.length == 0) return;
       wx.$TUIKit.getUserStatus({ userIDList }).then((imResponse) => {
         const { successUserList } = imResponse.data;
         this.setData({

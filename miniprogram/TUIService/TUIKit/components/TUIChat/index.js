@@ -113,14 +113,14 @@ Component({
       });
       
       // 手动发送已读消息回执
-      wx.$TUIKit.getMessageList({conversationID: this.data.conversationID}).then(function(imResponse) {
-        let messageList = imResponse.data.messageList; // 消息列表
-        wx.$TUIKit.sendMessageReadReceipt(messageList).then(function() {
-          logger.log('sendMessageReadReceipt OK');
-        }).catch(function(imError) {
-          logger.warn('sendMessageReadReceipt ERROR: ' + imError);
-        });
-      });
+      // wx.$TUIKit.getMessageList({conversationID: this.data.conversationID}).then(function(imResponse) {
+      //   let messageList = imResponse.data.messageList; // 消息列表
+      //   wx.$TUIKit.sendMessageReadReceipt(messageList).then(function() {
+      //     logger.log('sendMessageReadReceipt OK');
+      //   }).catch(function(imError) {
+      //     logger.warn('sendMessageReadReceipt ERROR: ' + imError);
+      //   });
+      // });
 
       wx.$TUIKit.getConversationProfile(this.data.conversationID).then((res) => {
         const { conversation } = res.data;

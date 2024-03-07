@@ -194,7 +194,7 @@ Page({
     await Promise.all([app.fetchSelfInfo(), app.fetchRegions()]);
     wx.hideLoading();
 
-    app.globalData.registered = true
+    app.globalData.registered = true;
     wx.showToast({
       title: (isEdit ? '已保存' : '注册成功'),
       icon: 'success',
@@ -203,6 +203,6 @@ Page({
           wx.navigateBack()
         }, 1500)
       }
-    })
+    });
   }
 })

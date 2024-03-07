@@ -1,4 +1,4 @@
-<movable-area wx:if="{{conversation.conversationID}}" class="t-conversation-item-container">
+<movable-area wx:if="{{conversation.conversationID}}" class="t-conversation-item-container" bind:tap="onTap">
     <movable-view
         class="t-conversation-item {{conversation.isPinned && 't-conversation-pinneditem'}}"
         bind:touchend="handleTouchEnd" direction="horizontal" bindchange="handleTouchMove" damping="100"
