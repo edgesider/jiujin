@@ -102,7 +102,6 @@ Component({
         this.setData({
           commonFunction: [
             { name: '常用语', key: '0' },
-            { name: '服务评价', key: '2' },
             { name: '解锁', key: '4' },
             { name: '售出', key: '5' },
           ]
@@ -111,7 +110,6 @@ Component({
         this.setData({
           commonFunction: [
             { name: '常用语', key: '0' },
-            { name: '服务评价', key: '2' },
           ]
         });
       }
