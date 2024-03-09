@@ -228,7 +228,7 @@ App({
   },
 
   async onMessageReceived(event) {
-    console.log(`onMessageReceived: ${event.data}`);
+    console.log(`onMessageReceived: `, event.data);
     const { conversationID } = event.data;
     const messageList = await wx.$TUIKit.getMessageList({ conversationID });
     if (messageList.length <= 1){
