@@ -33,6 +33,7 @@ Page({
     }
     const commodity = commResp.data;
 
+    console.warn(commodity);
     const sellerResp = await api.getUserInfo(commodity.sell_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
 

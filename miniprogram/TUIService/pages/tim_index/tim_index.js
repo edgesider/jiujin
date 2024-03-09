@@ -24,7 +24,7 @@ Page({
     const { targetCommodity, self } = app.globalData;
     const TUIKit = this.selectComponent('#TUIKit');
     var conversation = TUIKit.selectComponent('#TUIConversation');
-    if (targetCommodity){
+    if (targetCommodity != null){
       // 尝试创建群聊
       const sell_id = targetCommodity.sell_id;
       const { data: user } = await api.getUserInfo(sell_id);
@@ -47,6 +47,7 @@ Page({
         groupID: group_id,
         keyList: [ "commodityID", "sellID" ]
       }));
+      console.warn(targetCommodity);
       await wx.$TUIKit.setGroupAttributes({
         groupID: group_id,
         groupAttributes: {

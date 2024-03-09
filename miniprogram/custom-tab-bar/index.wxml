@@ -12,7 +12,7 @@
       <view
         class="{{selected === index ? item.selectedIconClass : item.iconClass}} icon"
         style="color: {{selected === index ? selectedColor: color}}">
-        <view class="unread-count" wx:if="{{index === 1 && unreadCount > 0}}">{{unreadCount > 99 ? "99+" : unreadCount}}</view>
+        <view class="unread-count" wx:if="{{index === 3 && unreadCount > 0}}">{{unreadCount > 99 ? "99+" : unreadCount}}</view>
       </view>
       <view class="text" style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
     </view>
