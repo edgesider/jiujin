@@ -54,8 +54,12 @@ Component({
 
   lifetimes: {
     attached() {
-      const { commodity } = app.globalData.config;
-      if (commodity !== null){
+      const { data: attrs } = await wx.$TUIKit.getGroupAttributes({
+        groupID: this.data.conversationID,
+        keyList: [ "commodityID", "sellID" ]
+      });
+      const { commodity } = await api.getCommodityInfo({ id: attrs.commodityID });
+      if (commodity != null){
         this.setData({
           showSell: true,
           commodity: commodity,
