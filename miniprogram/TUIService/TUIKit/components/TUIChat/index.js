@@ -54,17 +54,20 @@ Component({
 
   lifetimes: {
     attached() {
-      const { data: attrs } = await wx.$TUIKit.getGroupAttributes({
-        groupID: this.data.conversationID,
+      wx.$TUIKit.getGroupAttributes({
+        groupID: this.data.conversationID.substr(5),
         keyList: [ "commodityID", "sellID" ]
-      });
-      const { commodity } = await api.getCommodityInfo({ id: attrs.commodityID });
-      if (commodity != null){
-        this.setData({
-          showSell: true,
-          commodity: commodity,
+      }).then((data) => {
+        const { data: { groupAttributes: attrs } } = data;
+        api.getCommodityInfo({ id: attrs.commodityID }).then((data) => {
+          const { data: commodity } = data;
+          this.setData({
+            showSell: true,
+            commodity: commodity,
+            isSeller: attrs.sellID == app.globalData.self._id,
+          });
         });
-      }
+      });
     },
     ready() {
       const query = wx.createSelectorQuery().in(this);
@@ -165,19 +168,21 @@ Component({
     },
     sendCommodityMessage(event) {
       const { BUSINESS_ID_TEXT, FEAT_NATIVE_CODE } = constant;
-      const { content, img_url, origin_url, price_now, remark } = this.data.commodity;
+      const { _id, content, img_urls, price } = this.data.commodity;
       this.selectComponent('#MessageInput').$handleSendCustomMessage({
         detail: {
           payload: {
-            businessID: BUSINESS_ID_TEXT.ORDER,
-            version: FEAT_NATIVE_CODE.NATIVE_VERSION,
-            title: content,
-            imageUrl: img_url[0],
-            imageWidth: 135,
-            imageHeight: 135,
-            link: origin_url,
-            price: price_now,
-            description: remark,
+            data: JSON.stringify({
+              businessID: BUSINESS_ID_TEXT.ORDER,
+              version: FEAT_NATIVE_CODE.NATIVE_VERSION,
+              title: content,
+              imageUrl: img_urls[0],
+              imageWidth: 135,
+              imageHeight: 135,
+              link: `/pages/commodity_detail/index?id=${_id}`,
+              price: '￥' + price,
+              description: '',
+            })
           },
           description: content, // 获取自定义消息的具体描述
           extension: content, // 自定义消息的具体内容

@@ -175,14 +175,18 @@ const api = {
 
   // 获取单个商品
   async getCommodityInfo({ id }) {
-    var res = wrapResp(await callFunction({
+    const resp = await callFunction({
       path: "/commodity/getList",
       method: "POST",
       data: {
         _id: id,
         openid: getId()
       }
-    }));
+    });
+    if (!resp.data){
+      return new RespError({}, 'commodity not found');
+    }
+    const res = wrapResp(resp);
     Object.assign(res, { data: res.data.collectCommodity });
     Object.assign(res.data, { sell_id: res.data.seller_id });
     res.data.img_urls = res.data.img_urls

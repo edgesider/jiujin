@@ -9,8 +9,8 @@
               bind:showConversationList="showConversationList"></TUIGroup> -->
     <view class="conversation-commodity">
       <image src="{{commodity.img_urls[0]}}"></image>
-      <text>￥{{commodity.price_now}}</text>
-      <button bind:tap="sendCommodityMessage">发送商品：{{commodity.content}}</button>
+      <text>{{commodity.content}} ￥{{commodity.price}}</text>
+      <button bind:tap="sendCommodityMessage" wx:if="{{isSeller}}">发送商品：{{commodity.content}}</button>
     </view>
   </view>
   <view
