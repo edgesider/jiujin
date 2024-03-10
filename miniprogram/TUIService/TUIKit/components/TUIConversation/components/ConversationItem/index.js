@@ -145,7 +145,7 @@ Component({
     },
     async setUserAvatar(conversation){
       if (conversation.type === 'GROUP') {
-        const { data: attrs } = await wx.$TUIKit.getGroupAttributes({
+        const { data: { groupAttributes: attrs } } = await wx.$TUIKit.getGroupAttributes({
           groupID: conversation.groupProfile.groupID,
           keyList: [ "commodityID", "sellID" ]
         });

@@ -228,23 +228,23 @@ App({
   },
 
   async onMessageReceived(event) {
-    console.log(`onMessageReceived: ${event.data}`);
-    const { conversationID } = event.data;
-    const messageList = await wx.$TUIKit.getMessageList({ conversationID });
-    console.warn(`getMessageList: `, messageList);
-    if (messageList.length <= 1){
+    const { conversationID } = event.data[0];
+    const { data: { messageList } } = await wx.$TUIKit.getMessageList({ conversationID });
+    if (messageList.length <= 2){
       const msg = messageList[0];
       const { from, payload } = msg;
       const text = payload.hasOwnProperty("text") ? payload.text : "[消息]";
-      const user_profile = await wx.$TUIKit.getUserProfile({ userIDList: [ from ] });
-      console.warn(`user_profile: `, user_profile);
-      const group_profile = await wx.$TUIKit.getGroupProfile({ groupID: conversationID, groupCustomFieldFilter: ['name'] });
-      console.warn(`group_profile: `, group_profile);
+      const { data: user_profile } = await wx.$TUIKit.getUserProfile({ userIDList: [ from ] });
+      const { data: { groupAttributes: attrs } } = await wx.$TUIKit.getGroupAttributes({
+        groupID: conversationID.substr(5),
+        keyList: [ "commodityID" ]
+      });
+      const resp = await api.getCommodityInfo({ id: attrs.commodityID });
       this.sendIMSubscribeMessage({
         name: user_profile[0].nick,
         message: text,
         time: this.timeString(),
-        commodity: group_profile.name
+        commodity: resp.data.content
       });
     }
   },
