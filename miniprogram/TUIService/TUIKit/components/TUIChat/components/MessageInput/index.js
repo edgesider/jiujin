@@ -18,6 +18,7 @@ Component({
         this.setData({
           conversation: newVal,
         });
+        this.initCommodity();
       },
     },
     hasCallKit: {
@@ -96,9 +97,24 @@ Component({
           text: '按住说话',
         });
       });
+    },
+  },
 
-      const { commodity } = app.globalData.config;
-      if (commodity !== null){
+  /**
+   * 组件的方法列表
+   */
+  methods: {
+    async initCommodity(){
+      const { data: { groupAttributes: attrs } } = await wx.$TUIKit.getGroupAttributes({
+        groupID: this.data.conversation.groupProfile.groupID,
+        keyList: [ "commodityID", "sellID" ]
+      });
+      const { data: commodity } = await api.getCommodityInfo({ id: attrs.commodityID });
+      this.setData({
+        commodity,
+        isSeller: attrs.sellID == app.globalData.self._id,
+      });
+      if (this.data.isSeller){
         this.setData({
           commonFunction: [
             { name: '常用语', key: '0' },
@@ -114,12 +130,6 @@ Component({
         });
       }
     },
-  },
-
-  /**
-   * 组件的方法列表
-   */
-  methods: {
     // 获取消息列表来判断是否发送正在输入状态
     getMessageList(conversation) {
       wx.$TUIKit.getMessageList({
@@ -334,7 +344,7 @@ Component({
     },
 
     handleCommonFunctions(e) {
-      const { commodity } = app.globalData.config;
+      const { commodity } = this.data;
       switch (e.target.dataset.function.key) {
         case '0':
           this.setData({
@@ -358,6 +368,8 @@ Component({
             duration: 800,
             icon: 'success',
           });
+          commodity.status = COMMODITY_STATUS_LOCKED;
+          this.setData({ commodity });
           break;
         case '4': // 解锁
           if (commodity.status != COMMODITY_STATUS_LOCKED){
@@ -374,6 +386,8 @@ Component({
             duration: 800,
             icon: 'success',
           });
+          commodity.status = COMMODITY_STATUS_SELLING;
+          this.setData({ commodity });
           break;
         case '5': // 售出
           if (commodity.status != COMMODITY_STATUS_SELLING && commodity.status != COMMODITY_STATUS_LOCKED){
@@ -385,6 +399,8 @@ Component({
             return;
           }
           this.triggerEvent('sellCommodity');
+          commodity.status = COMMODITY_STATUS_SOLD;
+          this.setData({ commodity });
           break;
         default:
           break;

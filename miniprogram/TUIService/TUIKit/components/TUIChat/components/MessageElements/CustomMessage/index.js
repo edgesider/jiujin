@@ -163,7 +163,7 @@ Component({
         }
         return [{
           type: 'notSupport',
-          text: '[自定义消息]',
+          text: '[创建群聊]',
         }];
       } catch (error) {
       }
