@@ -3,6 +3,6 @@ export async function openProfile(user) {
     user = user._id;
   }
   await wx.navigateTo({
-    url: `../profile/index?user_id=${user}`,
+    url: `/pages/profile/index?user_id=${user}`,
   });
 }
