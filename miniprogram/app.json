@@ -8,6 +8,7 @@
     "pages/commodity_detail/index",
     "pages/commodity_list/index",
     "TUIService/pages/tim_index/tim_index",
+    "pages/profile/index",
     "pages/commodity_collect/index"
   ],
   "window": {

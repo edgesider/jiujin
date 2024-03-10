@@ -4,17 +4,17 @@
     <view class="t-message" wx:if="{{conversation.type !== '@TIM#SYSTEM'}}" wx:for="{{messageList}}" wx:key="index"  data-index ='{{index}}'  >
          <view class="time-pop-mask" data-value="{{item.time}}" wx:if="{{showMessageTime}}">
              <view class="showmessagetime" wx:if="{{item.isShowTime}}">
-             <text class="time"  wx:if="{{!item.isDeleted && !item.isRevoked}}">{{messageTime}} </text> 
+             <text class="time"  wx:if="{{!item.isDeleted && !item.isRevoked}}">{{messageTime}} </text>
              </view>
          </view>
           <view class="time-pop-mask" data-value="{{item.time}}" wx:if="{{showMessageHistoryTime}}">
              <view class="showmessagetime" wx:if="{{item.isShowHistoryTime && !item.isShowTime && !item.isShowMoreHistoryTime}}">
-             <text class="time"  wx:if="{{!item.isDeleted && !item.isRevoked}}">{{messageHistoryTime}} </text> 
+             <text class="time"  wx:if="{{!item.isDeleted && !item.isRevoked}}">{{messageHistoryTime}} </text>
              </view>
          </view>
          <view class="time-pop-mask"   wx:if="{{item.isShowMoreHistoryTime}}">
              <view class="showmessagetime">
-             <text class="time">{{newArr[item.ID]}} </text> 
+             <text class="time">{{newArr[item.ID]}} </text>
              </view>
          </view>
     <RevokeMessage wx:if="{{item.isRevoked}}" message="{{item}}" isMine="{{item.flow === 'out'}}" bind:resendMessage="resendMessage"/>
@@ -33,8 +33,12 @@
             </view>
             <TipMessage  wx:if="{{item.type === 'TIMGroupTipElem'}}" message="{{item}}"/>
             <view  wx:if="{{item.type !== 'TIMGroupTipElem'}}"   class="{{item.flow === 'out' ? 't-self-message':'t-recieve-message'}}" >
-                <image class="t-message-avatar" wx:if="{{item.flow === 'in'}}" src="{{item.avatar || 'https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/component/TUIKit/assets/avatar_21.png'}}" data-value="{{item}}" bindtap="getMemberProfile" />
-                <view class="read-receipts" wx:if="{{conversation.type === 'C2C' && item.flow==='out' }}">
+              <image
+                class="t-message-avatar" wx:if="{{item.flow === 'in'}}"
+                src="{{item.avatar || 'https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/component/TUIKit/assets/avatar_21.png'}}"
+                data-value="{{item}}" bindtap="handleClickAvatar"
+              />
+              <view class="read-receipts" wx:if="{{conversation.type === 'C2C' && item.flow==='out' }}">
                     <view wx:if="{{item.isPeerRead}}" >已读</view>
                     <view wx:else>未读</view>
                 </view>
@@ -62,7 +66,7 @@
 </scroll-view>
 </view>
 <view wx:if="{{showUnreadMessageCount}}" bindtap="handleJumpNewMessage">
-    <view class="new-message-item" > 
+    <view class="new-message-item" >
     <view class="new-message-box">
     <image class="icon-left" src="../../../../static/assets/down.svg"/>
     <text>{{newMessageCount.length}}条新消息</text>
@@ -70,7 +74,7 @@
     </view>
 </view>
 <view wx:if="{{showUpJump}}" bindtap="handleJumpUnreadMessage" >
-    <view class="unread-message-item" > 
+    <view class="unread-message-item" >
     <view class="unread-message-box">
     <image class="icon-left" src="../../../../static/assets/up.svg"/>
     <text wx:if="{{isLostsOfUnread}}"> 99+条未读</text>

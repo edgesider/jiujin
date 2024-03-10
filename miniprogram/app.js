@@ -98,7 +98,7 @@ App({
     InAppMonitor.stop();
   },
 
-  async userLogin(){
+  async userLogin() {
     return new Promise((resolve, reject) => {
       wx.login({
         success: (res) => {
@@ -146,7 +146,7 @@ App({
 
     await this.loginIMWithID(this.globalData.config.userID);
 
-    if (this.globalData.registered){
+    if (this.globalData.registered) {
       wx.$TUIKit.updateMyProfile({
         nick: this.globalData.self.name,
         avatar: this.globalData.self.avatar_url,
@@ -219,7 +219,7 @@ App({
     this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
-  timeString(){
+  timeString() {
     const date = new Date();
     const hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
     const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
@@ -228,7 +228,7 @@ App({
   },
 
   async onMessageReceived(event) {
-    console.warn(`onMessageReceived: `, event.data);
+    console.log(`onMessageReceived: ${event.data}`);
     const { conversationID } = event.data;
     const messageList = await wx.$TUIKit.getMessageList({ conversationID });
     console.warn(`getMessageList: `, messageList);
@@ -304,22 +304,13 @@ App({
     }
   },
 
-  async fetchOpenId() {
-    let openId = wx.getStorageSync('openId');
-    if (!openId) {
-      const { data: { openId } } = await api.getOpenId();
-      wx.setStorageSync('openId', openId);
-    }
-    this.globalData.openId = openId;
-  },
-
-  async fetchSelfInfo() {
+  async fetchSelfInfo(force = false) {
     let self = wx.getStorageSync('self');
-    if (!self) {
-      try{
+    if (force || !self) {
+      try {
         const res = await api.getSelfInfo();
         self = res.data;
-      }catch (e){
+      } catch (e) {
         console.error(e);
       }
     }
@@ -332,9 +323,9 @@ App({
     }
   },
 
-  async fetchRegions() {
+  async fetchRegions(force = false) {
     let regions = wx.getStorageSync('regions');
-    if (!regions) {
+    if (force || !regions) {
       regions = (await api.getRegions()).data ?? [];
       wx.setStorageSync('regions', regions);
     }
@@ -346,9 +337,9 @@ App({
     this.globalData.ridToRegion = ridToRegion;
   },
 
-  async fetchCategories() {
+  async fetchCategories(force = false) {
     let categories = wx.getStorageSync('categories');
-    if (!categories) {
+    if (force || !categories) {
       const resp = await api.getCategory();
       categories = resp.data ?? [];
       wx.setStorageSync('categories', categories);

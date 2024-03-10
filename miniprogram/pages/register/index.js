@@ -138,7 +138,7 @@ Page({
   async onRegister() {
     const { isEdit, name, gender: sex } = this.data;
     let avatar_url = this.data.avatarUrl;
-    if (!/^(cloud|http|https):\/\//.test(avatar_url) || /http:\/\/tmp\//.test(avatar_url)) {
+    if (avatar_url && !/^(cloud|http|https):\/\//.test(avatar_url) || /http:\/\/tmp\//.test(avatar_url)) {
       const resp = await api.uploadImage(
         avatar_url,
         `avatar/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}`
@@ -191,7 +191,7 @@ Page({
       }[sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
       allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
     });
-    await Promise.all([app.fetchSelfInfo(), app.fetchRegions()]);
+    await Promise.all([app.fetchSelfInfo(true), app.fetchRegions(true)]);
     wx.hideLoading();
 
     app.globalData.registered = true;

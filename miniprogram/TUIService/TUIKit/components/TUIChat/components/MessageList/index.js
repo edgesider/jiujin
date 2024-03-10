@@ -4,9 +4,6 @@ import constant from '../../../../utils/constant';
 // eslint-disable-next-line no-undef
 const app = getApp();
 Component({
-  /**
-   * 组件的属性列表
-   */
   properties: {
     conversation: {
       type: Object,
@@ -632,6 +629,9 @@ Component({
           url: dataLink.link,
         });
       }
+    },
+    handleClickAvatar(ev) {
+      console.log(ev);
     },
     onScroll(event) {
       let isScrollToBottom = false;

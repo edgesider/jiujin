@@ -52,7 +52,11 @@ Page({
   },
 
   async onShow() {
-    await app.fetchSelfInfo();
+    await app.fetchSelfInfo(true);
+    const { self } = app.globalData;
+    this.setData({
+      selfInfo: self
+    });
   },
 
   onEditMyInfo() {
@@ -285,9 +289,8 @@ Page({
     this.setData({
       showLoginPopup: false
     })
-    wx.redirectTo({
+    wx.navigateTo({
       url: '../register/index',
     })
-
   },
 })

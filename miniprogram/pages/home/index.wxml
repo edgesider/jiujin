@@ -61,7 +61,7 @@
               <view>或</view>
               <view
                 class="action"
-                bind:tap="onChangeRegion"
+                bind:tap="onRegionClick"
                 data-idx="{{selectedRegionIndex + 1}}"
               >去“{{regions[selectedRegionIndex + 1].name}}”看看
               </view>
