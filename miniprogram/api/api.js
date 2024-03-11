@@ -466,7 +466,7 @@ export const CollectApi = {
     }));
   },
   async getAll(start, count) {
-    const resp = await request({
+    const resp = wrapResp(await request({
       path: "/collect/getInfo",
       method: "POST",
       data: {
@@ -474,15 +474,13 @@ export const CollectApi = {
         count,
         openid: getOpenId()
       }
-    });
-    if (!resp.data) resp.data = [];
-    const res = wrapResp(resp);
-    res.data.forEach(c => {
+    }));
+    resp.data?.forEach(c => {
       c.img_urls = c.img_urls
         .replaceAll("\"", "")
         .replaceAll(" ", "")
         .split(",");
     })
-    return res;
+    return resp;
   },
 }
