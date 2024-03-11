@@ -1,5 +1,5 @@
 import moment from "moment";
-import 'moment-timezone';
+// import 'moment-timezone';
 
 export function initMoment() {
   wx.moment = moment;

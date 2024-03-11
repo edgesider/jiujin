@@ -7,7 +7,8 @@ const { RespSuccess, RespError } = require('../utils/resp')
 axios.defaults.adapter = mpAdapter;
 
 export const Axios = axios.create({
-  baseURL: "http://localhost:8080/",
+  // baseURL: "http://localhost:8080/",
+  baseURL: "https://lllw.ykai.cc",
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
@@ -16,19 +17,24 @@ export const Axios = axios.create({
 });
 
 Axios.interceptors.request.use(cfg => {
-  cfg.headers['session_key'] = wx.getStorageSync('session_key');
+  cfg.headers['session-key'] = wx.getStorageSync('session_key');
   return cfg;
 })
 
 Axios.interceptors.response.use(async resp => {
   if (!resp.config.url.endsWith('/user/authorize') && resp.status === 401) {
+    resp.config.__authorize_tries__ = (resp.config.__authorize_tries__ ?? 0) + 1
+    if (resp.config.__authorize_tries__ > 10) {
+      console.error('登录失败');
+      return resp;
+    }
     await doAuthorize();
     return Axios(resp.config);
   }
   return resp;
 })
 
-export async function doAuthorize() {
+async function doAuthorize() {
   const { code } = await wx.login();
   const resp = await api.authorize(code);
   if (resp.isError) {
@@ -60,7 +66,7 @@ function wrapResponse(resp) {
   return new RespSuccess(resp.result.data);
 }
 
-async function callFunction(param) {
+async function request(param) {
   return Axios({
     url: param.path,
     method: param.method ?? 'POST',
@@ -71,11 +77,13 @@ async function callFunction(param) {
 
 const api = {
   async getSelfInfo() {
-    console.log(getOpenId());
+    if (!openId) {
+      await doAuthorize();
+    }
     return this.getUserInfo(getOpenId());
   },
   async authorize(code) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/user/authorize",
       method: "POST",
       data: {
@@ -84,7 +92,7 @@ const api = {
     }));
   },
   async getUserInfo(uid) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/user/getInfo",
       method: "GET",
       params: {
@@ -105,7 +113,7 @@ const api = {
   },
 
   async getRegions() {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/region/get",
       method: "GET",
       params: {}
@@ -113,7 +121,7 @@ const api = {
   },
 
   async getAccessToken() {
-    const res = await callFunction({
+    const res = await request({
       path: "/getAccessToken",
       method: "GET",
       params: {}
@@ -122,7 +130,7 @@ const api = {
   },
 
   async registerUser(params) {
-    const res = await callFunction({
+    const res = await request({
       path: "/user/register",
       method: "POST",
       data: {
@@ -134,7 +142,7 @@ const api = {
   },
 
   async updateUser(params) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/user/update",
       method: "POST",
       data: {
@@ -145,7 +153,7 @@ const api = {
   },
 
   async getCategory() {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/category/get",
       method: "GET",
       params: {}
@@ -153,7 +161,7 @@ const api = {
   },
 
   async getCommodityList(filter) {
-    const resp = await callFunction({
+    const resp = await request({
       path: "/commodity/getList",
       method: "POST",
       data: {
@@ -183,7 +191,7 @@ const api = {
 
   async createCommodity(commodityInfo) {
     commodityInfo.img_urls = commodityInfo.img_urls.join(',');
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/create",
       method: "POST",
       data: {
@@ -195,7 +203,7 @@ const api = {
 
   // 擦亮商品
   async polishCommodity({ id }) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/polish",
       method: "POST",
       data: {
@@ -207,7 +215,7 @@ const api = {
 
   async updateCommodity(id, info) {
     Object.assign(info, { _id: id });
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/modify",
       method: "POST",
       data: {
@@ -218,7 +226,7 @@ const api = {
   },
 
   async offCommodity({ id }) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/updateStatus",
       method: "POST",
       data: {
@@ -230,7 +238,7 @@ const api = {
   },
 
   async deleteCommodity({ id }) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/delete",
       method: "POST",
       data: {
@@ -261,7 +269,7 @@ const api = {
   },
 
   async lockCommodity(id) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/lock",
       method: "POST",
       data: {
@@ -271,7 +279,7 @@ const api = {
   },
 
   async unlockCommodity(id) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/unlock",
       method: "POST",
       data: {
@@ -281,7 +289,7 @@ const api = {
   },
 
   async sellCommodity(id, buyer_id) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/sell",
       method: "POST",
       data: {
@@ -293,7 +301,7 @@ const api = {
   },
 
   async getViewed(start, count) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/commodity/getViewed",
       method: "POST",
       data: {
@@ -308,7 +316,7 @@ const api = {
   async getMyViewed(start, count) {
   },
   async getBannerList(rid) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: 'getBannerList',
       data: { rid },
     }))
@@ -327,7 +335,7 @@ export default api;
 
 export const CommentAPI = {
   async createQuestion(coid, content) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/createQuestion",
       method: "POST",
       data: {
@@ -339,7 +347,7 @@ export const CommentAPI = {
   },
 
   async createAnswer(cid, qid, content) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/createAnswer",
       method: "POST",
       data: {
@@ -352,7 +360,7 @@ export const CommentAPI = {
   },
 
   async getCommodityQuestionsAndAnswers(coid, start, count) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/getCommodityQuestionsAndAnswers",
       method: "POST",
       data: {
@@ -363,7 +371,7 @@ export const CommentAPI = {
     }));
   },
   async getQuestions(coid, start, count) {
-    var res = await callFunction({
+    var res = await request({
       path: "/getCommodityQuestionsAndAnswers",
       method: "POST",
       data: {
@@ -376,7 +384,7 @@ export const CommentAPI = {
     return wrapResp(res);
   },
   async getAnswers(qid, start, count) {
-    var res = await callFunction({
+    var res = await request({
       path: "/getCommodityQuestionsAndAnswers",
       method: "POST",
       data: {
@@ -390,7 +398,7 @@ export const CommentAPI = {
   },
 
   async delQuestion(qid) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/deleteQuestion",
       method: "POST",
       data: {
@@ -400,7 +408,7 @@ export const CommentAPI = {
     }));
   },
   async delAnswer(answer_id) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/deleteAnswer",
       method: "POST",
       data: {
@@ -410,7 +418,7 @@ export const CommentAPI = {
     }));
   },
   async modifyQuestion(question_id, content) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/modifyQuestion",
       method: "POST",
       data: {
@@ -421,7 +429,7 @@ export const CommentAPI = {
     }));
   },
   async modifyAnswer(answer_id, content) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/modifyAnswer",
       method: "POST",
       data: {
@@ -438,7 +446,7 @@ export const CommentAPI = {
  */
 export const CollectApi = {
   async collect(cid) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/collect/commodity",
       method: "POST",
       data: {
@@ -448,7 +456,7 @@ export const CollectApi = {
     }));
   },
   async cancel(cid) {
-    return wrapResp(await callFunction({
+    return wrapResp(await request({
       path: "/collect/cancel",
       method: "POST",
       data: {
@@ -458,7 +466,7 @@ export const CollectApi = {
     }));
   },
   async getAll(start, count) {
-    const resp = await callFunction({
+    const resp = await request({
       path: "/collect/getInfo",
       method: "POST",
       data: {

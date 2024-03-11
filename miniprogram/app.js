@@ -185,14 +185,14 @@ App({
   async onMessageReceived(event) {
     const { conversationID } = event.data[0];
     const { data: { messageList } } = await wx.$TUIKit.getMessageList({ conversationID });
-    if (messageList.length <= 2){
+    if (messageList.length <= 2) {
       const msg = messageList[0];
       const { from, payload } = msg;
       const text = payload.hasOwnProperty("text") ? payload.text : "[消息]";
-      const { data: user_profile } = await wx.$TUIKit.getUserProfile({ userIDList: [ from ] });
+      const { data: user_profile } = await wx.$TUIKit.getUserProfile({ userIDList: [from] });
       const { data: { groupAttributes: attrs } } = await wx.$TUIKit.getGroupAttributes({
         groupID: conversationID.substr(5),
-        keyList: [ "commodityID" ]
+        keyList: ["commodityID"]
       });
       const resp = await api.getCommodityInfo({ id: attrs.commodityID });
       this.sendIMSubscribeMessage({
