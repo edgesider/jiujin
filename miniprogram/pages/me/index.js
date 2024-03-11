@@ -2,7 +2,7 @@ import { setTabBar } from "../../utils/other";
 
 const app = getApp()
 import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
-import api, { CollectApi } from "../../api/api";
+import api, { CollectApi, getOpenId } from "../../api/api";
 import { openProfile } from "../../router";
 
 const placeholderUser = {
@@ -52,7 +52,7 @@ Page({
   },
 
   async onShow() {
-    await app.fetchSelfInfo(true);
+    await app.fetchSelfInfo();
     const { self } = app.globalData;
     this.setData({
       selfInfo: self
@@ -98,7 +98,7 @@ Page({
             const resp = await api.getCommodityList({
               start, count,
               status: statusMap[currTab],
-              sell_id: app.globalData.self._id,
+              seller_id: app.globalData.self._id,
             });
             if (resp.isError) {
               console.log(resp);
@@ -216,7 +216,7 @@ Page({
           fetcher: async ({ start, count }) => {
             const resp = await api.getCommodityList({
               start, count,
-              buyer_id: app.globalData.openId
+              buyer_id: getOpenId()
             });
             if (resp.isError) {
               console.log(resp);

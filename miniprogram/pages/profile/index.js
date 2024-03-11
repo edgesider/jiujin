@@ -83,11 +83,11 @@ Page({
   getApiParams() {
     const { currFilter, user: { _id: uid } } = this.data;
     if (currFilter === 'all') {
-      return { sell_id: uid, };
+      return { seller_id: uid, };
     } else if (currFilter === 'selling') {
-      return { sell_id: uid, status: COMMODITY_STATUS_SELLING };
+      return { seller_id: uid, status: COMMODITY_STATUS_SELLING };
     } else if (currFilter === 'sold') {
-      return { sell_id: uid, status: COMMODITY_STATUS_SOLD };
+      return { seller_id: uid, status: COMMODITY_STATUS_SOLD };
     }
   },
 

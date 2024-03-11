@@ -10,7 +10,7 @@
       class="fake-input"
       bindtap="startComment"
     >
-      {{selfInfo._id === commodity.sell_id ? '补充点信息吧~' : '问问更多细节~'}}
+      {{selfInfo._id === commodity.seller_id ? '补充点信息吧~' : '问问更多细节~'}}
     </view>
   </view>
   <view class="comments" wx:if="{{comments.length > 0}}">

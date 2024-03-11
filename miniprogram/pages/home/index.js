@@ -44,11 +44,12 @@ Page({
     setTabBar(this);
     this.setData({ isLoading: true })
     try {
-      await Promise.all([this.loadRegions(), this.loadBanners()]); // TODO cache
+      await app.waitForReady();
+      await Promise.all([this.loadRegions(), this.loadBanners()]);
       await this.fetchList();
     } catch (e) {
       await wx.showToast({
-        title: '加载失败',
+        title: '网络错误',
         icon: 'error',
       });
       console.error(e);
@@ -73,7 +74,6 @@ Page({
   },
 
   async loadRegions() {
-    await app.waitForReady();
     const { self, ridToRegion } = app.globalData;
     if (self) {
       // 已登录
@@ -103,7 +103,6 @@ Page({
   },
 
   async loadBanners() {
-    await app.waitForReady();
     const rid = app.globalData.self?.rid ?? DEFAULT_REGION_ID;
     const resp = await api.getBannerList(rid);
     if (resp.isError) {

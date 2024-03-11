@@ -56,7 +56,7 @@ Page({
     })
     const resp = await api.getCommodityList({
       // 不需要status过滤
-      sell_id: app.globalData.self._id,
+      seller_id: app.globalData.self._id,
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
     })

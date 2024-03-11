@@ -34,7 +34,7 @@ Page({
     const commodity = commResp.data;
 
     console.warn(commodity);
-    const sellerResp = await api.getUserInfo(commodity.sell_id);
+    const sellerResp = await api.getUserInfo(commodity.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
 
     let firstImageSize = [0, 0];
@@ -51,11 +51,11 @@ Page({
       loading: false,
       commodity,
       createTime: moment(commodity.create_time).format('YYYY-MM-DD HH:mm'),
-      polishTime: moment(commodity.update_time).fromNow(),
+      polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
       ridToRegion: app.globalData.ridToRegion,
-      isMine: app.globalData.self._id === commodity.sell_id,
+      isMine: app.globalData.self._id === commodity.seller_id,
       firstImageSize,
     });
   },

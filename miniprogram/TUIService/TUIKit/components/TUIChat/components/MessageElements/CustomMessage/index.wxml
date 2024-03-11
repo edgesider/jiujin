@@ -1,6 +1,6 @@
 <view>
   <view wx:if="{{renderDom[0].type ==='order'}}"  class="custom-message {{isMine?'my-custom':''}}">
-    <image class="custom-image" src="{{renderDom[0].imageUrl}}" />
+    <image class="custom-image" mode="aspectFill" src="{{renderDom[0].imageUrl}}" />
     <view class="custom-content">
       <view class="custom-content-title">{{renderDom[0].title}}</view>
       <view class="custom-content-description">{{renderDom[0].description}}</view>

@@ -1,4 +1,4 @@
-import api from './api/api';
+import api, { Axios, doAuthorize, getOpenId } from './api/api';
 import { BehaviorSubject } from "rxjs";
 
 import TencentCloudChat from '@tencentcloud/chat';
@@ -6,23 +6,14 @@ import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
 import { GENDER, setConstants } from "./constants";
 
-import axios from 'axios';
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
-
-const IMAxios = axios.create({
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json;charset=UTF-8',
-  },
-});
 
 App({
   _ready: false,
   _readyWaiters: [],
   globalData: {
     registered: false,
-    openId: null,
     self: null,
     ridToRegion: null,
     StatusBar: 0,
@@ -79,8 +70,8 @@ App({
 
     initMoment();
 
-    this.globalData.openId = await this.userLogin();
-    await Promise.all([this.fetchSelfInfo(), this.fetchRegions(), this.fetchCategories()]);
+    await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
+    await Promise.all([this.fetchRegions(), this.fetchCategories()]);
 
     // 登录腾讯IM
     await this.initTIM();
@@ -98,38 +89,12 @@ App({
     InAppMonitor.stop();
   },
 
-  async userLogin() {
-    return new Promise((resolve, reject) => {
-      wx.login({
-        success: (res) => {
-          api.userLogin(res.code).then((res) => {
-            resolve(res.data);
-          }).catch((err) => {
-            console.error(`ERROR: ${err}`);
-            reject(err);
-          })
-        },
-        fail: (res) => {
-          const { errMsg, errno } = res;
-          console.error(`微信登录错误，错误码${errno}：${errMsg}`);
-          wx.showToast({
-            title: "微信登录错误",
-            icon: 'error',
-            mask: true
-          });
-          reject(`ERROR${errno}: ${errMsg}`);
-        }
-      });
-    });
-  },
-
   async initTIM() {
     if (this.globalData.TUIEnabled) {
       console.error('私信重复登录！');
       return { errno: -1 };
     }
-    this.globalData.config.userID = this.globalData.openId;
-    console.log('私信登录ID: ', this.globalData.config.userID);
+    this.globalData.config.userID = getOpenId();
 
     wx.TencentCloudChat = TencentCloudChat;
     wx.$TUIKit = TencentCloudChat.create({
@@ -156,8 +121,6 @@ App({
           [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
         }[this.globalData.self.sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
         allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
-      }).then((imResponse) => {
-        console.log(imResponse.data); // 更新资料成功
       }).catch((imError) => {
         console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
       });
@@ -167,8 +130,6 @@ App({
   },
 
   async loginIMWithID(id) {
-    console.warn('用户登录ID: ' + id);
-
     if (wx.$TUIKit.getLoginUser() == id) {
       return;
     }
@@ -182,15 +143,11 @@ App({
     this.globalData.TUISDKReady = false;
     this.globalData.config.userID = user_id;
 
-    console.log("生成用户聊天ID");
-    var result = await api.genUserSig(user_id);
-    console.log('result', result);
+    const result = await api.genUserSig(user_id);
     if (result.errno == -1) {
-      console.log("生成用户聊天ID失败！");
-      return new RespError("生成用户聊天ID失败！");
+      return new Error("生成用户聊天ID失败！");
     }
     const userSig = result.data.userSig;
-    console.log("用户SIG：", userSig);
 
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
     wx.$chat_userID = user_id;
@@ -207,14 +164,12 @@ App({
 
   async onSDKReady(event) {
     // 监听到此事件后可调用 SDK 发送消息等 API，使用 SDK 的各项功能。
-    console.log("TencentCloudChat SDK_READY");
     this.globalData.TUISDKReady = true;
     this.globalData.totalUnread = await wx.$TUIKit.getTotalUnreadMessageCount();
     this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
   onTotalUnreadMessageCountUpdated(event) {
-    console.log("TencentCloudChat TOTAL_UNREAD_MESSAGE_COUNT_UPDATED");
     this.globalData.totalUnread = event.data;
     this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
@@ -251,9 +206,8 @@ App({
 
   // 发送订阅消息
   pushToUser(options) {
-    console.log('pushToUser options ->', options);
     const { access_token, touser, template_id, data } = options;
-    IMAxios({
+    Axios({
       url: `https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}`,
       data: {
         touser,
@@ -304,22 +258,13 @@ App({
     }
   },
 
-  async fetchSelfInfo(force = false) {
-    let self = wx.getStorageSync('self');
-    if (force || !self) {
-      try {
-        const res = await api.getSelfInfo();
-        self = res.data;
-      } catch (e) {
-        console.error(e);
-      }
-    }
+  async fetchSelfInfo() {
+    const { data: self } = await api.getSelfInfo();
     const registered = Boolean(self?._id);
-    this.globalData.registered = registered;
+    this.globalData.registered = registered; // TODO 删除
     if (registered) {
       this.globalData.self = self;
       this.userChangedSubject.next(self);
-      wx.setStorageSync('self', self);
     }
   },
 

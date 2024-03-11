@@ -1,4 +1,4 @@
-import api from "../../api/api";
+import api, { getOpenId } from "../../api/api";
 import Dialog from '@vant/weapp/dialog/dialog';
 import rules from "../../utils/rules";
 import { getQualitiesMap } from "../../utils/strings";
@@ -186,7 +186,7 @@ Page({
       } else {
         const resp = await api.uploadImage(
           path,
-          `commodity/${app.globalData.openId}_${Date.now()}_${Math.random() * 10000000}`
+          `commodity/${getOpenId()}_${Date.now()}_${Math.random() * 10000000}`
         );
         if (resp.isError) {
           throw resp.message;
@@ -255,7 +255,6 @@ Page({
       editing
         ? await api.updateCommodity(editing._id, info)
         : await api.createCommodity(info);
-    const comm_id = editing ? editing._id : resp.data._id;
     await wx.hideLoading();
     if (resp.isError) {
       console.error(resp);

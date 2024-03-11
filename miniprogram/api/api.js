@@ -6,26 +6,51 @@ const { RespSuccess, RespError } = require('../utils/resp')
 
 axios.defaults.adapter = mpAdapter;
 
-const IMAxios = axios.create({
-  baseURL: "http://59.110.214.108:8080/",
+export const Axios = axios.create({
+  baseURL: "http://localhost:8080/",
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
   },
+  validateStatus: () => true,
 });
 
-function getId(){
-  return getApp().globalData.openId;
+Axios.interceptors.request.use(cfg => {
+  cfg.headers['session_key'] = wx.getStorageSync('session_key');
+  return cfg;
+})
+
+Axios.interceptors.response.use(async resp => {
+  if (!resp.config.url.endsWith('/user/authorize') && resp.status === 401) {
+    await doAuthorize();
+    return Axios(resp.config);
+  }
+  return resp;
+})
+
+export async function doAuthorize() {
+  const { code } = await wx.login();
+  const resp = await api.authorize(code);
+  if (resp.isError) {
+    throw new Error(`authorize failed: ${JSON.stringify(resp)}`);
+  }
+  const { open_id, session_key } = resp.data;
+  openId = open_id;
+  wx.setStorageSync('open_id', open_id);
+  wx.setStorageSync('session_key', session_key);
+}
+
+let openId = wx.getStorageSync('open_id');
+
+export function getOpenId() {
+  return openId;
 }
 
 function wrapResp(resp) {
-  if (!resp.data) resp.data = {};
-  if (!resp.succeed) {
-    Object.assign(resp.data, { errno: resp.errCode });
-    return new RespError(resp.data, resp.errMsg ?? 'unknown error', resp.errCode ?? -1);
+  if (resp.status !== 200 || !resp.data.succeed) {
+    return new RespError(resp.data, `${resp.status} ${resp.statusText}`, resp.data.errCode ?? -1);
   }
-  Object.assign(resp.data, { errno: 0 });
-  return new RespSuccess(resp.data);
+  return new RespSuccess(resp.data?.data);
 }
 
 function wrapResponse(resp) {
@@ -35,52 +60,37 @@ function wrapResponse(resp) {
   return new RespSuccess(resp.result.data);
 }
 
-async function callFunction(param){
-  return new Promise(function(resolve, reject) {
-    var req = {
-      url: param.path,
-      method: param.method,
-      params: param.params,
-      data: param.data,
-    };
-    IMAxios(req).then((res) => {
-      if (res.status >= 400){
-        reject({ errCode: -1, errMsg: `${res.status} ${res.statusText}` });
-        return;
-      }
-      resolve(res.data);
-    }).catch((error) => {
-      reject({ errCode: -1, errMsg: error });
-    });
+async function callFunction(param) {
+  return Axios({
+    url: param.path,
+    method: param.method ?? 'POST',
+    params: param.params,
+    data: param.data,
   });
 }
 
 const api = {
   async getSelfInfo() {
-    return this.getUserInfo(getId());
+    console.log(getOpenId());
+    return this.getUserInfo(getOpenId());
   },
-  async getOpenId() {
-    return getId();
-  },
-  async userLogin(code) {
-    const res = wrapResp(await callFunction({
-      path: "/login",
+  async authorize(code) {
+    return wrapResp(await callFunction({
+      path: "/user/authorize",
       method: "POST",
       data: {
-        code
+        js_code: code
       }
     }));
-    return res;
   },
   async getUserInfo(uid) {
-    const res = wrapResp(await callFunction({
+    return wrapResp(await callFunction({
       path: "/user/getInfo",
       method: "GET",
       params: {
-        Id: uid
+        id: uid
       }
     }));
-    return res;
   },
 
   async genUserSig(id) {
@@ -102,16 +112,6 @@ const api = {
     }));
   },
 
-  // async getRegions() { 
-  //   const res = await wx.cloud.callFunction({ 
-  //     name: 'region', 
-  //     data: {
-  //       $url: 'getRegions', 
-  //     } 
-  //   }) 
-  //   return wrapResponse(res);
-  // },
-
   async getAccessToken() {
     const res = await callFunction({
       path: "/getAccessToken",
@@ -127,7 +127,7 @@ const api = {
       method: "POST",
       data: {
         ...params,
-        openid: getId()
+        openid: getOpenId()
       }
     });
     return wrapResp(res);
@@ -139,7 +139,7 @@ const api = {
       method: "POST",
       data: {
         ...params,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -158,42 +158,27 @@ const api = {
       method: "POST",
       data: {
         ...filter,
-        openid: getId()
+        openid: getOpenId()
       }
     });
     if (!resp.data) resp.data = [];
     const res = wrapResp(resp);
-    for (var i = 0; i < res.data.length; i++){
-      res.data[i].img_urls = res.data[i].img_urls
+    res.data.forEach(c => {
+      c.img_urls = c.img_urls
         .replaceAll("\"", "")
         .replaceAll(" ", "")
         .split(",");
-      res.data[i].sell_id = res.data[i].seller_id;
-    }
+    })
     return res;
   },
 
   // 获取单个商品
   async getCommodityInfo({ id }) {
-    const resp = await callFunction({
-      path: "/commodity/getList",
-      method: "POST",
-      data: {
-        _id: id,
-        openid: getId()
-      }
-    });
-    if (!resp.data){
-      return new RespError({}, 'commodity not found');
+    const listResp = await this.getCommodityList({ _id: id });
+    if (!listResp.isError) {
+      listResp.data = listResp.data?.[0] ?? null;
     }
-    const res = wrapResp(resp);
-    Object.assign(res, { data: res.data.collectCommodity });
-    Object.assign(res.data, { sell_id: res.data.seller_id });
-    res.data.img_urls = res.data.img_urls
-        .replaceAll("\"", "")
-        .replaceAll(" ", "")
-        .split(",");
-    return res;
+    return listResp;
   },
 
   async createCommodity(commodityInfo) {
@@ -203,7 +188,7 @@ const api = {
       method: "POST",
       data: {
         ...commodityInfo,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -215,7 +200,7 @@ const api = {
       method: "POST",
       data: {
         _id: id,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -227,7 +212,7 @@ const api = {
       method: "POST",
       data: {
         ...info,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -239,7 +224,7 @@ const api = {
       data: {
         _id: id,
         status: COMMODITY_STATUS_OFF,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -250,7 +235,7 @@ const api = {
       method: "POST",
       data: {
         _id: id,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -302,7 +287,7 @@ const api = {
       data: {
         _id: id,
         buyer_id,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -313,7 +298,7 @@ const api = {
       method: "POST",
       data: {
         start, count,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -323,13 +308,10 @@ const api = {
   async getMyViewed(start, count) {
   },
   async getBannerList(rid) {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'banner',
-      data: {
-        $url: 'getBannerList',
-        params: { rid }
-      }
-    }));
+    return wrapResp(await callFunction({
+      path: 'getBannerList',
+      data: { rid },
+    }))
   },
   async updateLastSeenTime() {
     return wrapResponse(await wx.cloud.callFunction({
@@ -351,7 +333,7 @@ export const CommentAPI = {
       data: {
         cid: coid,
         content,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -364,19 +346,19 @@ export const CommentAPI = {
         cid,
         question_id: qid,
         content,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
 
-  async getCommodityQuestionsAndAnswers(coid, start, count){
+  async getCommodityQuestionsAndAnswers(coid, start, count) {
     return wrapResp(await callFunction({
       path: "/getCommodityQuestionsAndAnswers",
       method: "POST",
       data: {
         commodity_id: coid,
         start, count,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -387,7 +369,7 @@ export const CommentAPI = {
       data: {
         commodity_id: coid,
         start, count,
-        openid: getId()
+        openid: getOpenId()
       }
     });
     res.data = res.data.commodityQuestions;
@@ -400,7 +382,7 @@ export const CommentAPI = {
       data: {
         commodity_id: coid,
         start, count,
-        openid: getId()
+        openid: getOpenId()
       }
     });
     res.data = res.data.commodityAnswers;
@@ -413,7 +395,7 @@ export const CommentAPI = {
       method: "POST",
       data: {
         question_id: qid,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -423,29 +405,29 @@ export const CommentAPI = {
       method: "POST",
       data: {
         answer_id,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
-  async modifyQuestion(question_id, content){
+  async modifyQuestion(question_id, content) {
     return wrapResp(await callFunction({
       path: "/modifyQuestion",
       method: "POST",
       data: {
         question_id,
         content,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
-  async modifyAnswer(answer_id, content){
+  async modifyAnswer(answer_id, content) {
     return wrapResp(await callFunction({
       path: "/modifyAnswer",
       method: "POST",
       data: {
         answer_id,
         content,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -461,7 +443,7 @@ export const CollectApi = {
       method: "POST",
       data: {
         cid,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -471,7 +453,7 @@ export const CollectApi = {
       method: "POST",
       data: {
         cid,
-        openid: getId()
+        openid: getOpenId()
       }
     }));
   },
@@ -482,18 +464,17 @@ export const CollectApi = {
       data: {
         start,
         count,
-        openid: getId()
+        openid: getOpenId()
       }
     });
     if (!resp.data) resp.data = [];
     const res = wrapResp(resp);
-    for (var i = 0; i < res.data.length; i++){
-      res.data[i].img_urls = res.data[i].img_urls
+    res.data.forEach(c => {
+      c.img_urls = c.img_urls
         .replaceAll("\"", "")
         .replaceAll(" ", "")
         .split(",");
-      res.data[i].sell_id = res.data[i].seller_id;
-    }
+    })
     return res;
   },
 }

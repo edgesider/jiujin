@@ -10,13 +10,13 @@
     </view>
     <view wx:elif='{{commodity.status === COMMODITY_STATUS_SELLING}}'>
       <view class="hint-line1">发布于 {{createTime}}</view>
-      <view wx:if="{{commodity.sell_id === self._id}}">
+      <view wx:if="{{commodity.seller_id === self._id}}">
         <view class="hint-line2">上次擦亮于 {{polishAt}}</view>
       </view>
     </view>
     <view class="price">￥{{commodity.price}}</view>
   </view>
-  <view class="right" wx:if="{{commodity.sell_id === self._id}}">
+  <view class="right" wx:if="{{commodity.seller_id === self._id}}">
     <block wx:if="{{commodity.status === COMMODITY_STATUS_OFF}}">
       <view class="button" bind:tap="polish">重新上架</view>
       <view class="button" bind:tap="gotoEdit">编辑</view>
