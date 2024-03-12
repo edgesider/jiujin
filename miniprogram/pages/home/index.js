@@ -221,7 +221,7 @@ Page({
     const { url } = ev.currentTarget.dataset;
     wx.previewImage({
       current: url,
-      urls: [url],
+      urls: this.data.banners.map(b => b.url),
     })
   },
 
