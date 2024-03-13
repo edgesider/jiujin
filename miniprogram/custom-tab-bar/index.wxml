@@ -3,10 +3,8 @@
     <view
       class="tab-bar-item"
       wx:for="{{list}}" wx:key="index"
-      data-path="{{item.pagePath}}"
       data-index="{{index}}"
-      data-use-navigate-to="{{item.useNavigateTo}}"
-      data-toast-text="{{item.toastText}}"
+      data-data="{{item}}"
       bindtap="switchTab"
     >
       <view

@@ -1,4 +1,5 @@
 import getConstants from "../constants";
+import { assertRegistered } from "../utils/other";
 
 Component({
   data: {
@@ -29,7 +30,8 @@ Component({
         pagePath: "/TUIService/pages/tim_index/tim_index",
         iconClass: "cuIcon-message",
         selectedIconClass: "cuIcon-messagefill",
-        text: "私信"
+        text: "私信",
+        requireRegistered: true,
       },
       {
         pagePath: '/pages/me/index',
@@ -57,8 +59,7 @@ Component({
   },
   methods: {
     async switchTab(e) {
-      const data = e.currentTarget.dataset
-      const { path, useNavigateTo, toastText } = data;
+      const { pagePath, useNavigateTo, toastText, requireRegistered } = e.currentTarget.dataset.data;
       if (toastText) {
         await wx.showToast({
           title: toastText,
@@ -66,10 +67,13 @@ Component({
         })
         return;
       }
+      if (requireRegistered) {
+        assertRegistered();
+      }
       if (useNavigateTo) {
-        await wx.navigateTo({ url: path })
+        await wx.navigateTo({ url: pagePath })
       } else {
-        await wx.switchTab({ url: path })
+        await wx.switchTab({ url: pagePath })
       }
     },
   },
