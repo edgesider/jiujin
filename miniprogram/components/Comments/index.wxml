@@ -34,27 +34,16 @@
             class="content"
             bindtap="onStartComment"
             data-comment="{{comment}}"
+            bind:longpress="onDeleteItem"
           >
             {{comment.content}}
           </view>
-        </view>
-        <view class="delete-btn"
-          wx:if="{{ comment.user._id === selfInfo._id }}"
-          bind:tap="onDeleteQuestion"
-          data-comment="{{comment}}">
-          删除
         </view>
       </view>
       <view wx:else class="comment answer">
         <view class="username">{{comment.user.name}}</view>
         <view class="colon">：</view>
         <view class="content">{{comment.content}}</view>
-        <view class="delete-btn"
-          wx:if="{{ comment.user._id === selfInfo._id }}"
-          bind:tap="onDeleteQuestion"
-          data-comment="{{comment}}">
-          删除
-        </view>
       </view>
     </view>
   </view>
@@ -71,6 +60,7 @@
         focus="{{true}}"
         adjust-position="{{false}}"
         confirm-type="send"
+        maxlength="10240"
         bindinput="onPopupInput"
         bindconfirm="onConfirmComment"
       />

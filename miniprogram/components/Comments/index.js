@@ -115,7 +115,7 @@ Component({
         commentingTo: comment, // 如果是回复则有这个字段
       })
     },
-    async onDeleteQuestion({ currentTarget: { dataset: { comment } } }) {
+    async onDeleteItem({ currentTarget: { dataset: { comment } } }) {
       const { confirm } = await wx.showModal({
         content: '确认删除此条留言',
       });
