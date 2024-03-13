@@ -244,4 +244,11 @@ Page({
       url: '../register/index',
     })
   },
+
+  onShareAppMessage(options) {
+    return {
+      title: '找到一个好用的小程序，快来看看吧！',
+      path: '/pages/home/index.js'
+    }
+  },
 })
