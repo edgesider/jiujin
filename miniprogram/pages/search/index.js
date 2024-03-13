@@ -2,6 +2,7 @@ import api from "../../api/api";
 import getConstants, { GENDER } from "../../constants";
 
 const COUNT_PER_PAGE = 12
+const MAX_HISTORIES = 10;
 const app = getApp();
 
 Page({
@@ -43,18 +44,11 @@ Page({
   },
 
   async onConfirm() {
-    const { text } = this.data;
-    if (text.trim() === '') {
-      this.setData({
-        isFocused: true,
-      })
+    let text = this.data.text.trim();
+    if (text === '') {
       return;
     }
-    const newHistories = [text, ...this.data.histories];
-    if (newHistories.length > 10) {
-      newHistories.splice(0, newHistories.length - 10);
-    }
-    this.setHistories(newHistories);
+    this.updateHistories(text);
     await this.fetch(true);
   },
 
@@ -62,17 +56,23 @@ Page({
     const { currentTarget: { dataset: { idx } } } = ev;
     const { histories } = this.data;
     const clicked = histories[idx];
-    histories.splice(idx, 1);
-    this.setHistories([clicked, ...histories]);
+    this.updateHistories(clicked)
     this.setData({
       isFocused: false,
       text: clicked
     });
     await this.fetch(true);
   },
+
+  updateHistories(newValue) {
+    this.setHistories(
+      [newValue, ...this.data.histories.filter(h => h !== newValue)]
+        .splice(0, MAX_HISTORIES)
+    );
+  },
+
   async onHistoriesClear() {
-    this.setData({ histories: [] });
-    wx.removeStorageSync('searchHistories');
+    this.setHistories([]);
   },
 
   setHistories(histories) {
@@ -96,9 +96,9 @@ Page({
     const { text, cursor, commodityList } = this.data;
     const resp = await api.getCommodityList({
       keyword: text,
-      orderBy: 'update_time',
       sex: this.data.onlyMyGender ? app.globalData.self.sex : GENDER.UNKNOWN,
-      order: 'desc',
+      // order_by: 'update_time',
+      // order: 'desc',
       start: cursor,
       count: COUNT_PER_PAGE,
     });
