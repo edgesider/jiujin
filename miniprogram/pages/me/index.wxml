@@ -1,8 +1,8 @@
 <scroll-view scroll-y class="scrollPage">
-  <view class="UCenter-bg">
-    <image src="{{selfInfo.avatar_url}}" class="png round" mode="widthFix" bindtap="openProfile"></image>
-    <view class="text-xl margin-top text-black" bindtap="onEnterHomeUserInfo">{{selfInfo.name}}</view>
-    <view class="margin-top-sm" bindtap="onEnterHomeUserInfo" wx:if="{{selfInfo.rid !== -1}}">
+  <view class="UCenter-bg" bindtap="openProfile">
+    <image src="{{selfInfo.avatar_url}}" class="cu-avatar png round" mode="widthFix"></image>
+    <view class="text-xl margin-top text-black">{{selfInfo.name || '欢迎来到楼里楼外'}}</view>
+    <view class="margin-top-sm" wx:if="{{selfInfo.rid !== -1}}">
       <text class="text-black">{{selfInfo.rid === -1 ? '未知' : ridToRegion[selfInfo.rid].name}}</text>
     </view>
   </view>
@@ -39,46 +39,6 @@
         <text class="text-grey">意见反馈</text>
       </button>
     </view>
-
-    <!-- <view class="cu-item arrow" bindtap="onEnterPrivateMessage">
-      <view class="content" hover-class="none">
-        <text class="cuIcon-messagefill text-blue"></text>
-        <text class="text-grey">我的私信 ({{totalUnread}})</text>
-      </view>
-    </view> -->
-
-    <!-- <view class="cu-item arrow" bindtap="onEnterCustomerService">
-      <view class="content" hover-class="none">
-        <text class="cuIcon-notification text-blue"></text>
-        <text class="text-grey">商品回复</text>
-      </view>
-    </view> -->
-
-    <!-- <view class="cu-item arrow" bindtap="onToggleMyCollect">
-      <view class="content" hover-class="none">
-        <text class="cuIcon-like text-red"></text>
-        <text class="text-grey">我的收藏</text>
-      </view>
-    </view> -->
   </view>
   <view class="cu-tabbar-height"></view>
 </scroll-view>
-
-
-<view class="hline"></view>
-
-<view class="cu-modal bottom-modal {{showLoginPopup?'show':''}}">
-  <view class="cu-dialog" catchtap>
-    <view class="cu-bar bg-white">
-      <view class="action text-blue"></view>
-      <view class="action text-green" catch:tap="onCancelLoginPopup">取消</view>
-    </view>
-    <view class="padding">
-      <button class="cu-btn block bg-green margin-tb-sm lg" open-type="getUserInfo" bindgetuserinfo="onAuth">
-        注册后可进行更多操作
-      </button>
-    </view>
-  </view>
-</view>
-
-<van-dialog id="van-dialog" />

@@ -1,4 +1,4 @@
-import { setTabBar } from "../../utils/other";
+import { assertRegistered, setTabBar } from "../../utils/other";
 
 const app = getApp()
 import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
@@ -30,9 +30,6 @@ Page({
     totalUnread: 0,
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   async onLoad(options) {
     setTabBar(this);
     await app.waitForReady();
@@ -45,7 +42,7 @@ Page({
     }
     app.userChangedSubject.subscribe(user => {
       this.setData({
-        selfInfo: user
+        selfInfo: user ?? null
       })
     })
     this.data.totalUnread = app.globalData.totalUnread;
@@ -60,11 +57,9 @@ Page({
   },
 
   onEditMyInfo() {
-    if (!this.ensureRegistered()) {
-      return;
-    }
+    assertRegistered();
     wx.navigateTo({
-      url: '../register/index?isEdit=true',
+      url: '../register/index',
     })
   },
 
@@ -75,9 +70,7 @@ Page({
   },
 
   onClickMyCommodity() {
-    if (!this.ensureRegistered()) {
-      return;
-    }
+    assertRegistered();
     wx.navigateTo({
       url: '../commodity_list/index',
       success: res => {
@@ -204,9 +197,7 @@ Page({
   },
 
   onClickMyBought() {
-    if (!this.ensureRegistered()) {
-      return;
-    }
+    assertRegistered();
     wx.navigateTo({
       url: '../commodity_list/index',
       success: res => {
@@ -239,9 +230,7 @@ Page({
   },
 
   onClickMyStarred() {
-    if (!this.ensureRegistered()) {
-      return;
-    }
+    assertRegistered();
     wx.navigateTo({
       url: '../commodity_list/index',
       success: res => {
@@ -269,28 +258,7 @@ Page({
     })
   },
   openProfile() {
+    assertRegistered();
     openProfile(app.globalData.self);
-  },
-  ensureRegistered() {
-    const registered = app.globalData.registered;
-    if (!registered) {
-      this.setData({
-        showLoginPopup: true
-      })
-    }
-    return registered;
-  },
-
-  // 用户注册
-  async onAuth(event) {
-    const userInfo = event.detail.userInfo
-    console.log(userInfo)
-    wx.setStorageSync('userInfo', userInfo)
-    this.setData({
-      showLoginPopup: false
-    })
-    wx.navigateTo({
-      url: '../register/index',
-    })
   },
 })

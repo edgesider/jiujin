@@ -26,3 +26,12 @@ export function getRegionPath(rid, ridToRegion = undefined) {
   }
   return regionPath;
 }
+
+export function assertRegistered() {
+  if (!getApp().globalData.self) {
+    wx.navigateTo({
+      url: '/pages/register/index',
+    })
+    throw Error('not registered');
+  }
+}

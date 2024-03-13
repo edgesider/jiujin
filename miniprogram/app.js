@@ -13,7 +13,6 @@ App({
   _ready: false,
   _readyWaiters: [],
   globalData: {
-    registered: false,
     self: null,
     ridToRegion: null,
     StatusBar: 0,
@@ -111,7 +110,7 @@ App({
 
     await this.loginIMWithID(this.globalData.config.userID);
 
-    if (this.globalData.registered) {
+    if (this.globalData.self) {
       wx.$TUIKit.updateMyProfile({
         nick: this.globalData.self.name,
         avatar: this.globalData.self.avatar_url,
@@ -260,12 +259,8 @@ App({
 
   async fetchSelfInfo() {
     const { data: self } = await api.getSelfInfo();
-    const registered = Boolean(self?._id);
-    this.globalData.registered = registered; // TODO 删除
-    if (registered) {
-      this.globalData.self = self;
-      this.userChangedSubject.next(self);
-    }
+    this.globalData.self = self;
+    this.userChangedSubject.next(self);
   },
 
   async fetchRegions(force = false) {

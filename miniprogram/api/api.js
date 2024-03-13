@@ -2,7 +2,7 @@ import { COMMODITY_STATUS_OFF } from "../constants";
 import axios from "axios";
 import mpAdapter from 'axios-miniprogram-adapter'
 
-const { RespSuccess, RespError } = require('../utils/resp')
+const { RespSuccess, RespError } = require('./resp')
 
 axios.defaults.adapter = mpAdapter;
 

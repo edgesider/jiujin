@@ -138,11 +138,10 @@ Page({
   },
 
   async onPrivateMessage() {
-    const registered = app.globalData.registered;
-    if (registered) {
+    if (app.globalData.self) {
       app.globalData.commodity = null;
       app.globalData.targetCommodity = this.data.commodity;
-      wx.switchTab({
+      await wx.switchTab({
         url: `../../TUIService/pages/tim_index/tim_index`,
       });
     } else {

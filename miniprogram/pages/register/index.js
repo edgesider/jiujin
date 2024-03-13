@@ -4,6 +4,9 @@ import getConstants, { GENDER } from "../../constants";
 
 const app = getApp();
 
+/**
+ * 注册或编辑个人资料
+ */
 Page({
   data: {
     ...getConstants(),
@@ -12,7 +15,7 @@ Page({
     avatarUrl: "",
 
     gender: GENDER.UNKNOWN,
-    genderOptions: ['保密', '男', '女'],
+    genderOptions: ['男', '女'],
 
     regions: [],
     l1ToL4: {},
@@ -21,10 +24,8 @@ Page({
   },
 
   async onLoad(options) {
-    const { isEdit } = options;
-
-    const { regions, ridToRegion } = app.globalData;
-    console.warn(app);
+    const { regions, ridToRegion, self } = app.globalData;
+    const isEdit = Boolean(self);
     // 大学
     const l1Regions = [];
     // 大学 -> 楼号
@@ -193,8 +194,6 @@ Page({
     });
     await Promise.all([app.fetchSelfInfo(), app.fetchRegions(true)]);
     wx.hideLoading();
-
-    app.globalData.registered = true;
     wx.showToast({
       title: (isEdit ? '已保存' : '注册成功'),
       icon: 'success',
