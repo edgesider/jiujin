@@ -110,12 +110,19 @@ Component({
         commentingTo: comment, // 如果是回复则有这个字段
       })
     },
-    deleteQuestion({ currentTarget: { dataset: { comment } } }) {
-      if (comment.type === 'question') {
-        CommentAPI.delQuestion(comment._id);
-      } else {
-        CommentAPI.delAnswer(comment._id);
+    async deleteQuestion({ currentTarget: { dataset: { comment } } }) {
+      const { confirm } = await wx.showModal({
+        content: '确认删除此条留言',
+      });
+      if (!confirm) {
+        return;
       }
+      if (comment.type === 'question') {
+        await CommentAPI.delQuestion(comment._id);
+      } else {
+        await CommentAPI.delAnswer(comment._id);
+      }
+      await this.fetchComments();
     },
     onPopupInput(ev) {
       this.setData({ commentingText: ev.detail.value });
