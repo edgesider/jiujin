@@ -2,7 +2,7 @@ import api, { CollectApi } from "../../api/api";
 import { splitMillisecondsToString } from "../../utils/time";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
-import { sleep } from "../../utils/other";
+import { assertRegistered, sleep } from "../../utils/other";
 import moment from "moment";
 import { openProfile } from "../../router";
 
@@ -33,7 +33,6 @@ Page({
     }
     const commodity = commResp.data;
 
-    console.warn(commodity);
     const sellerResp = await api.getUserInfo(commodity.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
 
@@ -47,6 +46,8 @@ Page({
       }
     }
 
+    const { self } = app.globalData;
+
     this.setData({
       loading: false,
       commodity,
@@ -55,7 +56,7 @@ Page({
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
       ridToRegion: app.globalData.ridToRegion,
-      isMine: app.globalData.self._id === commodity.seller_id,
+      isMine: self && self._id === commodity.seller_id,
       firstImageSize,
     });
   },
@@ -101,6 +102,7 @@ Page({
 
   togglingCollect: false,
   async onToggleCollect() {
+    assertRegistered();
     if (this.togglingCollect) {
       return;
     }
@@ -137,7 +139,21 @@ Page({
     }
   },
 
+  onClickReport() {
+    assertRegistered();
+    // TODO
+  },
+
+  async onClickShare() {
+    assertRegistered();
+    const {} = await wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    })
+  },
+
   async onPrivateMessage() {
+    assertRegistered();
     if (app.globalData.self) {
       app.globalData.commodity = null;
       app.globalData.targetCommodity = this.data.commodity;

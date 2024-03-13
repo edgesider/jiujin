@@ -1,14 +1,14 @@
 <view class="root">
-  <view class="title">{{comments.length}}条留言</view>
+  <view class="title">{{comments.length}} 条留言</view>
   <view class="input-area">
     <image
-      src="{{selfInfo.avatar_url}}"
+      src='{{selfInfo.avatar_url || DEFAULT_AVATAR}}'
       class="my-avatar"
       bindtap="openMyProfile"
     />
     <view
       class="fake-input"
-      bindtap="startComment"
+      bindtap="onStartComment"
     >
       {{selfInfo._id === commodity.seller_id ? '补充点信息吧~' : '问问更多细节~'}}
     </view>
@@ -26,13 +26,13 @@
           bindtap="openProfile"
           data-comment="{{comment}}"
         />
-        <view class="right" bindtap="startComment" data-comment="{{comment}}">
+        <view class="right" bindtap="onStartComment" data-comment="{{comment}}">
           <view class="username">
             {{comment.user.name}}
           </view>
           <view
             class="content"
-            bindtap="startComment"
+            bindtap="onStartComment"
             data-comment="{{comment}}"
           >
             {{comment.content}}
@@ -40,7 +40,7 @@
         </view>
         <view class="delete-btn"
           wx:if="{{ comment.user._id === selfInfo._id }}"
-          bind:tap="deleteQuestion"
+          bind:tap="onDeleteQuestion"
           data-comment="{{comment}}">
           删除
         </view>
@@ -51,7 +51,7 @@
         <view class="content">{{comment.content}}</view>
         <view class="delete-btn"
           wx:if="{{ comment.user._id === selfInfo._id }}"
-          bind:tap="deleteQuestion"
+          bind:tap="onDeleteQuestion"
           data-comment="{{comment}}">
           删除
         </view>
@@ -59,7 +59,7 @@
     </view>
   </view>
   <view wx:if="{{commenting}}" class="popup-input">
-    <view class="mask" bindtap="endComment" />
+    <view class="mask" bindtap="onEndComment" />
     <view
       class="input-line"
       style="margin-bottom: {{keyboardHeight}}px"
@@ -72,7 +72,7 @@
         adjust-position="{{false}}"
         confirm-type="send"
         bindinput="onPopupInput"
-        bindconfirm="confirmComment"
+        bindconfirm="onConfirmComment"
       />
     </view>
   </view>

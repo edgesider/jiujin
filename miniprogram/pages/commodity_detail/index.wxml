@@ -48,12 +48,16 @@
     </view>
     <view class="footer">
       <view class="left">
-        <view class="button" bind:tap="onToggleCollect">
+        <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">
           <text class="icon {{commodity.is_collected ? 'cuIcon-likefill' : 'cuIcon-like'}}"></text>
           <text class="text">收藏</text>
         </view>
         <view class="button">
-          <text class="icon cuIcon-warn"></text>
+          <text class="icon cuIcon-share" bindtap="onClickShare"></text>
+          <text class="text">分享</text>
+        </view>
+        <view wx:if="{{!isMine}}" class="button">
+          <text class="icon cuIcon-warn" bindtap="onClickReport"></text>
           <text class="text">举报</text>
         </view>
       </view>

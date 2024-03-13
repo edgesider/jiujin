@@ -1,5 +1,7 @@
 import api, { CommentAPI } from '../../api/api';
 import { openProfile } from "../../router";
+import { assertRegistered } from "../../utils/other";
+import getConstants from "../../constants";
 
 const app = getApp();
 
@@ -10,6 +12,7 @@ Component({
     },
   },
   data: {
+    ...getConstants(),
     selfInfo: null,
     comments: [],
     keyboardHeight: 0,
@@ -98,19 +101,21 @@ Component({
       }
     },
     async openMyProfile() {
+      assertRegistered();
       await openProfile(app.globalData.self);
     },
     async openProfile(ev) {
       const { user } = ev.currentTarget.dataset.comment;
       await openProfile(user);
     },
-    startComment({ currentTarget: { dataset: { comment } } }) {
+    onStartComment({ currentTarget: { dataset: { comment } } }) {
+      assertRegistered();
       this.setData({
         commenting: true,
         commentingTo: comment, // 如果是回复则有这个字段
       })
     },
-    async deleteQuestion({ currentTarget: { dataset: { comment } } }) {
+    async onDeleteQuestion({ currentTarget: { dataset: { comment } } }) {
       const { confirm } = await wx.showModal({
         content: '确认删除此条留言',
       });
@@ -127,7 +132,7 @@ Component({
     onPopupInput(ev) {
       this.setData({ commentingText: ev.detail.value });
     },
-    async confirmComment() {
+    async onConfirmComment() {
       const { commentingText, commentingTo } = this.data;
       const text = commentingText.trim();
       if (text) {
@@ -137,9 +142,9 @@ Component({
           this.sendQuestion(text).then();
         }
       }
-      this.endComment();
+      this.onEndComment();
     },
-    endComment() {
+    onEndComment() {
       this.setData({
         commenting: false,
         commentingTo: null,
