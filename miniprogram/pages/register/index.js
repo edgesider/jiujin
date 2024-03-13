@@ -1,6 +1,6 @@
 import api, { getOpenId } from "../../api/api";
 import rules from "../../utils/rules";
-import getConstants, { GENDER } from "../../constants";
+import getConstants, { DEFAULT_AVATAR, GENDER } from "../../constants";
 
 const app = getApp();
 
@@ -14,7 +14,7 @@ Page({
     name: "",
     avatarUrl: "",
 
-    gender: GENDER.UNKNOWN,
+    gender: GENDER.MALE,
     genderOptions: ['男', '女'],
 
     regions: [],
@@ -81,6 +81,7 @@ Page({
         l1ToL4,
         l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
         indexes: [0, 0],
+        avatarUrl: DEFAULT_AVATAR,
       });
     }
   },

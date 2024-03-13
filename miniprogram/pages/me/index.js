@@ -1,31 +1,15 @@
 import { assertRegistered, setTabBar } from "../../utils/other";
-
-const app = getApp()
-import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
+import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
 import api, { CollectApi, getOpenId } from "../../api/api";
 import { openProfile } from "../../router";
 
-const placeholderUser = {
-  _id: "0",
-  avatar_url: 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132',
-  create_time: 0,
-  is_deleted: false,
-  name: "点击登录",
-  rid: -1,
-  sex: 0,
-  total_release: 0,
-  total_transaction: 0,
-  update_time: 0,
-};
+const app = getApp()
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
+    ...getConstants(),
     pageIndex: 1,
-    selfInfo: placeholderUser,
+    selfInfo: null,
     ridToRegion: null,
     totalUnread: 0,
   },

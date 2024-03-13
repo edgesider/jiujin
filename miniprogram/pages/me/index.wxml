@@ -1,6 +1,6 @@
 <scroll-view scroll-y class="scrollPage">
   <view class="UCenter-bg" bindtap="openProfile">
-    <image src="{{selfInfo.avatar_url}}" class="cu-avatar png round" mode="widthFix"></image>
+    <image src="{{selfInfo.avatar_url || DEFAULT_AVATAR}}" class="png round" mode="widthFix"></image>
     <view class="text-xl margin-top text-black">{{selfInfo.name || '欢迎来到楼里楼外'}}</view>
     <view class="margin-top-sm" wx:if="{{selfInfo.rid !== -1}}">
       <text class="text-black">{{selfInfo.rid === -1 ? '未知' : ridToRegion[selfInfo.rid].name}}</text>

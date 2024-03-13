@@ -45,7 +45,8 @@ Page({
     this.setData({ isLoading: true })
     try {
       await app.waitForReady();
-      await Promise.all([this.loadRegions(), this.loadBanners()]);
+      this.updateRegions();
+      await this.loadBanners();
       await this.fetchList();
     } catch (e) {
       await wx.showToast({
@@ -68,12 +69,13 @@ Page({
       needRefresh = false;
       await this.fetchList();
     }
-    if (this.data.self && app.globalData.self && this.data.self.rid !== app.globalData.self.rid) {
-      await Promise.all([this.loadRegions(), this.fetchList(), this.loadBanners()]);
+    if (this.data.self?.rid !== app.globalData.self?.rid) {
+      this.updateRegions();
+      await Promise.all([this.fetchList(), this.loadBanners()]);
     }
   },
 
-  async loadRegions() {
+  updateRegions() {
     const { self, ridToRegion } = app.globalData;
     if (self) {
       // 已登录
