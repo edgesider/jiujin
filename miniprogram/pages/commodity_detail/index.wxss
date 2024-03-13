@@ -172,6 +172,7 @@
 }
 
 .footer .left .button {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -185,6 +186,15 @@
 
 .footer .left .button .text {
   font-size: 24rpx;
+}
+
+.footer .left .button button {
+  border: none;
+  background-color: transparent;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 
 .footer .right {

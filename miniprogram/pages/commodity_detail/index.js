@@ -176,7 +176,7 @@ Page({
   onShareAppMessage(options) {
     return {
       title: '找到一个好东西，快来看看吧！',
-      path: `/pages/commodity_detail/index.js?id=${this.data.commodity._id}`
+      path: `/pages/commodity_detail/index?id=${this.data.commodity._id}`
     }
   },
 });

@@ -160,10 +160,22 @@
   width: 100%;
   z-index: 100;
 
+  opacity: 0;
+  animation: popup-opacity ease-in-out 0.1s forwards;
+
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+}
+
+@keyframes popup-opacity {
+  from {
+    opacity: 0
+  }
+  to {
+    opacity: 1
+  }
 }
 
 .popup-input .mask {
