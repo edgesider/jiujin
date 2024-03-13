@@ -215,6 +215,7 @@ const api = {
 
   async updateCommodity(id, info) {
     Object.assign(info, { _id: id });
+    info.img_urls = info.img_urls.join(',');
     return wrapResp(await request({
       path: "/commodity/modify",
       method: "POST",
