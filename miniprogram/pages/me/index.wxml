@@ -39,6 +39,12 @@
         <text class="text-grey">意见反馈</text>
       </button>
     </view>
+    <view class="cu-item arrow">
+      <button class="cu-btn content" open-type="getPhoneNumber" bindgetphonenumber="onGetPhone">
+        <text class="cuIcon-writefill text-cyan"></text>
+        <text class="text-grey">获取手机号</text>
+      </button>
+    </view>
   </view>
   <view class="cu-tabbar-height"></view>
 </scroll-view>

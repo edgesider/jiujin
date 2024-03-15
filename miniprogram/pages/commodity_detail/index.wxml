@@ -71,11 +71,14 @@
             <text class="polish-time">{{polishTime}}\n<text class="polish-time-hint">上次擦亮</text></text>
             <view class="button" bindtap="polish">擦亮</view>
           </block>
-          <block wx:elif="{{commodity.status == COMMODITY_STATUS_OFF}}">
+          <block wx:elif="{{commodity.status === COMMODITY_STATUS_OFF}}">
             <view class="button" bindtap="polish">重新上架</view>
           </block>
-          <block wx:elif="{{commodity.status == COMMODITY_STATUS_SOLD}}">
+          <block wx:elif="{{commodity.status === COMMODITY_STATUS_SOLD}}">
             <view class="button button-disabled">交易已完成</view>
+          </block>
+          <block wx:elif='{{commodity.status === COMMODITY_STATUS_OFF}}'>
+            <view class="button button-disabled">已下架</view>
           </block>
         </block>
         <block wx:else>

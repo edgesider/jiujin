@@ -11,7 +11,7 @@ export const Axios = axios.create({
   baseURL: "https://lllw.ykai.cc",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json;charset=UTF-8',
+    'content-type': 'application/json;charset=utf-8',
   },
   validateStatus: () => true,
 });
@@ -323,11 +323,15 @@ const api = {
     }))
   },
   async updateLastSeenTime() {
-    return wrapResponse(await wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        $url: 'updateUserLastSeenTime',
-      }
+    return wrapResponse(await request({
+      path: '/user/updateLastSeenTime'
+    }));
+  },
+
+  async getPhoneNumber(code) {
+    return wrapResponse(await request({
+      path: '/weixin/phone_number',
+      data: { code }
     }));
   },
 }

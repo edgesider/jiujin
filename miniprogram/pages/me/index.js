@@ -245,4 +245,18 @@ Page({
     assertRegistered();
     openProfile(app.globalData.self);
   },
+
+  async onGetPhone(ev) {
+    const { code, errno, errMsg } = ev.detail;
+    if (errno || !code) {
+      console.error(`getPhoneNumber failed, errno=${errno}, errMsg=${errMsg}`);
+      return;
+    }
+    const resp = await api.getPhoneNumber(code)
+    if (resp.isError) {
+      console.error('getPhoneNumber failed', resp);
+      return;
+    }
+    console.log(resp.data);
+  },
 })
