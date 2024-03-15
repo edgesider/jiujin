@@ -7,8 +7,9 @@
     "pages/commodity_publish/index",
     "pages/commodity_detail/index",
     "pages/commodity_list/index",
-    "TUIService/pages/tim_index/tim_index",
-    "pages/profile/index"
+    "pages/profile/index",
+    "pages/chat/chat_list/index",
+    "pages/chat/chat_detail/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
@@ -30,7 +31,7 @@
         "pagePath": "pages/home/index"
       },
       {
-        "pagePath": "TUIService/pages/tim_index/tim_index"
+        "pagePath": "pages/chat/chat_list/index"
       },
       {
         "pagePath": "pages/me/index"

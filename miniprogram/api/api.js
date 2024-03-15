@@ -7,8 +7,8 @@ const { RespSuccess, RespError } = require('./resp')
 axios.defaults.adapter = mpAdapter;
 
 export const Axios = axios.create({
-  // baseURL: "http://localhost:8080/",
-  baseURL: "https://lllw.ykai.cc",
+  baseURL: "http://192.168.2.218:8080/",
+  // baseURL: "https://lllw.ykai.cc",
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',

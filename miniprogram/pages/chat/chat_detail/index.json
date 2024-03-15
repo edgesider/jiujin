@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "TUIChat": "./TUIChat/index"
+  }
+}

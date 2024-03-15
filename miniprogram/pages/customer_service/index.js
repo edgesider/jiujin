@@ -43,7 +43,7 @@ Page({
     });
     app.globalData.currentUser = user_id;
     wx.switchTab({
-      url: `../../TUIService/pages/tim_index/tim_index`,
+      url: "/pages/chat/chat_list/index",
     });
   },
 

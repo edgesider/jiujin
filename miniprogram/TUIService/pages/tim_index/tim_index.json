@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "TUIKit": "../../TUIKit/index"
-  },
-  "navigationStyle": "custom"
-}

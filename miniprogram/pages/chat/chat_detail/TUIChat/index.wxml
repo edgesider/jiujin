@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="tui-navigatorbar">
+    <image class="tui-navigatorbar-back" bindtap="goBack" src="../../static/assets/ic_back_white.svg" />
+    <view class="conversation-title">{{conversationName}}</view>
+  </view>
+  <view class="group-profile" wx:if="{{showSell}}">
+    <!-- <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall"
+              bind:showConversationList="showConversationList"></TUIGroup> -->
+    <view class="conversation-commodity">
+      <image mode="aspectFill" src="{{commodity.img_urls[0]}}"></image>
+      <text>{{commodity.content}} ￥{{commodity.price}}</text>
+      <button bind:tap="sendCommodityMessage" wx:if="{{isSeller}}">发送商品：{{commodity.content}}</button>
+    </view>
+  </view>
+  <view
+    class="list-box {{ showTips && 'list-box-notips'}} || {{ showGroupTips && 'list-box-group'}}  || {{ showAll && 'list-box-group-notips'}} ">
+    <scroll-view class="message-list" bindtap="triggerClose" scroll-y="true">
+      <MessageList id="MessageList" conversation="{{conversation}}" unreadCount="{{unreadCount}}"
+                   chatContainerHeight="{{chatContainerHeight}}" bind:changeMemberCount="changeMemberCount"
+                   bind:resendMessage="resendMessage" bind:typing="typing"
+                   bind:handleNewGroupProfile="handleNewGroupProfile"></MessageList>
+    </scroll-view>
+  </view>
+  <view class="input-area">
+    <view class="message-input" style="{{viewData.style}}" wx:if="{{showChat}}">
+      <MessageInput
+        id="MessageInput"
+        conversation="{{conversation}}"
+        hasCallKit="{{hasCallKit}}"
+        bind:sendMessage="sendMessage"
+        bind:downKeysBoards="downKeysBoards"
+        bind:pullKeysBoards="pullKeysBoards"
+        bind:showMessageErrorImage="showMessageErrorImage"
+        bind:handleCall="handleCall"
+        bind:inputHeightChange="inputHeightChange"
+        bind:sellCommodity="sellCommodity"
+      ></MessageInput>
+    </view>
+  </view>
+</view>

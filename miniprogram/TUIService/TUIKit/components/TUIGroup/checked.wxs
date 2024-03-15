@@ -1,9 +1,0 @@
-var includes = function() {
-    var show = false;
-    if(arguments[0].indexOf(arguments[1]) !== -1) {
-        return show = true;
-    }
-}
-module.exports = {
-    includes: includes
-};

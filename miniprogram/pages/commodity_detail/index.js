@@ -158,7 +158,7 @@ Page({
       app.globalData.commodity = null;
       app.globalData.targetCommodity = this.data.commodity;
       await wx.switchTab({
-        url: `../../TUIService/pages/tim_index/tim_index`,
+        url: "/pages/chat/chat_list/index",
       });
     } else {
       await wx.showToast({

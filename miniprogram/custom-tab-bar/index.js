@@ -27,7 +27,7 @@ Component({
         text: '发布',
       },
       {
-        pagePath: "/TUIService/pages/tim_index/tim_index",
+        pagePath: "/pages/chat/chat_list/index",
         iconClass: "cuIcon-message",
         selectedIconClass: "cuIcon-messagefill",
         text: "私信",

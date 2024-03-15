@@ -1,0 +1,6 @@
+<TUIChat
+  id="TUIChat"
+  wx:if="{{conversationId}}"
+  currentConversationID="{{conversationId}}"
+  unreadCount="{{unreadCount}}"
+/>
