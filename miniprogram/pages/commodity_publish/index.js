@@ -219,7 +219,7 @@ Page({
       };
     Object.assign(info, {
       // 从表单中更新
-      cid: categories[categoryIndex]._id,
+      cid: categories[categoryIndex]?._id,
       content: commodityContent,
       price: commodityCurrentPrice,
       quality: qualities[qualityIndex].value,

@@ -74,7 +74,6 @@ App({
 
     // 登录腾讯IM
     await this.initTIM();
-    this.globalData.totalUnread = wx.chat.getTotalUnreadMessageCount();
 
     console.warn('initialized. globalData=', this.globalData);
     this._ready = true;
@@ -129,6 +128,7 @@ App({
     })
 
     this.globalData.timInitialized = true;
+    this.globalData.totalUnread = wx.chat.getTotalUnreadMessageCount();
   },
 
   async loginIMWithID(id) {
