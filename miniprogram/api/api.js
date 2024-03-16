@@ -6,9 +6,12 @@ const { RespSuccess, RespError } = require('./resp')
 
 axios.defaults.adapter = mpAdapter;
 
+const version = wx.getAccountInfoSync().miniProgram.envVersion;
+
 export const Axios = axios.create({
-  // baseURL: "http://192.168.2.218:8080/",
-  baseURL: "https://lllw.ykai.cc",
+  baseURL: version === 'release' || version === 'trail'
+    ? 'https://lllw.ykai.cc'
+    : 'http://192.168.2.218:8080/',
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',
