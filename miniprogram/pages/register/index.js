@@ -183,15 +183,15 @@ Page({
       })
       return;
     }
-    await wx.$TUIKit.updateMyProfile({
+    await wx.chat.updateMyProfile({
       nick: name,
       avatar: avatar_url,
       gender: {
-        [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
-        [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
-        [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
-      }[sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
-      allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
+        [GENDER.UNKNOWN]: wx.chat.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: wx.chat.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: wx.chat.TYPES.GENDER_FEMALE,
+      }[sex] ?? wx.chat.TYPES.GENDER_UNKNOWN,
+      allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
     });
     await Promise.all([app.fetchSelfInfo(), app.fetchRegions(true)]);
     wx.hideLoading();

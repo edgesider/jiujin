@@ -35,8 +35,8 @@ Component({
   },
   lifetimes: {
     detached() {
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED, this.onConversationListUpdated, this);
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdate, this);
+      wx.chat.off(wx.chat.EVENT.CONVERSATION_LIST_UPDATED, this.onConversationListUpdated, this);
+      wx.chat.off(wx.chat.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdate, this);
       this.setData({
         isInit: false,
       })
@@ -65,8 +65,8 @@ Component({
 
     initEvent() {
       if (!this.data.isInit) {
-        wx.$TUIKit.on(wx.TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED, this.onConversationListUpdated, this);
-        wx.$TUIKit.on(wx.TencentCloudChat.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdate, this);
+        wx.chat.on(wx.chat.EVENT.CONVERSATION_LIST_UPDATED, this.onConversationListUpdated, this);
+        wx.chat.on(wx.chat.EVENT.USER_STATUS_UPDATED, this.onUserStatusUpdate, this);
         this.getConversationList();
         this.setData({
           isInit: true,
@@ -118,7 +118,7 @@ Component({
     },
     getConversationList() {
       if (this.data.conversationList.length === 0) {
-        wx.$TUIKit.getConversationList().then((imResponse) => {
+        wx.chat.getConversationList().then((imResponse) => {
           this.handleConversationList(imResponse.data.conversationList);
         })
       }
@@ -134,7 +134,7 @@ Component({
       if (conversationList.length === 0) return;
       const userIDList = [];
       conversationList.forEach((element) => {
-        if (element.type === wx.TencentCloudChat.TYPES.CONV_C2C) {
+        if (element.type === wx.chat.TYPES.CONV_C2C) {
           userIDList.push(element.userProfile.userID);
         }
       });
@@ -259,7 +259,7 @@ Component({
     // 订阅在线状态
     subscribeOnlineStatus(userIDList) {
       if (userIDList.length == 0) return;
-      wx.$TUIKit.getUserStatus({ userIDList }).then((imResponse) => {
+      wx.chat.getUserStatus({ userIDList }).then((imResponse) => {
         const { successUserList } = imResponse.data;
         this.setData({
           statusList: successUserList,
@@ -270,7 +270,7 @@ Component({
             + '1. 需要您开通旗舰版套餐：https://buy.cloud.tencent.com/avc ;' + '\n'
             + '2. 进入 IM 控制台开启“用户状态查询及状态变更通知”开关: https://console.cloud.tencent.com/im/login-message');
         });
-      wx.$TUIKit.subscribeUserStatus({ userIDList });
+      wx.chat.subscribeUserStatus({ userIDList });
     },
     learnMore() {
       if (app.globalData && app.globalData.reportType !== constant.OPERATING_ENVIRONMENT) return;

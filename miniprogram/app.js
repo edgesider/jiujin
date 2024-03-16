@@ -74,7 +74,7 @@ App({
 
     // 登录腾讯IM
     await this.initTIM();
-    this.globalData.totalUnread = wx.$TUIKit.getTotalUnreadMessageCount();
+    this.globalData.totalUnread = wx.chat.getTotalUnreadMessageCount();
 
     console.warn('initialized. globalData=', this.globalData);
     this._ready = true;
@@ -95,31 +95,34 @@ App({
     }
     this.globalData.config.userID = getOpenId();
 
-    wx.TencentCloudChat = TencentCloudChat;
-    wx.$TUIKit = TencentCloudChat.create({
-      SDKAppID: this.globalData.config.SDKAPPID,
-    });
+    wx.chat = Object.assign(
+      {},
+      TencentCloudChat.create({
+        SDKAppID: this.globalData.config.SDKAPPID,
+      }),
+      TencentCloudChat
+    );
 
-    wx.$TUIKit.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
-    wx.$TUIKit.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
+    wx.chat.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
+    wx.chat.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
 
     // 监听系统级事件
-    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.SDK_READY, this.onSDKReady, this);
-    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
-    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
+    wx.chat.on(wx.chat.EVENT.SDK_READY, this.onSDKReady, this);
+    wx.chat.on(wx.chat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
+    wx.chat.on(wx.chat.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
 
     await this.loginIMWithID(this.globalData.config.userID);
 
     if (this.globalData.self) {
-      wx.$TUIKit.updateMyProfile({
+      wx.chat.updateMyProfile({
         nick: this.globalData.self.name,
         avatar: this.globalData.self.avatar_url,
         gender: {
-          [GENDER.UNKNOWN]: wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
-          [GENDER.MALE]: wx.TencentCloudChat.TYPES.GENDER_MALE,
-          [GENDER.FEMALE]: wx.TencentCloudChat.TYPES.GENDER_FEMALE,
-        }[this.globalData.self.sex] ?? wx.TencentCloudChat.TYPES.GENDER_UNKNOWN,
-        allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
+          [GENDER.UNKNOWN]: wx.chat.TYPES.GENDER_UNKNOWN,
+          [GENDER.MALE]: wx.chat.TYPES.GENDER_MALE,
+          [GENDER.FEMALE]: wx.chat.TYPES.GENDER_FEMALE,
+        }[this.globalData.self.sex] ?? wx.chat.TYPES.GENDER_UNKNOWN,
+        allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
       }).catch((imError) => {
         console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
       });
@@ -129,12 +132,12 @@ App({
   },
 
   async loginIMWithID(id) {
-    if (wx.$TUIKit.getLoginUser() == id) {
+    if (wx.chat.getLoginUser() === id) {
       return;
     }
 
-    if (wx.$TUIKit.getLoginUser() != '') {
-      await wx.$TUIKit.logout();
+    if (wx.chat.getLoginUser() !== '') {
+      await wx.chat.logout();
     }
 
     const user_id = 'USER' + id;
@@ -151,20 +154,20 @@ App({
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
     wx.$chat_userID = user_id;
     wx.$chat_userSig = userSig;
-    wx.$TUIKit.login({
+    wx.chat.login({
       userID: user_id,
       userSig
     });
 
     return new Promise((ok) => {
-      wx.$TUIKit.on(wx.TencentCloudChat.EVENT.SDK_READY, ok, this);
+      wx.chat.on(wx.chat.EVENT.SDK_READY, ok, this);
     });
   },
 
   async onSDKReady(event) {
     // 监听到此事件后可调用 SDK 发送消息等 API，使用 SDK 的各项功能。
     this.globalData.TUISDKReady = true;
-    this.globalData.totalUnread = await wx.$TUIKit.getTotalUnreadMessageCount();
+    this.globalData.totalUnread = await wx.chat.getTotalUnreadMessageCount();
     this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
@@ -183,13 +186,13 @@ App({
 
   async onMessageReceived(event) {
     const { conversationID } = event.data[0];
-    const { data: { messageList } } = await wx.$TUIKit.getMessageList({ conversationID });
+    const { data: { messageList } } = await wx.chat.getMessageList({ conversationID });
     if (messageList.length <= 2) {
       const msg = messageList[0];
       const { from, payload } = msg;
       const text = payload.hasOwnProperty("text") ? payload.text : "[消息]";
-      const { data: user_profile } = await wx.$TUIKit.getUserProfile({ userIDList: [from] });
-      const { data: { groupAttributes: attrs } } = await wx.$TUIKit.getGroupAttributes({
+      const { data: user_profile } = await wx.chat.getUserProfile({ userIDList: [from] });
+      const { data: { groupAttributes: attrs } } = await wx.chat.getGroupAttributes({
         groupID: conversationID.substr(5),
         keyList: ["commodityID"]
       });

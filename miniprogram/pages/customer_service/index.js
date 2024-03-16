@@ -31,11 +31,11 @@ Page({
     const { self } = app.globalData;
     const user_id = 'REPY' + self._id + id;
     app.globalData.config.commodity = commodity;
-    wx.$TUIKit.updateMyProfile({
+    wx.chat.updateMyProfile({
       nick: self.name + '-' + desc,
       avatar: self.avatar_url,
-      gender: self.sex == 0 ? wx.TencentCloudChat.TYPES.GENDER_MALE : wx.TencentCloudChat.TYPES.GENDER_FEMALE,
-      allowType: wx.TencentCloudChat.TYPES.ALLOW_TYPE_ALLOW_ANY
+      gender: self.sex == 0 ? wx.chat.TYPES.GENDER_MALE : wx.chat.TYPES.GENDER_FEMALE,
+      allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
     }).then((imResponse) => {
       console.log(imResponse.data); // 更新资料成功
     }).catch((imError) => {

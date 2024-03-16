@@ -98,7 +98,7 @@ Component({
   methods: {
     async init() {
       console.log(this.data.conversationID);
-      const groupData = await wx.$TUIKit.getGroupAttributes({
+      const groupData = await wx.chat.getGroupAttributes({
         groupID: this.data.conversationID.substr(5),
         keyList: ["commodityID", "sellID"]
       })
@@ -111,7 +111,7 @@ Component({
           isSeller: attrs.sellID === app.globalData.self._id,
         });
       });
-      await wx.$TUIKit.setMessageRead({ conversationID: this.data.conversationID });
+      await wx.chat.setMessageRead({ conversationID: this.data.conversationID });
 
       // 手动发送已读消息回执
       // wx.$TUIKit.getMessageList({conversationID: this.data.conversationID}).then(function(imResponse) {
@@ -123,13 +123,13 @@ Component({
       //   });
       // });
 
-      const { data: { conversation } } = await wx.$TUIKit.getConversationProfile(this.data.conversationID);
+      const { data: { conversation } } = await wx.chat.getConversationProfile(this.data.conversationID);
       this.setData({
         conversationName: this.getConversationName(conversation),
         conversation,
-        isShow: conversation.type === wx.TencentCloudChat.TYPES.CONV_GROUP,
+        isShow: conversation.type === wx.chat.TYPES.CONV_GROUP,
       });
-      if (conversation.type !== wx.TencentCloudChat.TYPES.CONV_GROUP) return;
+      if (conversation.type !== wx.chat.TYPES.CONV_GROUP) return;
       if (!this.data.showTips) {
         this.setData({
           showGroupTips: true,
@@ -147,10 +147,10 @@ Component({
         });
         return '系统通知';
       }
-      if (conversation.type === wx.TencentCloudChat.TYPES.CONV_C2C) {
+      if (conversation.type === wx.chat.TYPES.CONV_C2C) {
         return conversation.remark || conversation.userProfile.nick || conversation.userProfile.userID;
       }
-      if (conversation.type === wx.TencentCloudChat.TYPES.CONV_GROUP) {
+      if (conversation.type === wx.chat.TYPES.CONV_GROUP) {
         return conversation.groupProfile.name || conversation.groupProfile.groupID;
       }
     },
@@ -193,7 +193,7 @@ Component({
       this.selectComponent('#MessageInput').handleClose();
     },
     handleCall(event) {
-      if (event.detail.conversationType === wx.TencentCloudChat.TYPES.CONV_GROUP) {
+      if (event.detail.conversationType === wx.chat.TYPES.CONV_GROUP) {
         this.selectComponent('#TUIGroup').callShowMoreMember(event);
       } else {
         this.triggerEvent('handleCall', event.detail);
@@ -206,7 +206,7 @@ Component({
     },
     async goBack() {
       await wx.navigateBack();
-      await wx.$TUIKit.setMessageRead({
+      await wx.chat.setMessageRead({
         conversationID: this.data.conversationID,
       });
     },
@@ -239,7 +239,7 @@ Component({
     },
     typing(event) {
       const { STRING_TEXT, FEAT_NATIVE_CODE } = constant;
-      if (this.data.conversation.type === wx.TencentCloudChat.TYPES.CONV_C2C) {
+      if (this.data.conversation.type === wx.chat.TYPES.CONV_C2C) {
         if (event.detail.typingMessage.typingStatus === FEAT_NATIVE_CODE.ISTYPING_STATUS && event.detail.typingMessage.actionParam === constant.TYPE_INPUT_STATUS_ING) {
           this.setData({
             conversationName: STRING_TEXT.TYPETYPING,

@@ -72,7 +72,7 @@ Component({
             });
           } else {
             // res.tempFilePath 存储录音文件的临时路径
-            const message = wx.$TUIKit.createAudioMessage({
+            const message = wx.chat.createAudioMessage({
               to: this.getToAccount(),
               conversationType: this.data.conversation.type,
               payload: {
@@ -96,7 +96,7 @@ Component({
 
   methods: {
     async initCommodity() {
-      const { data: { groupAttributes: attrs } } = await wx.$TUIKit.getGroupAttributes({
+      const { data: { groupAttributes: attrs } } = await wx.chat.getGroupAttributes({
         groupID: this.data.conversation.groupProfile.groupID,
         keyList: ["commodityID", "sellID"]
       });
@@ -123,7 +123,7 @@ Component({
     },
     // 获取消息列表来判断是否发送正在输入状态
     getMessageList(conversation) {
-      wx.$TUIKit.getMessageList({
+      wx.chat.getMessageList({
         conversationID: conversation.conversationID,
         nextReqMessageID: this.data.nextReqMessageID,
         count: 15,
@@ -298,7 +298,7 @@ Component({
 
     // 发送图片消息
     handleSendImageMessage(file) {
-      const message = wx.$TUIKit.createImageMessage({
+      const message = wx.chat.createImageMessage({
         to: this.getToAccount(),
         conversationType: this.data.conversation.type,
         payload: {
@@ -313,7 +313,7 @@ Component({
 
     // 发送视频消息
     handleSendVideoMessage(file) {
-      const message = wx.$TUIKit.createVideoMessage({
+      const message = wx.chat.createVideoMessage({
         to: this.getToAccount(),
         conversationType: this.data.conversation.type,
         payload: {
@@ -416,10 +416,10 @@ Component({
         return '';
       }
       switch (this.data.conversation.type) {
-        case wx.TencentCloudChat.TYPES.CONV_C2C:
-          return this.data.conversation.conversationID.replace(wx.TencentCloudChat.TYPES.CONV_C2C, '');
-        case wx.TencentCloudChat.TYPES.CONV_GROUP:
-          return this.data.conversation.conversationID.replace(wx.TencentCloudChat.TYPES.CONV_GROUP, '');
+        case wx.chat.TYPES.CONV_C2C:
+          return this.data.conversation.conversationID.replace(wx.chat.TYPES.CONV_C2C, '');
+        case wx.chat.TYPES.CONV_GROUP:
+          return this.data.conversation.conversationID.replace(wx.chat.TYPES.CONV_GROUP, '');
         default:
           return this.data.conversation.conversationID;
       }
@@ -481,13 +481,13 @@ Component({
       }
       const type = e.currentTarget.dataset.value;
       const conversationType = this.data.conversation.type;
-      if (conversationType === wx.TencentCloudChat.TYPES.CONV_GROUP) {
+      if (conversationType === wx.chat.TYPES.CONV_GROUP) {
         this.triggerEvent('handleCall', {
           type,
           conversationType,
         });
       }
-      if (conversationType === wx.TencentCloudChat.TYPES.CONV_C2C) {
+      if (conversationType === wx.chat.TYPES.CONV_C2C) {
         const { userID } = this.data.conversation.userProfile;
         this.triggerEvent('handleCall', {
           conversationType,
@@ -504,7 +504,7 @@ Component({
       const to = this.getToAccount();
       const text = flag ? msg : this.data.message;
       const { FEAT_NATIVE_CODE } = constant;
-      const message = wx.$TUIKit.createTextMessage({
+      const message = wx.chat.createTextMessage({
         to,
         conversationType: this.data.conversation.type,
         payload: {
@@ -567,7 +567,7 @@ Component({
     sendTypingStatusMessage() {
       const { BUSINESS_ID_TEXT, FEAT_NATIVE_CODE } = constant;
       // 创建正在输入状态消息, "typingStatus":1,正在输入中1,  输入结束0, "version": 1 兼容老版本,userAction:0, // 14表示正在输入,actionParam:"EIMAMSG_InputStatus_Ing" //"EIMAMSG_InputStatus_Ing" 表示正在输入, "EIMAMSG_InputStatus_End" 表示输入结束
-      const typingMessage = wx.$TUIKit.createCustomMessage({
+      const typingMessage = wx.chat.createCustomMessage({
         to: this.getToAccount(),
         conversationType: this.data.conversation.type,
         payload: {
@@ -635,7 +635,7 @@ Component({
     // 监听是否失去焦点
     inputBindBlur(event) {
       const { BUSINESS_ID_TEXT, FEAT_NATIVE_CODE } = constant;
-      const typingMessage = wx.$TUIKit.createCustomMessage({
+      const typingMessage = wx.chat.createCustomMessage({
         to: this.getToAccount(),
         conversationType: this.data.conversation.type,
         payload: {
@@ -675,7 +675,7 @@ Component({
     },
 
     $handleSendCustomMessage(e) {
-      const message = wx.$TUIKit.createCustomMessage({
+      const message = wx.chat.createCustomMessage({
         to: this.getToAccount(),
         conversationType: this.data.conversation.type,
         payload: e.detail.payload,
@@ -710,7 +710,7 @@ Component({
     },
     // 发送正在输入消息
     $sendTypingMessage(message) {
-      wx.$TUIKit.sendMessage(message, {
+      wx.chat.sendMessage(message, {
         onlineUserOnly: true,
       });
     },
@@ -719,7 +719,7 @@ Component({
       this.triggerEvent('sendMessage', {
         message,
       });
-      wx.$TUIKit.sendMessage(message, {
+      wx.chat.sendMessage(message, {
         offlinePushInfo: {
           disablePush: true,
         },

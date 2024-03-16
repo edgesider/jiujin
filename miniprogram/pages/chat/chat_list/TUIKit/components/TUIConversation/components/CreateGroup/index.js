@@ -49,7 +49,7 @@ Component({
     // 确认创建群聊
     bindConfirmCreate() {
       logger.log(`| TUI-Group | create-group | bindConfirmCreate | groupID: ${this.data.groupID}`);
-      wx.$TUIKit.createGroup({
+      wx.chat.createGroup({
         type: this.data.Type,
         name: this.data.name,
         groupID: this.data.groupID,
@@ -79,10 +79,10 @@ Component({
   },
   ready() {
     const groupTypeList = [
-      { groupType: '品牌客户群（Work)', Type: wx.TencentCloudChat.TYPES.GRP_WORK },
-      { groupType: 'VIP专属群（Public)', Type: wx.TencentCloudChat.TYPES.GRP_PUBLIC },
-      { groupType: '临时会议群 (Meeting)', Type: wx.TencentCloudChat.TYPES.GRP_MEETING },
-      { groupType: '直播群（AVChatRoom）', Type: wx.TencentCloudChat.TYPES.GRP_CHATROOM },
+      { groupType: '品牌客户群（Work)', Type: wx.chat.TYPES.GRP_WORK },
+      { groupType: 'VIP专属群（Public)', Type: wx.chat.TYPES.GRP_PUBLIC },
+      { groupType: '临时会议群 (Meeting)', Type: wx.chat.TYPES.GRP_MEETING },
+      { groupType: '直播群（AVChatRoom）', Type: wx.chat.TYPES.GRP_CHATROOM },
     ];
     this.setData({
       groupTypeList,

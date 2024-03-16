@@ -108,16 +108,16 @@ Component({
           });
         }
       }
-      wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived, this);
-      wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_READ_BY_PEER, this.$onMessageReadByPeer, this);
-      wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_REVOKED, this.$onMessageRevoked, this);
+      wx.chat.on(wx.chat.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived, this);
+      wx.chat.on(wx.chat.EVENT.MESSAGE_READ_BY_PEER, this.$onMessageReadByPeer, this);
+      wx.chat.on(wx.chat.EVENT.MESSAGE_REVOKED, this.$onMessageRevoked, this);
     },
 
     detached() {
       // 一定要解除相关的事件绑定
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived);
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.MESSAGE_READ_BY_PEER, this.$onMessageReadByPeer);
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.MESSAGE_REVOKED, this.$onMessageRevoked);
+      wx.chat.off(wx.chat.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived);
+      wx.chat.off(wx.chat.EVENT.MESSAGE_READ_BY_PEER, this.$onMessageReadByPeer);
+      wx.chat.off(wx.chat.EVENT.MESSAGE_REVOKED, this.$onMessageRevoked);
     },
   },
 
@@ -141,7 +141,7 @@ Component({
     // 获取消息列表
     getMessageList(conversation) {
       if (!this.data.isCompleted) {
-        wx.$TUIKit.getMessageList({
+        wx.chat.getMessageList({
           conversationID: conversation.conversationID,
           nextReqMessageID: this.data.nextReqMessageID,
           count: 15,
@@ -214,7 +214,7 @@ Component({
     // 收到的消息
     $onMessageReceived(value) {
       const message = value.data[0];
-      wx.$TUIKit.setMessageRead({ conversationID: this.data.conversation.conversationID }).then(() => {
+      wx.chat.setMessageRead({ conversationID: this.data.conversation.conversationID }).then(() => {
         logger.log('| MessageList | setMessageRead | ok');
       });
       const { BUSINESS_ID_TEXT, MESSAGE_TYPE_TEXT } = constant;
@@ -287,7 +287,7 @@ Component({
     // 自己的消息上屏
     updateMessageList(message) {
       if (message.conversationID !== this.data.conversation.conversationID) return;
-      wx.$TUIKit.setMessageRead({ conversationID: this.data.conversation.conversationID }).then(() => {
+      wx.chat.setMessageRead({ conversationID: this.data.conversation.conversationID }).then(() => {
         logger.log('| MessageList | setMessageRead | ok');
       });
       const { BUSINESS_ID_TEXT, MESSAGE_TYPE_TEXT } = constant;
@@ -375,7 +375,7 @@ Component({
     },
     // 删除消息
     deleteMessage() {
-      wx.$TUIKit.deleteMessage([this.data.selectedMessage])
+      wx.chat.deleteMessage([this.data.selectedMessage])
         .then((imResponse) => {
           this.updateMessageByID(imResponse.data.messageList[0].ID);
           wx.showToast({
@@ -394,7 +394,7 @@ Component({
     },
     // 撤回消息
     revokeMessage() {
-      wx.$TUIKit.revokeMessage(this.data.selectedMessage)
+      wx.chat.revokeMessage(this.data.selectedMessage)
         .then((imResponse) => {
           this.setData({
             resendMessage: imResponse.data.message,
@@ -555,7 +555,7 @@ Component({
           if (!res.confirm) {
             return;
           }
-          wx.$TUIKit.resendMessage(this.data.errorMessage) // 传入需要重发的消息实例
+          wx.chat.resendMessage(this.data.errorMessage) // 传入需要重发的消息实例
             .then(() => {
               this.showToast(TOAST_TITLE_TEXT.RESEND_SUCCESS);
               this.setData({

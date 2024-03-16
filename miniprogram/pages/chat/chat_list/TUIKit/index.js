@@ -45,7 +45,7 @@ Component({
       const { config } = this.data;
       config.userID = wx.$chat_userID;
       config.userSig = wx.$chat_userSig;
-      config.tim = wx.$TUIKit;
+      config.tim = wx.chat;
       config.SDKAppID = wx.$chat_SDKAppID;
       if (this.data.outsideConversation) {
         this.currentConversationID({

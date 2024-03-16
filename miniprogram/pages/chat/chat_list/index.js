@@ -30,8 +30,8 @@ Page({
       const comm_tail = targetCommodity._id.substr(0, 16);
       const group_id = `${self._id}${comm_tail}`;
       try{
-        await wx.$TUIKit.createGroup({
-          type: wx.TencentCloudChat.TYPES.GRP_MEETING,
+        await wx.chat.createGroup({
+          type: wx.chat.TYPES.GRP_MEETING,
           name: user.name,
           groupID: group_id,
           avatar: targetCommodity.img_urls[0],
@@ -42,12 +42,12 @@ Page({
         });
       }catch (e){}
 
-      console.log('群属性', await wx.$TUIKit.getGroupAttributes({
+      console.log('群属性', await wx.chat.getGroupAttributes({
         groupID: group_id,
         keyList: [ "commodityID", "sellID" ]
       }));
       console.warn(targetCommodity);
-      await wx.$TUIKit.setGroupAttributes({
+      await wx.chat.setGroupAttributes({
         groupID: group_id,
         groupAttributes: {
           commodityID: targetCommodity._id,

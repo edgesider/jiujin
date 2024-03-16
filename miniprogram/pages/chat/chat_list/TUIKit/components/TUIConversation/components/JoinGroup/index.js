@@ -26,7 +26,7 @@ Component({
     },
     // 通过输入的群ID来查找群
     searchGroupByID() {
-      wx.$TUIKit.searchGroupByID(this.data.groupID)
+      wx.chat.searchGroupByID(this.data.groupID)
         .then((imResponse) => {
           if (imResponse.data.group.groupID !== '') {
             this.setData({
@@ -59,7 +59,7 @@ Component({
     // 确认加入
     bindConfirmJoin() {
       logger.log(`| TUI-Group | join-group | bindConfirmJoin | groupID: ${this.data.groupID}`);
-      wx.$TUIKit.joinGroup({ groupID: this.data.groupID, type: this.data.searchGroup.type })
+      wx.chat.joinGroup({ groupID: this.data.groupID, type: this.data.searchGroup.type })
         .then((imResponse) => {
           if (this.data.searchGroup.isChoose) {
             if (imResponse.data.status === 'WaitAdminApproval') {
@@ -77,12 +77,12 @@ Component({
             });
           }
           switch (imResponse.data.status) {
-            case wx.TencentCloudChat.TYPES.JOIN_STATUS_WAIT_APPROVAL:
+            case wx.chat.TYPES.JOIN_STATUS_WAIT_APPROVAL:
               // 等待管理员同意
               break;
-            case wx.TencentCloudChat.TYPES.JOIN_STATUS_SUCCESS: // 加群成功
+            case wx.chat.TYPES.JOIN_STATUS_SUCCESS: // 加群成功
               break;
-            case wx.TencentCloudChat.TYPES.JOIN_STATUS_ALREADY_IN_GROUP: // 已经在群中
+            case wx.chat.TYPES.JOIN_STATUS_ALREADY_IN_GROUP: // 已经在群中
               break;
             default:
               break;

@@ -145,13 +145,13 @@ Component({
     },
     async setUserAvatar(conversation){
       if (conversation.type === 'GROUP') {
-        const { data: { groupAttributes: attrs } } = await wx.$TUIKit.getGroupAttributes({
+        const { data: { groupAttributes: attrs } } = await wx.chat.getGroupAttributes({
           groupID: conversation.groupProfile.groupID,
           keyList: [ "commodityID", "sellID" ]
         });
-        wx.$TUIKit.getGroupMemberList({
+        wx.chat.getGroupMemberList({
           groupID: conversation.groupProfile.groupID,
-          role: wx.TencentCloudChat.GRP_MBR_ROLE_MEMBER,
+          role: wx.chat.GRP_MBR_ROLE_MEMBER,
           count: 2,
           offset: 0
         }).then((imResponse) => {
@@ -187,7 +187,7 @@ Component({
         content: '删除聊天后，将同时删除聊天记录，包括聊天中的文件、图片、视频等内容。',
         success: (res) => {
           if (res.confirm) {
-            wx.$TUIKit.deleteConversation(this.data.conversation.conversationID);
+            wx.chat.deleteConversation(this.data.conversation.conversationID);
             this.setData({
               conversation: {},
               xScale: 0,
@@ -198,7 +198,7 @@ Component({
     },
     // 消息置顶
     pinConversation() {
-      wx.$TUIKit.pinConversation({ conversationID: this.data.conversation.conversationID, isPinned: true })
+      wx.chat.pinConversation({ conversationID: this.data.conversation.conversationID, isPinned: true })
         .then(() => {
           this.setData({
             xScale: 0,
@@ -208,7 +208,7 @@ Component({
           console.warn('pinConversation error:', imError); // 置顶会话失败的相关信息
         });
       if (this.data.showPin === '取消置顶') {
-        wx.$TUIKit.pinConversation({ conversationID: this.data.conversation.conversationID, isPinned: false })
+        wx.chat.pinConversation({ conversationID: this.data.conversation.conversationID, isPinned: false })
           .then(() => {
             this.setData({
               xScale: 0,
@@ -236,22 +236,22 @@ Component({
 
       let newShowMute = '';
       let newShowMuteIcon = false;
-      let messageRemindType = wx.TencentCloudChat.TYPES.MSG_REMIND_ACPT_NOT_NOTE;
+      let messageRemindType = wx.chat.TYPES.MSG_REMIND_ACPT_NOT_NOTE;
       if (this.data.showMute === '消息免打扰') {
         newShowMute = '取消免打扰';
         newShowMuteIcon = true;
-        messageRemindType = wx.TencentCloudChat.TYPES.MSG_REMIND_ACPT_NOT_NOTE;
+        messageRemindType = wx.chat.TYPES.MSG_REMIND_ACPT_NOT_NOTE;
       }
       if (this.data.showMute === '取消免打扰') {
         newShowMute = '消息免打扰';
         newShowMuteIcon = false;
-        messageRemindType = wx.TencentCloudChat.TYPES.MSG_REMIND_ACPT_AND_NOTE;
+        messageRemindType = wx.chat.TYPES.MSG_REMIND_ACPT_AND_NOTE;
       }
 
       if (this.data.conversation.type === 'C2C') {
         // C2C 消息免打扰，一般的实现是在线接收消息，离线不接收消息（在有离线推送的情况下），v2.16.0起支持
         const { userID } = this.data.conversation.userProfile;
-        wx.$TUIKit.setMessageRemindType({
+        wx.chat.setMessageRemindType({
           userIDList: [userID],
           messageRemindType,
         })
@@ -270,7 +270,7 @@ Component({
       if (this.data.conversation.type === 'GROUP')  {
         const { groupID } = this.data.conversation.groupProfile;
         // 群消息免打扰，一般的实现是在线接收消息，离线不接收消息（在有离线推送的情况下）
-        wx.$TUIKit.setMessageRemindType({
+        wx.chat.setMessageRemindType({
           groupID,
           messageRemindType,
         })
@@ -356,7 +356,7 @@ Component({
           getStatus: true,
         });
       }
-      if (conversation.type !== wx.TencentCloudChat.TYPES.CONV_C2C) return;
+      if (conversation.type !== wx.chat.TYPES.CONV_C2C) return;
       statusList.forEach((item) => {
         if (item.userID !== conversation.userProfile.userID) return;
         const showStatus = (item.statusType === 1);
