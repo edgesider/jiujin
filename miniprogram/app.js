@@ -1,4 +1,4 @@
-import api, { Axios, doAuthorize, getOpenId } from './api/api';
+import api, { Axios, doAuthorize } from './api/api';
 import { BehaviorSubject } from "rxjs";
 
 import TencentCloudChat from '@tencentcloud/chat';
@@ -266,12 +266,8 @@ App({
     this.userChangedSubject.next(self);
   },
 
-  async fetchRegions(force = false) {
-    let regions = wx.getStorageSync('regions');
-    if (force || !regions) {
-      regions = (await api.getRegions()).data ?? [];
-      wx.setStorageSync('regions', regions);
-    }
+  async fetchRegions() {
+    const regions = (await api.getRegions()).data ?? [];
     const ridToRegion = {};
     for (const region of regions) {
       ridToRegion[region._id] = region;
@@ -280,14 +276,9 @@ App({
     this.globalData.ridToRegion = ridToRegion;
   },
 
-  async fetchCategories(force = false) {
-    let categories = wx.getStorageSync('categories');
-    if (force || !categories) {
-      const resp = await api.getCategory();
-      categories = resp.data ?? [];
-      wx.setStorageSync('categories', categories);
-    }
-    this.globalData.categories = categories;
+  async fetchCategories() {
+    const resp = await api.getCategory();
+    this.globalData.categories = resp.data ?? [];
   },
 
   async waitForReady() {

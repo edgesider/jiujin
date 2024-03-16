@@ -183,8 +183,7 @@ Page({
       return;
     }
     await app.fetchSelfInfo();
-    await app.initTIM();
-    await app.fetchRegions(true);
+    await Promise.all([app.initTIM(), app.fetchRegions()]);
     await wx.hideLoading();
     await wx.showToast({
       title: (isEdit ? '已保存' : '注册成功'),
