@@ -6,10 +6,9 @@
   <view class="group-profile" wx:if="{{showSell}}">
     <!-- <TUIGroup class="group" id="TUIGroup" conversation="{{conversation}}" bind:groupCall="groupCall"
               bind:showConversationList="showConversationList"></TUIGroup> -->
-    <view class="conversation-commodity">
+    <view class="conversation-commodity" bindtap="gotoCommodityDetail" data-commodity="{{commodity}}">
       <image mode="aspectFill" src="{{commodity.img_urls[0]}}"></image>
       <text>{{commodity.content}} ￥{{commodity.price}}</text>
-      <button bind:tap="sendCommodityMessage" wx:if="{{isSeller}}">发送商品：{{commodity.content}}</button>
     </view>
   </view>
   <view

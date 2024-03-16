@@ -184,8 +184,8 @@ exports.main = async (event, context) => {
 
   // 获取用户IM聊天sig
   app.router('genUserSig', async (ctx, next) => {
-    const SECRETKEY = '0e3f256c7f3e15d4f1d29ea274d8f5e1572a73f4ef2ab9e8d8d7e6c2525f737c';
-    const SDKAPPID = 1600012697;
+    const SECRETKEY = 'ac36477ccf70ef504740c61f4db9c304b7c6d021948467633f548d4f40bab4e8';
+    const SDKAPPID = 1600027557;
     const EXPIRETIME = 604800;
     try {
       const { id } = event.params;

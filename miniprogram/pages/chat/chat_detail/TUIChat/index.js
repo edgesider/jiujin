@@ -23,18 +23,18 @@ Component({
   properties: {
     currentConversationID: {
       type: String,
-      value: '',
-      observer(currentConversationID) {
-        this.setData({
-          conversationID: currentConversationID,
-        }, () => {
-          this.init();
-        });
+      observer(newId, oldId) {
+        if (!oldId && newId) {
+          this.setData({
+            conversationID: newId,
+          }, () => {
+            this.init();
+          });
+        }
       },
     },
     unreadCount: {
       type: Number,
-      value: '',
       observer(unreadCount) {
         this.setData({
           unreadCount,
@@ -54,20 +54,6 @@ Component({
 
   lifetimes: {
     attached() {
-      wx.$TUIKit.getGroupAttributes({
-        groupID: this.data.conversationID.substr(5),
-        keyList: ["commodityID", "sellID"]
-      }).then((data) => {
-        const { data: { groupAttributes: attrs } } = data;
-        api.getCommodityInfo({ id: attrs.commodityID }).then((data) => {
-          const { data: commodity } = data;
-          this.setData({
-            showSell: true,
-            commodity: commodity,
-            isSeller: attrs.sellID == app.globalData.self._id,
-          });
-        });
-      });
     },
     ready() {
       const query = wx.createSelectorQuery().in(this);
@@ -82,6 +68,7 @@ Component({
     ...getConstants(),
     conversationName: '',
     conversation: null,
+    commodity: null,
     messageList: [],
     isShow: false,
     showImage: false,
@@ -109,10 +96,22 @@ Component({
   },
 
   methods: {
-    init() {
-      wx.$TUIKit.setMessageRead({ conversationID: this.data.conversationID }).then(() => {
-        logger.log('| TUI-chat | setMessageRead | ok');
+    async init() {
+      console.log(this.data.conversationID);
+      const groupData = await wx.$TUIKit.getGroupAttributes({
+        groupID: this.data.conversationID.substr(5),
+        keyList: ["commodityID", "sellID"]
+      })
+      const { data: { groupAttributes: attrs } } = groupData;
+      api.getCommodityInfo({ id: attrs.commodityID }).then((data) => {
+        const { data: commodity } = data;
+        this.setData({
+          showSell: true,
+          commodity: commodity,
+          isSeller: attrs.sellID === app.globalData.self._id,
+        });
       });
+      await wx.$TUIKit.setMessageRead({ conversationID: this.data.conversationID });
 
       // 手动发送已读消息回执
       // wx.$TUIKit.getMessageList({conversationID: this.data.conversationID}).then(function(imResponse) {
@@ -124,24 +123,22 @@ Component({
       //   });
       // });
 
-      wx.$TUIKit.getConversationProfile(this.data.conversationID).then((res) => {
-        const { conversation } = res.data;
-        this.setData({
-          conversationName: this.getConversationName(conversation),
-          conversation,
-          isShow: conversation.type === wx.TencentCloudChat.TYPES.CONV_GROUP,
-        });
-        if (conversation.type !== wx.TencentCloudChat.TYPES.CONV_GROUP) return;
-        if (!this.data.showTips) {
-          this.setData({
-            showGroupTips: true,
-          });
-        } else {
-          this.setData({
-            showAll: true,
-          });
-        }
+      const { data: { conversation } } = await wx.$TUIKit.getConversationProfile(this.data.conversationID);
+      this.setData({
+        conversationName: this.getConversationName(conversation),
+        conversation,
+        isShow: conversation.type === wx.TencentCloudChat.TYPES.CONV_GROUP,
       });
+      if (conversation.type !== wx.TencentCloudChat.TYPES.CONV_GROUP) return;
+      if (!this.data.showTips) {
+        this.setData({
+          showGroupTips: true,
+        });
+      } else {
+        this.setData({
+          showAll: true,
+        });
+      }
     },
     getConversationName(conversation) {
       if (conversation.type === '@TIM#SYSTEM') {
@@ -161,28 +158,33 @@ Component({
       // 将自己发送的消息写进消息列表里面
       this.selectComponent('#MessageList').updateMessageList(event.detail.message);
     },
-    sendCommodityMessage(event) {
-      const { BUSINESS_ID_TEXT, FEAT_NATIVE_CODE } = constant;
-      const { _id, content, img_urls, price } = this.data.commodity;
-      this.selectComponent('#MessageInput').$handleSendCustomMessage({
-        detail: {
-          payload: {
-            data: JSON.stringify({
-              businessID: BUSINESS_ID_TEXT.ORDER,
-              version: FEAT_NATIVE_CODE.NATIVE_VERSION,
-              title: content,
-              imageUrl: img_urls[0],
-              imageWidth: 135,
-              imageHeight: 135,
-              link: `/pages/commodity_detail/index?id=${_id}`,
-              price: '￥' + price,
-              description: '',
-            })
-          },
-          description: content, // 获取自定义消息的具体描述
-          extension: content, // 自定义消息的具体内容
-        }
-      });
+    // sendCommodityMessage(event) {
+    //   const { BUSINESS_ID_TEXT, FEAT_NATIVE_CODE } = constant;
+    //   const { _id, content, img_urls, price } = this.data.commodity;
+    //   this.selectComponent('#MessageInput').$handleSendCustomMessage({
+    //     detail: {
+    //       payload: {
+    //         data: JSON.stringify({
+    //           businessID: BUSINESS_ID_TEXT.ORDER,
+    //           version: FEAT_NATIVE_CODE.NATIVE_VERSION,
+    //           title: content,
+    //           imageUrl: img_urls[0],
+    //           imageWidth: 135,
+    //           imageHeight: 135,
+    //           link: `/pages/commodity_detail/index?id=${_id}`,
+    //           price: '￥' + price,
+    //           description: '',
+    //         })
+    //       },
+    //       description: content, // 获取自定义消息的具体描述
+    //       extension: content, // 自定义消息的具体内容
+    //     }
+    //   });
+    // },
+    gotoCommodityDetail() {
+      wx.navigateTo({
+        url: `/pages/commodity_detail/index?id=${this.data.commodity._id}`,
+      })
     },
     showMessageErrorImage(event) {
       this.selectComponent('#MessageList').sendMessageError(event);

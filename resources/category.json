@@ -1,7 +1,0 @@
-{"_id":1,"is_deleted":false,"name":"服饰","parent_id":"","sort_order":0.0,"status":0.0,"update_time":{"$date":"2020-08-27T15:25:57.456Z"},"create_time":{"$date":"2020-08-27T15:25:48.703Z"}}
-{"_id":2,"sort_order":0.0,"status":0.0,"update_time":{"$date":"2020-08-27T15:29:08.383Z"},"create_time":{"$date":"2020-08-27T15:29:01.919Z"},"is_deleted":false,"name":"数码","parent_id":""}
-{"_id":3,"sort_order":0.0,"status":0.0,"update_time":{"$date":"2020-08-31T14:29:48.849Z"},"create_time":{"$date":"2020-08-31T14:29:37.529Z"},"is_deleted":false,"name":"洗护/家居","parent_id":""}
-{"_id":4,"update_time":{"$date":"2020-08-31T14:34:07.257Z"},"create_time":{"$date":"2020-08-31T14:33:58.097Z"},"is_deleted":false,"name":"书籍/学习","parent_id":"","sort_order":0.0,"status":0.0}
-{"_id":5,"create_time":{"$date":"2020-08-31T14:37:31.145Z"},"is_deleted":false,"name":"食品","parent_id":"","sort_order":0.0,"status":0.0,"update_time":{"$date":"2020-08-31T14:37:37.473Z"}}
-{"_id":6,"is_deleted":false,"name":"体育/出行","parent_id":"","sort_order":0.0,"status":0.0,"update_time":{"$date":"2020-08-31T14:40:31.553Z"},"create_time":{"$date":"2020-08-31T14:40:22.105Z"}}
-{"_id":7,"create_time":{"$date":"2020-09-06T11:40:26.066Z"},"name":"虚拟产品","sort_order":0.0,"update_time":{"$date":"2020-09-06T11:40:33.498Z"},"is_deleted":false,"status":0.0,"parent_id":""}

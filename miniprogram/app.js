@@ -20,7 +20,7 @@ App({
     config: {
       userID: '', // User ID
       commodity: null,
-      SDKAPPID: 1600012697, // Your SDKAppID
+      SDKAPPID: 1600027557, // Your SDKAppID
     },
     TUIEnabled: false,
     TUISDKReady: false,
@@ -143,7 +143,7 @@ App({
     this.globalData.config.userID = user_id;
 
     const result = await api.genUserSig(user_id);
-    if (result.errno == -1) {
+    if (result.errno === -1) {
       return new Error("生成用户聊天ID失败！");
     }
     const userSig = result.data.userSig;

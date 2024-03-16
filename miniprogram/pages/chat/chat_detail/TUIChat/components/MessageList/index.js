@@ -9,7 +9,7 @@ Component({
       type: Object,
       value: {},
       observer(newVal) {
-        if (!newVal.conversationID) return;
+        if (!newVal?.conversationID) return;
         this.setData({
           conversation: newVal,
         }, () => {
