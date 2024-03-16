@@ -26,7 +26,12 @@
           bindtap="openProfile"
           data-comment="{{comment}}"
         />
-        <view class="right" bindtap="onStartComment" data-comment="{{comment}}">
+        <view
+          class="right"
+          bindtap="onStartComment"
+          bindlongpress="onLongPress"
+          data-comment="{{comment}}"
+        >
           <view class="username">
             {{comment.user.name}}
           </view>
@@ -34,7 +39,6 @@
             class="content"
             bindtap="onStartComment"
             data-comment="{{comment}}"
-            bind:longpress="onDeleteItem"
           >
             {{comment.content}}
           </view>

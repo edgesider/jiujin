@@ -104,7 +104,6 @@
   margin-top: 8rpx;
   width: 100%;
   word-break: break-all;
-  user-select: text;
   line-height: 1.5em;
 }
 

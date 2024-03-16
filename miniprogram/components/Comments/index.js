@@ -115,19 +115,38 @@ Component({
         commentingTo: comment, // 如果是回复则有这个字段
       })
     },
-    async onDeleteItem({ currentTarget: { dataset: { comment } } }) {
-      const { confirm } = await wx.showModal({
-        content: '确认删除此条留言',
+    async onLongPress({ currentTarget: { dataset: { comment } } }) {
+      const options = [];
+      options.push({
+        text: '复制',
+        action: 'copy',
       });
-      if (!confirm) {
-        return;
+      if (comment.user._id === app.globalData.self?._id) {
+        options.push({
+          text: '删除',
+          action: 'delete',
+        });
       }
-      if (comment.type === 'question') {
-        await CommentAPI.delQuestion(comment._id);
-      } else {
-        await CommentAPI.delAnswer(comment._id);
+      const { tapIndex } = await wx.showActionSheet({
+        itemList: options.map(o => o.text),
+      })
+      const action = options[tapIndex].action;
+      if (action === 'copy') {
+        await wx.setClipboardData({ data: comment.content })
+      } else if (action === 'delete') {
+        const { confirm } = await wx.showModal({
+          content: '确认删除此条留言',
+        });
+        if (!confirm) {
+          return;
+        }
+        if (comment.type === 'question') {
+          await CommentAPI.delQuestion(comment._id);
+        } else {
+          await CommentAPI.delAnswer(comment._id);
+        }
+        await this.fetchComments();
       }
-      await this.fetchComments();
     },
     onPopupInput(ev) {
       this.setData({ commentingText: ev.detail.value });
