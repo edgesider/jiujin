@@ -9,6 +9,9 @@ export const InAppMonitor = {
   _INTERVAL: 1000 * 30,
   _subj: rxjs.Subscription.EMPTY,
   _action() {
+    if (!getApp()?.globalData.self) {
+      return;
+    }
     api.updateLastSeenTime().then();
     console.log(`${this._TAG}: in_app=true`);
   },

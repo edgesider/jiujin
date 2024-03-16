@@ -22,7 +22,7 @@ App({
       commodity: null,
       SDKAPPID: 1600027557, // Your SDKAppID
     },
-    TUIEnabled: false,
+    timInitialized: false,
     TUISDKReady: false,
     totalUnread: 0,
     targetCommodity: null,
@@ -89,12 +89,6 @@ App({
   },
 
   async initTIM() {
-    if (this.globalData.TUIEnabled) {
-      console.error('私信重复登录！');
-      return { errno: -1 };
-    }
-    this.globalData.config.userID = getOpenId();
-
     wx.chat = Object.assign(
       {},
       TencentCloudChat.create({
@@ -103,6 +97,16 @@ App({
       TencentCloudChat
     );
 
+    if (this.globalData.timInitialized) {
+      console.error('私信重复登录！');
+      return { errno: -1 };
+    }
+
+    const { self } = this.globalData;
+    if (!this.globalData.self) {
+      return;
+    }
+    this.globalData.config.userID = self._id;
     wx.chat.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
     wx.chat.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
 
@@ -111,24 +115,20 @@ App({
     wx.chat.on(wx.chat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
     wx.chat.on(wx.chat.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
 
-    await this.loginIMWithID(this.globalData.config.userID);
+    await this.loginIMWithID(this.globalData.self._id);
 
-    if (this.globalData.self) {
-      wx.chat.updateMyProfile({
-        nick: this.globalData.self.name,
-        avatar: this.globalData.self.avatar_url,
-        gender: {
-          [GENDER.UNKNOWN]: wx.chat.TYPES.GENDER_UNKNOWN,
-          [GENDER.MALE]: wx.chat.TYPES.GENDER_MALE,
-          [GENDER.FEMALE]: wx.chat.TYPES.GENDER_FEMALE,
-        }[this.globalData.self.sex] ?? wx.chat.TYPES.GENDER_UNKNOWN,
-        allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
-      }).catch((imError) => {
-        console.warn('更新个人资料错误： ', imError); // 更新资料失败的相关信息
-      });
-    }
+    await wx.chat.updateMyProfile({
+      nick: this.globalData.self.name,
+      avatar: this.globalData.self.avatar_url,
+      gender: {
+        [GENDER.UNKNOWN]: wx.chat.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: wx.chat.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: wx.chat.TYPES.GENDER_FEMALE,
+      }[this.globalData.self.sex] ?? wx.chat.TYPES.GENDER_UNKNOWN,
+      allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
+    })
 
-    this.globalData.TUIEnabled = true;
+    this.globalData.timInitialized = true;
   },
 
   async loginIMWithID(id) {
@@ -145,11 +145,11 @@ App({
     this.globalData.TUISDKReady = false;
     this.globalData.config.userID = user_id;
 
-    const result = await api.genUserSig(user_id);
-    if (result.errno === -1) {
+    const sigResp = await api.genUserSig(user_id);
+    if (sigResp.isError) {
       return new Error("生成用户聊天ID失败！");
     }
-    const userSig = result.data.userSig;
+    const userSig = sigResp.data;
 
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
     wx.$chat_userID = user_id;

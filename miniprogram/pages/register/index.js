@@ -1,6 +1,7 @@
 import api, { getOpenId } from "../../api/api";
 import rules from "../../utils/rules";
 import getConstants, { DEFAULT_AVATAR, GENDER } from "../../constants";
+import { sleep } from "../../utils/other";
 
 const app = getApp();
 
@@ -166,9 +167,7 @@ Page({
       return
     }
 
-    wx.showLoading({
-      title: '正在提交中',
-    })
+    await wx.showLoading({ title: '正在提交中', });
 
     const resp = isEdit ? await api.updateUser(params) : await api.registerUser(params);
     if (resp.isError) {
@@ -183,26 +182,15 @@ Page({
       })
       return;
     }
-    await wx.chat.updateMyProfile({
-      nick: name,
-      avatar: avatar_url,
-      gender: {
-        [GENDER.UNKNOWN]: wx.chat.TYPES.GENDER_UNKNOWN,
-        [GENDER.MALE]: wx.chat.TYPES.GENDER_MALE,
-        [GENDER.FEMALE]: wx.chat.TYPES.GENDER_FEMALE,
-      }[sex] ?? wx.chat.TYPES.GENDER_UNKNOWN,
-      allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
-    });
-    await Promise.all([app.fetchSelfInfo(), app.fetchRegions(true)]);
-    wx.hideLoading();
-    wx.showToast({
+    await app.fetchSelfInfo();
+    await app.initTIM();
+    await app.fetchRegions(true);
+    await wx.hideLoading();
+    await wx.showToast({
       title: (isEdit ? '已保存' : '注册成功'),
       icon: 'success',
-      success(res) {
-        setTimeout(() => {
-          wx.navigateBack()
-        }, 1500)
-      }
     });
+    await sleep(1500);
+    await wx.navigateBack()
   }
 })
