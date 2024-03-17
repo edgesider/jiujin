@@ -59,7 +59,7 @@ Component({
             option.handleAction = 'Reject';
             option.handleMessage = '拒绝申请';
           }
-          wx.chat.handleGroupApplication(option)
+          tim.handleGroupApplication(option)
             .then(() => {
               wx.showToast({ title: option.handleAction === 'Agree' ? '已同意申请' : '已拒绝申请' });
             })

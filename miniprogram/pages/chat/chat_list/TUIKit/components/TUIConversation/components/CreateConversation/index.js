@@ -27,7 +27,7 @@ Component({
     },
     // 获取该 UserID 对应的个人资料
     getuserProfile() {
-      wx.chat.getUserProfile({
+      tim.getUserProfile({
         userIDList: [this.data.userID],
       }).then((imRes) => {
         if (imRes.data.length > 0) {

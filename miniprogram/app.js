@@ -8,6 +8,7 @@ import { GENDER, setConstants } from "./constants";
 
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
+import { getImUidFromUid } from "./pages/chat/integrate";
 
 App({
   _ready: false,
@@ -88,7 +89,7 @@ App({
   },
 
   async initTIM() {
-    wx.chat = Object.assign(
+    globalThis.tim = Object.assign(
       {},
       TencentCloudChat.create({
         SDKAppID: this.globalData.config.SDKAPPID,
@@ -106,41 +107,41 @@ App({
       return;
     }
     this.globalData.config.userID = self._id;
-    wx.chat.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
-    wx.chat.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
+    tim.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
+    tim.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
 
     // 监听系统级事件
-    wx.chat.on(wx.chat.EVENT.SDK_READY, this.onSDKReady, this);
-    wx.chat.on(wx.chat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
-    wx.chat.on(wx.chat.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
+    tim.on(tim.EVENT.SDK_READY, this.onSDKReady, this);
+    tim.on(tim.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
+    tim.on(tim.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
 
     await this.loginIMWithID(this.globalData.self._id);
 
-    await wx.chat.updateMyProfile({
+    await tim.updateMyProfile({
       nick: this.globalData.self.name,
       avatar: this.globalData.self.avatar_url,
       gender: {
-        [GENDER.UNKNOWN]: wx.chat.TYPES.GENDER_UNKNOWN,
-        [GENDER.MALE]: wx.chat.TYPES.GENDER_MALE,
-        [GENDER.FEMALE]: wx.chat.TYPES.GENDER_FEMALE,
-      }[this.globalData.self.sex] ?? wx.chat.TYPES.GENDER_UNKNOWN,
-      allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
+        [GENDER.UNKNOWN]: tim.TYPES.GENDER_UNKNOWN,
+        [GENDER.MALE]: tim.TYPES.GENDER_MALE,
+        [GENDER.FEMALE]: tim.TYPES.GENDER_FEMALE,
+      }[this.globalData.self.sex] ?? tim.TYPES.GENDER_UNKNOWN,
+      allowType: tim.TYPES.ALLOW_TYPE_ALLOW_ANY
     })
 
     this.globalData.timInitialized = true;
-    this.globalData.totalUnread = wx.chat.getTotalUnreadMessageCount();
+    this.globalData.totalUnread = tim.getTotalUnreadMessageCount();
   },
 
   async loginIMWithID(id) {
-    if (wx.chat.getLoginUser() === id) {
+    if (tim.getLoginUser() === id) {
       return;
     }
 
-    if (wx.chat.getLoginUser() !== '') {
-      await wx.chat.logout();
+    if (tim.getLoginUser() !== '') {
+      await tim.logout();
     }
 
-    const user_id = 'USER' + id;
+    const user_id = getImUidFromUid(id);
 
     this.globalData.TUISDKReady = false;
     this.globalData.config.userID = user_id;
@@ -154,20 +155,20 @@ App({
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
     wx.$chat_userID = user_id;
     wx.$chat_userSig = userSig;
-    wx.chat.login({
+    tim.login({
       userID: user_id,
       userSig
     });
 
     return new Promise((ok) => {
-      wx.chat.on(wx.chat.EVENT.SDK_READY, ok, this);
+      tim.on(tim.EVENT.SDK_READY, ok, this);
     });
   },
 
   async onSDKReady(event) {
     // 监听到此事件后可调用 SDK 发送消息等 API，使用 SDK 的各项功能。
     this.globalData.TUISDKReady = true;
-    this.globalData.totalUnread = await wx.chat.getTotalUnreadMessageCount();
+    this.globalData.totalUnread = await tim.getTotalUnreadMessageCount();
     this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
@@ -186,13 +187,13 @@ App({
 
   async onMessageReceived(event) {
     const { conversationID } = event.data[0];
-    const { data: { messageList } } = await wx.chat.getMessageList({ conversationID });
+    const { data: { messageList } } = await tim.getMessageList({ conversationID });
     if (messageList.length <= 2) {
       const msg = messageList[0];
       const { from, payload } = msg;
       const text = payload.hasOwnProperty("text") ? payload.text : "[消息]";
-      const { data: user_profile } = await wx.chat.getUserProfile({ userIDList: [from] });
-      const { data: { groupAttributes: attrs } } = await wx.chat.getGroupAttributes({
+      const { data: user_profile } = await tim.getUserProfile({ userIDList: [from] });
+      const { data: { groupAttributes: attrs } } = await tim.getGroupAttributes({
         groupID: conversationID.substr(5),
         keyList: ["commodityID"]
       });

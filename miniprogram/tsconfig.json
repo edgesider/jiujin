@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "exnext",
+    "target": "es5",
+    "sourceMap": true,
+    "lib": ["es6"],
+    "strict": true,
+    "allowJs": true
+  },
+  "include": [
+    "./custom.d.ts",
+    "./**/*.js",
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

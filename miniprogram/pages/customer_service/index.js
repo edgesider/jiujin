@@ -31,11 +31,11 @@ Page({
     const { self } = app.globalData;
     const user_id = 'REPY' + self._id + id;
     app.globalData.config.commodity = commodity;
-    wx.chat.updateMyProfile({
+    tim.updateMyProfile({
       nick: self.name + '-' + desc,
       avatar: self.avatar_url,
-      gender: self.sex == 0 ? wx.chat.TYPES.GENDER_MALE : wx.chat.TYPES.GENDER_FEMALE,
-      allowType: wx.chat.TYPES.ALLOW_TYPE_ALLOW_ANY
+      gender: self.sex == 0 ? tim.TYPES.GENDER_MALE : tim.TYPES.GENDER_FEMALE,
+      allowType: tim.TYPES.ALLOW_TYPE_ALLOW_ANY
     }).then((imResponse) => {
       console.log(imResponse.data); // 更新资料成功
     }).catch((imError) => {

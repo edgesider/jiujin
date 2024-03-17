@@ -89,7 +89,7 @@ npm install @tencentcloud/chat tim-upload-plugin tim-profanity-filter-plugin -s
 ### 步骤3：引入 TUIKit 组件
 
 ##### 方式一： 主包引入 （适用于业务逻辑简单的小程序）
-在 page 页面引用 TUIKit 组件，为此您需要分别修改 index.wxml 、index.js 和 index.json。
+在 page 页面引用 TUIKit 组件，为此您需要分别修改 index.wxml 、index.ts 和 index.json。
 
 wxml 文件
 
@@ -138,7 +138,7 @@ Page({
     wx.$chat_SDKAppID = this.data.config.SDKAPPID;
     wx.$chat_userID = this.data.config.userID;
     wx.$chat_userSig = userSig;
-    wx.chat = TencentCloudChat;
+    tim = TencentCloudChat;
     wx.$TUIKit.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
     wx.$TUIKit.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
     wx.$TUIKit.login({
@@ -149,10 +149,10 @@ Page({
       key: 'currentUserID',
       data: [],
     });
-    wx.$TUIKit.on(wx.chat.EVENT.SDK_READY, this.onSDKReady, this);
+    wx.$TUIKit.on(tim.EVENT.SDK_READY, this.onSDKReady, this);
   },
   onUnload() {
-    wx.$TUIKit.off(wx.chat.EVENT.SDK_READY, this.onSDKReady, this);
+    wx.$TUIKit.off(tim.EVENT.SDK_READY, this.onSDKReady, this);
   },
   onSDKReady() {
     const TUIKit = this.selectComponent('#TUIKit');
@@ -220,7 +220,7 @@ Page({
 
 <img  src="https://qcloudimg.tencent-cloud.cn/raw/b6a8236cce4a2143f886fa141ee106a5.png"/>
 
-5. 在分包内引用 TUIKit组件，为此需要分别修改分包内部 index.wxml 、index.js 、index.json 文件，以及 app.js 文件。
+5. 在分包内引用 TUIKit组件，为此需要分别修改分包内部 index.wxml 、index.ts 、index.json 文件，以及 app.js 文件。
 
 wxml 文件
 
@@ -285,7 +285,7 @@ App({
     });
     const userSig = genTestUserSig(this.globalData.config).userSig
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
-    wx.chat = TencentCloudChat;
+    tim = TencentCloudChat;
     wx.$chat_userID = this.globalData.config.userID;
     wx.$chat_userSig = userSig;
     wx.$TUIKit.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
@@ -295,10 +295,10 @@ App({
       userSig
     });
     // 监听系统级事件
-    wx.$TUIKit.on(wx.chat.EVENT.SDK_READY, this.onSDKReady, this);
+    wx.$TUIKit.on(tim.EVENT.SDK_READY, this.onSDKReady, this);
   },
   onUnload() {
-    wx.$TUIKit.off(wx.chat.EVENT.SDK_READY, this.onSDKReady, this);
+    wx.$TUIKit.off(tim.EVENT.SDK_READY, this.onSDKReady, this);
   },
   globalData: {
     config: {
@@ -313,7 +313,7 @@ App({
   }
 });
 ```
-6. 按需载入分包，您需要修改主包 pages 下的 index.wxml 、index.js。
+6. 按需载入分包，您需要修改主包 pages 下的 index.wxml 、index.ts。
 
 wxml 文件 
 

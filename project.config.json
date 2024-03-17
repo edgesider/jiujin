@@ -28,7 +28,11 @@
     "useCompilerModule": false,
     "userConfirmedUseCompilerModuleSwitch": false,
     "ignoreUploadUnusedFiles": true,
-    "ignoreDevUnusedFiles": true
+    "ignoreDevUnusedFiles": true,
+    "useCompilerPlugins": [
+      "typescript",
+      "less"
+    ]
   },
   "appid": "wxc89ea56f592e89c4",
   "projectname": "JiuJin",
@@ -36,17 +40,6 @@
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
-  "condition": {
-    "miniprogram": {
-      "list": [
-        {
-          "name": "db guide",
-          "pathName": "pages/databaseGuide/databaseGuide",
-          "query": ""
-        }
-      ]
-    }
-  },
   "compileType": "miniprogram",
   "srcMiniprogramRoot": "miniprogram/",
   "packOptions": {
@@ -56,5 +49,6 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "condition": {}
 }
