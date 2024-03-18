@@ -11,7 +11,7 @@ const version = wx.getAccountInfoSync().miniProgram.envVersion;
 export const Axios = axios.create({
   baseURL: (version === 'release' || version === 'trial')
     ? 'https://lllw.ykai.cc'
-    : 'http://192.168.2.218:8080/',
+    : 'http://localhost:8080/',
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',
