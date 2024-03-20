@@ -81,7 +81,8 @@ App({
     this._readyWaiters.forEach(waiter => waiter());
   },
 
-  onShow() {
+  async onShow() {
+    await this.waitForReady();
     InAppMonitor.start();
   },
   onHide() {
