@@ -9,9 +9,10 @@ axios.defaults.adapter = mpAdapter;
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  baseURL: (version === 'release' || version === 'trial')
-    ? 'https://lllw.ykai.cc'
-    : 'http://localhost:8080/',
+  baseURL: 'https://lllw.ykai.cc',
+  // baseURL: (version === 'release' || version === 'trial')
+  //   ? 'https://lllw.ykai.cc'
+  //   : 'http://localhost:8080/',
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',
