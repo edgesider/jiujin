@@ -1,5 +1,6 @@
-import getConstants from "../constants";
-import { assertRegistered } from "../utils/other";
+// custom-tab-bar/index.js
+import getConstants from '../constants';
+import { assertRegistered } from '../utils/other';
 
 Component({
   data: {
@@ -12,6 +13,8 @@ Component({
         pagePath: '/pages/home/index',
         iconClass: 'cuIcon-home',
         selectedIconClass: 'cuIcon-homefill',
+        iconPath: '/images/home0.png',
+        selectedIconPath: '/images/home1.png',
         text: '首页'
       },
       {
@@ -19,25 +22,33 @@ Component({
         iconClass: 'cuIcon-question',
         toastText: '敬请期待！',
         text: '互助',
+        iconPath: '/images/book0.png',
+        selectedIconPath: '/images/book1.png'
       },
       {
         pagePath: '/pages/commodity_publish/index',
         iconClass: 'cuIcon-add',
         useNavigateTo: true, // 是否使用navigateTo打开新的页面
         text: '发布',
+        iconPath: '/images/add0.png',
+        selectedIconPath: '/images/add1.png'
       },
       {
-        pagePath: "/pages/chat/chat_list/index",
-        iconClass: "cuIcon-message",
-        selectedIconClass: "cuIcon-messagefill",
-        text: "私信",
+        pagePath: '/pages/chat/chat_list/index',
+        iconClass: 'cuIcon-message',
+        selectedIconClass: 'cuIcon-messagefill',
+        text: '私信',
         requireRegistered: true,
+        iconPath: '/images/chat0.png',
+        selectedIconPath: '/images/chat1.png'
       },
       {
         pagePath: '/pages/me/index',
         iconClass: 'cuIcon-my',
         selectedIconClass: 'cuIcon-myfill',
-        text: '我的'
+        text: '我的',
+        iconPath: '/images/my0.png',
+        selectedIconPath: '/images/my1.png'
       },
     ],
     url: '',
@@ -50,7 +61,7 @@ Component({
         this.setData({ selected: i, url })
       }
       getApp().globalData.onUnreadCountUpdate = (count) => {
-        console.log("未读消息数改变为", count);
+        console.log('未读消息数改变为', count);
         this.setData({
           unreadCount: count
         });

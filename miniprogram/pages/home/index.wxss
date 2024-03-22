@@ -1,3 +1,7 @@
+page {
+  background-color: white !important;
+}
+
 .top-container {
   position: fixed;
   top: 0;
@@ -17,7 +21,11 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
+  /*padding-left: var(--logo-width);*/
+  /*border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
+
+  --logo-width: 145rpx;
+  --logo-ratio: calc(50 / 90);
 }
 
 .top .app-logo {
@@ -25,32 +33,28 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  margin-left: 12rpx;
-
-  --logo-width: 130rpx;
-  --ratio: calc(50 / 90);
+  margin-left: 20rpx;
   width: var(--logo-width);
-  height: calc(var(--ratio) * var(--logo-width));
+  height: calc(var(--logo-ratio) * var(--logo-width));
 }
 
 .top .search {
   position: relative;
   z-index: inherit;
-  background-color: #eee;
   line-height: 48rpx;
   height: 64rpx;
-  width: 40%;
+  width: 100%;
+  margin: 0 20rpx;
   border-radius: 32rpx;
-  font-size: 30rpx;
-  color: black;
-  display: flex;
-  align-items: center;
+  border: 1px solid #21AC39
 }
 
-.top .search text {
+.top .search image {
   position: absolute;
-  top: 8rpx;
-  right: 20rpx;
+  width: 36rpx;
+  height: 36rpx;
+  top: 13rpx;
+  left: 20rpx;
 }
 
 .top-swiper {
@@ -58,48 +62,93 @@
   z-index: -1;
   width: 100%;
   height: calc(32vw);
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
+  /*border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
 }
 
-.regions-filter {
+/*.regions-filter {*/
+/*  position: sticky;*/
+/*  top: 0;*/
+/*  background: white;*/
+/*  height: 96rpx;*/
+/*  z-index: 1;*/
+/*  flex: 0;*/
+/*  width: 100%;*/
+/*  display: flex;*/
+/*  overflow-x: scroll;*/
+/*  padding: 12rpx;*/
+/*  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
+/*}*/
+
+/*.regions-filter .region {*/
+/*  margin: 8rpx;*/
+/*  border-radius: 48rpx;*/
+/*  background: rgba(0, 0, 0, 0.1);*/
+/*  display: flex;*/
+/*  justify-content: center;*/
+/*  align-items: center;*/
+/*  padding: 12rpx 28rpx;*/
+/*}*/
+
+/*.regions-filter .region .name {*/
+/*  font-size: 24rpx;*/
+/*  color: black;*/
+/*  word-break: keep-all;*/
+/*}*/
+
+/*.regions-filter .region-selected {*/
+/*  font-weight: bold;*/
+/*  color: black;*/
+/*  word-break: keep-all;*/
+/*  background-color: rgb(161, 227, 60);*/
+/*}*/
+
+/*.regions-filter .region-selected .name {*/
+/*  font-weight: bold;*/
+/*}*/
+
+.region-filter {
+  background: white;
+  z-index: 1;
   position: sticky;
   top: 0;
-  background: white;
-  height: 96rpx;
-  z-index: 1;
-  flex: 0;
+  padding: 12rpx;
   width: 100%;
   display: flex;
-  overflow-x: scroll;
-  padding: 12rpx;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
 }
 
-.regions-filter .region {
-  margin: 8rpx;
-  border-radius: 48rpx;
-  background: rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12rpx 28rpx;
+.region-filter scroll-view {
+  width: 660rpx;
+  background: #f6f6f6;
+  border-radius: 10rpx;
+  white-space: nowrap;
 }
 
-.regions-filter .region .name {
-  font-size: 24rpx;
-  color: black;
-  word-break: keep-all;
+.region-filter .item-on {
+  margin: 0 18rpx;
+  border-bottom: 5rpx solid #FAC000;
+  line-height: 50rpx;
+  font-size: 27rpx;
+  color: #21AC39;
+  font-weight: 500;
+  font-style: italic;
+  display: inline-block;
 }
 
-.regions-filter .region-selected {
-  font-weight: bold;
-  color: black;
-  word-break: keep-all;
-  background-color: rgb(161, 227, 60);
+.region-filter .item {
+  padding: 0 18rpx;
+  line-height: 60rpx;
+  font-size: 27rpx;
+  color: #80899a;
+  font-weight: 500;
+  font-style: italic;
+  display: inline-block;
 }
 
-.regions-filter .region-selected .name {
-  font-weight: bold;
+.switch {
+  width: 50rpx;
+  height: 50rpx;
+  padding: 5rpx 0 5rpx 10rpx;
+  /* 内边距有效提高点击范围，对图标大小影响 */
 }
 
 /* noinspection CssUnresolvedCustomProperty */
@@ -108,7 +157,7 @@
   height: 100%;
   flex-shrink: 0;
 
-  --gap: 24rpx;
+  --gap: 12rpx;
   padding: var(--gap);
   gap: var(--gap);
   display: flex;
@@ -123,7 +172,7 @@
 .list .card {
   width: calc((100% - var(--gap)) / 2);
   border-radius: 16rpx;
-  box-shadow: 0 0 16rpx rgba(0, 0, 0, 0.3)
+  box-shadow: 0px 1px 2px 0px #17007333;
 }
 
 .bottom {

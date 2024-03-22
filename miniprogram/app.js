@@ -49,7 +49,7 @@ App({
         // 自定义顶栏高度
         const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
         // 底部导航栏高度
-        const TabBarHeight = 52;
+        const TabBarHeight = 72;
         // 底部指示器高度（小白条）
         const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
         const constants = Object.freeze({
@@ -65,6 +65,7 @@ App({
         });
         Object.assign(this.globalData, constants)
         setConstants(constants)
+        console.log(menuBtn, e.screenWidth);
       }
     })
 

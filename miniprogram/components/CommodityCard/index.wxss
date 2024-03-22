@@ -1,83 +1,62 @@
-.root {
-  height: 330rpx;
-  border-radius: 16rpx;
-  position: relative;
-}
-
-.bg {
-  position: absolute;
-  left: 0;
-  top: 0;
+.mall {
   width: 100%;
-  height: 100%;
-  border-radius: 16rpx;
+  background: #ffffff;
+  border-radius: 20rpx;
+  float: left;
+  font-size: 0;
+  /* 去除组件间的缝隙 */
 }
 
-.bg-placeholder {
-  background: rgba(0, 0, 0, 0.1);
+.cover {
+  width: 100%;
+  height: 250rpx;
+  border-top-left-radius: 20rpx;
+  border-top-right-radius: 20rpx;
+}
+
+.name {
+  width: 96%;
+  margin: 2%;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1f1f1d;
+}
+
+.Price {
+  float: right;
+  width: 96%;
+  height: 50rpx;
+  margin: 0 2%;
+}
+
+.price_rmb {
+  font-size: 22rpx;
+  font-style: italic;
+  color: #21AC39;
+  line-height: 60rpx;
+  font-weight: bold;
+  float: left;
 }
 
 .price {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: red;
-  background: rgba(255, 255, 255);
-  border-radius: 16rpx;
-  padding: 12rpx 16rpx;
-
-  margin: 8rpx;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.quality {
-  font-size: 32rpx;
+  font-size: 38rpx;
   font-style: italic;
-  color: black;
-  background: rgba(255, 255, 255);
-  border-radius: 16rpx;
-  padding: 12rpx 16rpx;
-
-  margin: 8rpx;
-  position: absolute;
-  right: 0;
-  top: 0;
+  color: #21AC39;
+  font-weight: bold;
+  float: left;
 }
 
-.bottom {
-  width: 100%;
-  height: fit-content;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8rpx;
-
-  padding: 8rpx;
+.location {
+  color: #80899a;
+  font-size: 20rpx;
+  line-height: 50rpx;
+  height: 50rpx;
+  float: right;
 }
 
-.bottom .content {
-  height: calc(1em + 8rpx);
-  font-size: 24rpx;
-  color: white;
-  background: rgba(0, 0, 0);
-  border-radius: 8rpx;
-  padding: 4rpx 8rpx;
-  flex-grow: 1;
-  overflow: hidden;
-  word-break: keep-all;
-  text-overflow: ellipsis;
-}
-
-.bottom .region {
-  font-size: 24rpx;
-  color: white;
-  background: rgba(0, 0, 0);
-  border-radius: 8rpx;
-  flex-shrink: 0;
-  padding: 4rpx 8rpx;
+.location_icon {
+  width: 20rpx;
+  height: 30rpx;
+  margin: 10rpx 0;
+  float: right;
 }

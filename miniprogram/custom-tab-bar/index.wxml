@@ -1,19 +1,11 @@
-<view class="root" data-url="{{url}}">
-  <view class="tab-bar" style="height: {{TabBarHeight}}px">
-    <view
-      class="tab-bar-item"
-      wx:for="{{list}}" wx:key="index"
-      data-index="{{index}}"
-      data-data="{{item}}"
-      bindtap="switchTab"
-    >
-      <view
-        class="{{selected === index ? item.selectedIconClass : item.iconClass}} icon"
-        style="color: {{selected === index ? selectedColor: color}}">
-        <view class="unread-count" wx:if="{{index === 3 && unreadCount > 0}}">{{unreadCount > 99 ? "99+" : unreadCount}}</view>
-      </view>
-      <view class="text" style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
-    </view>
-  </view>
-  <view class="safe-area" />
+<!--custom-tab-bar/index.wxml-->
+<view class="tab-bar" style="height: {{TabBarHeight}}px; margin-bottom: {{BottomIndicatorHeight}}px;">
+  <image
+    src="{{selected === index ? item.selectedIconPath : item.iconPath}}"
+    class="tab-bar-item tab-bar-item-icon"
+    wx:for="{{list}}" wx:key="index"
+    data-index="{{index}}"
+    data-data="{{item}}"
+    bindtap="switchTab"
+    mode="widthFix"></image>
 </view>
