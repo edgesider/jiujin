@@ -51,9 +51,9 @@ page {
 
 .top .search image {
   position: absolute;
-  width: 36rpx;
-  height: 36rpx;
-  top: 13rpx;
+  width: 32rpx;
+  height: 32rpx;
+  top: 15rpx;
   left: 20rpx;
 }
 
@@ -64,47 +64,6 @@ page {
   height: calc(32vw);
   /*border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
 }
-
-/*.regions-filter {*/
-/*  position: sticky;*/
-/*  top: 0;*/
-/*  background: white;*/
-/*  height: 96rpx;*/
-/*  z-index: 1;*/
-/*  flex: 0;*/
-/*  width: 100%;*/
-/*  display: flex;*/
-/*  overflow-x: scroll;*/
-/*  padding: 12rpx;*/
-/*  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
-/*}*/
-
-/*.regions-filter .region {*/
-/*  margin: 8rpx;*/
-/*  border-radius: 48rpx;*/
-/*  background: rgba(0, 0, 0, 0.1);*/
-/*  display: flex;*/
-/*  justify-content: center;*/
-/*  align-items: center;*/
-/*  padding: 12rpx 28rpx;*/
-/*}*/
-
-/*.regions-filter .region .name {*/
-/*  font-size: 24rpx;*/
-/*  color: black;*/
-/*  word-break: keep-all;*/
-/*}*/
-
-/*.regions-filter .region-selected {*/
-/*  font-weight: bold;*/
-/*  color: black;*/
-/*  word-break: keep-all;*/
-/*  background-color: rgb(161, 227, 60);*/
-/*}*/
-
-/*.regions-filter .region-selected .name {*/
-/*  font-weight: bold;*/
-/*}*/
 
 .region-filter {
   background: white;

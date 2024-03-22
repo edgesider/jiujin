@@ -1,4 +1,7 @@
-<view class="top-bar" style="height: {{TopBarHeight}}px; padding-top: {{StatusBar}}px;">
+<view
+  class="top-bar"
+  style="height: {{TopBarHeight}}px; padding-top: {{StatusBar}}px; padding-right: {{ScreenSize[0] - MenuButton.left + 14}}px;"
+>
   <text class="back cuIcon-back" bind:tap="onBack"></text>
   <view class="input-container" style="width: calc(100% - {{MenuButton.width - 8}}px - 20rpx);">
     <input
@@ -11,13 +14,14 @@
       bindinput="onInput"
       bindconfirm="onConfirm"
     />
+    <image class="search-icon" src="/images/search.png" />
   </view>
-  <view style="height: 100%; width: {{MenuButton.width + 16}}px; justify-self: flex-end" />
 </view>
 
 <view class="content">
   <view wx:if="{{state === 'inputting'}}" class="inputting">
-    <view class="title">历史记录
+    <view class="title">
+      <text>搜索历史</text>
       <text class="cuIcon-delete histories-clear" bindtap="onHistoriesClear">清除</text>
     </view>
     <view class="histories">
@@ -29,17 +33,9 @@
         data-idx="{{idx}}"
         bindtap="onHistoryClick"
       >
-        <text>{{item}}</text>
+        {{item}}
       </view>
     </view>
-    <!--    <view class="title">过滤</view>-->
-    <!--    <view class="filter">-->
-    <!--      <view-->
-    <!--        wx:if="{{self.sex !== null && self.sex !== GENDER.UNKNOWN}}"-->
-    <!--        class="text-check {{onlyMyGender ? 'checked' : ''}}"-->
-    <!--        bindtap="onOnlyMyGenderClick"-->
-    <!--      >仅{{GENDER_NAME_MAP[self.sex]}}性</view>-->
-    <!--    </view>-->
   </view>
   <view wx:elif="{{state === 'shown' || state === 'loading'}}" class="commodity-list-container">
     <view class="list" wx:if="{{commodityList.length > 0}}">

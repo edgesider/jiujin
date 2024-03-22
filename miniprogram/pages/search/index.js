@@ -23,7 +23,10 @@ Page({
   fetchToken: 0,
 
   async onLoad() {
-    const histories = wx.getStorageSync('searchHistories') ?? [];
+    let histories = wx.getStorageSync('searchHistories') ?? [];
+    if (!Array.isArray(histories)) {
+      histories = [];
+    }
     this.setData({
       self: app.globalData.self,
       histories,

@@ -1,11 +1,10 @@
 page {
-  background-color: #fff;
+  background-color: #fff !important;
 }
 
 .top-bar {
   z-index: 1;
   width: 100%;
-  background-color: #ddd;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -20,6 +19,7 @@ page {
 }
 
 .top-bar .input-container {
+  position: relative;
   flex-grow: 1;
   height: 64rpx;
   border-radius: 32rpx;
@@ -28,8 +28,17 @@ page {
   flex-direction: row;
   justify-content: stretch;
   align-items: center;
-  padding: 0 20rpx;
-  border: 2rpx rgba(0, 0, 0, .5) solid;
+  padding-left: 64rpx;
+  padding-right: 24rpx;
+  border: 1px solid #21AC39;
+}
+
+.top-bar .search-icon {
+  position: absolute;
+  width: 32rpx;
+  height: 32rpx;
+  top: 15rpx;
+  left: 20rpx;
 }
 
 .top-bar .input {
@@ -39,7 +48,6 @@ page {
 
 .content {
   width: 100%;
-  background-color: #fff;
   display: flex;
   flex-direction: column;
 }
@@ -55,7 +63,7 @@ page {
 }
 
 .inputting .title {
-  font-size: 28rpx;
+  font-size: 36rpx;
   font-weight: bold;
   margin: 18rpx 0;
   position: relative;
@@ -67,22 +75,28 @@ page {
   justify-content: flex-start;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 12rpx;
+  gap: 18rpx;
 }
 
 .histories-item {
-  font-size: 24rpx;
+  height: 68rpx;
+  line-height: 1;
+  font-size: 36rpx;
+  color: #979797;
   width: fit-content;
-  background: rgba(0, 0, 0, .1);
-  border-radius: 4rpx;
+  background: #f1f1f1;
+  border-radius: 8rpx;
   padding: 8rpx 12rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .histories-clear {
   margin-right: 18rpx;
   position: absolute;
   right: 0;
-  font-size: 12rpx;
+  font-size: 28rpx;
   font-weight: normal;
 }
 
