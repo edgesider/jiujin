@@ -21,6 +21,14 @@ Component({
       await wx.navigateTo({
         url: `../commodity_detail/index?id=${this.properties.commodity._id}`
       })
+    },
+    async onLongPress() {
+      const { tapIndex } = await wx.showActionSheet({
+        itemList: ['举报']
+      });
+      if (tapIndex === 0) {
+        await wx.showToast({ title: '已举报' });
+      }
     }
   },
   attached() {

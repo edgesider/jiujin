@@ -1,4 +1,8 @@
-<view bindtap="gotoDetail" class="mall">
+<view
+  class="mall"
+  bindtap="gotoDetail"
+  bindlongpress="onLongPress"
+>
   <image class="cover" src="{{commodity.img_urls[0]}}" mode="aspectFill"></image>
   <view class="name">{{desc}}</view>
   <view class="Price">

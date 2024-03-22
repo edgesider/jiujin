@@ -4,7 +4,7 @@ import api from '../../api/api';
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
-const DEFAULT_REGION_ID = 1
+const DEFAULT_REGION_ID = 6
 
 let needRefresh = false;
 
@@ -13,10 +13,6 @@ export function setNeedRefresh() {
 }
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     ...getConstants(),
     scrollTop: 0,
@@ -36,6 +32,15 @@ Page({
     pullDownRefreshing: false,
 
     banners: [],
+
+    showRankingPopup: false,
+    rankingOptions: [
+      { key: 'polish_time-desc', text: '时间由近到远' },
+      { key: 'polish_time-asc', text: '时间由远到近' },
+      { key: 'price-asc', text: '价格由低到高' },
+      { key: 'price-desc', text: '价格由高到低' },
+    ],
+    chosenRankingKey: 'polish_time-desc',
   },
 
   fetchToken: 0,
@@ -133,12 +138,11 @@ Page({
       commodityList: append ? oldList : [],
     });
     try {
+      const [orderBy, order] = this.data.chosenRankingKey.split('-');
       const resp = await api.getCommodityList({
-        rid,
-        start,
-        count: COUNT_PER_PAGE,
-        is_mine: false,
-        status: COMMODITY_STATUS_SELLING
+        rid, is_mine: false, status: COMMODITY_STATUS_SELLING,
+        start, count: COUNT_PER_PAGE,
+        orderBy, order,
       });
       if (resp.isError) {
         await wx.showToast({ title: '网络错误' })
@@ -245,6 +249,21 @@ Page({
     wx.redirectTo({
       url: '../register/index',
     })
+  },
+
+  onClickRankingSwitch() {
+    this.setData({
+      showRankingPopup: !this.data.showRankingPopup
+    });
+  },
+
+  onRankingKeyChanged(event) {
+    const { rankingKey } = event.currentTarget.dataset;
+    this.setData({
+      showRankingPopup: false,
+      chosenRankingKey: rankingKey
+    });
+    this.fetchList();
   },
 
   onShareAppMessage(options) {

@@ -108,7 +108,7 @@ page {
 
 .region-filter {
   background: white;
-  z-index: 1;
+  z-index: 5;
   position: sticky;
   top: 0;
   padding: 12rpx;
@@ -149,6 +149,27 @@ page {
   height: 50rpx;
   padding: 5rpx 0 5rpx 10rpx;
   /* 内边距有效提高点击范围，对图标大小影响 */
+}
+
+.ranking {
+  z-index: 4;
+  position: absolute;
+  right: 15rpx;
+  top: 330rpx;
+  background: #ffffff;
+  border: 2rpx solid #80899a;
+  padding: 35rpx 23rpx;
+  border-radius: 15rpx;
+}
+
+.ranking-on {
+  line-height: 70rpx;
+  color: #000000;
+}
+
+.ranking-off {
+  line-height: 70rpx;
+  color: #80899a;
 }
 
 /* noinspection CssUnresolvedCustomProperty */

@@ -39,16 +39,28 @@
 
     <view class="region-filter">
       <scroll-view scroll-x>
-        <view class="{{selectedRegionIndex === idx ?'item-on':'item'}}"
-              wx:for="{{regions}}"
-              wx:key="_id"
-              wx:for-index="idx"
-              bind:tap="onRegionClick"
-              data-idx="{{idx}}">
+        <view
+          class="{{selectedRegionIndex === idx ?'item-on':'item'}}"
+          wx:for="{{regions}}"
+          wx:key="_id"
+          wx:for-index="idx"
+          bind:tap="onRegionClick"
+          data-idx="{{idx}}"
+        >
           {{item.name}}
         </view>
       </scroll-view>
-      <image class="switch" src="/images/switch.png" bind:tap="switch"></image>
+      <image class="switch" src="/images/switch.png" bind:tap="onClickRankingSwitch" />
+    </view>
+
+    <view class="ranking" wx:if="{{showRankingPopup}}">
+      <view
+        wx:for="{{rankingOptions}}" wx:key="unique" wx:for-index="idx"
+        class="{{chosenRankingKey === item.key ? 'ranking-on' : 'ranking-off'}}"
+        bind:tap="onRankingKeyChanged" data-ranking-key="{{item.key}}"
+      >
+        {{item.text}}
+      </view>
     </view>
 
     <view class="list">
