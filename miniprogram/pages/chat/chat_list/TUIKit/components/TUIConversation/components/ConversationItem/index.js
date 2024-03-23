@@ -142,7 +142,7 @@ Component({
         const resp = api.getCommodityInfo({ id: this.data.commodityID });
         app.globalData.config.commodity = resp.data;
       }
-      // this.triggerEvent('handleRoute', {});
+      this.triggerEvent('handleRoute', {});
     },
     async setUserAvatar(conversation) {
       if (conversation.type === 'GROUP') {
