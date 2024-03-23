@@ -147,7 +147,11 @@ Component({
           count: 15,
         }).then((res) => {
           this.showMoreHistoryMessageTime(res.data.messageList);
-          const { messageList } = res.data; // 消息列表。
+          let { messageList } = res.data; // 消息列表。
+          // 过滤掉不需要看到的消息
+          messageList = messageList.filter(msg => {
+            return msg.type !== 'TIMCustomElem';
+          });
           this.data.nextReqMessageID = res.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
           this.data.isCompleted = res.data.isCompleted; // 表示是否已经拉完所有消息。
           this.data.messageList = [...messageList, ...this.data.messageList];

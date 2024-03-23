@@ -11,7 +11,6 @@ Component({
     conversation: {
       type: Object,
       observer(newVal, oldVal) {
-        console.log('new:old', newVal, oldVal);
         if (!oldVal && newVal && Object.keys(newVal).length > 0) {
           this.setData({ conversation: newVal, });
           this.initCommodity();
