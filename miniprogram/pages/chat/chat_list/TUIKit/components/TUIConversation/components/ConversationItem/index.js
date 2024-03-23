@@ -1,5 +1,7 @@
 import api from '../../../../../../../../api/api';
 import { caculateTimeago } from '../../../../../../utils/common';
+import { getImUidFromUid } from '../../../../../../../../utils/im';
+
 const app = getApp();
 
 Component({
@@ -64,7 +66,6 @@ Component({
   lifetimes: {
     attached() {
     },
-
   },
   pageLifetimes: {
     // 展示已经置顶的消息和更新时间戳
@@ -136,43 +137,40 @@ Component({
         return conversation.groupProfile.avatar || '../../../../static/assets/group-avatar.svg';
       }
     },
-    onTap(event){
-      if (this.data.isSeller){
+    onTap(event) {
+      if (this.data.isSeller) {
         const resp = api.getCommodityInfo({ id: this.data.commodityID });
         app.globalData.config.commodity = resp.data;
       }
-      this.triggerEvent('handleRoute', {});
+      // this.triggerEvent('handleRoute', {});
     },
-    async setUserAvatar(conversation){
+    async setUserAvatar(conversation) {
       if (conversation.type === 'GROUP') {
         const { data: { groupAttributes: attrs } } = await tim.getGroupAttributes({
           groupID: conversation.groupProfile.groupID,
-          keyList: [ "commodityID", "sellID" ]
+          keyList: ["commodityID", "sellID"]
         });
-        tim.getGroupMemberList({
+        const imResponse = await tim.getGroupMemberList({
           groupID: conversation.groupProfile.groupID,
           role: tim.GRP_MBR_ROLE_MEMBER,
           count: 2,
           offset: 0
-        }).then((imResponse) => {
-          const list = imResponse.data.memberList;
-          if (list.length < 2){
-            this.setData({
-              setUserAvatar: this.data.setConversationAvatar
-            });
-            return;
-          }
-          const { self } = app.globalData;
-          // 取出对方的头像
-          const idx = ("USER" + self._id == list[0].userID ? 1 : 0);
-          const avatar = list[idx].avatar;
+        });
+        const list = imResponse.data.memberList;
+        if (list.length < 2) {
           this.setData({
-            setUserAvatar: avatar,
-            isSeller: self._id == attrs.sellID,
-            commodityID: attrs.commodityID,
+            setUserAvatar: this.data.setConversationAvatar
           });
-        }).catch((imError) => {
-          console.warn('getGroupMemberList error:', imError);
+          return;
+        }
+        const { self } = app.globalData;
+        // 取出对方的头像
+        const idx = (getImUidFromUid(self._id) === list[0].userID ? 1 : 0);
+        const avatar = list[idx].avatar;
+        this.setData({
+          setUserAvatar: avatar,
+          isSeller: self._id === attrs.sellID,
+          commodityID: attrs.commodityID,
         });
         return;
       }
@@ -267,7 +265,7 @@ Component({
           });
       }
 
-      if (this.data.conversation.type === 'GROUP')  {
+      if (this.data.conversation.type === 'GROUP') {
         const { groupID } = this.data.conversation.groupProfile;
         // 群消息免打扰，一般的实现是在线接收消息，离线不接收消息（在有离线推送的情况下）
         tim.setMessageRemindType({

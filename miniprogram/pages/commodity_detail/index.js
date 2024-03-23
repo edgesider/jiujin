@@ -5,7 +5,7 @@ import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
 import moment from "moment";
 import { openProfile } from "../../router";
 import { TransactionApi } from "../../api/transaction";
-import { getConversationByGroup, getGroupIdFromCommodity, getOrCreateGroup } from "../../utils/im";
+import { getConversationByGroup, getGroupIdFromCommodity, getImUidFromUid, getOrCreateGroup } from "../../utils/im";
 
 const app = getApp();
 
@@ -206,7 +206,10 @@ async function startTransaction(commodity, seller) {
     {
       name: seller.name,
       avatar: commodity.img_urls[0],
-      members: [`USER${getOpenId()}`],
+      members: [
+        getImUidFromUid(getOpenId()),
+        getImUidFromUid(seller._id),
+      ],
     }
   );
   if (newCreate) {

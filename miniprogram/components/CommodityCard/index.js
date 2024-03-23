@@ -42,6 +42,6 @@ Component({
     this.setData({
       desc: content,
       ridToRegion: app.globalData.ridToRegion,
-    })
+    });
   }
 });
