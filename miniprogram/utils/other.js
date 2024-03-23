@@ -30,7 +30,7 @@ export function getRegionPath(rid, ridToRegion = undefined) {
   return regionPath;
 }
 
-export function assertRegistered() {
+export function ensureRegistered() {
   if (!getApp().globalData.self) {
     wx.navigateTo({
       url: '/pages/register/index',

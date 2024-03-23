@@ -56,21 +56,14 @@ export function getOpenId() {
   return openId;
 }
 
-function wrapResp(resp) {
-  if (resp.status !== 200 || !resp.data.succeed) {
-    return new RespError(resp.data, `${resp.status} ${resp.statusText}`, resp.data.errCode ?? -1);
+export function wrapResp(resp) {
+  if (resp.status !== 200 || !resp.data?.succeed) {
+    return new RespError(`${resp.status} ${resp.statusText}`, resp.data?.errCode ?? -1);
   }
   return new RespSuccess(resp.data?.data);
 }
 
-function wrapResponse(resp) {
-  if (resp.result?.errno !== 0) {
-    return new RespError(resp.result, resp.result?.error ?? 'unknown error', resp.result?.errno ?? -1);
-  }
-  return new RespSuccess(resp.result.data);
-}
-
-async function request(param) {
+export async function request(param) {
   return Axios({
     url: param.path,
     method: param.method ?? 'POST',
@@ -263,7 +256,7 @@ const api = {
       cloudPath: cloudPath,
     });
     if (!res.fileID) {
-      return new RespError(res, 'upload failed');
+      return new RespError('upload failed');
     }
     return new RespSuccess(res.fileID);
   },
@@ -322,13 +315,13 @@ const api = {
     }))
   },
   async updateLastSeenTime() {
-    return wrapResponse(await request({
+    return wrapResp(await request({
       path: '/user/updateLastSeenTime'
     }));
   },
 
   async getPhoneNumber(code) {
-    return wrapResponse(await request({
+    return wrapResp(await request({
       path: '/weixin/phone_number',
       data: { code }
     }));

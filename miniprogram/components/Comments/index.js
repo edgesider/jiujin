@@ -1,6 +1,6 @@
 import api, { CommentAPI } from '../../api/api';
 import { openProfile } from "../../router";
-import { assertRegistered } from "../../utils/other";
+import { ensureRegistered } from "../../utils/other";
 import getConstants from "../../constants";
 
 const app = getApp();
@@ -104,7 +104,7 @@ Component({
       }
     },
     async openMyProfile() {
-      assertRegistered();
+      ensureRegistered();
       await openProfile(app.globalData.self);
     },
     async openProfile(ev) {
@@ -112,7 +112,7 @@ Component({
       await openProfile(user);
     },
     onStartComment({ currentTarget: { dataset: { comment } } }) {
-      assertRegistered();
+      ensureRegistered();
       this.setData({
         commenting: true,
         commentingTo: comment, // 如果是回复则有这个字段

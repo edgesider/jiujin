@@ -1,6 +1,6 @@
 // custom-tab-bar/index.js
 import getConstants from '../constants';
-import { assertRegistered } from '../utils/other';
+import { ensureRegistered } from '../utils/other';
 
 Component({
   data: {
@@ -79,7 +79,7 @@ Component({
         return;
       }
       if (requireRegistered) {
-        assertRegistered();
+        ensureRegistered();
       }
       if (useNavigateTo) {
         await wx.navigateTo({ url: pagePath })

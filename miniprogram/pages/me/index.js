@@ -1,4 +1,4 @@
-import { assertRegistered, getRegionPath, setTabBar } from "../../utils/other";
+import { ensureRegistered, getRegionPath, setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
 import api, { CollectApi, getOpenId } from "../../api/api";
 import { openProfile } from "../../router";
@@ -42,7 +42,7 @@ Page({
   },
 
   onEditMyInfo() {
-    assertRegistered();
+    ensureRegistered();
     wx.navigateTo({
       url: '../register/index',
     })
@@ -55,7 +55,7 @@ Page({
   },
 
   onClickMyCommodity() {
-    assertRegistered();
+    ensureRegistered();
     wx.navigateTo({
       url: '../commodity_list/index',
       success: res => {
@@ -182,7 +182,7 @@ Page({
   },
 
   onClickMyBought() {
-    assertRegistered();
+    ensureRegistered();
     wx.navigateTo({
       url: '../commodity_list/index',
       success: res => {
@@ -215,7 +215,7 @@ Page({
   },
 
   onClickMyStarred() {
-    assertRegistered();
+    ensureRegistered();
     wx.navigateTo({
       url: '../commodity_list/index',
       success: res => {
@@ -243,7 +243,7 @@ Page({
     })
   },
   openProfile() {
-    assertRegistered();
+    ensureRegistered();
     openProfile(app.globalData.self);
   },
 

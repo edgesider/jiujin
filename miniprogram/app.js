@@ -9,6 +9,7 @@ import { GENDER, setConstants } from "./constants";
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
 import { getImUidFromUid } from "./pages/chat/integrate";
+import { initTim } from "./utils/im";
 
 App({
   _ready: false,
@@ -108,6 +109,7 @@ App({
       return;
     }
     this.globalData.config.userID = self._id;
+    tim.setLogLevel(1);
     tim.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
     tim.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
 
@@ -117,6 +119,7 @@ App({
     tim.on(tim.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
 
     await this.loginIMWithID(this.globalData.self._id);
+    initTim(); // TODO 都挪到外面
 
     await tim.updateMyProfile({
       nick: this.globalData.self.name,
@@ -156,7 +159,7 @@ App({
     wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
     wx.$chat_userID = user_id;
     wx.$chat_userSig = userSig;
-    tim.login({
+    await tim.login({
       userID: user_id,
       userSig
     });

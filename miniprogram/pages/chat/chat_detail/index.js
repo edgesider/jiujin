@@ -8,7 +8,7 @@ Page({
     const { conversationId, unreadCount } = options;
     this.setData({
       conversationId,
-      unreadCount: parseInt(unreadCount),
+      unreadCount: parseInt(unreadCount) ?? 0,
     });
   }
 });
