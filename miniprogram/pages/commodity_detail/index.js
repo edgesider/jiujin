@@ -2,7 +2,7 @@ import api, { CollectApi } from "../../api/api";
 import { splitMillisecondsToString } from "../../utils/time";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
-import { assertRegistered, sleep } from "../../utils/other";
+import { assertRegistered, getRegionPath, sleep } from "../../utils/other";
 import moment from "moment";
 import { openProfile } from "../../router";
 
@@ -17,6 +17,7 @@ Page({
     commodity: null,
     createTime: '',
     polishTime: '',
+    regionName: '',
     seller: null,
     contentParagraphs: [],
     firstImageSize: [],
@@ -55,11 +56,21 @@ Page({
       polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
-      ridToRegion: app.globalData.ridToRegion,
+      regionName: this.getRegionName(commodity.rid),
       isMine: self && self._id === commodity.seller_id,
       firstImageSize,
     });
   },
+  /**
+   * 获取展示的区域名，显示第1、3级
+   */
+  getRegionName(rid) {
+    const path = getRegionPath(rid);
+    const region = path[0];
+    const parentParent = path[2];
+    return parentParent ? `${parentParent.name} / ${region.name}` : region.name;
+  },
+
   back() {
     wx.navigateBack().then();
   },

@@ -1,5 +1,5 @@
 <view class="root">
-  <view class="title">{{comments.length}} 条留言</view>
+  <view class="title">{{comments.length}} 条评论</view>
   <view class="input-area">
     <image
       src='{{selfInfo.avatar_url || DEFAULT_AVATAR}}'

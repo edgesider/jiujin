@@ -1,13 +1,11 @@
 <view class="root">
-  <TitleBar title="详情" />
-
-  <view wx:if="{{loading}}" class="loading cu-load">
-  </view>
+  <view wx:if="{{loading}}" class="loading cu-load" />
   <view wx:elif="{{!commodity}}" class="loading">
     <text>商品走丢了</text>
   </view>
   <block wx:else>
-    <view class="header">
+    <view class="header" style="margin-top: {{StatusBar}}px">
+      <view class="cuIcon-back back" bindtap="back" />
       <image
         bindtap="onAvatarClick"
         class="avatar"
@@ -16,11 +14,11 @@
       <view class="info">
         <view class="line1">
           <text class="name">{{seller.name || '已注销用户'}}</text>
-          <text wx:if="{{seller.sex !== 0}}" class="sex-icon cuIcon-people" />
-          <text class="region" wx:if="{{(seller.rid || -1) !== -1}}">{{ridToRegion[seller.rid].name}}</text>
+          <text class="time">{{createTime}}</text>
         </view>
-        <view class="line2">
-          <text class="time">发布于 {{createTime}}</text>
+        <view class="line2" wx:if="{{(seller.rid || -1) !== -1}}">
+          <image src="/images/location.png" class="region-icon" />
+          <text class="region">{{regionName}}</text>
         </view>
       </view>
     </view>
@@ -39,6 +37,16 @@
             data-curr="{{img}}"
             bindtap="previewImages"
           />
+        </view>
+        <view class="divider" />
+        <view class="info">
+          <text class="price">
+            <text class="unit">￥</text>
+            <text class="amount">{{commodity.price}}</text>
+          </text>
+          <text class="views">XXXX浏览</text>
+          <view class="spacer" />
+          <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
         </view>
         <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
       </view>

@@ -37,6 +37,9 @@ Component({
       const { data: questions } = await CommentAPI.getCommodityQuestionsAndAnswers(this.properties.commodity._id, 0, 10);
       for (const question of questions) {
         const { data: user } = await api.getUserInfo(question.user_id);
+        if (!user) {
+          continue;
+        }
         comments.push({
           type: 'question',
           _id: question._id,

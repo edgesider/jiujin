@@ -14,6 +14,9 @@ export async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/**
+ * 从{@param rid}向上找到顶，返回中途的所有区域
+ */
 export function getRegionPath(rid, ridToRegion = undefined) {
   ridToRegion = ridToRegion ?? getApp().globalData.ridToRegion;
   const regionPath = [];

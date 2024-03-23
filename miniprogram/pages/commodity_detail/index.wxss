@@ -28,21 +28,27 @@
   flex-shrink: 0;
 
   background: white;
-  padding: 16rpx 24rpx;
+  padding: 0 0 16rpx;
+
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }
 
+.header .back {
+  font-size: 42rpx;
+  margin: 0 16rpx;
+}
+
 .header .avatar {
   border-radius: 50%;
-  width: 72rpx;
-  height: 72rpx;
+  width: 80rpx;
+  height: 80rpx;
 }
 
 .header .info {
-  margin-left: 24rpx;
+  margin-left: 12rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -53,35 +59,37 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: center;
+  align-items: baseline;
 }
 
 .header .info .line1 .name {
   font-size: 28rpx;
-  font-weight: bold;
+  font-weight: 500;
 }
 
-.header .info .line1 .sex-icon {
-  width: 24rpx;
-  height: 24rpx;
-  margin-left: 8rpx;
-}
-
-.header .info .line1 .region {
+.header .info .line1 .time {
   font-size: 20rpx;
   margin-left: 8rpx;
-  background: aquamarine;
-  padding: 4rpx 12rpx;
-  border-radius: 8rpx;
+  color: #979797;
 }
 
 .header .info .line2 {
   margin-top: 4rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 2rpx;
 }
 
-.header .info .line2 .time {
+.header .info .line2 .region-icon {
+  width: 20rpx;
+  height: 30rpx;
+}
+
+.header .info .line2 .region {
   font-size: 20rpx;
-  color: grey;
+  color: #979797;
 }
 
 .body {
@@ -98,11 +106,17 @@
   --content-padding: 32rpx;
   background: white;
   width: 100%;
-  padding: 0 var(--content-padding) 48rpx;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+}
+
+.divider {
+  flex-basis: 0.5px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .body .content .images {
@@ -112,8 +126,7 @@
 }
 
 .body .content .images-single {
-  width: 100vw;
-  transform: translateX(calc(-1 * var(--content-padding)));
+  width: 100%;
   max-height: 120vw;
 }
 
@@ -140,11 +153,52 @@
   height: calc((100vw - var(--content-padding) * 2 - var(--gap) * 2) / 3);
 }
 
+.body .content .info {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 var(--content-padding);
+}
+
+.body .content .info .price {
+  color: #21ac39;
+  display: flex;
+  align-self: flex-end;
+  font-style: italic;
+}
+
+.body .content .info .price .unit {
+  font-size: 28rpx;
+}
+
+.body .content .info .price .amount {
+  font-size: 48rpx;
+}
+
+.body .content .info .views {
+  margin-left: 8rpx;
+  font-size: 24rpx;
+  font-weight: 300;
+}
+
+.body .content .info .spacer {
+  flex-grow: 1;
+}
+
+.body .content .info .quality {
+  width: 150rpx;
+  height: 60rpx;
+  align-self: flex-end;
+}
+
 .body .content .paragraph {
   font-size: 28rpx;
-  line-height: 1.5em;
-  margin-top: 16rpx;
+  line-height: 40rpx;
+  padding: 16rpx var(--content-padding);
   user-select: text;
+  color: #454545;
 }
 
 .body .comments {
