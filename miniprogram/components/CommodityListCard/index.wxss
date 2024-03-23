@@ -1,21 +1,21 @@
+page {
+  background-color: white !important;
+}
+
 .root {
-  height: calc(192rpx + 24rpx * 2);
   display: flex;
   flex-direction: row;
   justify-content: stretch;
-  align-items: stretch;
+  align-items: center;
   padding: 24rpx 0;
   background: white;
 }
 
-.left {
-  flex: 0 0 auto;
-}
-
-.left .image {
-  width: 192rpx;
-  height: 192rpx;
+.image {
+  flex: 0 0 112rpx;
+  height: 112rpx;
   border-radius: 16rpx;
+  align-self: center;
 }
 
 .middle {
@@ -25,29 +25,28 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: stretch;
 }
 
-.middle .hint-line1 {
+.middle .title {
   margin: 8rpx 0 0;
-  font-size: 22rpx;
-  color: rgba(0, 0, 0, .5);
-}
-
-.middle .hint-line2 {
-  font-size: 22rpx;
-  color: rgba(0, 0, 0, .5);
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #000;
 }
 
 .middle .price {
-  font-size: 28rpx;
+  margin-top: 16rpx;
+  font-size: 40rpx;
   font-weight: bold;
-  color: red;
-  border-radius: 16rpx;
-  /*padding: 12rpx 16rpx;*/
+  font-style: italic;
+  color: #21ac39;
+}
 
-  margin: 8rpx;
+.middle .status {
+  width: 136rpx;
+  height: 96rpx;
   position: absolute;
   right: 0;
   bottom: 0;
@@ -63,15 +62,29 @@
 }
 
 .right .button {
-  width: 128rpx;
+  width: 180rpx;
+  height: 48rpx;
   border-radius: 48rpx;
-  border: 0.5px solid rgba(0, 0, 0, 0.4);
-  color: rgba(0, 0, 0, 0.8);
   padding: 4rpx 0;
-  font-size: 24rpx;
+  font-size: 28rpx;
+  font-style: italic;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.right .button.green {
+  background-color: #21ac39;
+}
+
+.right .button.greenyellow {
+  background-color: #a7d000;
+}
+
+.right .button.yellow {
+  background-color: #fac000;
+
 }
 
 .right .button-disabled {

@@ -8,8 +8,7 @@ import { GENDER, setConstants } from "./constants";
 
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
-import { getImUidFromUid } from "./pages/chat/integrate";
-import { initTim } from "./utils/im";
+import { getImUidFromUid, initTim } from "./utils/im";
 
 App({
   _ready: false,

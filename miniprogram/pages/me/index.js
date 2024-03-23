@@ -48,10 +48,49 @@ Page({
     })
   },
 
-  commonCommodityFetcher: async ({ start, count }) => {
-    const resp = await api.getCommodityList({
-      start, count,
-    })
+  gotoList(ev) {
+    ensureRegistered();
+    const { type } = ev.currentTarget.dataset;
+    wx.navigateTo({
+      url: `../commodity_list/index?type=${type}`,
+      success: res => {
+        res.eventChannel.emit('onParams', {
+          title: ({
+            selling: '我发布的闲置',
+            bought: '我买到的',
+            sold: '我卖出的',
+            deactivated: '我下架的',
+            started: '我收藏的',
+          })[type],
+          fetcher: async ({ start, count }) => {
+            let resp;
+            if (type === 'started') {
+              resp = await CollectApi.getAll(start, count);
+            } else {
+              const status = ({
+                selling: COMMODITY_STATUS_SELLING,
+                sold: COMMODITY_STATUS_SOLD,
+                deactivated: COMMODITY_STATUS_OFF,
+              })[type];
+              const self = app.globalData.self._id;
+              const filter = { status, start, count };
+              if (type === 'bought') {
+                filter['buyer_id'] = self;
+              } else {
+                filter['seller_id'] = self;
+              }
+
+              resp = await api.getCommodityList(filter);
+            }
+            if (resp.isError) {
+              console.error(resp);
+              return null;
+            }
+            return resp.data;
+          },
+        })
+      }
+    });
   },
 
   onClickMyCommodity() {
@@ -141,7 +180,7 @@ Page({
               },
               delete: async () => {
                 return new Promise(async (res) => {
-                  await wx.showModal({
+                  wx.showModal({
                     title: '提示',
                     content: `确认删除`,
                     success: async (res) => {

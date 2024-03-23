@@ -17,49 +17,44 @@
 </view>
 
 <view class="List">
-  <navigator url="./mall/mall" class="list">
+  <view class="list" bindtap="gotoList" data-type="selling">
     <view class="list_title">我发布的闲置</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
   <view class="divider" />
-  <navigator url="./help/help" class="list">
+  <view class="list" bindtap="gotoList" data-type="">
     <view class="list_title">我发布的互助</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
 </view>
 
 <view class="List">
-  <navigator bindtap="onClickMyBought" class="list">
+  <view class="list" bindtap="gotoList" data-type="bought">
     <view class="list_title">我买到的</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
   <view class="divider" />
-  <navigator url="./sell/sell" class="list">
+  <view class="list" bindtap="gotoList" data-type="sold">
     <view class="list_title">我卖出的</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
   <view class="divider" />
-  <navigator url="./delist/delist" class="list">
+  <view class="list" bindtap="gotoList" data-type="deactivated">
     <view class="list_title">我下架的</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
   <view class="divider" />
-  <navigator bindtap="onClickMyStarred" class="list">
+  <view class="list" bindtap="gotoList" data-type="stared">
     <view class="list_title">我收藏的</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
-  <view class="divider" />
-  <navigator url="./like/like" class="list">
-    <view class="list_title">我点赞的</view>
-    <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
 </view>
 
 <view class="List">
-  <navigator url="./" class="list">
+  <view class="list">
     <view class="list_title">联系我们</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
   <view class="divider" />
   <view class="list">
     <view class="list_title">意见反馈</view>
@@ -67,8 +62,8 @@
     <button open-type="feedback" class="feedback-btn" />
   </view>
   <view class="divider" />
-  <navigator url="./" class="list">
+  <view class="list">
     <view class="list_title">关于我们</view>
     <image class="right" src="/images/right.png"></image>
-  </navigator>
+  </view>
 </view>

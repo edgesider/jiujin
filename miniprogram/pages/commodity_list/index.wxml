@@ -42,6 +42,6 @@
       />
     </view>
 
-    <view class="cu-load {{isLoading ? 'loading' : 'over'}}"></view>
+    <view class="cu-load {{isLoading ? 'loading' : ''}}"></view>
   </scroll-view>
 </view>

@@ -127,12 +127,11 @@ page {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4rpx;
 }
 
 .filters .item .arrows .arrow {
   width: 14rpx;
-  height: 8rpx;
+  height: 14rpx;
 }
 
 .filters .item .arrows .arrow.arrow-down {
