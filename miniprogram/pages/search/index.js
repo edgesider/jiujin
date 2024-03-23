@@ -8,16 +8,18 @@ const app = getApp();
 Page({
   data: {
     ...getConstants(),
+    self: app.globalData.self,
+
     commodityList: [],
     cursor: 0,
     state: 'inputting', // inputting | loading | shown
     isFocused: true,
     text: '',
 
-    self: app.globalData.self,
-    onlyMyGender: false,
-
     histories: [],
+    // 当前选择的区域过滤器
+    selectedRegionId: null,
+    order: ['polish_time', 'desc'], // ['polish_time' | 'price', 'desc' | 'asc']
   },
 
   fetchToken: 0,
@@ -83,10 +85,6 @@ Page({
     wx.setStorageSync('searchHistories', histories);
   },
 
-  onOnlyMyGenderClick() {
-    this.setData({ onlyMyGender: !this.data.onlyMyGender });
-  },
-
   async fetch(clear) {
     if (clear) {
       this.setData({
@@ -96,10 +94,11 @@ Page({
       })
     }
     const token = ++this.fetchToken;
-    const { text, cursor, commodityList } = this.data;
+    const { text, cursor, commodityList, order: [orderBy, order] } = this.data;
     const resp = await api.getCommodityList({
       keyword: text,
-      sex: this.data.onlyMyGender ? app.globalData.self.sex : GENDER.UNKNOWN,
+      order_by: orderBy,
+      order: order,
       // order_by: 'update_time',
       // order: 'desc',
       start: cursor,
@@ -155,5 +154,25 @@ Page({
     wx.navigateTo({
       url: `../commodity_detail/index?id=${id}`,
     })
+  },
+
+  onToggleTimeOrder() {
+    this.toggleOrder('polish_time');
+  },
+  onTogglePriceOrder() {
+    this.toggleOrder('price');
+  },
+  toggleOrder(order) {
+    const { order: oldOrder } = this.data;
+    const newOrder = [order, 'desc'];
+    if (oldOrder[0] === order) {
+      newOrder[1] = oldOrder[1] === 'desc' ? 'asc' : 'desc';
+    }
+    this.setData({
+      order: newOrder
+    });
+    this.fetch(true);
+  },
+  onRegionFilterClick() {
   },
 })

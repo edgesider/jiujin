@@ -38,6 +38,40 @@
     </view>
   </view>
   <view wx:elif="{{state === 'shown' || state === 'loading'}}" class="commodity-list-container">
+    <view class="filters">
+      <view class="item" bindtap="onRegionFilterClick">
+        区域
+        <view class="arrows">
+          <image src="/images/arrow.png" class="arrow" />
+        </view>
+      </view>
+      <view class="item" bindtap="onTogglePriceOrder">
+        价格
+        <view class="arrows">
+          <image
+            src="{{order[0] === 'price' && order[1] === 'asc' ? '/images/arrow-active.png' : '/images/arrow.png'}}"
+            class="arrow"
+          />
+          <image
+            src="{{order[0] === 'price' && order[1] === 'desc' ? '/images/arrow-active.png' : '/images/arrow.png'}}"
+            class="arrow arrow-down"
+          />
+        </view>
+      </view>
+      <view class="item" bindtap="onToggleTimeOrder">
+        时间
+        <view class="arrows">
+          <image
+            src="{{order[0] === 'polish_time' && order[1] === 'asc' ? '/images/arrow-active.png' : '/images/arrow.png'}}"
+            class="arrow"
+          />
+          <image
+            src="{{order[0] === 'polish_time' && order[1] === 'desc' ? '/images/arrow-active.png' : '/images/arrow.png'}}"
+            class="arrow arrow-down"
+          />
+        </view>
+      </view>
+    </view>
     <view class="list" wx:if="{{commodityList.length > 0}}">
       <CommodityCard
         wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
