@@ -65,7 +65,6 @@ App({
         });
         Object.assign(this.globalData, constants)
         setConstants(constants)
-        console.log(menuBtn, e.screenWidth);
       }
     })
 

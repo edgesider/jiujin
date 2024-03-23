@@ -132,7 +132,7 @@ page {
 
 .filters .item .arrows .arrow {
   width: 14rpx;
-  height: 8rpx
+  height: 8rpx;
 }
 
 .filters .item .arrows .arrow.arrow-down {

@@ -1,4 +1,4 @@
-import { setTabBar } from "../../utils/other";
+import { getRegionPath, setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
 import api from '../../api/api';
 
@@ -82,16 +82,11 @@ Page({
 
   updateRegions() {
     const { self, ridToRegion } = app.globalData;
+    const rid = self?.rid ?? DEFAULT_REGION_ID;
+
+    const regionPath = getRegionPath(rid);
     if (self) {
       // 已登录
-      const { rid } = self;
-
-      let lastRegion = ridToRegion[rid];
-      const regionPath = []; // 自己所在的区域，以及所有父区域
-      while (lastRegion !== undefined) {
-        regionPath.push(lastRegion);
-        lastRegion = ridToRegion[lastRegion.parents?.[0]];
-      }
       this.setData({
         self,
         ridToRegion,
@@ -103,7 +98,7 @@ Page({
       this.setData({
         self,
         ridToRegion,
-        regions: [ridToRegion[DEFAULT_REGION_ID]],
+        regions: regionPath,
         selectedRegionIndex: 0,
       });
     }

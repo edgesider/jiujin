@@ -1,4 +1,4 @@
-import { assertRegistered, setTabBar } from "../../utils/other";
+import { assertRegistered, getRegionPath, setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
 import api, { CollectApi, getOpenId } from "../../api/api";
 import { openProfile } from "../../router";
@@ -10,18 +10,19 @@ Page({
     ...getConstants(),
     pageIndex: 1,
     selfInfo: null,
-    ridToRegion: null,
+    regionName: '',
     totalUnread: 0,
   },
 
   async onLoad(options) {
     setTabBar(this);
     await app.waitForReady();
-    const { self, ridToRegion } = app.globalData;
+    const { self } = app.globalData;
     if (app.globalData.self) {
+      const regionPath = getRegionPath(self.rid);
       this.setData({
         selfInfo: self,
-        ridToRegion,
+        regionName: regionPath[2] ? `${regionPath[2].name} / ${regionPath[0].name}` : regionPath[0].name,
       });
     }
     app.userChangedSubject.subscribe(user => {

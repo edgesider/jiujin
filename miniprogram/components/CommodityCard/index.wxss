@@ -4,7 +4,7 @@
   border-radius: 20rpx;
   float: left;
   font-size: 0;
-  /* 去除组件间的缝隙 */
+  box-shadow: 0 0 4px 0 #17007333;
 }
 
 .cover {
