@@ -99,8 +99,12 @@ Page({
     await this.processClick('polish', ev);
   },
   // 下架
-  async onOff(ev) {
-    await this.processClick('off', ev);
+  async onDeactivate(ev) {
+    await this.processClick('deactivate', ev);
+  },
+  // 重新上架
+  async onActivate(ev) {
+    await this.processClick('activate', ev);
   },
   async onEdit(ev) {
     await this.processClick('edit', ev);
@@ -123,7 +127,6 @@ Page({
       index: idx,
       currTab: this.data.currTab,
     })) ?? {};
-    console.log(action, currTab);
     if (currTab && currTab !== this.data.currTab) {
       this.setData({ currTab });
     }

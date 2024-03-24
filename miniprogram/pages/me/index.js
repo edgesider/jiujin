@@ -1,5 +1,9 @@
 import { ensureRegistered, getRegionPath, setTabBar } from "../../utils/other";
-import getConstants, { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
+import getConstants, {
+  COMMODITY_STATUS_SOLD,
+  COMMODITY_STATUS_SELLING,
+  COMMODITY_STATUS_DEACTIVATED
+} from "../../constants";
 import api, { CollectApi, getOpenId } from "../../api/api";
 import { openProfile } from "../../router";
 
@@ -60,17 +64,17 @@ Page({
             bought: '我买到的',
             sold: '我卖出的',
             deactivated: '我下架的',
-            started: '我收藏的',
+            stared: '我收藏的',
           })[type],
           fetcher: async ({ start, count }) => {
             let resp;
-            if (type === 'started') {
+            if (type === 'stared') {
               resp = await CollectApi.getAll(start, count);
             } else {
               const status = ({
                 selling: COMMODITY_STATUS_SELLING,
                 sold: COMMODITY_STATUS_SOLD,
-                deactivated: COMMODITY_STATUS_OFF,
+                deactivated: COMMODITY_STATUS_DEACTIVATED,
               })[type];
               const self = app.globalData.self._id;
               const filter = { status, start, count };
@@ -88,41 +92,7 @@ Page({
             }
             return resp.data;
           },
-        })
-      }
-    });
-  },
 
-  onClickMyCommodity() {
-    ensureRegistered();
-    wx.navigateTo({
-      url: '../commodity_list/index',
-      success: res => {
-        res.eventChannel.emit('onParams', {
-          title: '我发布的',
-          tabs: [
-            { key: 'selling', text: '正在出售' },
-            { key: 'off', text: '已下架' },
-            { key: 'sold', text: '已售出' },
-          ],
-          currTab: 'selling',
-          fetcher: async ({ start, count, currTab }) => {
-            const statusMap = {
-              selling: COMMODITY_STATUS_SELLING,
-              off: COMMODITY_STATUS_OFF,
-              sold: COMMODITY_STATUS_SOLD,
-            };
-            const resp = await api.getCommodityList({
-              start, count,
-              status: statusMap[currTab],
-              seller_id: app.globalData.self._id,
-            });
-            if (resp.isError) {
-              console.log(resp);
-              return null;
-            }
-            return resp.data;
-          },
           onClick: async ({ type, commodity }) => {
             return await ({
               'click-card': () => {
@@ -152,9 +122,9 @@ Page({
                   action: 'fetchSingle'
                 };
               },
-              off: async () => {
+              deactivate: async () => {
                 await wx.showLoading({ mask: true, title: '正在下架...' });
-                const resp = await api.offCommodity({ id: commodity._id, });
+                const resp = await api.deactivateCommodity({ id: commodity._id, });
                 await wx.hideLoading();
                 if (resp.isError) {
                   console.error(resp)
@@ -162,6 +132,20 @@ Page({
                   return;
                 }
                 await wx.showToast({ title: '下架成功', icon: 'success', mask: true });
+                return {
+                  action: 'fetchSingle'
+                };
+              },
+              activate: async () => {
+                await wx.showLoading({ mask: true, title: '正在重新上架...' });
+                const resp = await api.activateCommodity({ id: commodity._id, });
+                await wx.hideLoading();
+                if (resp.isError) {
+                  console.error(resp)
+                  await wx.showToast({ title: '上架失败', icon: 'error', mask: true });
+                  return;
+                }
+                await wx.showToast({ title: '上架成功', icon: 'success', mask: true });
                 return {
                   action: 'fetchSingle'
                 };
@@ -213,74 +197,10 @@ Page({
             })[type]?.();
           },
         })
-      },
-      fail: (error) => {
-        console.error(error);
       }
-    })
+    });
   },
 
-  onClickMyBought() {
-    ensureRegistered();
-    wx.navigateTo({
-      url: '../commodity_list/index',
-      success: res => {
-        res.eventChannel.emit('onParams', {
-          title: '我买到的',
-          api: 'starred',
-          fetcher: async ({ start, count }) => {
-            const resp = await api.getCommodityList({
-              start, count,
-              buyer_id: getOpenId()
-            });
-            if (resp.isError) {
-              console.log(resp);
-              return null;
-            }
-            return resp.data;
-          },
-          onClick: async ({ type, commodity }) => {
-            return await ({
-              'click-card': async () => {
-                await wx.navigateTo({
-                  url: `../commodity_detail/index?id=${commodity._id}`
-                })
-              },
-            })[type]?.();
-          },
-        })
-      }
-    })
-  },
-
-  onClickMyStarred() {
-    ensureRegistered();
-    wx.navigateTo({
-      url: '../commodity_list/index',
-      success: res => {
-        res.eventChannel.emit('onParams', {
-          title: '我收藏的',
-          fetcher: async ({ start, count }) => {
-            const resp = await CollectApi.getAll(start, count);
-            if (resp.isError) {
-              console.log(resp);
-              return null;
-            }
-            return resp.data;
-          },
-          onClick: async ({ type, commodity }) => {
-            return await ({
-              'click-card': async () => {
-                await wx.navigateTo({
-                  url: `../commodity_detail/index?id=${commodity._id}`
-                })
-              },
-            })[type]?.();
-          },
-        })
-      }
-    })
-  },
   openProfile() {
     ensureRegistered();
     openProfile(app.globalData.self);

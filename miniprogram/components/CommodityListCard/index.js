@@ -1,6 +1,10 @@
 import { getContentDesc, getQualitiesMap } from "../../utils/strings";
 import moment from 'moment';
-import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
+import getConstants, {
+  COMMODITY_STATUS_SOLD,
+  COMMODITY_STATUS_SELLING,
+  COMMODITY_STATUS_DEACTIVATED
+} from "../../constants";
 
 const app = getApp();
 
@@ -15,9 +19,7 @@ Component({
     }
   },
   data: {
-    COMMODITY_STATUS_SELLING,
-    COMMODITY_STATUS_OFF,
-    COMMODITY_STATUS_SOLD,
+    ...getConstants(),
     self: null,
     desc: '',
     createTime: '',
@@ -43,8 +45,13 @@ Component({
         commodity: this.properties.commodity,
       })
     },
-    off() {
-      this.triggerEvent('onOff', {
+    deactivate() {
+      this.triggerEvent('onDeactivate', {
+        commodity: this.properties.commodity,
+      })
+    },
+    activate() {
+      this.triggerEvent('onActivate', {
         commodity: this.properties.commodity,
       })
     },
@@ -71,7 +78,7 @@ Component({
         statusImage: ({
           [COMMODITY_STATUS_SOLD]: '/images/已成交.png',
           [COMMODITY_STATUS_SELLING]: '/images/未成交.png',
-          [COMMODITY_STATUS_OFF]: '/images/已结束.png',
+          [COMMODITY_STATUS_DEACTIVATED]: '/images/已结束.png',
         })[status]
       })
     },

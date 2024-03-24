@@ -1,6 +1,6 @@
-import { COMMODITY_STATUS_OFF } from "../constants";
 import axios from "axios";
 import mpAdapter from 'axios-miniprogram-adapter'
+import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from "../constants";
 
 const { RespSuccess, RespError } = require('./resp')
 
@@ -9,10 +9,10 @@ axios.defaults.adapter = mpAdapter;
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  baseURL: 'https://lllw.ykai.cc',
-  // baseURL: (version === 'release' || version === 'trial')
-  //   ? 'https://lllw.ykai.cc'
-  //   : 'http://localhost:8080/',
+  // baseURL: 'https://lllw.ykai.cc',
+  baseURL: (version === 'release' || version === 'trial')
+    ? 'https://lllw.ykai.cc'
+    : 'http://localhost:8080/',
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',
@@ -218,13 +218,25 @@ const api = {
     }));
   },
 
-  async offCommodity({ id }) {
+  async activateCommodity({ id }) {
     return wrapResp(await request({
-      path: "/commodity/updateStatus",
+      path: "/commodity/activateCommodity",
       method: "POST",
       data: {
         _id: id,
-        status: COMMODITY_STATUS_OFF,
+        status: COMMODITY_STATUS_SELLING,
+        openid: getOpenId()
+      }
+    }));
+  },
+
+  async deactivateCommodity({ id }) {
+    return wrapResp(await request({
+      path: "/commodity/deactivateCommodity",
+      method: "POST",
+      data: {
+        _id: id,
+        status: COMMODITY_STATUS_DEACTIVATED,
         openid: getOpenId()
       }
     }));
