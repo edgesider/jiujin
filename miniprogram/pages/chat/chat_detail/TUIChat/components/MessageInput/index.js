@@ -1,6 +1,6 @@
 import logger from '../../../../utils/logger';
 import constant from '../../../../utils/constant';
-import { COMMODITY_STATUS_LOCKED, COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from '../../../../../../constants';
+import { COMMODITY_STATUS_BOOKED, COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from '../../../../../../constants';
 import api from '../../../../../../api/api';
 
 var app = getApp();
@@ -358,11 +358,11 @@ Component({
             duration: 800,
             icon: 'success',
           });
-          commodity.status = COMMODITY_STATUS_LOCKED;
+          commodity.status = COMMODITY_STATUS_BOOKED;
           this.setData({ commodity });
           break;
         case '4': // 解锁
-          if (commodity.status != COMMODITY_STATUS_LOCKED) {
+          if (commodity.status != COMMODITY_STATUS_BOOKED) {
             wx.showToast({
               title: '商品不是已锁定',
               duration: 800,
@@ -380,7 +380,7 @@ Component({
           this.setData({ commodity });
           break;
         case '5': // 售出
-          if (commodity.status != COMMODITY_STATUS_SELLING && commodity.status != COMMODITY_STATUS_LOCKED) {
+          if (commodity.status != COMMODITY_STATUS_SELLING && commodity.status != COMMODITY_STATUS_BOOKED) {
             wx.showToast({
               title: '商品不是可售出',
               duration: 800,
@@ -526,7 +526,7 @@ Component({
       const commodity = app.globalData.config.commodity;
       if (commodity.status == COMMODITY_STATUS_SELLING) {
         api.lockCommodity(commodity._id);
-        commodity.status = COMMODITY_STATUS_LOCKED;
+        commodity.status = COMMODITY_STATUS_BOOKED;
         wx.showToast({
           title: '商品锁定成功',
           duration: 800,

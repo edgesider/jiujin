@@ -1,5 +1,7 @@
 import { Conversation, Group } from '@tencentcloud/chat';
 import { getOpenId } from '../api/api';
+import { TransactionApi } from '../api/transaction';
+import { sleep } from './other';
 
 export function initTim() {
   // tim.on(tim.EVENT.CONVERSATION_LIST_UPDATED, ({ data }: { data: Conversation[] }) => {
@@ -32,7 +34,8 @@ export async function getOrCreateGroup(
     name: name,
     groupID: id,
     avatar,
-    memberList: members.map(id => ({ userID: id }))
+    memberList: members.map(id => ({ userID: id })),
+    joinOption: tim.TYPES.JOIN_OPTIONS_DISABLE_APPLY,
   })).data.group, true];
 }
 
@@ -40,6 +43,11 @@ export function getImUidFromUid(uid: string) {
   return 'USER' + uid;
 }
 
+/**
+ * 根据商品获取群组ID
+ *
+ * TODO 这个ID不可靠，改为在服务端维护ID，或者在服务端建群
+ */
 export function getGroupIdFromCommodity(commodity: { _id: string }): string {
   const openId = getOpenId();
   if (!openId) {
@@ -52,4 +60,12 @@ export function getGroupIdFromCommodity(commodity: { _id: string }): string {
 export async function getConversationByGroup(groupId: string): Promise<Conversation | undefined> {
   const list = (await tim.getConversationList()).data.conversationList as Conversation[];
   return list?.find(cv => cv.groupProfile?.groupID === groupId);
+}
+
+export async function deleteAllGroup() {
+  const list = (await tim.getGroupList()).data.groupList as Group[];
+  for (const g of list) {
+    await tim.dismissGroup(g.groupID);
+  }
+  return list.length;
 }

@@ -4,8 +4,13 @@ import getConstants from "../../constants";
 import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
 import moment from "moment";
 import { openProfile } from "../../router";
+import {
+  getConversationByGroup,
+  getGroupIdFromCommodity,
+  getImUidFromUid,
+  getOrCreateGroup,
+} from "../../utils/im";
 import { TransactionApi } from "../../api/transaction";
-import { getConversationByGroup, getGroupIdFromCommodity, getImUidFromUid, getOrCreateGroup } from "../../utils/im";
 
 const app = getApp();
 
@@ -191,11 +196,14 @@ Page({
   },
 });
 
-async function startTransaction(commodity, seller) {
+/**
+ * 根据商品和卖家创建群聊
+ */
+export async function startTransaction(commodity, seller) {
   const transactions = await TransactionApi.listByCommodity(commodity._id);
   if (transactions.isError) {
     console.error('failed to query existed transactions');
-    return null;
+    return;
   }
   const transaction = transactions.data?.[0];
   if (transaction) {
@@ -230,7 +238,7 @@ async function startTransaction(commodity, seller) {
     if (conv) {
       break;
     }
-    // 会话同步需要时间，如果上面没拿到就等一会在拿，多试几次 TODO 试试能否在服务端维护这个列表
+    // 会话同步需要时间，如果上面没拿到就等一会在拿，多试几次
     await sleep(200);
   }
   if (!conv) {
@@ -240,7 +248,7 @@ async function startTransaction(commodity, seller) {
   const resp = await TransactionApi.start(commodity._id, conv.conversationID);
   if (resp.isError) {
     console.error('failed to start a new transaction');
-    return null;
+    return;
   }
   return resp.data;
 }

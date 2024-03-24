@@ -69,21 +69,6 @@
         class="card"
         commodity="{{item}}"
       />
-      <CommodityCard
-        wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
-        class="card"
-        commodity="{{item}}"
-      />
-      <CommodityCard
-        wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
-        class="card"
-        commodity="{{item}}"
-      />
-      <CommodityCard
-        wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
-        class="card"
-        commodity="{{item}}"
-      />
     </view>
 
     <view class="bottom">

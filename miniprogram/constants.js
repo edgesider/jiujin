@@ -1,7 +1,7 @@
 export const COMMODITY_STATUS_SELLING = 0; // 出售中
 export const COMMODITY_STATUS_OFF = 1; // 已下架
 export const COMMODITY_STATUS_SOLD = 2; // 已售出
-export const COMMODITY_STATUS_LOCKED = 3; // 已锁定
+export const COMMODITY_STATUS_BOOKED = 3; // 已锁定
 
 export const DEFAULT_AVATAR = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132';
 
@@ -21,7 +21,7 @@ const constants = {
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_OFF,
   COMMODITY_STATUS_SOLD,
-  COMMODITY_STATUS_LOCKED,
+  COMMODITY_STATUS_BOOKED,
   CustomBar: 0,
   StatusBar: 0,
   GENDER, GENDER_NAME_MAP,
