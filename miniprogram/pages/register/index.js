@@ -137,6 +137,21 @@ Page({
     return l1L4Pair[1][indexes[1]];
   },
 
+  async onClickGender() {
+    const { tapIndex } = await wx.showActionSheet({
+      itemList: ['男', '女']
+    });
+    if (tapIndex === 0) {
+      this.setData({
+        gender: GENDER.MALE
+      });
+    } else if (tapIndex === 1) {
+      this.setData({
+        gender: GENDER.FEMALE
+      });
+    }
+  },
+
   // 提交注册信息
   async onRegister() {
     const { isEdit, name, gender: sex } = this.data;

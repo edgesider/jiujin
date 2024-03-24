@@ -28,18 +28,11 @@
           bindinput="onChangeName"
         />
       </view>
-      <view class="cu-form-group">
+      <view class="cu-form-group gender-option">
         <view class="title">性别</view>
-        <picker
-          mode="selector"
-          range="{{genderOptions}}"
-          value="{{gender}}"
-          bindchange="onGenderPickerConfirm"
-        >
-          <view class="picker">{{GENDER_NAME_MAP[gender]}}</view>
-        </picker>
+        <view class="title" bindtap="onClickGender">{{GENDER_NAME_MAP[gender]}}</view>
       </view>
-      <view class="cu-form-group">
+      <view class="cu-form-group region-option">
         <view class="title">常用位置</view>
         <picker
           mode="multiSelector"
