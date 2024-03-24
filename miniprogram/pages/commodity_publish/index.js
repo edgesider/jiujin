@@ -28,6 +28,19 @@ Page({
     commodityCurrentPrice: 0,
     qualityIndex: 0,
     onlyMyGender: false,
+
+    filtration: ["全部可见","同校区可见","同性别可见","同楼可见"],
+    choose_filtration: "全部可见"
+  },
+
+  /**
+   * 用户点击切换过滤
+   */
+  choose_filtration(e) {
+    let the = this
+    the.setData({
+      choose_filtration: e.currentTarget.dataset.filtration
+    })
   },
 
   /**

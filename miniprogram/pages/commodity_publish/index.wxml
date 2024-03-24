@@ -1,90 +1,48 @@
-<!--<cu-custom bgColor="bg-yellow" isBack="{{true}}">-->
-  <!--  <view slot="backText" bind:tap="onNavigateBack">返回</view>-->
-  <!--  <view slot="content">发布商品</view>-->
-  <!--</cu-custom>-->
-<TitleBar title="{{buttonText}}商品" />
+<TitleBar title="发布闲置物品" />
+<view class="Content">
+  <textarea class="content" name="content" value="{{commodityContent}}" maxlength="-1"
+            bindinput="onChangeCommodityContent" placeholder="描述一下物品基本信息…"></textarea>
 
-<form>
-  <view class="cu-item shadow margin-top">
-    <view class="cu-form-group margin-top desc">
-      <textarea class="desc-textarea" value="{{commodityContent}}" maxlength="-1"
-                bindinput="onChangeCommodityContent" placeholder="物品描述" />
-    </view>
-    <view class="cu-bar bg-white margin-top">
-      <view class="action">
-        {{commodityImg.length}}/9
-      </view>
-    </view>
-    <view class="cu-form-group">
-      <view class="grid col-4 grid-square flex-sub">
-        <view class="bg-img" wx:for="{{commodityImg}}" wx:key="index" bindtap="onViewCommodityImg"
-              data-url="{{commodityImg[index]}}">
-          <image src='{{commodityImg[index]}}' mode='aspectFill'></image>
-          <view class="cu-tag bg-red" catchtap="onDelCommodityImg" data-index="{{index}}">
-            <text class="cuIcon-close"></text>
-          </view>
-        </view>
-        <view class="solids" bindtap="onUpdateCommodityImg" wx:if="{{commodityImg.length < 9}}">
-          <text class="cuIcon-cameraadd"></text>
-        </view>
-      </view>
-    </view>
-    <view class="cu-form-group margin-top">
-      <view class="title">价格（元）</view>
-      <input
-        value="{{commodityCurrentPriceText}}"
-        maxlength="10"
-        type="digit"
-        placeholder=""
-        bindblur="onPriceInputBlur"
-        bindinput="onChangeCommodityCurrentPrice"
-      />
-    </view>
-    <view class="cu-form-group margin-top text-checkbox">
-      <view class="title">成色</view>
-      <view class="items">
-        <view
-          class="item {{qualityIndex === idx ? 'checked' : ''}}"
-          wx:for="{{qualities}}" wx:for-index="idx" wx:key="value"
-          data-idx="{{idx}}"
-          bindtap="onChangeQuality"
-        >
-          {{item.name}}
-        </view>
-      </view>
-    </view>
-    <view class="cu-form-group margin-top text-checkbox">
-      <view class="title">谁可见</view>
-      <view class="items">
-        <view
-          class="item {{onlyMyGender ? '' : 'checked'}}"
-          data-value="{{false}}"
-          bindtap="onChangeOnlyMyGender"
-        >不限
-        </view>
-        <view
-          wx:if="{{self !== null && self.sex !== GENDER.UNKNOWN}}"
-          class="item {{onlyMyGender ? 'checked' : ''}}"
-          data-value="{{true}}"
-          bindtap="onChangeOnlyMyGender"
-        >
-          仅{{GENDER_NAME_MAP[self.sex]}}性可见
-        </view>
-      </view>
-    </view>
+  <view class="images">
+    <image wx:for="{{commodityImg}}" wx:key="index" bindtap="onViewCommodityImg" data-url="{{commodityImg[index]}}"
+           class="image" src='{{commodityImg[index]}}' mode="aspectFill"></image>
+    <image
+      wx:if="{{commodityImg.length<9}}"
+      class="add_icon"
+      src="/images/add.png"
+      bindtap="onUpdateCommodityImg"
+    />
+  </view>
+</view>
 
-    <view class="cu-form-group margin-top">
-      <view class="title">分类</view>
-      <picker bindchange="onChangeCommodityCategory" value="{{categoryIndex}}" range="{{categories}}"
-              range-key="{{'name'}}">
-        <view class="picker">
-          {{categories[categoryIndex].name}}
-        </view>
-      </picker>
+  <!-- 价格 -->
+<view class="Price">
+  <view class="price_title">价格</view>
+  <input class="price" value="{{commodityCurrentPriceText}}"
+         maxlength="10"
+         bindblur="onPriceInputBlur"
+         bindinput="onChangeCommodityCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
+</view>
+
+  <!-- 成色 -->
+<view class="Sort">
+  <view class="sort_title">成色</view>
+  <image
+    class="sort" wx:for="{{qualities}}" wx:for-index="idx" wx:key="value" data-idx="{{idx}}"
+    src="/images/quality_{{item.value}}_{{qualityIndex===idx?'on':'off'}}.png" mode="widthFix" bindtap="onChangeQuality"
+  />
+</view>
+
+  <!-- 过滤 -->
+<view class="Sort">
+  <view class="sort_title">过滤</view>
+  <view class="filters">
+    <view class="{{choose_filtration===item?'sort_on':'sort_off'}}" wx:for="{{filtration}}" wx:key="unique"
+          bind:tap="choose_filtration" data-filtration="{{item}}">{{item}}
     </view>
   </view>
-</form>
+</view>
 
 <van-dialog id="van-dialog" />
 
-<button bindtap="onSubmit" class="release-button">{{buttonText}}</button>
+<button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'#21AC39'}};" class="submit">{{buttonText}}</button>
