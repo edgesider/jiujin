@@ -2,6 +2,7 @@
   "component": true,
   "usingComponents": {
     "MessageList": "./components/MessageList/index",
-    "MessageInput": "./components/MessageInput/index"
+    "MessageInput": "./components/MessageInput/index",
+    "UserTitleBar": "../../../../components/UserTitleBar/index"
   }
 }

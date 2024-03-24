@@ -1,4 +1,4 @@
-import { getQualitiesMap } from "../../utils/strings";
+import { getContentDesc, getQualitiesMap } from "../../utils/strings";
 
 const app = getApp();
 
@@ -32,15 +32,9 @@ Component({
     }
   },
   attached() {
-    let { content } = this.properties.commodity
-    // 处理content
-    content = content.substring(0, 8); // 最多十个
-    const firstLR = content.indexOf('\n');
-    if (firstLR !== -1) {
-      content = content.substring(0, content.indexOf('\n')) // 从第一个回车截断
-    }
+    const { content } = this.properties.commodity
     this.setData({
-      desc: content,
+      desc: getContentDesc(content),
       ridToRegion: app.globalData.ridToRegion,
     });
   }

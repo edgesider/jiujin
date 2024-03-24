@@ -1,4 +1,4 @@
-import { getQualitiesMap } from "../../utils/strings";
+import { getContentDesc, getQualitiesMap } from "../../utils/strings";
 import moment from 'moment';
 import { COMMODITY_STATUS_OFF, COMMODITY_STATUS_SOLD, COMMODITY_STATUS_SELLING } from "../../constants";
 
@@ -60,16 +60,10 @@ Component({
     },
 
     onUpdate() {
-      let { content, create_time, update_time, selled_time, status } = this.properties.commodity
-      // 处理content
-      content = content.substring(0, 8); // 最多十个
-      const firstLR = content.indexOf('\n');
-      if (firstLR !== -1) {
-        content = content.substring(0, content.indexOf('\n')) // 从第一个回车截断
-      }
+      const { content, create_time, update_time, selled_time, status } = this.properties.commodity
       this.setData({
         self: app.globalData.self,
-        desc: content,
+        desc: getContentDesc(content),
         createTime: moment(create_time).format('YYYY-MM-DD HH:mm'),
         soldTime: selled_time && moment(selled_time).format('YYYY-MM-DD HH:mm') || '',
         polishAt: moment(update_time).fromNow(),

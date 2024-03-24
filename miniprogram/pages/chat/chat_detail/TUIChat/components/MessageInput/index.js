@@ -97,28 +97,18 @@ Component({
     async initCommodity() {
       const { data: { groupAttributes: attrs } } = await tim.getGroupAttributes({
         groupID: this.data.conversation.groupProfile.groupID,
-        keyList: ["commodityID", "sellID"]
+        keyList: ['commodityId', 'sellerId', 'transactionId']
       });
-      const { data: commodity } = await api.getCommodityInfo({ id: attrs.commodityID });
+      const { data: commodity } = await api.getCommodityInfo({ id: attrs.commodityId });
       this.setData({
         commodity,
-        isSeller: attrs.sellID == app.globalData.self._id,
+        isSeller: attrs.sellerId === app.globalData.self._id,
       });
-      if (this.data.isSeller) {
-        this.setData({
-          commonFunction: [
-            { name: '常用语', key: '0' },
-            { name: '解锁', key: '4' },
-            { name: '售出', key: '5' },
-          ]
-        });
-      } else {
-        this.setData({
-          commonFunction: [
-            { name: '常用语', key: '0' },
-          ]
-        });
-      }
+      this.setData({
+        commonFunction: [
+          { name: '常用语', key: '0' },
+        ]
+      });
     },
     // 获取消息列表来判断是否发送正在输入状态
     getMessageList(conversation) {
@@ -334,65 +324,11 @@ Component({
     },
 
     handleCommonFunctions(e) {
-      const { commodity } = this.data;
       switch (e.target.dataset.function.key) {
         case '0':
           this.setData({
             displayCommonWords: true,
           });
-          break;
-        case '1':
-          this.setData({
-            displayOrderList: true,
-          });
-          break;
-        case '2':
-          this.setData({
-            displayServiceEvaluation: true,
-          });
-          break;
-        case '3': // 锁定
-          api.lockCommodity(commodity._id);
-          wx.showToast({
-            title: '锁定成功',
-            duration: 800,
-            icon: 'success',
-          });
-          commodity.status = COMMODITY_STATUS_BOOKED;
-          this.setData({ commodity });
-          break;
-        case '4': // 解锁
-          if (commodity.status != COMMODITY_STATUS_BOOKED) {
-            wx.showToast({
-              title: '商品不是已锁定',
-              duration: 800,
-              icon: 'error',
-            });
-            return;
-          }
-          api.unlockCommodity(commodity._id);
-          wx.showToast({
-            title: '解锁成功',
-            duration: 800,
-            icon: 'success',
-          });
-          commodity.status = COMMODITY_STATUS_SELLING;
-          this.setData({ commodity });
-          break;
-        case '5': // 售出
-          if (commodity.status != COMMODITY_STATUS_SELLING && commodity.status != COMMODITY_STATUS_BOOKED) {
-            wx.showToast({
-              title: '商品不是可售出',
-              duration: 800,
-              icon: 'error',
-            });
-            return;
-          }
-          this.triggerEvent('sellCommodity');
-          commodity.status = COMMODITY_STATUS_SOLD;
-          this.setData({ commodity });
-          break;
-        default:
           break;
       }
     },
@@ -522,17 +458,6 @@ Component({
         sendMessageBtn: false,
       });
       this.$sendTIMMessage(message);
-
-      const commodity = app.globalData.config.commodity;
-      if (commodity.status == COMMODITY_STATUS_SELLING) {
-        api.lockCommodity(commodity._id);
-        commodity.status = COMMODITY_STATUS_BOOKED;
-        wx.showToast({
-          title: '商品锁定成功',
-          duration: 800,
-          icon: 'success',
-        });
-      }
     },
 
     // 监听输入框value值变化

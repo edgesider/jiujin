@@ -69,3 +69,6 @@ export async function deleteAllGroup() {
   }
   return list.length;
 }
+
+interface CustomMessagePayload {
+}

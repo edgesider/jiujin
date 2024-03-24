@@ -198,9 +198,9 @@ App({
       const { data: user_profile } = await tim.getUserProfile({ userIDList: [from] });
       const { data: { groupAttributes: attrs } } = await tim.getGroupAttributes({
         groupID: conversationID.substr(5),
-        keyList: ["commodityID"]
+        keyList: ["commodityId"]
       });
-      const resp = await api.getCommodityInfo({ id: attrs.commodityID });
+      const resp = await api.getCommodityInfo({ id: attrs.commodityId });
       this.sendIMSubscribeMessage({
         name: user_profile[0].nick,
         message: text,

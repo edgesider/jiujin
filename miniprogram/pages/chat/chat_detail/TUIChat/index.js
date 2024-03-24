@@ -1,8 +1,9 @@
 // TUIKit-WChat/Chat/index.ts
-import logger from '../../utils/logger';
 import constant from '../../utils/constant';
 import api from "../../../../api/api";
 import getConstants from "../../../../constants";
+import { TransactionApi, TransactionStatus } from "../../../../api/transaction";
+import { getContentDesc } from "../../../../utils/strings";
 
 const app = getApp();
 
@@ -15,8 +16,7 @@ let newInputStyle = `
 `;
 
 const setNewInputStyle = (number) => {
-  const height = number;
-  newInputStyle = `--padding: ${height}px`;
+  newInputStyle = `--padding: ${number}px`;
 };
 
 Component({
@@ -41,19 +41,13 @@ Component({
         });
       },
     },
-    hasCallKit: {
-      type: Boolean,
-      value: false,
-      observer(hasCallKit) {
-        this.setData({
-          hasCallKit,
-        });
-      },
-    },
   },
 
   lifetimes: {
     attached() {
+    },
+    detached() {
+      tim.off(tim.EVENT.MESSAGE_RECEIVED, this.onNewMessage);
     },
     ready() {
       const query = wx.createSelectorQuery().in(this);
@@ -62,84 +56,82 @@ Component({
           chatContainerHeight: rect.height
         })
       }).exec();
-    }
+    },
   },
   data: {
     ...getConstants(),
+    isSeller: false,
     conversationName: '',
     conversation: null,
+    group: null,
     commodity: null,
-    messageList: [],
-    isShow: false,
-    showImage: false,
-    showChat: true,
-    showSell: false,
+    commodityDesc: '',
+    transaction: null,
+    statusImage: null,
+    tip: '',
     conversationID: '',
-    config: {
-      sdkAppID: '',
-      userID: '',
-      userSig: '',
-      type: 1,
-      tim: null,
-    },
     unreadCount: 0,
-    hasCallKit: false,
     viewData: {
       style: inputStyle,
     },
-    KeyboardHeight: 0,
-    showTips: false,
-    showGroupTips: false,
-    showAll: false,
     chatContainerHeight: 0,
-    newGroupProfile: {}
   },
 
   methods: {
     async init() {
-      console.log(this.data.conversationID);
+      const { conversation } = (await tim.getConversationProfile(this.data.conversationID)).data;
+      tim.setMessageRead({ conversationID: conversation.conversationID }).then();
+      const group = conversation.groupProfile;
       const groupData = await tim.getGroupAttributes({
-        groupID: this.data.conversationID.substr(5),
-        keyList: ["commodityID", "sellID"]
-      })
-      const { data: { groupAttributes: attrs } } = groupData;
-      api.getCommodityInfo({ id: attrs.commodityID }).then((data) => {
-        const { data: commodity } = data;
-        this.setData({
-          showSell: true,
-          commodity: commodity,
-          isSeller: attrs.sellID === app.globalData.self._id,
-        });
+        groupID: group.groupID,
+        keyList: ['commodityId', 'sellerId', 'transactionId']
       });
-      await tim.setMessageRead({ conversationID: this.data.conversationID });
-
-      // 手动发送已读消息回执
-      // wx.$TUIKit.getMessageList({conversationID: this.data.conversationID}).then(function(imResponse) {
-      //   let messageList = imResponse.data.messageList; // 消息列表
-      //   wx.$TUIKit.sendMessageReadReceipt(messageList).then(function() {
-      //     logger.log('sendMessageReadReceipt OK');
-      //   }).catch(function(imError) {
-      //     logger.warn('sendMessageReadReceipt ERROR: ' + imError);
-      //   });
-      // });
-
-      const { data: { conversation } } = await tim.getConversationProfile(this.data.conversationID);
-      this.setData({
-        conversationName: this.getConversationName(conversation),
-        conversation,
-        isShow: conversation.type === tim.TYPES.CONV_GROUP,
-      });
-      if (conversation.type !== tim.TYPES.CONV_GROUP) return;
-      if (!this.data.showTips) {
-        this.setData({
-          showGroupTips: true,
-        });
-      } else {
-        this.setData({
-          showAll: true,
-        });
+      const { commodityId, sellerId, transactionId: transactionIdStr } = groupData.data.groupAttributes;
+      const transactionId = parseInt(transactionIdStr);
+      const [commodityResp, transactionResp, sellerResp] =
+        await Promise.all([
+          api.getCommodityInfo({ id: commodityId }),
+          TransactionApi.getById(transactionId),
+          api.getUserInfo(sellerId),
+        ])
+      if (commodityResp.isError || transactionResp.isError || sellerResp.isError) {
+        await wx.showToast({ title: '网络错误', icon: 'error' });
+        return;
       }
+      const commodity = commodityResp.data;
+      const transaction = transactionResp.data;
+      const seller = sellerResp.data;
+      this.setData({
+        commodity: commodity,
+        commodityDesc: getContentDesc(commodity.content),
+        isSeller: sellerId === app.globalData.self._id,
+        conversationName: this.getConversationName(conversation),
+        seller,
+        conversation,
+        group,
+        transaction,
+        statusImage: this.getTransactionStatusImage(transaction),
+      });
+
+      const onNewMessage = (newData) => {
+        const msgList = newData.data;
+        let needUpdateTransaction = false;
+        msgList
+          .filter(msg => msg.conversationID === conversation.conversationID)
+          .forEach(msg => {
+            const custom = JSON.parse(msg.cloudCustomData ?? '{}');
+            if (custom?.needUpdateTransaction) {
+              needUpdateTransaction = true;
+            }
+          });
+        if (needUpdateTransaction) {
+          this.updateTransaction().then();
+        }
+      }
+      this.onNewMessage = onNewMessage;
+      tim.on(tim.EVENT.MESSAGE_RECEIVED, onNewMessage);
     },
+    onNewMessage: null,
     getConversationName(conversation) {
       if (conversation.type === '@TIM#SYSTEM') {
         this.setData({
@@ -154,33 +146,10 @@ Component({
         return conversation.groupProfile.name || conversation.groupProfile.groupID;
       }
     },
-    sendMessage(event) {
+    onSendMessage(event) {
       // 将自己发送的消息写进消息列表里面
       this.selectComponent('#MessageList').updateMessageList(event.detail.message);
     },
-    // sendCommodityMessage(event) {
-    //   const { BUSINESS_ID_TEXT, FEAT_NATIVE_CODE } = constant;
-    //   const { _id, content, img_urls, price } = this.data.commodity;
-    //   this.selectComponent('#MessageInput').$handleSendCustomMessage({
-    //     detail: {
-    //       payload: {
-    //         data: JSON.stringify({
-    //           businessID: BUSINESS_ID_TEXT.ORDER,
-    //           version: FEAT_NATIVE_CODE.NATIVE_VERSION,
-    //           title: content,
-    //           imageUrl: img_urls[0],
-    //           imageWidth: 135,
-    //           imageHeight: 135,
-    //           link: `/pages/commodity_detail/index?id=${_id}`,
-    //           price: '￥' + price,
-    //           description: '',
-    //         })
-    //       },
-    //       description: content, // 获取自定义消息的具体描述
-    //       extension: content, // 自定义消息的具体内容
-    //     }
-    //   });
-    // },
     gotoCommodityDetail() {
       wx.navigateTo({
         url: `/pages/commodity_detail/index?id=${this.data.commodity._id}`,
@@ -199,22 +168,11 @@ Component({
         this.triggerEvent('handleCall', event.detail);
       }
     },
-    groupCall(event) {
-      const { selectedUserIDList, type, groupID } = event.detail;
-      const userIDList = selectedUserIDList;
-      this.triggerEvent('handleCall', { userIDList, type, groupID });
-    },
     async goBack() {
       await wx.navigateBack();
       await tim.setMessageRead({
         conversationID: this.data.conversationID,
       });
-    },
-    showConversationList() {
-      this.triggerEvent('showConversationList');
-    },
-    changeMemberCount(event) {
-      this.selectComponent('#TUIGroup').updateMemberCount(event.detail.groupOperationType);
     },
     resendMessage(event) {
       this.selectComponent('#MessageInput').onInputValueChange(event);
@@ -256,61 +214,143 @@ Component({
         }
       }
     },
-    handleReport() {
-      const url = '/pages/TUI-User-Center/webview/webview?url=https://cloud.tencent.com/apply/p/xc3oaubi98g';
-      wx.navigateTo({
-        url,
-      });
-    },
-    handleNewGroupProfile(event) {
-      const newGroupProfile = event.detail;
-      for (let key in newGroupProfile) {
-        // 群名称变更
-        if (key === 'groupName') {
-          const conversationName = newGroupProfile[key];
-          this.setData({
-            conversationName: conversationName
-          })
-        }
-      }
-    },
-    onCopyUserID(event) {
-      wx.setClipboardData({
-        data: this.data.conversation.userProfile.userID,
-        success(res) {
-          wx.showToast({
-            title: '已复制到剪贴板',
-            icon: 'success',
-            mask: true,
-          });
-        }
-      });
-    },
-    sellCommodity(event) {
-      const { commodity } = app.globalData.config;
-      const user_id = this.data.conversation.userProfile.userID;
-      if (user_id.substr(0, 4) !== 'USER') {
-        wx.showToast({
-          title: '对方不是个人用户，售出失败',
-          icon: 'error',
-          mask: true,
-        });
+    async sendTextMessage(text) {
+      const { group } = this.data;
+      if (!group) {
         return;
       }
-      api.sellCommodity(commodity._id, user_id.substr(4)).then((res) => {
-        wx.showToast({
-          title: '售出成功',
-          duration: 800,
-          icon: 'success',
-        });
-      }).catch((e) => {
-        wx.showToast({
-          title: '售出失败',
-          duration: 800,
-          icon: 'error',
-        });
-        console.error(e);
+      const msg = tim.createTextMessage({
+        to: this.data.group.groupID,
+        conversationType: tim.TYPES.CONV_GROUP,
+        payload: { text },
+        cloudCustomData: JSON.stringify({
+          needUpdateTransaction: true
+        })
       });
+      await tim.sendMessage(msg);
+      this.selectComponent('#MessageList').updateMessageList(msg);
+    },
+    async updateTransaction() {
+      if (!this.data.transaction) {
+        return;
+      }
+      console.log('updating transaction');
+      const transaction = (await TransactionApi.getById(this.data.transaction.id)).data;
+      if (!transaction) {
+        return;
+      }
+      this.setData({
+        transaction,
+        statusImage: this.getTransactionStatusImage(transaction),
+      });
+    },
+    async agreeBooking() {
+      const { transaction } = this.data;
+      const resp = await TransactionApi.agreeBooking(transaction.id);
+      if (resp.isError) {
+        await wx.showToast({
+          title: '操作失败，请稍后再试',
+          icon: 'error'
+        })
+        return;
+      }
+      await this.updateTransaction();
+      this.sendTextMessage('我已同意你的预定').then();
+      wx.showToast({ title: '已同意', }).then();
+    },
+    async denyBooking() {
+      const { transaction } = this.data;
+      const reasons = ['商品已售出', '交易距离远', '不想卖了', '其他'];
+      const { tapIndex } = await wx.showActionSheet({
+        itemList: reasons
+      });
+      const reason = reasons[tapIndex];
+      const resp = await TransactionApi.denyBooking(transaction.id, reason);
+      if (resp.isError) {
+        await wx.showToast({
+          title: '操作失败，请稍后再试',
+          icon: 'error'
+        })
+        return;
+      }
+      await this.updateTransaction();
+      this.sendTextMessage(`因“${reason}”，我已拒绝你的预定`).then();
+      wx.showToast({ title: '已拒绝' }).then();
+    },
+    async requestBooking() {
+      const { transaction } = this.data;
+      const resp = await TransactionApi.requestBooking(transaction.id);
+      if (resp.isError) {
+        await wx.showToast({
+          title: '操作失败，请稍后再试',
+          icon: 'error'
+        })
+        return;
+      }
+      await this.updateTransaction();
+      this.sendTextMessage('我已发出预约申请').then();
+      wx.showToast({ title: '已申请预约' }).then();
+    },
+    async cancelBooking() {
+      const { transaction } = this.data;
+      const resp = await TransactionApi.cancelBooking(transaction.id);
+      if (resp.isError) {
+        await wx.showToast({
+          title: '操作失败，请稍后再试',
+          icon: 'error'
+        })
+        return;
+      }
+      await this.updateTransaction();
+      this.sendTextMessage('我已取消预约申请').then();
+      wx.showToast({ title: '已取消预约', }).then();
+    },
+    async confirmSold() {
+      const { transaction } = this.data;
+      const resp = await TransactionApi.confirmSold(transaction.id);
+      if (resp.isError) {
+        await wx.showToast({
+          title: '操作失败，请稍后再试',
+          icon: 'error'
+        })
+        return;
+      }
+      await this.updateTransaction();
+      this.sendTextMessage('我已确认售出').then();
+      wx.showToast({ title: '已确认售出', }).then();
+    },
+    async confirmTerminated() {
+      const { transaction } = this.data;
+      const resp = await TransactionApi.confirmTerminated(transaction.id);
+      if (resp.isError) {
+        await wx.showToast({
+          title: '操作失败，请稍后再试',
+          icon: 'error'
+        })
+        return;
+      }
+      await this.updateTransaction();
+      this.sendTextMessage('我已确认终止').then();
+      wx.showToast({ title: '已确认终止', }).then();
+    },
+    getTransactionStatusImage(transaction) {
+      return ({
+        [TransactionStatus.RequestingBooking]: '/images/待确认.png',
+        [TransactionStatus.Denied]: '/images/已拒绝.png',
+        [TransactionStatus.Booked]: '/images/已预定.png',
+        [TransactionStatus.Finished]: '/images/已成交.png',
+      })[transaction.status];
+    },
+    getTransactionStatusTip(transaction) {
+      if (this.data.isSeller) {
+        return ({
+          [TransactionStatus.Booked]: '点击“已售出”商品正式下架，点击“未售出”后商品擦亮置顶',
+        })[transaction.status];
+      } else {
+        return ({
+          [TransactionStatus.Idle]: '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品',
+        })[transaction.status];
+      }
     }
   },
 });

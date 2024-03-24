@@ -139,7 +139,7 @@ Component({
     },
     onTap(event) {
       if (this.data.isSeller) {
-        const resp = api.getCommodityInfo({ id: this.data.commodityID });
+        const resp = api.getCommodityInfo({ id: this.data.commodityId });
         app.globalData.config.commodity = resp.data;
       }
       this.triggerEvent('handleRoute', {});
@@ -148,7 +148,7 @@ Component({
       if (conversation.type === 'GROUP') {
         const { data: { groupAttributes: attrs } } = await tim.getGroupAttributes({
           groupID: conversation.groupProfile.groupID,
-          keyList: ["commodityID", "sellID"]
+          keyList: ['commodityId', 'sellerId', 'transactionId']
         });
         const imResponse = await tim.getGroupMemberList({
           groupID: conversation.groupProfile.groupID,
@@ -169,8 +169,8 @@ Component({
         const avatar = list[idx].avatar;
         this.setData({
           setUserAvatar: avatar,
-          isSeller: self._id === attrs.sellID,
-          commodityID: attrs.commodityID,
+          isSeller: self._id === attrs.sellerId,
+          commodityId: attrs.commodityId,
         });
         return;
       }

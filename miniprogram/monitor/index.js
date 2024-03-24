@@ -16,7 +16,6 @@ export const InAppMonitor = {
     console.log(`${this._TAG}: in_app=true`);
   },
   start() {
-    console.log(this);
     console.log(`${this._TAG}: start`);
     this._subj.unsubscribe();
     this._action();

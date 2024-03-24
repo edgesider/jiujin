@@ -84,9 +84,10 @@ export const TransactionApi = {
       path: `/transaction/agreeBooking/${id}`,
     }))
   },
-  async denyBooking(id: number): Promise<Resp<void>> {
+  async denyBooking(id: number, reason: string): Promise<Resp<void>> {
     return wrapResp(await request({
       path: `/transaction/denyBooking/${id}`,
+      data: { reason }
     }))
   },
   async cancelBooking(id: number): Promise<Resp<void>> {

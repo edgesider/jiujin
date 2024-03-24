@@ -220,29 +220,19 @@ export async function startTransaction(commodity, seller) {
       ],
     }
   );
-  if (newCreate) {
-    await tim.initGroupAttributes({
-      groupID: group.groupID,
-      groupAttributes: {
-        commodityID: commodity._id,
-        sellID: seller._id,
-        commodityId: commodity._id,
-        sellId: seller._id,
-      }
-    })
-  }
   console.log(`created group ${group.groupID} for commodity ${commodity._id}`);
   let conv;
   for (let i = 0; i < 10; i++) {
+    // 会话同步需要时间，多试几次
     conv = await getConversationByGroup(group.groupID);
     if (conv) {
       break;
     }
-    // 会话同步需要时间，如果上面没拿到就等一会在拿，多试几次
     await sleep(200);
   }
   if (!conv) {
-    throw Error('failed to get conversation');
+    console.error('failed to get conversation');
+    return;
   }
   console.log(`starting transaction: commodity=${commodity._id} conversation=${conv.conversationID}`)
   const resp = await TransactionApi.start(commodity._id, conv.conversationID);
@@ -250,5 +240,14 @@ export async function startTransaction(commodity, seller) {
     console.error('failed to start a new transaction');
     return;
   }
-  return resp.data;
+  const tact = resp.data;
+  await tim.setGroupAttributes({
+    groupID: group.groupID,
+    groupAttributes: {
+      commodityId: commodity._id,
+      sellerId: seller._id,
+      transactionId: tact.id.toString(),
+    }
+  })
+  return tact;
 }

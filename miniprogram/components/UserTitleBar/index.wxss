@@ -1,0 +1,101 @@
+@import "/app.wxss";
+
+.top {
+  background: white;
+  position: relative;
+  width: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.top .back {
+  height: 100%;
+  padding: 0 24rpx;
+  font-size: 36rpx;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top .title {
+  justify-self: center;
+  align-self: center;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.top-user {
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  background: white;
+  padding: 0 0 16rpx;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.top-user .back {
+  font-size: 42rpx;
+  margin: 0 16rpx;
+}
+
+.top-user .avatar {
+  border-radius: 50%;
+  width: 80rpx;
+  height: 80rpx;
+}
+
+.top-user .info {
+  margin-left: 12rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.top-user .info .line1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.top-user .info .line1 .name {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.top-user .info .line1 .time {
+  font-size: 20rpx;
+  margin-left: 8rpx;
+  color: #979797;
+}
+
+.top-user .info .line2 {
+  margin-top: 4rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 2rpx;
+}
+
+.top-user .info .line2 .region-icon {
+  width: 20rpx;
+  height: 30rpx;
+}
+
+.top-user .info .line2 .region {
+  font-size: 20rpx;
+  color: #979797;
+}

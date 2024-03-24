@@ -84,7 +84,6 @@ page {
 
 .right .button.yellow {
   background-color: #fac000;
-
 }
 
 .right .button-disabled {

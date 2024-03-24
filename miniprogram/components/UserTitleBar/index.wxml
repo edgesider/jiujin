@@ -1,0 +1,20 @@
+<view style="width: 100%; background: white; height: {{StatusBar}}px" />
+
+<view class="top-user">
+  <view wx:if="{{hasBack}}" class="cuIcon-back back" bindtap="back" />
+  <image
+    bindtap="onAvatarClick"
+    class="avatar"
+    src="{{user.avatar_url || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"
+  />
+  <view class="info">
+    <view class="line1">
+      <text class="name">{{user.name || '已注销用户'}}</text>
+      <text class="time" wx:if="{{time}}">{{time}}</text>
+    </view>
+    <view class="line2" wx:if="{{region}}">
+      <image src="/images/location.png" class="region-icon" />
+      <text class="region">{{region}}</text>
+    </view>
+  </view>
+</view>
