@@ -26,7 +26,7 @@
       <view class="content">
         <view
           class="images {{commodity.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
-          style="height: calc({{firstImageSize[1] / firstImageSize[0]}} * 100vw);"
+          style="{{commodity.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
         >
           <image
             wx:for="{{commodity.img_urls}}"

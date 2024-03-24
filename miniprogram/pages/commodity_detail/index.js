@@ -43,7 +43,7 @@ Page({
     const sellerResp = await api.getUserInfo(commodity.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
 
-    let firstImageSize = [0, 0];
+    let firstImageSize = [0, 1];
     if (commodity.img_urls.length === 1) {
       try {
         const size = await wx.getImageInfo({ src: commodity.img_urls[0] });
