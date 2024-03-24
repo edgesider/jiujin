@@ -5,7 +5,7 @@
   <view class="info">
     <view class="name">
       <text>{{selfInfo.name || '欢迎来到楼里楼外'}}</text>
-      <text class="{{user.gender === GENDER.MALE ? 'men' : 'women'}}">{{user.gender === GENDER.MALE ? '♂' : '♀'}}</text>
+      <text class="{{selfInfo.sex === GENDER.MALE ? 'men' : 'women'}}">{{selfInfo.sex === GENDER.MALE ? '♂' : '♀'}}</text>
     </view>
     <view class="region" wx:if="{{selfInfo.rid > 0}}">
       <image class="icon" src="/images/location.png" />
