@@ -75,7 +75,7 @@
     <view class="list" wx:if="{{commodityList.length > 0}}">
       <CommodityCard
         wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
-        class="item"
+        class="card"
         commodity="{{item}}"
       />
     </view>

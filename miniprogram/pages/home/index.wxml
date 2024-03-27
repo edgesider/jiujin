@@ -39,28 +39,21 @@
 
     <view class="region-filter">
       <scroll-view scroll-x>
-        <view
-          class="{{selectedRegionIndex === idx ?'item-on':'item'}}"
-          wx:for="{{regions}}"
-          wx:key="_id"
-          wx:for-index="idx"
-          bind:tap="onRegionClick"
-          data-idx="{{idx}}"
-        >
-          {{item.name}}
+        <view class="container">
+          <view
+            class="item {{selectedRegionIndex === idx ? 'item-on' : ''}}"
+            wx:for="{{regions}}"
+            wx:key="_id"
+            wx:for-index="idx"
+            bind:tap="onRegionClick"
+            data-idx="{{idx}}"
+          >
+            <text class="item-text">{{item.name}}</text>
+            <view class="item-indicator" wx:if="{{selectedRegionIndex === idx}}" />
+          </view>
         </view>
       </scroll-view>
-      <image class="switch" src="/images/switch.png" bind:tap="onClickRankingSwitch" />
-    </view>
-
-    <view class="ranking" wx:if="{{showRankingPopup}}">
-      <view
-        wx:for="{{rankingOptions}}" wx:key="unique" wx:for-index="idx"
-        class="{{chosenRankingKey === item.key ? 'ranking-on' : 'ranking-off'}}"
-        bind:tap="onRankingKeyChanged" data-ranking-key="{{item.key}}"
-      >
-        {{item.text}}
-      </view>
+      <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />
     </view>
 
     <view class="list">
@@ -68,6 +61,7 @@
         wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
         class="card"
         commodity="{{item}}"
+        showRegionLevel="{{selectedRegionIndex - 1}}"
       />
     </view>
 
@@ -94,16 +88,15 @@
   </view>
 </scroll-view>
 
-<view class="cu-modal bottom-modal {{showLoginPopup?'show':''}}">
-  <view class="cu-dialog">
-    <view class="cu-bar bg-white">
-      <view class="action text-blue"></view>
-      <view class="action text-green" catch:tap="onCancelLoginPopup">取消</view>
-    </view>
-    <view class="padding">
-      <button class="cu-btn block bg-green margin-tb-sm lg" open-type="getUserInfo" bindgetuserinfo="onAuth">
-        注册后可进行更多操作
-      </button>
+<view class="ranking-container" wx:if="{{showRankingPopup}}">
+  <view class="ranking-mask" bind:tap="onToggleRankingSwitch" />
+  <view class="ranking" style="top: {{rankingPopupTop}}px">
+    <view
+      wx:for="{{rankingOptions}}" wx:key="unique" wx:for-index="idx"
+      class="{{chosenRankingKey === item.key ? 'ranking-on' : 'ranking-off'}}"
+      bind:tap="onRankingKeyChanged" data-ranking-key="{{item.key}}"
+    >
+      {{item.text}}
     </view>
   </view>
 </view>

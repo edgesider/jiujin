@@ -110,7 +110,10 @@ Component({
         conversation,
         group,
         transaction,
+      });
+      this.setData({
         statusImage: this.getTransactionStatusImage(transaction),
+        tip: this.getTransactionStatusTip(transaction),
       });
 
       const onNewMessage = (newData) => {
@@ -242,6 +245,7 @@ Component({
       this.setData({
         transaction,
         statusImage: this.getTransactionStatusImage(transaction),
+        tip: this.getTransactionStatusTip(transaction),
       });
     },
     async agreeBooking() {
@@ -321,7 +325,12 @@ Component({
     },
     async confirmTerminated() {
       const { transaction } = this.data;
-      const resp = await TransactionApi.confirmTerminated(transaction.id);
+      const reasons = ['商品已售出', '交易距离远', '不想卖了', '其他'];
+      const { tapIndex } = await wx.showActionSheet({
+        itemList: reasons
+      });
+      const reason = reasons[tapIndex];
+      const resp = await TransactionApi.confirmTerminated(transaction.id, reason);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',

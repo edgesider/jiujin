@@ -95,9 +95,10 @@ export const TransactionApi = {
       path: `/transaction/cancelBooking/${id}`,
     }))
   },
-  async confirmTerminated(id: number): Promise<Resp<void>> {
+  async confirmTerminated(id: number, reason: string): Promise<Resp<void>> {
     return wrapResp(await request({
       path: `/transaction/confirmTerminated/${id}`,
+      data: { reason }
     }))
   },
   async confirmSold(id: number): Promise<Resp<void>> {

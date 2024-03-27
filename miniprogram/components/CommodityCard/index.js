@@ -1,4 +1,5 @@
 import { getContentDesc, getQualitiesMap } from "../../utils/strings";
+import { getRegionPath } from "../../utils/other";
 
 const app = getApp();
 
@@ -7,11 +8,14 @@ Component({
     commodity: {
       type: Object,
     },
+    showRegionLevel: {
+      type: Number,
+      value: 0,
+    }
   },
   data: {
     desc: '',
-    ridToRegion: app.globalData.ridToRegion,
-    qualitiesMap: getQualitiesMap()
+    regionName: '',
   },
   methods: {
     async gotoDetail() {
@@ -32,10 +36,13 @@ Component({
     }
   },
   attached() {
-    const { content } = this.properties.commodity
+    const { showRegionLevel } = this.properties;
+    const { content, rid } = this.properties.commodity;
+    const path = getRegionPath(rid).splice(0, showRegionLevel + 1).map(r => r.name);
+    path.reverse();
     this.setData({
       desc: getContentDesc(content),
-      ridToRegion: app.globalData.ridToRegion,
+      regionName: path.length > 0 ? path.join('/') : '楼里', // 没有要展示的就展示“楼里”
     });
   }
 });

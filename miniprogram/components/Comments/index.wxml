@@ -1,5 +1,5 @@
 <view class="root">
-  <view class="title">{{comments.length}} 条评论</view>
+  <view class="title">{{comments.length}} 条留言</view>
   <view class="input-area">
     <image
       src='{{selfInfo.avatar_url || DEFAULT_AVATAR}}'
@@ -10,7 +10,7 @@
       class="fake-input"
       bindtap="onStartComment"
     >
-      {{selfInfo._id === commodity.seller_id ? '补充点信息吧~' : '问问更多细节~'}}
+      {{selfInfo._id === commodity.seller_id ? '补充点信息吧~' : '说点啥~'}}
     </view>
   </view>
   <view class="comments" wx:if="{{comments.length > 0}}">

@@ -14,7 +14,7 @@
 
 .top .back {
   height: 100%;
-  padding: 0 24rpx;
+  margin: 0 16rpx;
   font-size: 36rpx;
   position: absolute;
   left: 0;

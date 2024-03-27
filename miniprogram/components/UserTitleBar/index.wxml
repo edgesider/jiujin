@@ -1,7 +1,7 @@
 <view style="width: 100%; background: white; height: {{StatusBar}}px" />
 
 <view class="top-user">
-  <view wx:if="{{hasBack}}" class="cuIcon-back back" bindtap="back" />
+  <text class="back cuIcon-back" bindtap="back" />
   <image
     bindtap="onAvatarClick"
     class="avatar"

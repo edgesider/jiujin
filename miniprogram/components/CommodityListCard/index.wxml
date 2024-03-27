@@ -1,4 +1,4 @@
-<view class="root">
+<view class="root" bind:tap="gotoDetail">
   <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}" />
 
   <view class="middle">
@@ -8,20 +8,20 @@
   </view>
   <view class="right" wx:if="{{commodity.seller_id === self._id}}">
     <block wx:if="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">
-      <view class="button green" bind:tap="activate">重新上架</view>
-      <view class="button yellow" bind:tap="delete">删除</view>
+      <view class="button green" catch:tap="activate">重新上架</view>
+      <view class="button yellow" catch:tap="delete">删除</view>
     </block>
     <block wx:elif="{{commodity.status === COMMODITY_STATUS_SELLING}}">
-      <view class="button green" bind:tap="polish">擦亮</view>
-      <view class="button greenyellow" bind:tap="gotoEdit">编辑</view>
+      <view class="button green" catch:tap="polish">擦亮</view>
+      <view class="button greenyellow" catch:tap="gotoEdit">编辑</view>
       <view
         class="button yellow {{commodity.status === COMMODITY_STATUS_SELLING ? '' : 'button-disabled'}}"
-        bind:tap="off"
+        catch:tap="deactivate"
       >下架
       </view>
     </block>
     <block wx:elif="{{commodity.status === COMMODITY_STATUS_SOLD}}">
-      <view class="button green" bind:tap="republish">重新发布</view>
+      <view class="button green" catch:tap="republish">重新发布</view>
     </block>
   </view>
 </view>

@@ -16,7 +16,6 @@ Page({
   data: {
     ...getConstants(),
     scrollTop: 0,
-    showLoginPopup: false,
     pageIndex: 0,
     searchInput: "",
 
@@ -34,6 +33,7 @@ Page({
     banners: [],
 
     showRankingPopup: false,
+    rankingPopupTop: 0,
     rankingOptions: [
       { key: 'polish_time-desc', text: '时间由近到远' },
       { key: 'polish_time-asc', text: '时间由远到近' },
@@ -137,7 +137,7 @@ Page({
       const resp = await api.getCommodityList({
         rid, is_mine: false, status: COMMODITY_STATUS_SELLING,
         start, count: COUNT_PER_PAGE,
-        orderBy, order,
+        order_by: orderBy, order,
       });
       if (resp.isError) {
         await wx.showToast({ title: '网络错误' })
@@ -185,21 +185,6 @@ Page({
     await this.loadMore();
   },
 
-  splitListToRows(list) {
-    const rows = [];
-    for (let i = 0; i < list.length; i += 2) {
-      rows.push(list.slice(i, i + 2));
-    }
-    return rows;
-  },
-
-  // 表单
-  onSearchInput(event) {
-    this.setData({
-      searchInput: event.detail.value
-    })
-  },
-
   async onSearchClick() {
     wx.navigateTo({
       url: `../search/index`,
@@ -226,30 +211,23 @@ Page({
     })
   },
 
-  async onEnterCommodityDetail(event) {
-    const id = event.currentTarget.dataset.id
-    wx.navigateTo({
-      url: `../commodity_detail/index?id=${id}&enteredFrom=1`,
-    })
-  },
-
-  // 用户注册
-  async onAuth(event) {
-    const userInfo = event.detail.userInfo
-    console.log(userInfo)
-    wx.setStorageSync('userInfo', userInfo)
-    this.setData({
-      showLoginPopup: false
-    })
-    wx.redirectTo({
-      url: '../register/index',
-    })
-  },
-
-  onClickRankingSwitch() {
-    this.setData({
-      showRankingPopup: !this.data.showRankingPopup
-    });
+  onToggleRankingSwitch() {
+    if (this.data.showRankingPopup) {
+      this.setData({
+        showRankingPopup: false,
+      });
+      return;
+    }
+    wx.createSelectorQuery()
+      .select('#ranking-switch')
+      .boundingClientRect(res => {
+        const top = res.top + 40;
+        this.setData({
+          showRankingPopup: true,
+          rankingPopupTop: top,
+        })
+      })
+      .exec();
   },
 
   onRankingKeyChanged(event) {

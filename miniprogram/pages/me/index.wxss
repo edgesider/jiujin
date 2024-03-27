@@ -27,7 +27,7 @@ page {
   align-items: flex-start;
 }
 
-.info .name {
+.info .username {
   font-size: 40rpx;
   font-weight: bold;
   display: flex;
@@ -77,18 +77,6 @@ page {
   font-size: 25rpx;
 }
 
-.location {
-  width: 30rpx;
-  height: 40rpx;
-}
-
-.address {
-  font-size: 22rpx;
-  line-height: 40rpx;
-  color: #80899a;
-  margin-left: 10rpx;
-}
-
 /* 列表 */
 .List {
   margin: 20rpx;
@@ -106,8 +94,8 @@ page {
 .divider {
   width: calc(100% - 40rpx);
   margin-left: 20rpx;
-  height: 0.5px;
-  background-color: #f0f0f0;
+  height: 1px;
+  background-color: #f1f1f1;
 }
 
 .feedback-btn {

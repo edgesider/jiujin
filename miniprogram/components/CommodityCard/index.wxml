@@ -4,11 +4,14 @@
   bindlongpress="onLongPress"
 >
   <image class="cover" src="{{commodity.img_urls[0]}}" mode="aspectFill"></image>
-  <view class="name">{{desc}}</view>
-  <view class="Price">
-    <view class="price_rmb">¥</view>
-    <view class="price">{{commodity.price}}</view>
-    <view class="location">{{ridToRegion[commodity.rid].name}}</view>
-    <image class="location_icon" src="/images/location.png"></image>
+  <view class="info">
+    <view class="name">{{desc}}</view>
+    <view class="line2">
+      <view class="price-unit">￥</view>
+      <view class="price">{{commodity.price}}</view>
+      <view class="spacer" />
+      <image class="region-icon" src="/images/location.png" />
+      <view class="region">{{regionName}}</view>
+    </view>
   </view>
 </view>

@@ -5,10 +5,11 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  padding: 24rpx 32rpx;
+  padding: 24rpx 20rpx;
 }
 
 .title {
+  color: #3c3c3c;
   font-size: 32rpx;
   font-weight: bold;
 }
@@ -23,17 +24,18 @@
 
 .input-area .my-avatar {
   flex: 0 0 auto;
-  width: 72rpx;
-  height: 72rpx;
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
 }
 
 .input-area .fake-input {
   flex-grow: 1;
-  background: rgba(0, 0, 0, 0.05);
-  height: 56rpx;
-  border-radius: 28rpx;
-  margin-left: 24rpx;
+  color: #979797;
+  background: #f1f1f1;
+  height: 60rpx;
+  border-radius: 30rpx;
+  margin-left: 8rpx;
   padding: 0 24rpx;
   font-size: 24rpx;
   display: flex;

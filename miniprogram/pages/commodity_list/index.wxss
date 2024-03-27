@@ -54,3 +54,7 @@ scroll-view {
   background: white;
   height: auto;
 }
+
+.card:last-of-type {
+  border-bottom: none;
+}

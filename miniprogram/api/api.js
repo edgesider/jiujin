@@ -9,10 +9,10 @@ axios.defaults.adapter = mpAdapter;
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  // baseURL: 'https://lllw.ykai.cc',
-  baseURL: (version === 'release' || version === 'trial')
-    ? 'https://lllw.ykai.cc'
-    : 'http://localhost:8080/',
+  baseURL: 'https://lllw.ykai.cc',
+  // baseURL: (version === 'release' || version === 'trial')
+  //   ? 'https://lllw.ykai.cc'
+  //   : 'http://localhost:8080/',
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',
@@ -165,9 +165,9 @@ const api = {
     const res = wrapResp(resp);
     res.data.forEach(c => {
       c.img_urls = c.img_urls
-        .replaceAll("\"", "")
+        ?.replaceAll("\"", "")
         .replaceAll(" ", "")
-        .split(",");
+        .split(",") ?? [];
     })
     return res;
   },
@@ -486,9 +486,9 @@ export const CollectApi = {
     }));
     resp.data?.forEach(c => {
       c.img_urls = c.img_urls
-        .replaceAll("\"", "")
+        ?.replaceAll("\"", "")
         .replaceAll(" ", "")
-        .split(",");
+        .split(",") ?? [];
     })
     return resp;
   },

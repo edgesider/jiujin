@@ -4,24 +4,25 @@
     <text>商品走丢了</text>
   </view>
   <block wx:else>
-    <view class="header" style="margin-top: {{StatusBar}}px">
-      <view class="cuIcon-back back" bindtap="back" />
-      <image
-        bindtap="onAvatarClick"
-        class="avatar"
-        src="{{seller.avatar_url || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"
-      />
-      <view class="info">
-        <view class="line1">
-          <text class="name">{{seller.name || '已注销用户'}}</text>
-          <text class="time">{{createTime}}</text>
-        </view>
-        <view class="line2" wx:if="{{(seller.rid || -1) !== -1}}">
-          <image src="/images/location.png" class="region-icon" />
-          <text class="region">{{regionName}}</text>
-        </view>
-      </view>
-    </view>
+<!--    <view class="header" style="margin-top: {{StatusBar}}px">-->
+<!--      <view class="cuIcon-back back" bindtap="back" />-->
+<!--      <image-->
+<!--        bindtap="onAvatarClick"-->
+<!--        class="avatar"-->
+<!--        src="{{seller.avatar_url || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"-->
+<!--      />-->
+<!--      <view class="info">-->
+<!--        <view class="line1">-->
+<!--          <text class="name">{{seller.name || '已注销用户'}}</text>-->
+<!--          <text class="time">{{createTime}}</text>-->
+<!--        </view>-->
+<!--        <view class="line2" wx:if="{{(seller.rid || -1) !== -1}}">-->
+<!--          <image src="/images/location.png" class="region-icon" />-->
+<!--          <text class="region">{{regionName}}</text>-->
+<!--        </view>-->
+<!--      </view>-->
+<!--    </view>-->
+    <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{createTime}}" />
     <view class="body">
       <view class="content">
         <view
@@ -48,11 +49,12 @@
           <view class="spacer" />
           <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
         </view>
-        <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+        <view class="paragraphs">
+          <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+        </view>
       </view>
-      <view class="part-space"></view>
+      <view class="divider" />
       <Comments class="comments" commodity="{{commodity}}" />
-      <view class="part-space"></view>
     </view>
     <view class="footer">
       <view class="left">

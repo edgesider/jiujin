@@ -3,7 +3,7 @@
 <view class="User" style="margin-top: {{0}}px">
   <image class="avatar" src="{{selfInfo.avatar_url || DEFAULT_AVATAR}}" mode="aspectFill"></image>
   <view class="info">
-    <view class="name">
+    <view class="username">
       <text>{{selfInfo.name || '欢迎来到楼里楼外'}}</text>
       <text class="{{selfInfo.sex === GENDER.MALE ? 'men' : 'women'}}">{{selfInfo.sex === GENDER.MALE ? '♂' : '♀'}}</text>
     </view>
