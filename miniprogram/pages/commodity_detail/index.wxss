@@ -213,12 +213,12 @@
 .footer {
   flex-grow: 0;
   flex-shrink: 0;
-  border-top: 0.5px solid rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 24rpx 32rpx;
+  padding: 24rpx 20rpx;
 }
 
 .footer .left {
@@ -227,7 +227,7 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  gap: 20rpx;
+  gap: 24rpx;
 }
 
 .footer .left .button {
@@ -240,11 +240,14 @@
 }
 
 .footer .left .button .icon {
-  font-size: 40rpx;
+  width: 48rpx;
+  height: 48rpx;
 }
 
 .footer .left .button .text {
-  font-size: 24rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #979797;
 }
 
 .footer .left .button button {
@@ -259,7 +262,6 @@
 .footer .right {
   flex-grow: 1;
   flex-shrink: 1;
-  margin-left: 24rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -267,10 +269,11 @@
 }
 
 .footer .right .polish-time {
-  margin-right: 16rpx;
+  margin-right: 24rpx;
   flex-shrink: 1;
   font-size: 24rpx;
   text-align: right;
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .footer .right .polish-time-hint {
@@ -282,11 +285,22 @@
 
 .footer .right .button {
   flex-shrink: 0;
-  border-radius: calc((1em + 32rpx) / 2);
-  padding: 12rpx 32rpx;
-  background: aquamarine;
+  border-radius: 16rpx;
+  padding: 16rpx 48rpx;
+  background: #21ac39;
   font-size: 28rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #ffeeb4;
+  font-weight: 500;
 }
+
+/*.footer .right .button image {*/
+/*  width: 84rpx;*/
+/*  height: 36rpx;*/
+/*}*/
 
 .button-disabled {
   opacity: 0.3;

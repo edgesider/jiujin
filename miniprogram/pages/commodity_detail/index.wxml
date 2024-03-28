@@ -4,24 +4,6 @@
     <text>商品走丢了</text>
   </view>
   <block wx:else>
-<!--    <view class="header" style="margin-top: {{StatusBar}}px">-->
-<!--      <view class="cuIcon-back back" bindtap="back" />-->
-<!--      <image-->
-<!--        bindtap="onAvatarClick"-->
-<!--        class="avatar"-->
-<!--        src="{{seller.avatar_url || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"-->
-<!--      />-->
-<!--      <view class="info">-->
-<!--        <view class="line1">-->
-<!--          <text class="name">{{seller.name || '已注销用户'}}</text>-->
-<!--          <text class="time">{{createTime}}</text>-->
-<!--        </view>-->
-<!--        <view class="line2" wx:if="{{(seller.rid || -1) !== -1}}">-->
-<!--          <image src="/images/location.png" class="region-icon" />-->
-<!--          <text class="region">{{regionName}}</text>-->
-<!--        </view>-->
-<!--      </view>-->
-<!--    </view>-->
     <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{createTime}}" />
     <view class="body">
       <view class="content">
@@ -59,11 +41,12 @@
     <view class="footer">
       <view class="left">
         <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">
-          <text class="icon {{commodity.is_collected ? 'cuIcon-likefill' : 'cuIcon-like'}}"></text>
+          <image class="icon"
+                 src="{{commodity.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
           <text class="text">收藏</text>
         </view>
         <view class="button" bindtap="onClickShare">
-          <text class="icon cuIcon-share"></text>
+          <image class="icon" src="/images/share.png" />
           <text class="text">分享</text>
           <button
             open-type="share" plain="true"
@@ -71,7 +54,7 @@
           />
         </view>
         <view wx:if="{{!isMine}}" class="button" bindtap="onClickReport">
-          <text class="icon cuIcon-warn"></text>
+          <image class="icon" src="/images/report.png" />
           <text class="text">举报</text>
         </view>
       </view>
@@ -92,7 +75,10 @@
           </block>
         </block>
         <block wx:else>
-          <view class="button" bind:tap="onPrivateMessage">私聊</view>
+          <view class="button" bind:tap="onPrivateMessage">
+            去私聊
+<!--            <image src="/images/tochat.png" />-->
+          </view>
         </block>
       </view>
     </view>
