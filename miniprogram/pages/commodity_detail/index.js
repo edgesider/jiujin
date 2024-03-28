@@ -66,6 +66,7 @@ Page({
       isMine: self && self._id === commodity.seller_id,
       firstImageSize,
     });
+    await api.addViewCount(id);
   },
   /**
    * 获取展示的区域名，显示第1、3级

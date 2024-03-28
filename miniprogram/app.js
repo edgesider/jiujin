@@ -33,20 +33,24 @@ App({
   userChangedSubject: new BehaviorSubject(null),
 
   async onLaunch() {
-    wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
+    try {
+      wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
 
-    initConstants();
-    initMoment();
+      initConstants();
+      initMoment();
 
-    await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
-    await Promise.all([this.fetchRegions(), this.fetchCategories()]);
+      await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
+      await Promise.all([this.fetchRegions(), this.fetchCategories()]);
 
-    // 登录腾讯IM
-    await this.initTIM();
+      // 登录腾讯IM
+      await this.initTIM();
 
-    console.warn('initialized. globalData=', this.globalData);
-    this._ready = true;
-    this._readyWaiters.forEach(waiter => waiter());
+      console.warn('initialized. globalData=', this.globalData);
+      this._ready = true;
+      this._readyWaiters.forEach(waiter => waiter[0]());
+    } catch (e) {
+      this._readyWaiters.forEach(waiter => waiter[1](e));
+    }
   },
 
   async onShow() {
@@ -254,11 +258,11 @@ App({
   },
 
   async waitForReady() {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       if (this._ready) {
         resolve();
       } else {
-        this._readyWaiters.push(resolve);
+        this._readyWaiters.push([resolve, reject]);
       }
     });
   }

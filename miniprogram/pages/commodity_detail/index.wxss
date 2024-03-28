@@ -86,7 +86,7 @@
 }
 
 .body {
-  overflow: scroll;
+  overflow-y: scroll;
   flex-grow: 1;
   flex-shrink: 1;
   display: flex;
@@ -130,7 +130,6 @@
 
 .body .content .images-multi {
   --gap: 10rpx;
-  width: 100%;
   flex: 1 0;
   display: flex;
   flex-direction: row;
@@ -138,14 +137,13 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--gap);
-  padding: 0 var(--gap);
-  margin-left: var(--gap);
+  padding: 0 var(--content-padding);
 }
 
 .body .content .images-multi image {
   border-radius: 8rpx;
-  width: calc((100vw - var(--gap) * 6) / 3);
-  height: calc((100vw - var(--gap) * 6) / 3);
+  width: calc((100vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
+  height: calc((100vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
 }
 
 .body .content .info {

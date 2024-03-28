@@ -10,6 +10,7 @@ const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
   baseURL: 'https://lllw.ykai.cc',
+  // baseURL: 'http://localhost:8080/',
   // baseURL: (version === 'release' || version === 'trial')
   //   ? 'https://lllw.ykai.cc'
   //   : 'http://localhost:8080/',
@@ -19,6 +20,8 @@ export const Axios = axios.create({
   },
   validateStatus: () => true,
 });
+
+let openId = wx.getStorageSync('open_id');
 
 Axios.interceptors.request.use(cfg => {
   cfg.headers['session-key'] = wx.getStorageSync('session_key');
@@ -49,8 +52,6 @@ async function doAuthorize() {
   wx.setStorageSync('open_id', open_id);
   wx.setStorageSync('session_key', session_key);
 }
-
-let openId = wx.getStorageSync('open_id');
 
 export function getOpenId() {
   return openId;
@@ -338,6 +339,15 @@ const api = {
       data: { code }
     }));
   },
+
+  async addViewCount(commodity_id) {
+    return wrapResp(await request({
+      path: '/commodity/add_view',
+      data: {
+        _id: commodity_id,
+      }
+    }));
+  }
 }
 
 export default api;

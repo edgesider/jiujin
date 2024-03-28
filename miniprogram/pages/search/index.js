@@ -1,5 +1,5 @@
 import api from "../../api/api";
-import getConstants, { GENDER } from "../../constants";
+import getConstants, { COMMODITY_STATUS_SELLING, GENDER } from "../../constants";
 
 const COUNT_PER_PAGE = 12
 const MAX_HISTORIES = 10;
@@ -99,10 +99,9 @@ Page({
       keyword: text,
       order_by: orderBy,
       order: order,
-      // order_by: 'update_time',
-      // order: 'desc',
       start: cursor,
       count: COUNT_PER_PAGE,
+      status: COMMODITY_STATUS_SELLING,
     });
     if (resp.isError) {
       await wx.showToast({
