@@ -1,10 +1,10 @@
-import api, { Axios, doAuthorize } from './api/api';
+import api, { Axios } from './api/api';
 import { BehaviorSubject } from "rxjs";
 
 import TencentCloudChat from '@tencentcloud/chat';
 import TIMUploadPlugin from 'tim-upload-plugin';
 import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
-import { GENDER, setConstants } from "./constants";
+import { GENDER, initConstants } from "./constants";
 
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
@@ -33,43 +33,9 @@ App({
   userChangedSubject: new BehaviorSubject(null),
 
   async onLaunch() {
-    if (!wx.cloud) {
-      console.error('请使用 2.2.3 或以上的基础库以使用云能力')
-    } else {
-      wx.cloud.init({
-        env: 'jj-4g1ndtns7f1df442',
-      })
-    }
+    wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
 
-    wx.getSystemInfo({
-      success: e => {
-        const menuBtn = wx.getMenuButtonBoundingClientRect();
-        const { platform } = wx.getSystemInfoSync();
-        // 系统状态栏高度
-        const StatusBar = e.statusBarHeight;
-        // 自定义顶栏高度
-        const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
-        // 底部导航栏高度
-        const TabBarHeight = 60;
-        // 底部指示器高度（小白条）
-        const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
-        const constants = Object.freeze({
-          StatusBar,
-          CustomBar,
-          TabBarHeight,
-          MenuButton: menuBtn,
-          ScreenSize: [e.screenWidth, e.screenHeight],
-          SafeArea: e.safeArea,
-          TopBarHeight: StatusBar + CustomBar,
-          BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
-          BottomIndicatorHeight,
-          Platform: platform, // ios | android | devtools
-        });
-        Object.assign(this.globalData, constants)
-        setConstants(constants)
-      }
-    })
-
+    initConstants();
     initMoment();
 
     await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize

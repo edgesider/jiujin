@@ -2,6 +2,7 @@ import api, { getOpenId } from "../../api/api";
 import rules from "../../utils/rules";
 import getConstants, { DEFAULT_AVATAR, GENDER } from "../../constants";
 import { sleep } from "../../utils/other";
+import randomName from "../../utils/random_name";
 
 const app = getApp();
 
@@ -12,9 +13,9 @@ Page({
   data: {
     ...getConstants(),
     isEdit: false,
+
     name: "",
     avatarUrl: "",
-
     gender: GENDER.MALE,
     genderOptions: ['男', '女'],
 
@@ -82,6 +83,7 @@ Page({
         l1ToL4,
         l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
         indexes: [0, 0],
+        name: randomName.getNickName(),
         avatarUrl: DEFAULT_AVATAR,
       });
     }

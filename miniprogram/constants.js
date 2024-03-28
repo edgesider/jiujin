@@ -32,6 +32,36 @@ const constants = {
   TransactionFinishReason,
 };
 
+export function initConstants() {
+  wx.getSystemInfo({
+    success: e => {
+      const menuBtn = wx.getMenuButtonBoundingClientRect();
+      const { platform } = wx.getSystemInfoSync();
+      // 系统状态栏高度
+      const StatusBar = e.statusBarHeight;
+      // 自定义顶栏高度
+      const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
+      // 底部导航栏高度
+      const TabBarHeight = 60;
+      // 底部指示器高度（小白条）
+      const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
+      const constants = Object.freeze({
+        StatusBar,
+        CustomBar,
+        TabBarHeight,
+        MenuButton: menuBtn,
+        ScreenSize: [e.screenWidth, e.screenHeight],
+        SafeArea: e.safeArea,
+        TopBarHeight: StatusBar + CustomBar,
+        BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
+        BottomIndicatorHeight,
+        Platform: platform, // ios | android | devtools
+      });
+      setConstants(constants)
+    }
+  })
+}
+
 export default function getConstants() {
   return { ...constants };
 };
