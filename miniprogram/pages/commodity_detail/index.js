@@ -220,15 +220,7 @@ export async function startTransaction(commodity, seller) {
     }
   );
   console.log(`created group ${group.groupID} for commodity ${commodity._id}`);
-  let conv;
-  for (let i = 0; i < 10; i++) {
-    // 会话同步需要时间，多试几次
-    conv = getConversationByGroup(group.groupID);
-    if (conv) {
-      break;
-    }
-    await sleep(200);
-  }
+  const conv = await getConversationByGroup(group.groupID);
   if (!conv) {
     console.error('failed to get conversation');
     return;

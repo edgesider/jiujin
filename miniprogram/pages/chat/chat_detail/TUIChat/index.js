@@ -99,7 +99,7 @@ Component({
       const seller = sellerResp.data;
       this.setData({
         commodity: commodity,
-        commodityDesc: getContentDesc(commodity.content),
+        commodityDesc: getContentDesc(commodity.content, 40),
         isSeller: sellerId === app.globalData.self._id,
         conversationName: this.getConversationName(conversation),
         seller,

@@ -23,6 +23,7 @@ Component({
     },
   },
   data: {
+    conversation: null as Conversation | null,
     lastTime: '',
     seller: null as User | null,
   },
@@ -30,7 +31,7 @@ Component({
     created() {
     },
     async attached() {
-      const conversation = getConversationById(this.properties.conversationId);
+      const conversation = await getConversationById(this.properties.conversationId);
       if (!conversation) {
         console.error(`invalid conversationId ${this.properties.conversationId}`);
         return;
@@ -50,7 +51,6 @@ Component({
   },
   methods: {
     async onConversationUpdate(conversation: Conversation) {
-      conversation = (await tim.getConversationProfile(conversation.conversationID)).data.conversation as Conversation;
       this.setData({
         conversation,
         lastTime: moment(conversation.lastMessage.lastTime * 1000).format('YYYY-MM-DD HH:mm'),

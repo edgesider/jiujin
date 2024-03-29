@@ -1,7 +1,5 @@
 import { Conversation, Group, Message } from '@tencentcloud/chat';
-import { getOpenId } from '../api/api';
-import { TransactionApi } from '../api/transaction';
-import { sleep } from './other';
+import { generateUUID, sleep } from './other';
 import { Observable, Subject } from 'rxjs';
 
 /**
@@ -133,20 +131,31 @@ export function getImUidFromUid(uid: string) {
  * TODO 这个ID不可靠，改为在服务端维护ID，或者在服务端建群
  */
 export function getGroupIdFromCommodity(commodity: { _id: string }): string {
-  const openId = getOpenId();
-  if (!openId) {
-    throw Error('not login yet');
+  return generateUUID();
+}
+
+export async function getConversationByGroup(groupId: string, reties: number = 8): Promise<Conversation | undefined> {
+  let res: Conversation | undefined;
+  for (let i = reties; i--; i > 0) {
+    res = groupIdToConversation.get(groupId);
+    if (res) {
+      return res;
+    }
+    await sleep(200);
   }
-  const comm_tail = commodity._id.substring(0, commodity._id.length - 16);
-  return `${openId}${comm_tail}`;
+  return undefined;
 }
 
-export function getConversationByGroup(groupId: string): Conversation | undefined {
-  return groupIdToConversation.get(groupId);
-}
-
-export function getConversationById(convId: string): Conversation | undefined {
-  return idToConversation.get(convId);
+export async function getConversationById(convId: string, reties: number = 8): Promise<Conversation | undefined> {
+  let res: Conversation | undefined;
+  for (let i = reties; i--; i > 0) {
+    res = idToConversation.get(convId);
+    if (res) {
+      return res;
+    }
+    await sleep(200);
+  }
+  return undefined;
 }
 
 export async function deleteAllGroup() {
@@ -167,11 +176,17 @@ export async function setCommodityGroupAttributes(groupID: string, attrs: Commod
 }
 
 export async function getCommodityGroupAttributes(groupID: string): Promise<CommodityGroupAttributes | undefined> {
-  const attrs = await tim.getGroupAttributes({
-    groupID,
-    keyList: ['info']
-  })
-  return JSON.parse(attrs.data.groupAttributes?.info ?? 'null');
+  for (let reties = 3; reties--; reties > 0) {
+    const attrs = await tim.getGroupAttributes({
+      groupID,
+      keyList: ['info']
+    })
+    const res =  JSON.parse(attrs.data.groupAttributes?.info ?? 'null');
+    if (res) {
+      return res;
+    }
+    await sleep(200);
+  }
 }
 
 export function listenMessageForConversation(conversationId: string): Observable<Message> {
