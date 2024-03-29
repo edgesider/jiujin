@@ -1,5 +1,6 @@
 import getConstants from "../../constants";
 import { getRegionPath } from "../../utils/other";
+import { openProfile } from "../../router";
 
 Component({
   properties: {
@@ -39,6 +40,9 @@ Component({
         user,
         region: path[2] ? `${path[2].name} / ${path[0].name}` : path[0].name
       })
+    },
+    onAvatarClick() {
+      openProfile(this.properties.user);
     },
     back() {
       wx.navigateBack().then();

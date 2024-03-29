@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "module": "exnext",
-    "target": "es5",
+    "target": "es2015",
+    "moduleResolution": "NodeNext",
     "sourceMap": true,
     "lib": ["es6"],
     "strict": true,
-    "allowJs": true
+    "allowJs": true,
+    "esModuleInterop": true
   },
   "include": [
     "./custom.d.ts",

@@ -13,9 +13,10 @@ Component({
         pagePath: '/pages/home/index',
         iconClass: 'cuIcon-home',
         selectedIconClass: 'cuIcon-homefill',
+        text: '首页',
         iconPath: '/images/home0.png',
         selectedIconPath: '/images/home1.png',
-        text: '首页'
+        hasDot: false,
       },
       {
         pagePath: '/pages/commodity_publish/index',
@@ -23,7 +24,8 @@ Component({
         toastText: '敬请期待！',
         text: '互助',
         iconPath: '/images/book0.png',
-        selectedIconPath: '/images/book1.png'
+        selectedIconPath: '/images/book1.png',
+        hasDot: false,
       },
       {
         pagePath: '/pages/commodity_publish/index',
@@ -31,7 +33,8 @@ Component({
         useNavigateTo: true, // 是否使用navigateTo打开新的页面
         text: '发布',
         iconPath: '/images/add0.png',
-        selectedIconPath: '/images/add1.png'
+        selectedIconPath: '/images/add1.png',
+        hasDot: false,
       },
       {
         pagePath: '/pages/chat/chat_list_v2/index',
@@ -40,7 +43,8 @@ Component({
         text: '私信',
         requireRegistered: true,
         iconPath: '/images/chat0.png',
-        selectedIconPath: '/images/chat1.png'
+        selectedIconPath: '/images/chat1.png',
+        hasDot: false,
       },
       {
         pagePath: '/pages/me/index',
@@ -48,24 +52,33 @@ Component({
         selectedIconClass: 'cuIcon-myfill',
         text: '我的',
         iconPath: '/images/my0.png',
-        selectedIconPath: '/images/my1.png'
+        selectedIconPath: '/images/my1.png',
+        hasDot: false,
       },
     ],
     url: '',
     unreadCount: 0,
   },
   lifetimes: {
-    created() {
+    async created() {
       this.updateTo = url => {
         const i = this.data.list.findIndex(item => item.pagePath === '/' + url);
         this.setData({ selected: i, url })
       }
-      getApp().globalData.onUnreadCountUpdate = (count) => {
-        console.log('未读消息数改变为', count);
-        this.setData({
-          unreadCount: count
-        });
+
+      await getApp().waitForReady();
+      const unreadChanged = count => {
+        if (count > 0) {
+          this.data.list.find(item => item.text === '私信').hasDot = true;
+          this.setData({
+            list: [...this.data.list],
+          });
+        }
       }
+      unreadChanged(tim.getTotalUnreadMessageCount());
+      tim.on(tim.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, function ({ data: count }) {
+        unreadChanged(count)
+      }, this);
     },
   },
   methods: {

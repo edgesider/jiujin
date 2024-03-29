@@ -4,6 +4,7 @@ import api from "../../../../api/api";
 import getConstants from "../../../../constants";
 import { TransactionApi, TransactionStatus } from "../../../../api/transaction";
 import { getContentDesc } from "../../../../utils/strings";
+import { getCommodityGroupAttributes } from "../../../../utils/im";
 
 const app = getApp();
 
@@ -82,12 +83,7 @@ Component({
       const { conversation } = (await tim.getConversationProfile(this.data.conversationID)).data;
       tim.setMessageRead({ conversationID: conversation.conversationID }).then();
       const group = conversation.groupProfile;
-      const groupData = await tim.getGroupAttributes({
-        groupID: group.groupID,
-        keyList: ['commodityId', 'sellerId', 'transactionId']
-      });
-      const { commodityId, sellerId, transactionId: transactionIdStr } = groupData.data.groupAttributes;
-      const transactionId = parseInt(transactionIdStr);
+      const { commodityId, sellerId, transactionId } = await getCommodityGroupAttributes(group.groupID) ?? {};
       const [commodityResp, transactionResp, sellerResp] =
         await Promise.all([
           api.getCommodityInfo({ id: commodityId }),

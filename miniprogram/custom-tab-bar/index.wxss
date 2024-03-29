@@ -4,14 +4,13 @@
   bottom: 0;
   width: 100%;
   background: #ffffff;
-  padding: 0 20rpx;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-end;
 }
 
 .tab-bar-item {
-  width: 20%;
+  position: relative;
   text-align: center;
   display: flex;
   justify-content: flex-end;
@@ -32,4 +31,16 @@
 .tab-bar-item view {
   font-size: 26rpx;
   line-height: 50rpx;
+}
+
+.tab-bar-item-dot::after {
+  content: ' ';
+  font-size: 0;
+  width: 16rpx;
+  height: 16rpx;
+  background-color: #ff4d4d;
+  border-radius: 50%;
+  position: absolute;
+  right: 10rpx;
+  top: 0;
 }

@@ -63,7 +63,6 @@ App({
 
   async initTIM() {
     globalThis.tim = Object.assign(
-      {},
       TencentCloudChat.create({
         SDKAppID: this.globalData.config.SDKAPPID,
       }),
@@ -86,8 +85,6 @@ App({
 
     // 监听系统级事件
     tim.on(tim.EVENT.SDK_READY, this.onSDKReady, this);
-    tim.on(tim.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, this.onTotalUnreadMessageCountUpdated, this);
-    tim.on(tim.EVENT.MESSAGE_RECEIVED, this.onMessageReceived, this);
 
     await this.loginIMWithID(this.globalData.self._id);
     initTim(); // TODO 都挪到外面
@@ -143,12 +140,7 @@ App({
   async onSDKReady(event) {
     // 监听到此事件后可调用 SDK 发送消息等 API，使用 SDK 的各项功能。
     this.globalData.TUISDKReady = true;
-    this.globalData.totalUnread = await tim.getTotalUnreadMessageCount();
-    this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
-  },
-
-  onTotalUnreadMessageCountUpdated(event) {
-    this.globalData.totalUnread = event.data;
+    this.globalData.totalUnread = tim.getTotalUnreadMessageCount();
     this.globalData.onUnreadCountUpdate(this.globalData.totalUnread);
   },
 
@@ -158,28 +150,6 @@ App({
     const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
     const secs = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
     return `${hours}:${minutes}:${secs}`;
-  },
-
-  async onMessageReceived(event) {
-    const { conversationID } = event.data[0];
-    const { data: { messageList } } = await tim.getMessageList({ conversationID });
-    if (messageList.length <= 2) {
-      const msg = messageList[0];
-      const { from, payload } = msg;
-      const text = payload.hasOwnProperty("text") ? payload.text : "[消息]";
-      const { data: user_profile } = await tim.getUserProfile({ userIDList: [from] });
-      const { data: { groupAttributes: attrs } } = await tim.getGroupAttributes({
-        groupID: conversationID.substr(5),
-        keyList: ["commodityId"]
-      });
-      const resp = await api.getCommodityInfo({ id: attrs.commodityId });
-      this.sendIMSubscribeMessage({
-        name: user_profile[0].nick,
-        message: text,
-        time: this.timeString(),
-        commodity: resp.data.content
-      });
-    }
   },
 
   // 发送订阅消息

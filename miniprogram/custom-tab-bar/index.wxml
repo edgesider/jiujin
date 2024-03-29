@@ -2,14 +2,17 @@
   class="tab-bar"
   style="height: {{BottomBarHeight}}px; padding-bottom: {{BottomIndicatorHeight}}px;"
 >
-  <image
-    src="{{selected === index ? item.selectedIconPath : item.iconPath}}"
-    class="tab-bar-item tab-bar-item-icon"
+  <view
+    class="tab-bar-item {{item.hasDot ? 'tab-bar-item-dot' : ''}}"
     wx:for="{{list}}" wx:key="index"
     data-index="{{index}}"
     data-data="{{item}}"
     bindtap="switchTab"
-    mode="widthFix"
-  />
+  >
+    <image
+      src="{{selected === index ? item.selectedIconPath : item.iconPath}}"
+      class="tab-bar-item-icon"
+      mode="widthFix"
+    />
+  </view>
 </view>
-<!--<view style="width: 100%; height 4px; background-color: black; position: absolute; left: 0; bottom: 34px; z-index: 100" />-->

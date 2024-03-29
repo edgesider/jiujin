@@ -22,52 +22,13 @@
   class="list"
   scroll-y
 >
-  <!--  <view class="conversation" wx:for="{{conversations}}">-->
-  <view class="conversation">
-    <image class="avatar" src="/images/chat-star.png" />
-    <view class="dot" />
-    <view class="info">
-      <view class="line1">
-        <view class="name">王石磊</view>
-        <view class="time">2024/03/08 10:49</view>
-      </view>
-      <view class="line2">裤子什么时候买的？有购买记录吗？裤子什么时候买的？有购买记录吗？裤子什么时候买的？有购买记录吗？
-      </view>
-    </view>
-    <image class="image" src="/images/chat-star.png" />
-  </view>
-  <view class="conversation">
-    <image class="avatar" src="/images/chat-star.png" />
-    <view class="info">
-      <view class="line1">
-        <view class="name">王石磊</view>
-        <view class="time">2024/03/08 10:49</view>
-      </view>
-      <view class="line2">裤子什么时候买的？有购买记录吗？</view>
-    </view>
-    <image class="image" src="/images/chat-star.png" />
-  </view>
-  <view class="conversation">
-    <image class="avatar" src="/images/chat-star.png" />
-    <view class="info">
-      <view class="line1">
-        <view class="name">王石磊</view>
-        <view class="time">2024/03/08 10:49</view>
-      </view>
-      <view class="line2">裤子什么时候买的？有购买记录吗？</view>
-    </view>
-    <image class="image" src="/images/chat-star.png" />
-  </view>
-  <view class="conversation">
-    <image class="avatar" src="/images/chat-star.png" />
-    <view class="info">
-      <view class="line1">
-        <view class="name">王石磊</view>
-        <view class="time">2024/03/08 10:49</view>
-      </view>
-      <view class="line2">裤子什么时候买的？有购买记录吗？</view>
-    </view>
-    <image class="image" src="/images/chat-star.png" />
-  </view>
+  <Conversation
+    class="conversation"
+    wx:for="{{conversations}}"
+    wx:for-index="idx"
+    wx:key="conversationID"
+    conversationId="{{item.conversationID}}"
+    conversationIndex="{{idx}}"
+  />
 </scroll-view>
 <view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />

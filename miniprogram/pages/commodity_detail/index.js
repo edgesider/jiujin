@@ -3,12 +3,12 @@ import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
 import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
 import moment from "moment";
-import { openProfile } from "../../router";
+import { openConversationDetail, openProfile } from "../../router";
 import {
   getConversationByGroup,
   getGroupIdFromCommodity,
   getImUidFromUid,
-  getOrCreateGroup,
+  getOrCreateGroup, setCommodityGroupAttributes,
 } from "../../utils/im";
 import { TransactionApi } from "../../api/transaction";
 
@@ -180,9 +180,7 @@ Page({
       });
       return;
     }
-    await wx.navigateTo({
-      url: `/pages/chat/chat_detail/index?conversationId=${tact.conversation_id}`,
-    });
+    await openConversationDetail(tact.conversation_id);
   },
 
   async onAvatarClick() {
@@ -225,7 +223,7 @@ export async function startTransaction(commodity, seller) {
   let conv;
   for (let i = 0; i < 10; i++) {
     // 会话同步需要时间，多试几次
-    conv = await getConversationByGroup(group.groupID);
+    conv = getConversationByGroup(group.groupID);
     if (conv) {
       break;
     }
@@ -242,13 +240,10 @@ export async function startTransaction(commodity, seller) {
     return;
   }
   const tact = resp.data;
-  await tim.setGroupAttributes({
-    groupID: group.groupID,
-    groupAttributes: {
-      commodityId: commodity._id,
-      sellerId: seller._id,
-      transactionId: tact.id.toString(),
-    }
-  })
+  await setCommodityGroupAttributes(group.groupID, {
+    commodityId: commodity._id,
+    sellerId: seller._id,
+    transactionId: tact.id
+  });
   return tact;
 }

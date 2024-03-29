@@ -1,0 +1,12 @@
+<view class="conversation" bindtap="gotoDetail">
+  <image class="avatar" src="{{seller.avatar_url}}" />
+  <view class="dot" wx:if="{{conversation.unreadCount > 0}}" />
+  <view class="info">
+    <view class="line1">
+      <view class="name">{{conversation.groupProfile.name}}</view>
+      <view class="time">{{lastTime}}</view>
+    </view>
+    <view class="line2">{{conversation.lastMessage.messageForShow}}</view>
+  </view>
+  <image class="image" src="{{conversation.groupProfile.avatar}}" />
+</view>
