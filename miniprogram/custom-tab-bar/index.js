@@ -68,12 +68,10 @@ Component({
 
       await getApp().waitForReady();
       const unreadChanged = count => {
-        if (count > 0) {
-          this.data.list.find(item => item.text === '私信').hasDot = true;
-          this.setData({
-            list: [...this.data.list],
-          });
-        }
+        this.data.list.find(item => item.text === '私信').hasDot = count > 0;
+        this.setData({
+          list: [...this.data.list],
+        });
       }
       unreadChanged(tim.getTotalUnreadMessageCount());
       tim.on(tim.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, function ({ data: count }) {
