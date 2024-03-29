@@ -15,7 +15,8 @@
 </view>
 
 <scroll-view
-  style="margin-top: {{TopBarHeight}}px; height: calc(100vh - {{TopBarHeight + BottomBarHeight}}px);"
+  class="content-scroll"
+  style="margin-top: {{TopBarHeight}}px;"
   scroll-y="true"
   scroll-with-animation="true"
   refresher-enabled="{{pullDownRefreshing || !isLoading}}"
@@ -87,6 +88,8 @@
     </view>
   </view>
 </scroll-view>
+
+<view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />
 
 <view class="ranking-container" wx:if="{{showRankingPopup}}">
   <view class="ranking-mask" bind:tap="onToggleRankingSwitch" />

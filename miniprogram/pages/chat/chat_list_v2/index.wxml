@@ -1,0 +1,73 @@
+<TitleBar title="消息" hasBack="{{false}}" />
+
+<view class="header">
+  <view class="item">
+    <image class="icon" src="/images/chat-comment.png" />
+    <text class="text">留言</text>
+    <view class="dot" />
+  </view>
+  <view class="item">
+    <image class="icon" src="/images/chat-like.png" />
+    <text class="text">点赞</text>
+    <view class="dot" />
+  </view>
+  <view class="item">
+    <image class="icon" src="/images/chat-star.png" />
+    <text class="text">收藏</text>
+    <view class="dot" />
+  </view>
+</view>
+
+<scroll-view
+  class="list"
+  scroll-y
+>
+  <!--  <view class="conversation" wx:for="{{conversations}}">-->
+  <view class="conversation">
+    <image class="avatar" src="/images/chat-star.png" />
+    <view class="dot" />
+    <view class="info">
+      <view class="line1">
+        <view class="name">王石磊</view>
+        <view class="time">2024/03/08 10:49</view>
+      </view>
+      <view class="line2">裤子什么时候买的？有购买记录吗？裤子什么时候买的？有购买记录吗？裤子什么时候买的？有购买记录吗？
+      </view>
+    </view>
+    <image class="image" src="/images/chat-star.png" />
+  </view>
+  <view class="conversation">
+    <image class="avatar" src="/images/chat-star.png" />
+    <view class="info">
+      <view class="line1">
+        <view class="name">王石磊</view>
+        <view class="time">2024/03/08 10:49</view>
+      </view>
+      <view class="line2">裤子什么时候买的？有购买记录吗？</view>
+    </view>
+    <image class="image" src="/images/chat-star.png" />
+  </view>
+  <view class="conversation">
+    <image class="avatar" src="/images/chat-star.png" />
+    <view class="info">
+      <view class="line1">
+        <view class="name">王石磊</view>
+        <view class="time">2024/03/08 10:49</view>
+      </view>
+      <view class="line2">裤子什么时候买的？有购买记录吗？</view>
+    </view>
+    <image class="image" src="/images/chat-star.png" />
+  </view>
+  <view class="conversation">
+    <image class="avatar" src="/images/chat-star.png" />
+    <view class="info">
+      <view class="line1">
+        <view class="name">王石磊</view>
+        <view class="time">2024/03/08 10:49</view>
+      </view>
+      <view class="line2">裤子什么时候买的？有购买记录吗？</view>
+    </view>
+    <image class="image" src="/images/chat-star.png" />
+  </view>
+</scroll-view>
+<view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />

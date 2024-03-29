@@ -9,6 +9,7 @@
     "pages/commodity_list/index",
     "pages/profile/index",
     "pages/chat/chat_list/index",
+    "pages/chat/chat_list_v2/index",
     "pages/chat/chat_detail/index"
   ],
   "window": {
@@ -28,7 +29,7 @@
         "pagePath": "pages/home/index"
       },
       {
-        "pagePath": "pages/chat/chat_list/index"
+        "pagePath": "pages/chat/chat_list_v2/index"
       },
       {
         "pagePath": "pages/me/index"

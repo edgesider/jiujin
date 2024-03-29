@@ -9,7 +9,11 @@ Component({
     hasBack: {
       type: Boolean,
       value: true
-    }
+    },
+    hasDivider: {
+      type: Boolean,
+      value: true
+    },
   },
   data: {
     ...getConstants(),

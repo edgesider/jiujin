@@ -34,7 +34,7 @@ Component({
         selectedIconPath: '/images/add1.png'
       },
       {
-        pagePath: '/pages/chat/chat_list/index',
+        pagePath: '/pages/chat/chat_list_v2/index',
         iconClass: 'cuIcon-message',
         selectedIconClass: 'cuIcon-messagefill',
         text: '私信',

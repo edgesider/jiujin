@@ -1,6 +1,7 @@
 <view
-  class="tab-bar {{Platform === 'ios' || Platform === 'devtools' && 'tab-bar-ios'}}"
-  style="height: {{BottomBarHeight}}px; padding-bottom: {{BottomIndicatorHeight}}px;">
+  class="tab-bar"
+  style="height: {{BottomBarHeight}}px; padding-bottom: {{BottomIndicatorHeight}}px;"
+>
   <image
     src="{{selected === index ? item.selectedIconPath : item.iconPath}}"
     class="tab-bar-item tab-bar-item-icon"

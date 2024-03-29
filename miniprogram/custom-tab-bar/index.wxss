@@ -10,11 +10,6 @@
   align-items: flex-end;
 }
 
-.tab-bar-ios {
-  /* ios 向下挪一点 */
-  transform: translateY(20rpx);
-}
-
 .tab-bar-item {
   width: 20%;
   text-align: center;

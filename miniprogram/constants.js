@@ -42,9 +42,13 @@ export function initConstants() {
       // 自定义顶栏高度
       const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
       // 底部导航栏高度
+
       const TabBarHeight = 60;
       // 底部指示器高度（小白条）
-      const BottomIndicatorHeight = e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
+      const BottomIndicatorHeight =
+        platform === 'ios' || platform === 'devtools'
+          ? 14 // ios 获取到的的小白条高度有点高（34），这里直接写死14
+          : e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
       const constants = Object.freeze({
         StatusBar,
         CustomBar,
