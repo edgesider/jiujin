@@ -1,5 +1,5 @@
 <view class="container">
-  <UserTitleBar user="{{seller}}" />
+  <UserTitleBar user="{{isSeller ? buyer : seller}}" />
   <view class="status-area" wx:if="{{commodity}}">
     <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}" bindtap="gotoCommodityDetail" />
     <view class="info" bindtap="gotoCommodityDetail">

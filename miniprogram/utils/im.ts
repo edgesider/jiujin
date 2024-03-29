@@ -9,6 +9,7 @@ import { Observable, Subject } from 'rxjs';
  */
 export interface CommodityGroupAttributes {
   sellerId: string;
+  buyerId: string;
   commodityId: string;
   transactionId: number;
 }
@@ -130,7 +131,7 @@ export function getImUidFromUid(uid: string) {
  *
  * TODO 这个ID不可靠，改为在服务端维护ID，或者在服务端建群
  */
-export function getGroupIdFromCommodity(commodity: { _id: string }): string {
+export function getGroupIdFromCommodity(): string {
   return generateUUID();
 }
 

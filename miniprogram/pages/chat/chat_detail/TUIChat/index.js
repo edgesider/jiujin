@@ -62,6 +62,8 @@ Component({
   data: {
     ...getConstants(),
     isSeller: false,
+    seller: null,
+    buyer: null,
     conversationName: '',
     conversation: null,
     group: null,
@@ -83,26 +85,29 @@ Component({
       const { conversation } = (await tim.getConversationProfile(this.data.conversationID)).data;
       tim.setMessageRead({ conversationID: conversation.conversationID }).then();
       const group = conversation.groupProfile;
-      const { commodityId, sellerId, transactionId } = await getCommodityGroupAttributes(group.groupID) ?? {};
-      const [commodityResp, transactionResp, sellerResp] =
+      const { commodityId, sellerId, buyerId, transactionId } = await getCommodityGroupAttributes(group.groupID) ?? {};
+      const [commodityResp, transactionResp, sellerResp, buyerResp] =
         await Promise.all([
           api.getCommodityInfo({ id: commodityId }),
           TransactionApi.getById(transactionId),
           api.getUserInfo(sellerId),
+          api.getUserInfo(buyerId),
         ])
-      if (commodityResp.isError || transactionResp.isError || sellerResp.isError) {
+      if (commodityResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
         await wx.showToast({ title: '网络错误', icon: 'error' });
         return;
       }
       const commodity = commodityResp.data;
       const transaction = transactionResp.data;
       const seller = sellerResp.data;
+      const buyer = buyerResp.data;
       this.setData({
         commodity: commodity,
         commodityDesc: getContentDesc(commodity.content, 40),
         isSeller: sellerId === app.globalData.self._id,
         conversationName: this.getConversationName(conversation),
         seller,
+        buyer,
         conversation,
         group,
         transaction,

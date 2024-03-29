@@ -3,9 +3,8 @@ import { Conversation } from '@tencentcloud/chat';
 import {
   getCommodityGroupAttributes,
   getConversationById, listenConversation,
-  listenMessageForConversation
 } from '../../../../../utils/im';
-import api from '../../../../../api/api';
+import api, { getOpenId } from '../../../../../api/api';
 import { Resp } from '../../../../../api/resp';
 import { User } from '../../../../../types';
 import { openConversationDetail } from '../../../../../router';
@@ -25,6 +24,8 @@ Component({
   data: {
     conversation: null as Conversation | null,
     lastTime: '',
+    /** 对方用户的信息 */
+    peerUser: null as User | null,
     seller: null as User | null,
   },
   lifetimes: {
@@ -62,12 +63,13 @@ Component({
         console.error('not commodity conversation');
         return;
       }
-      const seller: Resp<User> = await api.getUserInfo(attrs.sellerId);
-      if (seller.isError) {
-        console.error(`failed to get user info for ${attrs.sellerId}`);
+      const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;
+      const peerUser: Resp<User> = await api.getUserInfo(peerUid);
+      if (peerUser.isError) {
+        console.error(`failed to get user info for ${peerUid}`);
       } else {
         this.setData({
-          seller: seller.data
+          peerUser: peerUser.data
         })
       }
     },

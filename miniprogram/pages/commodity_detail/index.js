@@ -209,7 +209,7 @@ export async function startTransaction(commodity, seller) {
     return transaction;
   }
   const [group, newCreate] = await getOrCreateGroup(
-    getGroupIdFromCommodity(commodity),
+    getGroupIdFromCommodity(),
     {
       name: seller.name,
       avatar: commodity.img_urls[0],
@@ -235,7 +235,8 @@ export async function startTransaction(commodity, seller) {
   await setCommodityGroupAttributes(group.groupID, {
     commodityId: commodity._id,
     sellerId: seller._id,
-    transactionId: tact.id
+    transactionId: tact.id,
+    buyerId: getOpenId(),
   });
   return tact;
 }
