@@ -70,7 +70,7 @@ Component({
       const { content, create_time, update_time, selled_time, status } = this.properties.commodity
       this.setData({
         self: app.globalData.self,
-        desc: getContentDesc(content),
+        desc: getContentDesc(content, 40),
         createTime: moment(create_time).format('YYYY-MM-DD HH:mm'),
         soldTime: selled_time && moment(selled_time).format('YYYY-MM-DD HH:mm') || '',
         polishAt: moment(update_time).fromNow(),

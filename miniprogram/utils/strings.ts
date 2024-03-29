@@ -1,4 +1,4 @@
-const qualitiesMap = Object.freeze({
+const qualitiesMap: Readonly<Record<number, { name: string; namePrefix: string; value: number }>> = Object.freeze({
   10: { name: '全新', namePrefix: '全', value: 10 },
   9: { name: '9成新', namePrefix: '九', value: 9 },
   8: { name: '8成新', namePrefix: '八', value: 8 },
@@ -15,12 +15,12 @@ export function getQualitiesMap() {
   return qualitiesMap;
 }
 
-export function getQualityName(quality) {
+export function getQualityName(quality: number) {
   return qualitiesMap[quality]?.name;
 }
 
-export function getContentDesc(content) {
-  content = content.substring(0, 8); // 最多十个
+export function getContentDesc(content: string, len?: number) {
+  content = content.substring(0, len ?? 20);
   const firstLR = content.indexOf('\n');
   if (firstLR !== -1) {
     content = content.substring(0, content.indexOf('\n')) // 从第一个回车截断

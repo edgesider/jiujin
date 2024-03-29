@@ -21,11 +21,11 @@
     <view class="list_title">我发布的闲置</view>
     <image class="right" src="/images/right.png"></image>
   </view>
-  <view class="divider" />
-  <view class="list" bindtap="gotoList" data-type="">
-    <view class="list_title">我发布的互助</view>
-    <image class="right" src="/images/right.png"></image>
-  </view>
+<!--  <view class="divider" />-->
+<!--  <view class="list" bindtap="gotoList" data-type="">-->
+<!--    <view class="list_title">我发布的互助</view>-->
+<!--    <image class="right" src="/images/right.png"></image>-->
+<!--  </view>-->
 </view>
 
 <view class="List">
