@@ -1,10 +1,9 @@
 import getConstants from '../../../constants';
-import { setTabBar } from '../../../utils/other';
+import { setTabBar, sleep } from '../../../utils/other';
 import { Conversation, Message } from '@tencentcloud/chat';
 import { User } from '../../../types';
 
 const app = getApp();
-
 
 interface SmallConversation {
   name: string;
@@ -22,6 +21,7 @@ Page({
   data: {
     ...getConstants(),
     conversations: [] as Conversation[],
+    refreshing: false,
   },
   async onLoad() {
     setTabBar(this);
@@ -31,12 +31,29 @@ Page({
     })
   },
   async onShow() {
-    await this.onConversationListUpdate(
-      (await tim.getConversationList()).data.conversationList as Conversation[]);
+    await this.refresh();
   },
   async onConversationListUpdate(conversationList: Conversation[]) {
     this.setData({
       conversations: conversationList.filter(conv => conv.groupProfile),
     });
+  },
+  async refresh() {
+    await this.onConversationListUpdate(
+      (await tim.getConversationList()).data.conversationList as Conversation[]);
+  },
+  async onRefresh() {
+    this.setData({ refreshing: true });
+    try {
+      await this.refresh();
+    } catch (e){
+      await wx.showToast({
+        title: '网络错误',
+        icon: 'error'
+      })
+    } finally {
+      await sleep(500);
+      this.setData({ refreshing: false });
+    }
   },
 })

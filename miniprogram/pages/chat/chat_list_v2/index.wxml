@@ -21,6 +21,9 @@
 <scroll-view
   class="list"
   scroll-y
+  refresher-enabled="{{true}}"
+  refresher-triggered="{{refreshing}}"
+  bindrefresherrefresh="onRefresh"
 >
   <Conversation
     class="conversation"
