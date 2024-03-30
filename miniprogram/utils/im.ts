@@ -1,5 +1,5 @@
 import { Conversation, Group, Message } from '@tencentcloud/chat';
-import { generateUUID, sleep } from './other';
+import { debounce, generateUUID, sleep, tryJsonParse } from './other';
 import { Observable, Subject } from 'rxjs';
 
 /**
@@ -23,46 +23,7 @@ const groupIdToConversation = new Map<string, Conversation>();
 const conversationListeners = new Map<string, Subject<Conversation>>();
 const messageListeners = new Map<string, Subject<Message>>();
 
-type AnyFunc = (...args: any) => any;
-
-/**
- * 节流和防抖都是用来限制在一段时间内只执行一次。
- * 不同之处在于：
- *   节流只保留第一次执行，会丢弃后续的执行；
- *   而防抖会丢弃前面的执行，只保留最后一次执行。
- * @param func
- * @param wait
- */
-export function throttle<T extends AnyFunc>(func: T, wait: number): (...args: Parameters<T>) => ReturnType<T> | undefined {
-  let recentCalled = false;
-  return (...args: any) => {
-    if (recentCalled) {
-      return undefined;
-    } else {
-      recentCalled = true;
-      setTimeout(() => recentCalled = false, wait);
-      return func(...args);
-    }
-  };
-}
-
-export function debounce<T extends AnyFunc>(func: T, wait: number): (...args: Parameters<T>) => void {
-  let inDebounce = false;
-  let lastArgs: Parameters<T> | undefined;
-  return (...args: Parameters<T>) => {
-    lastArgs = args;
-    if (!inDebounce) {
-      inDebounce = true;
-      setTimeout(() => {
-        inDebounce = false;
-        // 本次节流结束之后执行，传入最后一次获得的参数
-        // @ts-ignore
-        func(...lastArgs!);
-      }, wait);
-    }
-  };
-}
-
+const groupAttrsCache = new Map<string, CommodityGroupAttributes>;
 
 export function initTim() {
   const updateConversations = debounce((list: Conversation[]) => {
@@ -77,6 +38,7 @@ export function initTim() {
     });
   }, 200);
 
+  loadCache().then();
   tim.getConversationList().then((result: any) => {
     updateConversations(result.data.conversationList);
   });
@@ -159,6 +121,26 @@ export async function getConversationById(convId: string, reties: number = 8): P
   return undefined;
 }
 
+export async function tryDeleteConversationAndGroup(conv: Conversation) {
+  try {
+    await tim.dismissGroup(conv.groupProfile.groupID);
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    await tim.quitGroup(conv.groupProfile.groupID);
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    await tim.deleteConversation({
+      conversationIDList: [conv.conversationID]
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function deleteAllGroup() {
   const list = (await tim.getGroupList()).data.groupList as Group[];
   for (const g of list) {
@@ -167,27 +149,47 @@ export async function deleteAllGroup() {
   return list.length;
 }
 
-export async function setCommodityGroupAttributes(groupID: string, attrs: CommodityGroupAttributes) {
-  await tim.setGroupAttributes({
-    groupID,
-    groupAttributes: {
-      info: JSON.stringify(attrs)
-    }
+async function saveCache() {
+  await wx.setStorage({
+    key: 'groupAttrsCache', data: JSON.stringify([...groupAttrsCache.entries()])
   });
 }
 
-export async function getCommodityGroupAttributes(groupID: string): Promise<CommodityGroupAttributes | undefined> {
-  for (let reties = 3; reties--; reties > 0) {
-    const attrs = await tim.getGroupAttributes({
-      groupID,
-      keyList: ['info']
-    })
-    const res =  JSON.parse(attrs.data.groupAttributes?.info ?? 'null');
+async function loadCache() {
+  const groupAttrsCacheEntries: [string, CommodityGroupAttributes][] =
+    tryJsonParse((await wx.getStorage({ key: 'groupAttrsCache' })).data ?? '[]');
+  for (const entries of groupAttrsCacheEntries) {
+    groupAttrsCache.set(entries[0], entries[1]);
+  }
+}
+
+export async function setCommodityGroupAttributes(groupID: string, attrs: CommodityGroupAttributes) {
+  await tim.updateGroupProfile({
+    groupID,
+    introduction: JSON.stringify(attrs),
+  })
+  groupAttrsCache.set(groupID, attrs);
+  saveCache().then();
+}
+
+export async function getCommodityGroupAttributes(group: string | Group, cache = true): Promise<CommodityGroupAttributes | undefined> {
+  const groupID = typeof group === 'string' ? group : group.groupID;
+  if (cache) {
+    const res = groupAttrsCache.get(groupID);
     if (res) {
       return res;
     }
-    await sleep(200);
   }
+  if (typeof group === 'string' || !group.introduction) {
+    group = (await tim.getGroupProfile({ groupID }))?.data?.group as Group;
+    if (!group) {
+      throw Error(`invalid groupId ${groupID}`);
+    }
+  }
+  const res = tryJsonParse(group.introduction);
+  groupAttrsCache.set(groupID, res);
+  saveCache().then();
+  return res;
 }
 
 export function listenMessageForConversation(conversationId: string): Observable<Message> {

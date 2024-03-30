@@ -1,7 +1,6 @@
 import getConstants from '../../../constants';
 import { setTabBar } from '../../../utils/other';
 import { Conversation, Message } from '@tencentcloud/chat';
-import moment from 'moment';
 import { User } from '../../../types';
 
 const app = getApp();

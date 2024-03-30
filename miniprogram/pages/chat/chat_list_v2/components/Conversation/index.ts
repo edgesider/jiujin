@@ -2,7 +2,7 @@ import moment from 'moment';
 import { Conversation } from '@tencentcloud/chat';
 import {
   getCommodityGroupAttributes,
-  getConversationById, listenConversation,
+  getConversationById, listenConversation, tryDeleteConversationAndGroup,
 } from '../../../../../utils/im';
 import api, { getOpenId } from '../../../../../api/api';
 import { Resp } from '../../../../../api/resp';
@@ -37,11 +37,11 @@ Component({
         console.error(`invalid conversationId ${this.properties.conversationId}`);
         return;
       }
-      this.onConversationUpdate(conversation);
+      this.onConversationUpdate(conversation, true);
       // @ts-ignore
       this.subscription =
         listenConversation(this.properties.conversationId).subscribe(conv => {
-          this.onConversationUpdate(conversation);
+          this.onConversationUpdate(conversation, false);
         });
     },
     detached() {
@@ -51,26 +51,30 @@ Component({
     }
   },
   methods: {
-    async onConversationUpdate(conversation: Conversation) {
+    async onConversationUpdate(conversation: Conversation, updateOtherInfo: boolean) {
       this.setData({
         conversation,
         lastTime: moment(conversation.lastMessage.lastTime * 1000).format('YYYY-MM-DD HH:mm'),
       });
 
-      const group = conversation.groupProfile;
-      const attrs = await getCommodityGroupAttributes(group.groupID);
-      if (!attrs) {
-        console.error('not commodity conversation');
-        return;
-      }
-      const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;
-      const peerUser: Resp<User> = await api.getUserInfo(peerUid);
-      if (peerUser.isError) {
-        console.error(`failed to get user info for ${peerUid}`);
-      } else {
-        this.setData({
-          peerUser: peerUser.data
-        })
+      // 由于tim频控限制比较严格，所以只在第一次更新属性信息
+      if (updateOtherInfo) {
+        const group = conversation.groupProfile;
+        const attrs = await getCommodityGroupAttributes(group);
+        if (!attrs) {
+          console.error(`not commodity conversation ${group.groupID} ${group.ownerID}`);
+          tryDeleteConversationAndGroup(conversation).then();
+          return;
+        }
+        const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;
+        const peerUser: Resp<User> = await api.getUserInfo(peerUid);
+        if (peerUser.isError) {
+          console.error(`failed to get user info for ${peerUid}`);
+        } else {
+          this.setData({
+            peerUser: peerUser.data
+          })
+        }
       }
     },
     gotoDetail() {

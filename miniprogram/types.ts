@@ -12,3 +12,10 @@ export interface User {
   create_time: number;
   update_time: number;
 }
+
+export interface Region {
+  _id: number;
+  name: string;
+  parents: number[];
+  children: number[];
+}

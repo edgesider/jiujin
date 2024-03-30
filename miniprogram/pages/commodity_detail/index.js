@@ -8,7 +8,7 @@ import {
   getConversationByGroup,
   getGroupIdFromCommodity,
   getImUidFromUid,
-  getOrCreateGroup, setCommodityGroupAttributes,
+  getOrCreateGroup, setCommodityGroupAttributes, tryDeleteConversationAndGroup,
 } from "../../utils/im";
 import { TransactionApi } from "../../api/transaction";
 
@@ -172,7 +172,12 @@ Page({
 
   async onPrivateMessage() {
     ensureRegistered();
+    await wx.showLoading({
+      title: '请稍后',
+      mask: true
+    })
     const tact = await startTransaction(this.data.commodity, this.data.seller);
+    await wx.hideLoading();
     if (!tact) {
       await wx.showToast({
         title: '发起私聊失败，请稍后再试',
@@ -229,6 +234,7 @@ export async function startTransaction(commodity, seller) {
   const resp = await TransactionApi.start(commodity._id, conv.conversationID);
   if (resp.isError) {
     console.error('failed to start a new transaction');
+    await tryDeleteConversationAndGroup(conv);
     return;
   }
   const tact = resp.data;

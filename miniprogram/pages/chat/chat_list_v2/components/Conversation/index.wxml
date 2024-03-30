@@ -1,12 +1,12 @@
 <view class="conversation" bindtap="gotoDetail">
-  <image class="avatar" src="{{peerUser.avatar_url}}" />
+  <image class="avatar" src="{{peerUser.avatar_url}}" mode="aspectFill" />
   <view class="dot" wx:if="{{conversation.unreadCount > 0}}" />
   <view class="info">
     <view class="line1">
-      <view class="name">{{conversation.groupProfile.name}}</view>
+      <view class="name">{{peerUser.name}}</view>
       <view class="time">{{lastTime}}</view>
     </view>
     <view class="line2">{{conversation.lastMessage.messageForShow}}</view>
   </view>
-  <image class="image" src="{{conversation.groupProfile.avatar}}" />
+  <image class="image" src="{{conversation.groupProfile.avatar}}" mode="aspectFill" />
 </view>
