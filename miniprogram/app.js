@@ -87,7 +87,7 @@ App({
     tim.on(tim.EVENT.SDK_READY, this.onSDKReady, this);
 
     await this.loginIMWithID(this.globalData.self._id);
-    initTim(); // TODO 都挪到外面
+    initTim(self); // TODO 都挪到外面
 
     await tim.updateMyProfile({
       nick: this.globalData.self.name,

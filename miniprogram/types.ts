@@ -11,6 +11,9 @@ export interface User {
   last_seen_time: number;
   create_time: number;
   update_time: number;
+  like_group_id: string;
+  collect_group_id: string;
+  comment_group_id: string;
 }
 
 export interface Region {

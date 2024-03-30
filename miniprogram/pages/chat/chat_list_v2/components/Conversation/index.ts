@@ -26,7 +26,6 @@ Component({
     lastTime: '',
     /** 对方用户的信息 */
     peerUser: null as User | null,
-    seller: null as User | null,
   },
   lifetimes: {
     created() {
@@ -63,7 +62,6 @@ Component({
         const attrs = await getCommodityGroupAttributes(group);
         if (!attrs) {
           console.error(`not commodity conversation ${group.groupID} ${group.ownerID}`);
-          tryDeleteConversationAndGroup(conversation).then();
           return;
         }
         const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;

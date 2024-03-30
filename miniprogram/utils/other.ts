@@ -8,8 +8,8 @@ export function tryJsonParse(str: string, defaultValue = null) {
   }
 }
 
-export function setTabBar(page: any) {
-  page.getTabBar().updateTo(page.route)
+export function setTabBar(page: any, onClick?: () => void) {
+  page.getTabBar().updateTo(page.route, onClick);
 }
 
 export async function sleep(ms: number) {

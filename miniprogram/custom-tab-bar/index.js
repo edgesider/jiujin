@@ -61,8 +61,10 @@ Component({
   },
   lifetimes: {
     async created() {
-      this.updateTo = url => {
+      const tab = this;
+      this.updateTo = function (url, onClick) {
         const i = this.data.list.findIndex(item => item.pagePath === '/' + url);
+        tab.onClick = onClick;
         this.setData({ selected: i, url })
       }
 
@@ -82,6 +84,10 @@ Component({
   methods: {
     async switchTab(e) {
       const { pagePath, useNavigateTo, toastText, requireRegistered } = e.currentTarget.dataset.data;
+      const index = e.currentTarget.dataset.index;
+      if (this.data.selected === index) {
+        this.onClick?.();
+      }
       if (toastText) {
         await wx.showToast({
           title: toastText,

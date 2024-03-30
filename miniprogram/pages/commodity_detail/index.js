@@ -6,7 +6,7 @@ import moment from "moment";
 import { openConversationDetail, openProfile } from "../../router";
 import {
   getConversationByGroup,
-  getGroupIdFromCommodity,
+  getGroupIdForTransaction,
   getImUidFromUid,
   getOrCreateGroup, setCommodityGroupAttributes, tryDeleteConversationAndGroup,
 } from "../../utils/im";
@@ -214,7 +214,7 @@ export async function startTransaction(commodity, seller) {
     return transaction;
   }
   const [group, newCreate] = await getOrCreateGroup(
-    getGroupIdFromCommodity(),
+    getGroupIdForTransaction(),
     {
       name: seller.name,
       avatar: commodity.img_urls[0],

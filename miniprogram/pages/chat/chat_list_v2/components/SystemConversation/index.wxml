@@ -1,0 +1,5 @@
+<view class="conversation" bindtap="gotoDetail">
+  <image class="icon" src="{{icon}}" />
+  <text class="text">{{name}}</text>
+  <view class="dot" wx:if="{{conversation.unreadCount > 0}}" />
+</view>

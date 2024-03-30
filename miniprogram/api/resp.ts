@@ -1,12 +1,11 @@
 export class Resp<T> {
-  public errno: number;
   constructor(
     public data: T | undefined,
     public errno: number,
     public message?: string
   ) {}
 
-  get isError() {
+  get isError(): boolean {
     return this instanceof RespError;
   }
 }

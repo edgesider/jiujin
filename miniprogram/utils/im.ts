@@ -1,6 +1,7 @@
 import { Conversation, Group, Message } from '@tencentcloud/chat';
 import { debounce, generateUUID, sleep, tryJsonParse } from './other';
 import { Observable, Subject } from 'rxjs';
+import { User } from '../types';
 
 /**
  * 通过交易创建出来群组的属性列表
@@ -17,25 +18,28 @@ export interface CommodityGroupAttributes {
 interface CustomMessagePayload {
 }
 
+const conversationsUpdateSubject = new Subject<Conversation[]>();
+const conversationSubjects = new Map<string, Subject<Conversation>>();
+const conversationByGroupSubjects = new Map<string, Subject<Conversation>>();
+const messageSubjects = new Map<string, Subject<Message>>();
 
 const idToConversation = new Map<string, Conversation>();
 const groupIdToConversation = new Map<string, Conversation>();
-const conversationListeners = new Map<string, Subject<Conversation>>();
-const messageListeners = new Map<string, Subject<Message>>();
 
 const groupAttrsCache = new Map<string, CommodityGroupAttributes>;
 
-export function initTim() {
+export function initTim(self: User) {
   const updateConversations = debounce((list: Conversation[]) => {
-    console.log('conversation list updated');
     idToConversation.clear();
-    list.forEach(conv => {
+    for (const conv of list) {
       idToConversation.set(conv.conversationID, conv);
+      conversationSubjects.get(conv.conversationID)?.next(conv);
       if (conv.groupProfile) {
         groupIdToConversation.set(conv.groupProfile.groupID, conv);
+        conversationByGroupSubjects.get(conv.groupProfile.groupID)?.next(conv);
       }
-      conversationListeners.get(conv.conversationID)?.next(conv);
-    });
+    }
+    conversationsUpdateSubject.next(list)
   }, 200);
 
   loadCache().then();
@@ -48,7 +52,7 @@ export function initTim() {
   tim.on(tim.EVENT.MESSAGE_RECEIVED, (event: any) => {
     const messages = event.data as Message[];
     for (const msg of messages) {
-      messageListeners.get(msg.conversationID)?.next(msg);
+      messageSubjects.get(msg.conversationID)?.next(msg);
     }
   });
 }
@@ -89,12 +93,19 @@ export function getImUidFromUid(uid: string) {
 }
 
 /**
- * 根据商品获取群组ID
+ * 创建用于交易的群组ID
  *
  * TODO 这个ID不可靠，改为在服务端维护ID，或者在服务端建群
  */
-export function getGroupIdFromCommodity(): string {
-  return generateUUID();
+export function getGroupIdForTransaction(): string {
+  return 'CO_' + generateUUID();
+}
+
+/**
+ * 是否是用于交易的群组ID
+ */
+export function isGroupIdForTransaction(groupId: string): boolean {
+  return groupId.startsWith('CO_');
 }
 
 export async function getConversationByGroup(groupId: string, reties: number = 8): Promise<Conversation | undefined> {
@@ -192,20 +203,33 @@ export async function getCommodityGroupAttributes(group: string | Group, cache =
   return res;
 }
 
-export function listenMessageForConversation(conversationId: string): Observable<Message> {
-  let subject = messageListeners.get(conversationId);
+export function listenConversationListUpdate(): Observable<Conversation[]> {
+  return conversationsUpdateSubject;
+}
+
+export function listenMessage(conversationId: string): Observable<Message> {
+  let subject = messageSubjects.get(conversationId);
   if (!subject) {
     subject = new Subject<Message>();
-    messageListeners.set(conversationId, subject);
+    messageSubjects.set(conversationId, subject);
+  }
+  return subject;
+}
+
+export function listenConversationByGroup(groupId: string): Observable<Conversation> {
+  let subject = conversationByGroupSubjects.get(groupId);
+  if (!subject) {
+    subject = new Subject<Conversation>();
+    conversationByGroupSubjects.set(groupId, subject);
   }
   return subject;
 }
 
 export function listenConversation(conversationId: string): Observable<Conversation> {
-  let subject = conversationListeners.get(conversationId);
+  let subject = conversationSubjects.get(conversationId);
   if (!subject) {
     subject = new Subject<Conversation>();
-    conversationListeners.set(conversationId, subject);
+    conversationSubjects.set(conversationId, subject);
   }
   return subject;
 }

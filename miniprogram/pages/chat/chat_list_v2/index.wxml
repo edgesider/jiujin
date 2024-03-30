@@ -1,21 +1,24 @@
 <TitleBar title="消息" hasBack="{{false}}" />
 
 <view class="header">
-  <view class="item">
-    <image class="icon" src="/images/chat-comment.png" />
-    <text class="text">留言</text>
-    <view class="dot" />
-  </view>
-  <view class="item">
-    <image class="icon" src="/images/chat-like.png" />
-    <text class="text">点赞</text>
-    <view class="dot" />
-  </view>
-  <view class="item">
-    <image class="icon" src="/images/chat-star.png" />
-    <text class="text">收藏</text>
-    <view class="dot" />
-  </view>
+  <SystemConversation
+    class="item"
+    icon="/images/chat-comment.png"
+    name="留言"
+    groupId="{{self.comment_group_id}}"
+  />
+  <SystemConversation
+    class="item"
+    icon="/images/chat-like.png"
+    name="点赞"
+    groupId="{{self.like_group_id}}"
+  />
+  <SystemConversation
+    class="item"
+    icon="/images/chat-star.png"
+    name="收藏"
+    groupId="{{self.collect_group_id}}"
+  />
 </view>
 
 <scroll-view
