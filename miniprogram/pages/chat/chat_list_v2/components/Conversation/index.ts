@@ -7,7 +7,7 @@ import {
 import api, { getOpenId } from '../../../../../api/api';
 import { Resp } from '../../../../../api/resp';
 import { User } from '../../../../../types';
-import { openConversationDetail } from '../../../../../router';
+import { openConversationDetail } from '../../../../../utils/router';
 import { Subscription } from 'rxjs';
 
 Component({

@@ -6,18 +6,6 @@ import { isGroupIdForTransaction, listenConversationListUpdate } from '../../../
 
 const app = getApp();
 
-interface SmallConversation {
-  name: string;
-  avatar: string;
-  sellerId: string;
-  seller?: User;
-  commodityId: string;
-  transactionId: number,
-  lastMessage: Message;
-  unreadCount: number;
-  lastTime: string;
-}
-
 Page({
   data: {
     ...getConstants(),

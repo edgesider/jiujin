@@ -4,6 +4,7 @@ import {
   listenConversationByGroup,
 } from '../../../../../utils/im';
 import { Subscription } from 'rxjs';
+import { openSystemConversationDetail } from '../../../../../utils/router';
 
 Component({
   properties: {
@@ -52,13 +53,7 @@ Component({
       this.setData({ conversation, usingGroupId: groupId });
     },
     gotoDetail() {
-      if (this.data.conversation) {
-        console.log('set read');
-        tim.setMessageRead({
-          conversationID: this.data.conversation.conversationID,
-        })
-      }
-      // openConversationDetail(this.properties.conversationId as string);
+      openSystemConversationDetail(this.data.conversation, this.properties.name);
     },
   }
 })

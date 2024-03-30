@@ -1,4 +1,4 @@
-import { User } from './types';
+import { User } from '../types';
 import { Conversation } from '@tencentcloud/chat';
 
 export async function openProfile(user: string | User) {
@@ -17,5 +17,14 @@ export async function openConversationDetail(conv: Conversation | string) {
   }
   await wx.navigateTo({
     url: `/pages/chat/chat_detail/index?conversationId=${conv}`,
+  });
+}
+
+export async function openSystemConversationDetail(conv: Conversation | string | null, convName: string) {
+  if (conv && typeof conv === 'object') {
+    conv = conv.conversationID;
+  }
+  await wx.navigateTo({
+    url: `/pages/chat/system_chat_detail/index?conversationId=${conv ?? ''}&convName=${convName}`,
   });
 }

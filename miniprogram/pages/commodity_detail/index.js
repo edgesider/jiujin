@@ -3,7 +3,7 @@ import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
 import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
 import moment from "moment";
-import { openConversationDetail, openProfile } from "../../router";
+import { openConversationDetail, openProfile } from "../../utils/router";
 import {
   getConversationByGroup,
   getGroupIdForTransaction,

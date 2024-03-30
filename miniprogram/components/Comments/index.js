@@ -1,5 +1,5 @@
 import api, { CommentAPI } from '../../api/api';
-import { openProfile } from "../../router";
+import { openProfile } from "../../utils/router";
 import { ensureRegistered } from "../../utils/other";
 import getConstants from "../../constants";
 

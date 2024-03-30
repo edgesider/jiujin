@@ -5,7 +5,7 @@ import getConstants, {
   COMMODITY_STATUS_DEACTIVATED
 } from "../../constants";
 import api, { CollectApi, getOpenId } from "../../api/api";
-import { openProfile } from "../../router";
+import { openProfile } from "../../utils/router";
 
 const app = getApp()
 

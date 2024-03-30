@@ -1,6 +1,6 @@
 import getConstants from "../../constants";
 import { getRegionPath } from "../../utils/other";
-import { openProfile } from "../../router";
+import { openProfile } from "../../utils/router";
 
 Component({
   properties: {
