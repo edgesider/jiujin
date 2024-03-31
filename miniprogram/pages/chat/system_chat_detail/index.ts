@@ -84,7 +84,13 @@ Page({
       tim.setMessageRead(this.data.conversation).then();
     }
   },
+  /**
+   * 更新消息列表
+   * @param rawMsgList 原始的消息列表，需要确保最新的消息在前面
+   * @param mode 添加方式
+   */
   onMessageUpdate(rawMsgList: Message[], mode: 'prepend' | 'append' | 'replace') {
+    console.log(rawMsgList);
     const msgList = rawMsgList
       .map(this.convertRawMsg)
       .filter((msg): msg is NotifyMsg => Boolean(msg));
@@ -137,7 +143,7 @@ Page({
       isCompleted: newList.data.isCompleted,
       nextMsgId: newList.data.nextReqMessageID,
     })
-    this.onMessageUpdate(newList.data.messageList, 'append');
+    this.onMessageUpdate(newList.data.messageList.reverse(), 'append');
   },
   async onReachBottom() {
     await this.fetchMoreMessages();
