@@ -36,6 +36,7 @@ Page({
   },
 
   onFocus() {
+    this.fetchToken++;
     this.setData({
       state: 'inputting',
     })
