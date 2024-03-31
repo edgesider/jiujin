@@ -72,16 +72,23 @@
         </view>
       </view>
     </view>
-    <view class="list" wx:if="{{commodityList.length > 0}}">
-      <CommodityCard
-        wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
-        class="card"
-        commodity="{{item}}"
+    <scroll-view
+      class="scroll"
+      scroll-y="{{true}}"
+      bindscrolltolower="onReachBottom"
+      wx:if="{{commodityList.length > 0}}"
+    >
+      <view class="list">
+        <CommodityCard
+          wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
+          class="card"
+          commodity="{{item}}"
+        />
+      </view>
+      <view
+        wx:if="{{state === 'shown' || state === 'loading'}}"
+        class="cu-load {{state === 'loading' ? 'loading' : 'over'}}"
       />
-    </view>
+    </scroll-view>
   </view>
-  <view
-    wx:if="{{state === 'shown' || state === 'loading'}}"
-    class="cu-load {{state === 'loading' ? 'loading' : 'over'}}"
-  />
 </view>

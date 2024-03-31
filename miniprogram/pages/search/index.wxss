@@ -1,5 +1,11 @@
 page {
   background-color: #fff !important;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 .top-bar {
@@ -49,6 +55,7 @@ page {
 
 .content {
   width: 100%;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
@@ -144,16 +151,28 @@ page {
 }
 
 .commodity-list-container {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
 }
 
-.commodity-list-container .list {
+.commodity-list-container .scroll {
   margin-top: 54rpx;
-  overflow: visible;
   width: 100%;
+  height: 100rpx;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-bottom: 48rpx;
+}
+
+.commodity-list-container .list {
+  width: 100%;
+
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -167,6 +186,10 @@ page {
 
 .commodity-list-container .card {
   width: calc(50% - var(--gap) / 2);
+  /*width: 100rpx;*/
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
   border-radius: 16rpx;
   box-shadow: 0 0 4px 0 #17007333;
 }
