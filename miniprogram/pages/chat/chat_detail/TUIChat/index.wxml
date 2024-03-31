@@ -47,7 +47,7 @@
           <view class="button disabled">已完成</view>
         </block>
         <block wx:elif='{{transaction.status === TransactionStatus.Terminated}}'>
-          <view>已终止</view>
+          <view class="button disabled">已终止</view>
           <view class="button" bindtap="requestBooking">重新预定</view>
         </block>
         <block wx:elif='{{transaction.status === TransactionStatus.Closed}}'>
@@ -57,6 +57,7 @@
     </view>
   </view>
   <view class="tip" wx:if="{{tip}}">{{tip}}</view>
+  <view class="divider" wx:else />
   <view
     class="list-box">
     <scroll-view class="message-list" bindtap="triggerClose" scroll-y="true">

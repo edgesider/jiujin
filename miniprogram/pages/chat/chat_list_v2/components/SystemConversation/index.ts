@@ -49,7 +49,7 @@ Component({
     },
     async onConversationUpdate(conversation: Conversation) {
       const groupId = conversation!.groupProfile.groupID;
-      console.log(`system conversation ${this.properties.name}(gid=${groupId}) updated`);
+      // console.log(`system conversation ${this.properties.name}(gid=${groupId}) updated`);
       this.setData({ conversation, usingGroupId: groupId });
     },
     gotoDetail() {

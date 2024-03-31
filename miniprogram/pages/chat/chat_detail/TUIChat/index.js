@@ -4,7 +4,7 @@ import api from "../../../../api/api";
 import getConstants from "../../../../constants";
 import { TransactionApi, TransactionStatus } from "../../../../api/transaction";
 import { getContentDesc } from "../../../../utils/strings";
-import { getCommodityGroupAttributes } from "../../../../utils/im";
+import { getCommodityGroupAttributes, listenMessage } from "../../../../utils/im";
 
 const app = getApp();
 
@@ -48,7 +48,7 @@ Component({
     attached() {
     },
     detached() {
-      tim.off(tim.EVENT.MESSAGE_RECEIVED, this.onNewMessage);
+      this.subscription.unsubscribe();
     },
     ready() {
       const query = wx.createSelectorQuery().in(this);
@@ -117,25 +117,13 @@ Component({
         tip: this.getTransactionStatusTip(transaction),
       });
 
-      const onNewMessage = (newData) => {
-        const msgList = newData.data;
-        let needUpdateTransaction = false;
-        msgList
-          .filter(msg => msg.conversationID === conversation.conversationID)
-          .forEach(msg => {
-            const custom = JSON.parse(msg.cloudCustomData ?? '{}');
-            if (custom?.needUpdateTransaction) {
-              needUpdateTransaction = true;
-            }
-          });
-        if (needUpdateTransaction) {
+      this.subscription = listenMessage(conversation.conversationID).subscribe(msg => {
+        const custom = JSON.parse(msg.cloudCustomData ?? '{}');
+        if (custom?.needUpdateTransaction) {
           this.updateTransaction().then();
         }
-      }
-      this.onNewMessage = onNewMessage;
-      tim.on(tim.EVENT.MESSAGE_RECEIVED, onNewMessage);
+      })
     },
-    onNewMessage: null,
     getConversationName(conversation) {
       if (conversation.type === '@TIM#SYSTEM') {
         this.setData({
@@ -349,18 +337,20 @@ Component({
         [TransactionStatus.Denied]: '/images/已拒绝.png',
         [TransactionStatus.Booked]: '/images/已预定.png',
         [TransactionStatus.Finished]: '/images/已成交.png',
-      })[transaction.status];
+      })[transaction.status] ?? null;
     },
     getTransactionStatusTip(transaction) {
+      let tip;
       if (this.data.isSeller) {
-        return ({
+        tip = ({
           [TransactionStatus.Booked]: '点击“已售出”商品正式下架，点击“未售出”后商品擦亮置顶',
         })[transaction.status];
       } else {
-        return ({
+        tip = ({
           [TransactionStatus.Idle]: '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品',
         })[transaction.status];
       }
+      return tip ?? null;
     }
   },
 });

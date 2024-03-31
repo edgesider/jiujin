@@ -28,8 +28,6 @@ Component({
     peerUser: null as User | null,
   },
   lifetimes: {
-    created() {
-    },
     async attached() {
       const conversation = await getConversationById(this.properties.conversationId);
       if (!conversation) {

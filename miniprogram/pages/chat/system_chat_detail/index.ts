@@ -5,6 +5,7 @@ import { tryJsonParse } from '../../../utils/other';
 import { Commodity, convertCommodity, User } from '../../../types';
 import moment from 'moment';
 import { openCommodityDetail } from '../../../utils/router';
+import { Subscription } from 'rxjs';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -49,6 +50,7 @@ Page({
     nextMsgId: null,
     isCompleted: false,
   },
+  subscription: null as Subscription | null,
   async onLoad(options) {
     const { conversationId, convName } = options;
     this.setData({ convName });
@@ -65,15 +67,19 @@ Page({
     }
     this.setData({ conversation: conv });
 
-    listenConversation(conv.conversationID).subscribe(conv => {
+    const subscription = new Subscription();
+
+    subscription.add(listenConversation(conv.conversationID).subscribe(conv => {
       this.setData({ conversation: conv });
-    })
-    listenMessage(conv.conversationID).subscribe(rawMsg => {
+    }));
+    subscription.add(listenMessage(conv.conversationID).subscribe(rawMsg => {
       this.onMessageUpdate([rawMsg], 'prepend');
-    });
+    }));
+    this.subscription = subscription;
     await this.fetchMoreMessages();
   },
   async onUnload() {
+    this.subscription?.unsubscribe();
     if (this.data.conversation) {
       tim.setMessageRead(this.data.conversation).then();
     }

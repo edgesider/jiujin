@@ -3,6 +3,7 @@ import { setTabBar, sleep } from '../../../utils/other';
 import { Conversation, Message } from '@tencentcloud/chat';
 import { User } from '../../../types';
 import { isGroupIdForTransaction, listenConversationListUpdate } from '../../../utils/im';
+import { Subscription } from 'rxjs';
 
 const app = getApp();
 
@@ -13,6 +14,7 @@ Page({
     refreshing: false,
     self: null as User | null,
   },
+  subscription: null as Subscription | null,
   async onLoad() {
     setTabBar(this, () => {
       this.onRefresh();
@@ -21,9 +23,13 @@ Page({
       self: app.globalData.self
     });
 
-    listenConversationListUpdate().subscribe(list => {
+    this.subscription = listenConversationListUpdate().subscribe(list => {
       this.onConversationListUpdate(list);
     })
+  },
+  onUnload() {
+    console.log(this.subscription);
+    this.subscription?.unsubscribe()
   },
   async onShow() {
     await this.refresh();
