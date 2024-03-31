@@ -58,7 +58,7 @@ Component({
         lastMessageText = ''
       } else if (lastMessage.isRevoked) {
         lastMessageText = `${lastMessage.fromAccount === getImUidFromUid(getOpenId()) ? '我' : '对方'}撤回了一条消息`;
-      } else if (lastMessage.type !== 'TIMCustomElem') {
+      } else if (lastMessage.type !== 'TIMCustomElem' && lastMessage.type !== 'TIMGroupTipElem') {
         lastMessageText = conversation.lastMessage.messageForShow;
       }
       this.setData({
