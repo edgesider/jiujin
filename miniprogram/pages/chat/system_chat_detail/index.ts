@@ -6,6 +6,7 @@ import { Commodity, convertCommodity, User } from '../../../types';
 import moment from 'moment';
 
 const app = getApp();
+const COUNT_PER_PAGE = 5;
 
 interface BaseNotifyPayload {
   text: string;
@@ -42,6 +43,8 @@ Page({
     state: 'loading' as 'loading' | 'empty' | 'error',
     conversation: null as Conversation | null,
     messages: [] as NotifyMsg[],
+    nextMsgId: null,
+    isCompleted: false,
   },
   async onLoad(options) {
     const { conversationId, convName } = options;
@@ -59,27 +62,28 @@ Page({
     }
     this.setData({ conversation: conv });
 
-    listenMessage(conv.conversationID).subscribe(rawMsg => {
-      const msg = this.convertRawMsg(rawMsg);
-      if (msg) {
-        this.setData({
-          messages: [msg, ...this.data.messages]
-        });
-      }
-    });
     listenConversation(conv.conversationID).subscribe(conv => {
       this.setData({ conversation: conv });
     })
-    const rawMsgList: Message[] = (await tim.getMessageList(conv)).data?.messageList ?? [];
-    this.onMessageUpdate(rawMsgList);
+    listenMessage(conv.conversationID).subscribe(rawMsg => {
+      this.onMessageUpdate([rawMsg], 'prepend');
+    });
+    await this.fetchMoreMessages();
   },
-  onMessageUpdate(rawMsgList: Message[]) {
+  onMessageUpdate(rawMsgList: Message[], mode: 'prepend' | 'append' | 'replace') {
     const msgList = rawMsgList
       .map(this.convertRawMsg)
       .filter((msg): msg is NotifyMsg => Boolean(msg));
-    this.setData({ messages: msgList });
-    if (this.data.conversation) {
-      tim.setMessageRead(this.data.conversation).then();
+    if (mode === 'replace') {
+      this.setData({ messages: msgList });
+    } else {
+      const { messages } = this.data;
+      if (mode === 'prepend') {
+        messages.splice(0, 0, ...msgList);
+      } else if (mode === 'append') {
+        messages.push(...msgList);
+      }
+      this.setData({ messages });
     }
   },
   convertRawMsg(rawMsg: Message): NotifyMsg | undefined {
@@ -103,6 +107,26 @@ Page({
       console.error(e);
       return undefined;
     }
+  },
+  async fetchMoreMessages() {
+    const { conversation, nextMsgId, isCompleted } = this.data;
+    if (!conversation || isCompleted) {
+      return;
+    }
+    const newList = await tim.getMessageList({
+      conversationID: conversation.conversationID,
+      nextReqMessageID: nextMsgId ?? undefined,
+      // @ts-ignore
+      count: COUNT_PER_PAGE,
+    });
+    this.setData({
+      isCompleted: newList.data.isCompleted,
+      nextMsgId: newList.data.nextReqMessageID,
+    })
+    this.onMessageUpdate(newList.data.messageList, 'append');
+  },
+  async onReachBottom() {
+    await this.fetchMoreMessages();
   },
   async onUnload() {
     if (this.data.conversation) {

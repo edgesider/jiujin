@@ -3,6 +3,8 @@
 <scroll-view
   class="container"
   scroll-y="{{true}}"
+  bindscrolltolower="onReachBottom"
+  lower-threshold="200"
 >
   <view
     wx:for="{{messages}}"
