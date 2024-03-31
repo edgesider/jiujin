@@ -238,6 +238,15 @@ Component({
       });
     },
     async agreeBooking() {
+      const { confirm } = await wx.showModal({
+        content: '该用户想你申请预订商品，预定期间商品暂时下架，其他人不可见，是否同意？',
+        confirmText: '同意',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
+        return;
+      }
       const { transaction } = this.data;
       const resp = await TransactionApi.agreeBooking(transaction.id);
       if (resp.isError) {
@@ -252,6 +261,15 @@ Component({
       wx.showToast({ title: '已同意', }).then();
     },
     async denyBooking() {
+      const { confirm } = await wx.showModal({
+        content: '确认拒绝？',
+        confirmText: '确认',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
+        return;
+      }
       const { transaction } = this.data;
       const reasons = ['商品已售出', '交易距离远', '不想卖了', '其他'];
       const { tapIndex } = await wx.showActionSheet({
@@ -299,6 +317,15 @@ Component({
       wx.showToast({ title: '已取消预约', }).then();
     },
     async confirmSold() {
+      const { confirm } = await wx.showModal({
+        content: '售出后该商品可参与抽奖……确认已售出？',
+        confirmText: '确认',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
+        return;
+      }
       const { transaction } = this.data;
       const resp = await TransactionApi.confirmSold(transaction.id);
       if (resp.isError) {
@@ -313,6 +340,15 @@ Component({
       wx.showToast({ title: '已确认售出', }).then();
     },
     async confirmTerminated() {
+      const { confirm } = await wx.showModal({
+        content: '确认终止？',
+        confirmText: '确认',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
+        return;
+      }
       const { transaction } = this.data;
       const reasons = ['商品已售出', '交易距离远', '不想卖了', '其他'];
       const { tapIndex } = await wx.showActionSheet({
