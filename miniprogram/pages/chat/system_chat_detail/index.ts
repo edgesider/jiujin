@@ -6,7 +6,7 @@ import { Commodity, convertCommodity, User } from '../../../types';
 import moment from 'moment';
 
 const app = getApp();
-const COUNT_PER_PAGE = 5;
+const COUNT_PER_PAGE = 20;
 
 interface BaseNotifyPayload {
   text: string;
