@@ -4,7 +4,7 @@
     class="top"
     style="height: {{CustomBar}}px; padding-left: calc(var(--logo-width) + 20rpx); padding-right: {{ScreenSize[0] - MenuButton.left}}px"
   >
-    <image class="app-logo" src="../../images/LOGO.png" mode="aspectFit" />
+    <image class="app-logo" src="../../images/LOGO.png" mode="aspectFit" bindtap="onClickLogo" />
     <view
       class="search"
       bindtap="onSearchClick"

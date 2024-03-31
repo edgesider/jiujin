@@ -1,7 +1,0 @@
-{
-  "component": true,
-  "usingComponents": {
-    "TUIConversation": "./components/TUIConversation/index",
-    "TUICallKit": "./components/TUICallKit/TUICallKit/TUICallKit"
-  }
-}

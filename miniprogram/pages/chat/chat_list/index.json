@@ -1,6 +1,9 @@
 {
   "usingComponents": {
-    "TUIKit": "./TUIKit/index"
+    "TitleBar": "/components/TitleBar/index",
+    "Conversation": "./components/Conversation/index",
+    "SystemConversation": "./components/SystemConversation/index"
   },
-  "navigationStyle": "custom"
+  "enablePullDownRefresh": false,
+  "disableScroll": true
 }

@@ -8,9 +8,10 @@
     "pages/commodity_detail/index",
     "pages/commodity_list/index",
     "pages/profile/index",
-    "pages/chat/chat_list_v2/index",
+    "pages/chat/chat_list/index",
+    "pages/chat/chat_detail/index",
     "pages/chat/system_chat_detail/index",
-    "pages/chat/chat_detail/index"
+    "pages/login/index"
   ],
   "window": {
     "backgroundColor": "#f1f1f1",
@@ -29,7 +30,7 @@
         "pagePath": "pages/home/index"
       },
       {
-        "pagePath": "pages/chat/chat_list_v2/index"
+        "pagePath": "pages/chat/chat_list/index"
       },
       {
         "pagePath": "pages/me/index"

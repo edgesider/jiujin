@@ -1,0 +1,81 @@
+page {
+  background-color: white !important;
+  height: 100% !important;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 140rpx;
+  justify-content: flex-start;
+  align-items: center;
+
+  .app-logo {
+    width: 140rpx;
+    height: 140rpx;
+  }
+
+  .button {
+    position: relative;
+    margin-top: 120rpx;
+    background-color: #21ac39;
+    height: 96rpx;
+    border-radius: 48rpx;
+    width: 80%;
+
+    font-size: 32rpx;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  .button.disabled {
+    background-color: #d7d7d7;
+  }
+
+  .protocol {
+    margin-top: 22rpx;
+    padding: 10rpx;
+    box-sizing: content-box;
+    width: 76%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    font-size: 24rpx;
+
+    .checkbox {
+      width: 28rpx;
+      height: 28rpx;
+      flex-shrink: 0;
+      flex-grow: 0;
+      border-radius: 50%;
+      margin-right: 8rpx;
+
+    }
+
+    .checkbox.unchecked {
+      border: 1rpx solid #979797;
+    }
+
+    .text {
+      color: #979797;
+    }
+
+    .text.highlight {
+      color: #1661c8;
+    }
+  }
+}

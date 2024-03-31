@@ -1,6 +1,7 @@
 import { getRegionPath, setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
 import api from '../../api/api';
+import { openLogin } from "../../utils/router";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -62,6 +63,9 @@ Page({
     } finally {
       this.setData({ isLoading: false });
     }
+  },
+  onClickLogo() {
+    openLogin();
   },
 
   onPageScroll(options) {

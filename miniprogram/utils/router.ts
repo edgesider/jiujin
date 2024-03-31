@@ -41,3 +41,9 @@ export async function openSystemConversationDetail(conv: Conversation | string |
     url: `/pages/chat/system_chat_detail/index?conversationId=${conv ?? ''}&convName=${convName}`,
   });
 }
+
+export async function openLogin() {
+  await wx.navigateTo({
+    url: '/pages/login/index',
+  });
+}

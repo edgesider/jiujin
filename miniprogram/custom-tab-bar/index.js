@@ -37,7 +37,7 @@ Component({
         hasDot: false,
       },
       {
-        pagePath: '/pages/chat/chat_list_v2/index',
+        pagePath: '/pages/chat/chat_list/index',
         iconClass: 'cuIcon-message',
         selectedIconClass: 'cuIcon-messagefill',
         text: '私信',

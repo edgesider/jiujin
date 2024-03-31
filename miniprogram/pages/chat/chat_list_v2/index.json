@@ -1,9 +1,0 @@
-{
-  "usingComponents": {
-    "TitleBar": "/components/TitleBar/index",
-    "Conversation": "./components/Conversation/index",
-    "SystemConversation": "./components/SystemConversation/index"
-  },
-  "enablePullDownRefresh": false,
-  "disableScroll": true
-}
