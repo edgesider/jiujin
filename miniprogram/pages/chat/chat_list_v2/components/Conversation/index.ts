@@ -1,14 +1,16 @@
 import moment from 'moment';
 import { Conversation } from '@tencentcloud/chat';
 import {
+  CommodityGroupAttributes,
   getCommodityGroupAttributes,
-  getConversationById, listenConversation, tryDeleteConversationAndGroup,
+  getConversationById, getImUidFromUid, listenConversation, tryDeleteConversationAndGroup,
 } from '../../../../../utils/im';
 import api, { getOpenId } from '../../../../../api/api';
 import { Resp } from '../../../../../api/resp';
 import { User } from '../../../../../types';
 import { openConversationDetail } from '../../../../../utils/router';
 import { Subscription } from 'rxjs';
+import { sleep } from '../../../../../utils/other';
 
 Component({
   properties: {
@@ -23,6 +25,7 @@ Component({
   },
   data: {
     conversation: null as Conversation | null,
+    lastMessageText: '',
     lastTime: '',
     /** 对方用户的信息 */
     peerUser: null as User | null,
@@ -49,15 +52,33 @@ Component({
   },
   methods: {
     async onConversationUpdate(conversation: Conversation, updateOtherInfo: boolean) {
+      const { lastMessage } = conversation;
+      let lastMessageText = '';
+      if (!lastMessage) {
+        lastMessageText = ''
+      } else if (lastMessage.isRevoked) {
+        lastMessageText = `${lastMessage.fromAccount === getImUidFromUid(getOpenId()) ? '我' : '对方'}撤回了一条消息`;
+      } else if (lastMessage.type !== 'TIMCustomElem') {
+        lastMessageText = conversation.lastMessage.messageForShow;
+      }
       this.setData({
         conversation,
+        lastMessageText,
         lastTime: moment(conversation.lastMessage.lastTime * 1000).format('YYYY-MM-DD HH:mm'),
       });
 
       // 由于tim频控限制比较严格，所以只在第一次更新属性信息
       if (updateOtherInfo) {
         const group = conversation.groupProfile;
-        const attrs = await getCommodityGroupAttributes(group);
+        let attrs: CommodityGroupAttributes | undefined;
+        // 刚建好群属性可能还没同步，多等一下
+        for (let i = 0; i < 3; i++) {
+          attrs = await getCommodityGroupAttributes(group);
+          if (attrs) {
+            break;
+          }
+          await sleep(500);
+        }
         if (!attrs) {
           console.error(`not commodity conversation ${group.groupID} ${group.ownerID}`);
           return;

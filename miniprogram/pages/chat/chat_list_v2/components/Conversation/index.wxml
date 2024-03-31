@@ -6,7 +6,7 @@
       <view class="name">{{peerUser.name}}</view>
       <view class="time">{{lastTime}}</view>
     </view>
-    <view class="line2">{{conversation.lastMessage.messageForShow}}</view>
+    <view class="line2" wx:if="{{lastMessageText}}">{{lastMessageText}}</view>
   </view>
   <image class="image" src="{{conversation.groupProfile.avatar}}" mode="aspectFill" />
 </view>
