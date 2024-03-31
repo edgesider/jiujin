@@ -4,6 +4,9 @@ import { getConversationById, listenConversation, listenMessage } from '../../..
 import { tryJsonParse } from '../../../utils/other';
 import { Commodity, convertCommodity, User } from '../../../types';
 import moment from 'moment';
+import { openCommodityDetail } from '../../../utils/router';
+
+type CustomEvent = WechatMiniprogram.CustomEvent;
 
 const app = getApp();
 const COUNT_PER_PAGE = 20;
@@ -70,6 +73,11 @@ Page({
     });
     await this.fetchMoreMessages();
   },
+  async onUnload() {
+    if (this.data.conversation) {
+      tim.setMessageRead(this.data.conversation).then();
+    }
+  },
   onMessageUpdate(rawMsgList: Message[], mode: 'prepend' | 'append' | 'replace') {
     const msgList = rawMsgList
       .map(this.convertRawMsg)
@@ -128,9 +136,10 @@ Page({
   async onReachBottom() {
     await this.fetchMoreMessages();
   },
-  async onUnload() {
-    if (this.data.conversation) {
-      tim.setMessageRead(this.data.conversation).then();
+  async gotoDetail(ev: CustomEvent) {
+    const msg = ev.currentTarget.dataset.msg as NotifyMsg;
+    if (msg.type === 'comment' || msg.type === 'collect') {
+      await openCommodityDetail({ id: msg.commodity._id, scrollToComment: msg.type === 'comment' });
     }
-  }
+  },
 })

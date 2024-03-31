@@ -17,6 +17,8 @@ const app = getApp();
 Page({
   data: {
     ...getConstants(),
+    scrollToView: '',
+    scrollToComment: false,
     ridToRegion: {},
     loading: true,
     isMine: false,
@@ -29,7 +31,7 @@ Page({
     firstImageSize: [],
   },
   onLoad: async function (options) {
-    const { id } = options;
+    const { id, scrollToComment } = options;
     const commResp = await api.getCommodityInfo({ id });
     if (commResp.isError) {
       await wx.showToast({
@@ -57,6 +59,7 @@ Page({
 
     this.setData({
       loading: false,
+      scrollToComment: scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0',
       commodity,
       createTime: moment(commodity.create_time).format('YYYY-MM-DD HH:mm'),
       polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
@@ -66,6 +69,7 @@ Page({
       isMine: self && self._id === commodity.seller_id,
       firstImageSize,
     });
+
     await api.addViewCount(id);
   },
   /**
@@ -196,6 +200,13 @@ Page({
     return {
       title: '找到一个好东西，快来看看吧！',
       path: `/pages/commodity_detail/index?id=${this.data.commodity._id}`
+    }
+  },
+  onCommentLoadFinished() {
+    if (this.data.scrollToComment) {
+      this.setData({
+        scrollToView: 'comments'
+      });
     }
   },
 });

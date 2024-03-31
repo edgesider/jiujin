@@ -86,7 +86,8 @@
 }
 
 .body {
-  overflow-y: scroll;
+  height: 100rpx;
+  width: 100%;
   flex-grow: 1;
   flex-shrink: 1;
   display: flex;

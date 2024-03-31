@@ -29,6 +29,8 @@ Component({
       })
     })
     await this.fetchComments();
+
+    this.triggerEvent('loadFinished');
   },
   methods: {
     nop() {},

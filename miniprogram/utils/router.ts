@@ -10,6 +10,19 @@ export async function openProfile(user: string | User) {
   });
 }
 
+interface CommodityDetailOptions {
+  id: string;
+  scrollToComment?: boolean;
+}
+
+export async function openCommodityDetail(options: CommodityDetailOptions) {
+  if (!options.id) {
+    throw Error('commodity id is required');
+  }
+  await wx.navigateTo({
+    url: `/pages/commodity_detail/index?id=${options.id}&scrollToComment=${options.scrollToComment}`,
+  })
+}
 
 export async function openConversationDetail(conv: Conversation | string) {
   if (typeof conv === 'object') {
