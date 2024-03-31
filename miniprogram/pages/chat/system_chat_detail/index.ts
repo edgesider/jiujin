@@ -1,27 +1,26 @@
 import getConstants from '../../../constants';
 import { Conversation, Message } from '@tencentcloud/chat';
-import { getConversationById, listenMessage } from '../../../utils/im';
+import { getConversationById, listenConversation, listenMessage } from '../../../utils/im';
 import { tryJsonParse } from '../../../utils/other';
+import { Commodity, convertCommodity, User } from '../../../types';
+import moment from 'moment';
 
 const app = getApp();
 
 interface BaseNotifyPayload {
   text: string;
+  operator?: User;
 }
 
 interface CommentNotifyPayload extends BaseNotifyPayload {
   type: 'comment';
-  commodityId: string;
-  commentContent: string;
+  commodity: Commodity;
   commentId?: number; // TODO
-  user: string;
 }
 
 interface StarNotifyPayload extends BaseNotifyPayload {
   type: 'collect';
-  commodityId: string;
-  commodityDesc: string;
-  user: string;
+  commodity: Commodity;
 }
 
 interface LikeNotifyPayload extends BaseNotifyPayload {
@@ -32,6 +31,7 @@ type NotifyPayload = CommentNotifyPayload | StarNotifyPayload | LikeNotifyPayloa
 type NotifyMsg = NotifyPayload & {
   rawId: string;
   time: number;
+  timeStr: string;
   seq: number;
 };
 
@@ -57,8 +57,8 @@ Page({
       this.setData({ state: 'error' });
       return;
     }
-    const rawMsgList: Message[] = (await tim.getMessageList(conv)).data?.messageList ?? [];
-    this.onMessageUpdate(rawMsgList);
+    this.setData({ conversation: conv });
+
     listenMessage(conv.conversationID).subscribe(rawMsg => {
       const msg = this.convertRawMsg(rawMsg);
       if (msg) {
@@ -66,26 +66,47 @@ Page({
           messages: [msg, ...this.data.messages]
         });
       }
+    });
+    listenConversation(conv.conversationID).subscribe(conv => {
+      this.setData({ conversation: conv });
     })
-  },
-  convertRawMsg(rawMsg: Message): NotifyMsg | undefined {
-    const payload: NotifyPayload = tryJsonParse(rawMsg.payload.text);
-    if (!payload || !payload.type) {
-      return;
-    }
-    return {
-      rawId: rawMsg.ID,
-      time: rawMsg.time * 1000 + rawMsg.sequence,
-      seq: rawMsg.sequence,
-      ...payload
-    };
+    const rawMsgList: Message[] = (await tim.getMessageList(conv)).data?.messageList ?? [];
+    this.onMessageUpdate(rawMsgList);
   },
   onMessageUpdate(rawMsgList: Message[]) {
     const msgList = rawMsgList
       .map(this.convertRawMsg)
       .filter((msg): msg is NotifyMsg => Boolean(msg));
     this.setData({ messages: msgList });
+    if (this.data.conversation) {
+      tim.setMessageRead(this.data.conversation).then();
+    }
   },
-  async onShow() {
+  convertRawMsg(rawMsg: Message): NotifyMsg | undefined {
+    try {
+      const payload: NotifyPayload = tryJsonParse(rawMsg.payload.text);
+      if (!payload || !payload.type) {
+        return;
+      }
+      if (payload.type === 'comment' || payload.type === 'collect') {
+        payload.commodity = convertCommodity(payload.commodity);
+      }
+      const time = rawMsg.time * 1000 + rawMsg.sequence;
+      return {
+        rawId: rawMsg.ID,
+        time: rawMsg.time * 1000 + rawMsg.sequence,
+        timeStr: moment(time).format('YYYY-MM-DD HH:mm'),
+        seq: rawMsg.sequence,
+        ...payload
+      };
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
   },
+  async onUnload() {
+    if (this.data.conversation) {
+      tim.setMessageRead(this.data.conversation).then();
+    }
+  }
 })

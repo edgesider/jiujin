@@ -1,6 +1,7 @@
 import axios from "axios";
 import mpAdapter from 'axios-miniprogram-adapter'
 import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from "../constants";
+import { convertCommodity } from "../types";
 
 const { RespSuccess, RespError } = require('./resp')
 
@@ -162,15 +163,8 @@ const api = {
         openid: getOpenId()
       }
     });
-    if (!resp.data) resp.data = [];
-    const res = wrapResp(resp);
-    res.data.forEach(c => {
-      c.img_urls = c.img_urls
-        ?.replaceAll("\"", "")
-        .replaceAll(" ", "")
-        .split(",") ?? [];
-    })
-    return res;
+    resp.data.data = (resp.data?.data ?? []).map(convertCommodity);
+    return wrapResp(resp);
   },
 
   // 获取单个商品

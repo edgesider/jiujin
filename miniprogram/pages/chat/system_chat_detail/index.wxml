@@ -13,15 +13,15 @@
     bindtap="gotoDetail"
     data-msg="{{msg}}"
   >
-    <image class="avatar" src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/commodity/o5j6j64dqTLhUpXWFN0Zh14UPtxs_1711654683291_784784.122611415" mode="aspectFill" />
+    <image class="avatar" src="{{msg.operator.avatar_url}}" mode="aspectFill" />
     <view class="dot" wx:if="{{conversation.unreadCount > idx}}" />
     <view class="info">
       <view class="line1">
-        <view class="name">{{msg.user}}</view>
-        <view class="time">{{msg.time}}</view>
+        <view class="name">{{msg.operator.name}}</view>
+        <view class="time">{{msg.timeStr}}</view>
       </view>
       <view class="line2">{{msg.text}}</view>
     </view>
-    <image class="image" src="cloud://jj-4g1ndtns7f1df442.6a6a-jj-4g1ndtns7f1df442-1322373141/commodity/o5j6j64dqTLhUpXWFN0Zh14UPtxs_1711654683291_784784.122611415" mode="aspectFill" />
+    <image class="image" src="{{msg.commodity.img_urls[0]}}" mode="aspectFill" />
   </view>
 </scroll-view>
