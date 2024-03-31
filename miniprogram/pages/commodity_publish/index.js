@@ -252,6 +252,7 @@ Page({
       price: commodityCurrentPrice,
       quality: qualities[qualityIndex].value,
       img_urls: commodityImg,
+      all_visible: filters.find(f => f.key === 'all').selected,
       only_same_campus: filters.find(f => f.key === 'campus').selected,
       only_same_sex: filters.find(f => f.key === 'sex').selected,
       only_same_building: filters.find(f => f.key === 'building').selected,
