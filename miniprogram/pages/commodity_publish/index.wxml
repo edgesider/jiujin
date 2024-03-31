@@ -37,8 +37,14 @@
 <view class="Sort">
   <view class="sort_title">过滤</view>
   <view class="filters">
-    <view class="{{choose_filtration===item?'sort_on':'sort_off'}}" wx:for="{{filtration}}" wx:key="unique"
-          bind:tap="choose_filtration" data-filtration="{{item}}">{{item}}
+    <view
+      class="{{item.selected ? 'sort_on' : 'sort_off'}}"
+      wx:for="{{filters}}"
+      wx:for-index="idx"
+      wx:key="key"
+      bind:tap="onFilterClick"
+      data-idx="{{idx}}"
+    >{{item.text}}
     </view>
   </view>
 </view>

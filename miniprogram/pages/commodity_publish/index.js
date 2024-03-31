@@ -27,20 +27,15 @@ Page({
     commodityCurrentPriceText: '0',
     commodityCurrentPrice: 0,
     qualityIndex: 0,
-    onlyMyGender: false,
 
-    filtration: ["全部可见","同校区可见","同性别可见","同楼可见"],
+    filters: [
+      { text: '全部可见', key: 'all', selected: true },
+      { text: '同校区可见', key: 'campus', selected: false },
+      { text: '同性别可见', key: 'sex', selected: false },
+      { text: '同楼可见', key: 'building', selected: false },
+    ],
+    filtration: ["全部可见", "同校区可见", "同性别可见", "同楼可见"],
     choose_filtration: "全部可见"
-  },
-
-  /**
-   * 用户点击切换过滤
-   */
-  choose_filtration(e) {
-    let the = this
-    the.setData({
-      choose_filtration: e.currentTarget.dataset.filtration
-    })
   },
 
   /**
@@ -69,12 +64,23 @@ Page({
       editingCommodity: isEdit ? commodity : null,
     };
     if (commodity) {
+      const {
+        only_same_campus,
+        only_same_sex,
+        only_same_building,
+      } = commodity;
       Object.assign(data, {
         commodityImg: commodity.img_urls,
         commodityContent: commodity.content,
         commodityCurrentPrice: commodity.price,
         categoryIndex: this.data.categories.findIndex(c => c._id === commodity.cid),
         qualityIndex: this.data.qualities.findIndex(q => q.value === commodity.quality),
+        filters: [
+          { text: '全部可见', key: 'all', selected: !only_same_campus && !only_same_sex && !only_same_building },
+          { text: '同校区可见', key: 'campus', selected: Boolean(only_same_campus) },
+          { text: '同性别可见', key: 'sex', selected: Boolean(only_same_sex) },
+          { text: '同楼可见', key: 'building', selected: Boolean(only_same_building) },
+        ],
       });
     }
     data.buttonText = isEdit ? '保存' : '发布';
@@ -164,11 +170,20 @@ Page({
       qualityIndex: idx,
     })
   },
-  onChangeOnlyMyGender(ev) {
-    const { currentTarget: { dataset: { value } } } = ev;
-    this.setData({
-      onlyMyGender: value,
-    })
+
+  onFilterClick(ev) {
+    const { currentTarget: { dataset: { idx } } } = ev;
+    const filters = this.data.filters;
+    const filter = filters[idx];
+    if (filter.key === 'all') {
+      for (const filter of filters) {
+        filter.selected = filter.key === 'all';
+      }
+    } else {
+      filters.find(f => f.key === 'all').selected = false;
+      filter.selected = !filter.selected;
+    }
+    this.setData({ filters });
   },
 
   // 验证表单格式
@@ -214,7 +229,6 @@ Page({
   async onSubmit() {
     const {
       editingCommodity: editing,
-      onlyMyGender,
       self,
       categories,
       categoryIndex,
@@ -222,7 +236,8 @@ Page({
       commodityCurrentPrice,
       qualityIndex,
       qualities,
-      commodityImg
+      commodityImg,
+      filters,
     } = this.data;
     const info = editing // 编辑商品时的初始值
       ?? {
@@ -237,8 +252,11 @@ Page({
       price: commodityCurrentPrice,
       quality: qualities[qualityIndex].value,
       img_urls: commodityImg,
-      sex: onlyMyGender ? self.sex : GENDER.UNKNOWN,
+      only_same_campus: filters.find(f => f.key === 'campus').selected,
+      only_same_sex: filters.find(f => f.key === 'sex').selected,
+      only_same_building: filters.find(f => f.key === 'building').selected,
     });
+    console.log(info);
     const error = this.checkForm(info);
     if (error) {
       Dialog.alert({ title: error, })

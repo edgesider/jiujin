@@ -117,6 +117,7 @@ export async function getConversationByGroup(groupId: string, reties: number = 8
     }
     await sleep(200);
   }
+  // TODO 尝试给群组里面发一条激活消息
   return undefined;
 }
 
