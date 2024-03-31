@@ -21,13 +21,13 @@ export async function sleep(ms: number) {
  */
 export function getRegionPath(rid: number, ridToRegion?: Record<number, Region | undefined>) {
   ridToRegion = (ridToRegion ?? getApp().globalData.ridToRegion ?? {}) as Record<number, Region | undefined>;
-  const regionPath = [];
+  const regionPath: Region[] = [];
   for (
     let region = ridToRegion[rid];
     Boolean(region);
     region = region!.parents[0] ? ridToRegion[region!.parents[0]] : undefined
   ) {
-    regionPath.push(region);
+    regionPath.push(region!);
   }
   return regionPath;
 }

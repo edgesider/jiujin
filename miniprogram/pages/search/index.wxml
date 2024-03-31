@@ -40,7 +40,7 @@
   <view wx:elif="{{state === 'shown' || state === 'loading'}}" class="commodity-list-container">
     <view class="filters">
       <view class="item" bindtap="onRegionFilterClick">
-        区域
+        区域：{{regionFilter ? regionFilter.name : '不限'}}
         <view class="arrows">
           <image src="/images/arrow.png" class="arrow" />
         </view>

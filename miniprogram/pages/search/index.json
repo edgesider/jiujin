@@ -2,5 +2,6 @@
   "usingComponents": {
     "CommodityCard": "/components/CommodityCard/index"
   },
-  "enablePullDownRefresh": false
+  "enablePullDownRefresh": false,
+  "disableScroll": true
 }

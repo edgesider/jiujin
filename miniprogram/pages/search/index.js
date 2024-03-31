@@ -1,5 +1,6 @@
 import api from "../../api/api";
 import getConstants, { COMMODITY_STATUS_SELLING, GENDER } from "../../constants";
+import { getRegionPath } from "../../utils/other";
 
 const COUNT_PER_PAGE = 12
 const MAX_HISTORIES = 10;
@@ -18,6 +19,7 @@ Page({
 
     histories: [],
     // 当前选择的区域过滤器
+    regionFilter: null, // Region
     selectedRegionId: null,
     order: ['polish_time', 'desc'], // ['polish_time' | 'price', 'desc' | 'asc']
   },
@@ -95,12 +97,19 @@ Page({
       })
     }
     const token = ++this.fetchToken;
-    const { text, cursor, commodityList, order: [orderBy, order] } = this.data;
+    const {
+      text,
+      cursor,
+      commodityList,
+      order: [orderBy, order],
+      regionFilter,
+    } = this.data;
     const resp = await api.getCommodityList({
       keyword: text,
       order_by: orderBy,
       order: order,
       start: cursor,
+      rid: regionFilter ? regionFilter._id : undefined,
       count: COUNT_PER_PAGE,
       status: COMMODITY_STATUS_SELLING,
     });
@@ -173,6 +182,15 @@ Page({
     });
     this.fetch(true);
   },
-  onRegionFilterClick() {
+  async onRegionFilterClick() {
+    const { self } = this.data;
+    const path = getRegionPath(self.rid);
+    const { tapIndex } = await wx.showActionSheet({
+      itemList: [...path.map(p => p.name), '不限']
+    })
+    this.setData({
+      regionFilter: path[tapIndex] ?? undefined
+    });
+    await this.fetch(true);
   },
 })
