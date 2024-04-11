@@ -1,4 +1,5 @@
 import getConstants from "../../constants";
+import { redirectToHome } from "../../utils/router";
 
 Component({
   properties: {
@@ -17,12 +18,21 @@ Component({
   },
   data: {
     ...getConstants(),
+    isFirstPage: false,
   },
-  created() {
+  attached() {
+    const pages = getCurrentPages();
+    this.setData({
+      isFirstPage: pages.length === 1,
+    });
   },
   methods: {
     back() {
-      wx.navigateBack().then();
+      if (this.data.isFirstPage) {
+        redirectToHome().then();
+      } else {
+        wx.navigateBack().then();
+      }
     },
   }
 });

@@ -1,6 +1,6 @@
 import { Region } from '../types';
 
-export function tryJsonParse(str: string, defaultValue = null) {
+export function tryJsonParse<T = any>(str: string, defaultValue: T | null = null): T | null {
   try {
     return JSON.parse(str)
   } catch (e) {

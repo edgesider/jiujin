@@ -1,6 +1,7 @@
 import { getRegionPath, setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
-import api from '../../api/api';
+import api, { getOpenId } from '../../api/api';
+import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
 import { openLogin } from "../../utils/router";
 
 const app = getApp()
@@ -46,8 +47,16 @@ Page({
 
   fetchToken: 0,
 
-  async onLoad() {
+  async onLoad(options) {
     setTabBar(this);
+
+    const { shareInfo: shareInfoStr } = options;
+    const shareInfo = parseShareInfo(shareInfoStr);
+    if (shareInfo) {
+      console.log('shareInfo', shareInfo);
+      reportShareInfo(shareInfo).then();
+    }
+
     this.setData({ isLoading: true })
     try {
       await app.waitForReady();
@@ -244,9 +253,16 @@ Page({
   },
 
   onShareAppMessage(options) {
+    const shareInfo = buildShareParam({
+      type: 'app',
+      from: options.from,
+      fromUid: getOpenId(),
+      timestamp: Date.now(),
+      method: 'card'
+    });
     return {
-      title: '找到一个好用的小程序，快来看看吧！',
-      path: '/pages/home/index.ts'
+      title: '闲置交易，又近又快',
+      path: `/pages/home/index?shareInfo=${encodeURIComponent(shareInfo)}`
     }
   },
 })

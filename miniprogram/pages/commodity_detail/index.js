@@ -12,6 +12,7 @@ import {
 } from "../../utils/im";
 import { TransactionApi } from "../../api/transaction";
 import { DATETIME_FORMAT } from "../../utils/time";
+import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
 
 const app = getApp();
 
@@ -33,7 +34,14 @@ Page({
     firstImageSize: [],
   },
   onLoad: async function (options) {
-    const { id, scrollToComment } = options;
+    const { id, scrollToComment, shareInfo: shareInfoStr } = options;
+
+    const shareInfo = parseShareInfo(shareInfoStr);
+    if (shareInfo) {
+      console.log('shareInfo', shareInfo);
+      reportShareInfo(shareInfo).then();
+    }
+
     const commResp = await api.getCommodityInfo({ id });
     if (commResp.isError) {
       await wx.showToast({
@@ -61,7 +69,7 @@ Page({
 
     this.setData({
       loading: false,
-      scrollToComment: scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0',
+      scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
       commodity,
       createTime: moment(commodity.create_time).format(DATETIME_FORMAT),
       polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
@@ -200,9 +208,19 @@ Page({
   },
 
   onShareAppMessage(options) {
+    const shareInfo = buildShareParam({
+      type: 'commodity',
+      from: options.from,
+      commodityId: this.data.commodity._id,
+      fromUid: getOpenId(),
+      timestamp: Date.now(),
+      method: 'card'
+    });
     return {
       title: '找到一个好东西，快来看看吧！',
-      path: `/pages/commodity_detail/index?id=${this.data.commodity._id}`
+      path: '/pages/commodity_detail/index' +
+        `?id=${this.data.commodity._id}` +
+        `&shareInfo=${encodeURIComponent(shareInfo)}`
     }
   },
   onCommentLoadFinished() {

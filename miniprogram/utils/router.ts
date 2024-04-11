@@ -47,3 +47,9 @@ export async function openLogin() {
     url: '/pages/login/index',
   });
 }
+
+export async function redirectToHome() {
+  await wx.reLaunch({
+    url: '/pages/home/index'
+  });
+}
