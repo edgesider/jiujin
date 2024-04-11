@@ -6,6 +6,7 @@ export const COMMODITY_STATUS_SOLD = 2; // 已售出
 export const COMMODITY_STATUS_BOOKED = 3; // 已锁定
 
 export const DEFAULT_AVATAR = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132';
+export const DEFAULT_REGION_ID = 6
 
 export const GENDER = {
   UNKNOWN: 0,

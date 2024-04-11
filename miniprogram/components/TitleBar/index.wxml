@@ -1,5 +1,5 @@
 <view style="width: 100%; background: white; height: {{StatusBar}}px" />
 <view class="top" style="height: {{CustomBar}}px; {{hasDivider ? 'border-bottom: 1rpx solid rgba(0, 0, 0, 0.1)' : ''}}">
-  <text class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}" bindtap="back" />
+  <text class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}" bindtap="back" wx:if="{{hasBack}}" />
   <text class="title">{{title}}</text>
 </view>

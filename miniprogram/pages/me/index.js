@@ -48,7 +48,7 @@ Page({
   onEditMyInfo() {
     ensureRegistered();
     wx.navigateTo({
-      url: '../register/index',
+      url: '../edit_profile/index',
     })
   },
 

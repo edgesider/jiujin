@@ -1,4 +1,5 @@
 import { Region } from '../types';
+import { openLogin } from './router';
 
 export function tryJsonParse<T = any>(str: string, defaultValue: T | null = null): T | null {
   try {
@@ -34,9 +35,7 @@ export function getRegionPath(rid: number, ridToRegion?: Record<number, Region |
 
 export function ensureRegistered() {
   if (!getApp().globalData.self) {
-    wx.navigateTo({
-      url: '/pages/register/index',
-    })
+    openLogin().then();
     throw Error('not registered');
   }
 }

@@ -2,7 +2,7 @@
   "pages": [
     "pages/home/index",
     "pages/me/index",
-    "pages/register/index",
+    "pages/edit_profile/index",
     "pages/search/index",
     "pages/commodity_publish/index",
     "pages/commodity_detail/index",

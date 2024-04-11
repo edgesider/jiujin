@@ -1,12 +1,12 @@
 import { getRegionPath, setTabBar } from "../../utils/other";
-import getConstants, { COMMODITY_STATUS_SELLING } from '../../constants';
+import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
 import { openLogin } from "../../utils/router";
+import Identicon from "../../utils/randomAvatar";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
-const DEFAULT_REGION_ID = 6
 
 let needRefresh = false;
 
@@ -52,6 +52,7 @@ Page({
 
     const { shareInfo: shareInfoStr } = options;
     const shareInfo = parseShareInfo(shareInfoStr);
+    console.log(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
       reportShareInfo(shareInfo).then();
@@ -74,7 +75,7 @@ Page({
     }
   },
   onClickLogo() {
-    openLogin();
+    // openLogin();
   },
 
   onPageScroll(options) {

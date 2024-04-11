@@ -2,7 +2,7 @@ import api, { getOpenId } from "../../api/api";
 import rules from "../../utils/rules";
 import getConstants, { DEFAULT_AVATAR, GENDER } from "../../constants";
 import { sleep } from "../../utils/other";
-import randomName from "../../utils/random_name";
+import randomName from "../../utils/randomName";
 
 const app = getApp();
 
@@ -158,6 +158,7 @@ Page({
   async onRegister() {
     const { isEdit, name, gender: sex } = this.data;
     let avatar_url = this.data.avatarUrl;
+    const rid = this.getSelectedRegion()._id;
     if (avatar_url && !/^(cloud|http|https):\/\//.test(avatar_url) || /http:\/\/tmp\//.test(avatar_url)) {
       const resp = await api.uploadImage(
         avatar_url,
@@ -175,7 +176,12 @@ Page({
       avatar_url = resp.data;
     }
 
-    const params = { avatar_url, name, sex, rid: this.getSelectedRegion()._id }
+    const params = {
+      avatar_url,
+      name,
+      sex,
+      rid
+    };
     if (!rules.required(params.name)) {
       await wx.showToast({
         title: "昵称不能为空！",

@@ -35,7 +35,34 @@ export function parseShareInfo(info: string | undefined | null): ShareInfo | nul
   if (!info) {
     return null;
   }
-  return tryJsonParse(info);
+  let res = tryJsonParse(info);
+  if (!res) {
+    try {
+      res = tryJsonParse(decodeURIComponent(info)); // 低版本的系统上，onLoad里面的内容可能未被decode
+    } catch (e) {}
+  }
+  return res;
+}
+
+function saveLastEnterByShareInfo(shareInfo: ShareInfo) {
+  console.log('save share info', shareInfo);
+  wx.setStorageSync('lastShareInfo', shareInfo);
+}
+
+/**
+ * 获取上次通过分享进入小程序的信息
+ */
+export function getLastEnterByShareInfo(): ShareInfo | undefined {
+  const res = wx.getStorageSync<ShareInfo>('lastShareInfo');
+  if (!res) {
+    return undefined;
+  }
+  console.log('got share info', res);
+  if (Date.now() - res.timestamp > 10 * 24 * 60 * 60 * 1000) {
+    wx.setStorageSync('lastShareInfo', null);
+    return undefined;
+  }
+  return res;
 }
 
 export async function reportShareInfo(shareInfo: ShareInfo) {
@@ -43,5 +70,7 @@ export async function reportShareInfo(shareInfo: ShareInfo) {
     ...shareInfo,
     reachedUser: getOpenId(),
   }
-  console.log(data);
+  if (shareInfo.fromUid !== getOpenId()) {
+    saveLastEnterByShareInfo(shareInfo);
+  }
 }
