@@ -24,21 +24,13 @@ Component({
     ...getConstants(),
   },
   created() {
-    const { user } = this.properties;
-    if (user) {
-      const path = getRegionPath(user.rid);
-      this.setData({
-        user,
-        region: path[2] ? `${path[2].name} / ${path[0].name}` : path[0].name
-      })
-    }
   },
   methods: {
     userUpdated(user) {
       const path = getRegionPath(user.rid);
       this.setData({
         user,
-        region: path[2] ? `${path[2].name} / ${path[0].name}` : path[0].name
+        region: path[2] ? `${path[2].name}/${path[0].name}` : path[0].name
       })
     },
     onAvatarClick() {

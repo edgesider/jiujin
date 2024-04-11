@@ -11,6 +11,7 @@ import {
   getOrCreateGroup, setCommodityGroupAttributes, tryDeleteConversationAndGroup,
 } from "../../utils/im";
 import { TransactionApi } from "../../api/transaction";
+import { DATETIME_FORMAT } from "../../utils/time";
 
 const app = getApp();
 
@@ -24,7 +25,8 @@ Page({
     isMine: false,
     commodity: null,
     createTime: '',
-    polishTime: '',
+    polishTime: '', // 3天前
+    polishTimeGeneral: '', // 2022/2/2 10:10
     regionName: '',
     seller: null,
     contentParagraphs: [],
@@ -61,8 +63,9 @@ Page({
       loading: false,
       scrollToComment: scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0',
       commodity,
-      createTime: moment(commodity.create_time).format('YYYY-MM-DD HH:mm'),
+      createTime: moment(commodity.create_time).format(DATETIME_FORMAT),
       polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
+      polishTimeGeneral: moment(commodity.polish_time ?? commodity.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
       regionName: this.getRegionName(commodity.rid),

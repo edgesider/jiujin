@@ -5,6 +5,7 @@ import getConstants, {
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED
 } from "../../constants";
+import { DATETIME_FORMAT } from "../../utils/time";
 
 const app = getApp();
 
@@ -71,8 +72,8 @@ Component({
       this.setData({
         self: app.globalData.self,
         desc: getContentDesc(content, 40),
-        createTime: moment(create_time).format('YYYY-MM-DD HH:mm'),
-        soldTime: selled_time && moment(selled_time).format('YYYY-MM-DD HH:mm') || '',
+        createTime: moment(create_time).format(DATETIME_FORMAT),
+        soldTime: selled_time && moment(selled_time).format(DATETIME_FORMAT) || '',
         polishAt: moment(update_time).fromNow(),
         ridToRegion: app.globalData.ridToRegion,
         statusImage: ({

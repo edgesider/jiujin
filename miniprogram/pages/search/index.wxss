@@ -89,8 +89,8 @@ page {
 .histories-item {
   /*height: 68rpx;*/
   line-height: 1;
-  font-size: 24rpx;
-  color: #5d5d5d;
+  font-size: 28rpx;
+  color: #979797;
   width: fit-content;
   background: #f1f1f1;
   border-radius: 16rpx;

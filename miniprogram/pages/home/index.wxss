@@ -113,10 +113,9 @@ page {
   position: relative;
   margin-left: 24rpx;
   height: 100%;
-  font-size: 30rpx;
-  color: #80899a;
-  font-weight: 500;
-  font-style: italic;
+  font-size: 32rpx;
+  color: #0000004D;
+  font-weight: 400;
   white-space: nowrap;
   display: flex;
   justify-content: center;
@@ -129,6 +128,7 @@ page {
 
 .region-filter .item-on {
   color: #21ac39;
+  font-weight: 600;
 }
 
 .region-filter .item-indicator {

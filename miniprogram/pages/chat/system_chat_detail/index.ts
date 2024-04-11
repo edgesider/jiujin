@@ -6,6 +6,7 @@ import { Commodity, convertCommodity, User } from '../../../types';
 import moment from 'moment';
 import { openCommodityDetail } from '../../../utils/router';
 import { Subscription } from 'rxjs';
+import { DATETIME_FORMAT } from '../../../utils/time';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -119,7 +120,7 @@ Page({
       return {
         rawId: rawMsg.ID,
         time: rawMsg.time * 1000 + rawMsg.sequence,
-        timeStr: moment(time).format('YYYY-MM-DD HH:mm'),
+        timeStr: moment(time).format(DATETIME_FORMAT),
         seq: rawMsg.sequence,
         ...payload
       };

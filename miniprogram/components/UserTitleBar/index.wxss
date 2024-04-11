@@ -11,8 +11,8 @@
 }
 
 .top-user .back {
-  font-size: 36rpx;
-  margin: 0 16rpx;
+  padding: 0 16rpx;
+  font-size: 42rpx;
 }
 
 .top-user .avatar {
@@ -48,7 +48,6 @@
 }
 
 .top-user .info .line2 {
-  margin-top: 4rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -63,5 +62,6 @@
 
 .top-user .info .line2 .region {
   font-size: 20rpx;
+  font-weight: 600;
   color: #979797;
 }

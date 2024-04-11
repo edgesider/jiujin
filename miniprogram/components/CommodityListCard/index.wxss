@@ -67,11 +67,11 @@ page {
 
 .right .button {
   width: 180rpx;
-  height: 48rpx;
-  border-radius: 48rpx;
+  height: 54rpx;
+  border-radius: 12rpx;
   padding: 4rpx 0;
   font-size: 28rpx;
-  font-style: italic;
+  font-weight: 600;
   color: white;
   display: flex;
   justify-content: center;

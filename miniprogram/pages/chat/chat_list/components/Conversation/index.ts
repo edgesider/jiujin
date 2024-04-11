@@ -11,6 +11,7 @@ import { User } from '../../../../../types';
 import { openConversationDetail } from '../../../../../utils/router';
 import { Subscription } from 'rxjs';
 import { sleep } from '../../../../../utils/other';
+import { DATETIME_FORMAT } from '../../../../../utils/time';
 
 Component({
   properties: {
@@ -64,7 +65,7 @@ Component({
       this.setData({
         conversation,
         lastMessageText,
-        lastTime: moment(conversation.lastMessage.lastTime * 1000).format('YYYY-MM-DD HH:mm'),
+        lastTime: moment(conversation.lastMessage.lastTime * 1000).format(DATETIME_FORMAT),
       });
 
       // 由于tim频控限制比较严格，所以只在第一次更新属性信息

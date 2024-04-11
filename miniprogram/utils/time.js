@@ -1,6 +1,8 @@
 import moment from "moment";
 // import 'moment-timezone';
 
+export const DATETIME_FORMAT = 'YYYY/MM/DD HH:mm';
+
 export function initMoment() {
   wx.moment = moment;
   // moment.tz('Asia/Shanghai'); // TODO

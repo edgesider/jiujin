@@ -57,9 +57,9 @@ page {
 }
 
 .price_title {
+  font-size: 32rpx;
   width: 100rpx;
   line-height: 90rpx;
-  font-style: italic;
   font-weight: bold;
 }
 
@@ -79,7 +79,7 @@ page {
 }
 
 .sort_title {
-  font-style: italic;
+  font-size: 32rpx;
   font-weight: bold;
   width: 100%;
   margin-bottom: 20rpx;

@@ -26,7 +26,7 @@ Page({
       const regionPath = getRegionPath(self.rid);
       this.setData({
         selfInfo: self,
-        regionName: regionPath[2] ? `${regionPath[2].name} / ${regionPath[0].name}` : regionPath[0].name,
+        regionName: regionPath[2] ? `${regionPath[2].name}/${regionPath[0].name}` : regionPath[0].name,
       });
     }
     app.userChangedSubject.subscribe(user => {
