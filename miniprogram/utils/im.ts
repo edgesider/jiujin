@@ -169,7 +169,7 @@ async function saveCache() {
 
 async function loadCache() {
   const groupAttrsCacheEntries: [string, CommodityGroupAttributes][] =
-    tryJsonParse((await wx.getStorage({ key: 'groupAttrsCache' })).data ?? '[]');
+    tryJsonParse((await wx.getStorage({ key: 'groupAttrsCache' })).data ?? '[]') ?? [];
   for (const entries of groupAttrsCacheEntries) {
     groupAttrsCache.set(entries[0], entries[1]);
   }

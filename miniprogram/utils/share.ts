@@ -45,7 +45,6 @@ export function parseShareInfo(info: string | undefined | null): ShareInfo | nul
 }
 
 function saveLastEnterByShareInfo(shareInfo: ShareInfo) {
-  console.log('save share info', shareInfo);
   wx.setStorageSync('lastShareInfo', shareInfo);
 }
 
@@ -57,7 +56,6 @@ export function getLastEnterByShareInfo(): ShareInfo | undefined {
   if (!res) {
     return undefined;
   }
-  console.log('got share info', res);
   if (Date.now() - res.timestamp > 10 * 24 * 60 * 60 * 1000) {
     wx.setStorageSync('lastShareInfo', null);
     return undefined;

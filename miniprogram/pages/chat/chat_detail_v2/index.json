@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "UserTitleBar": "/components/UserTitleBar",
+    "TransactionBanner": "./TransactionBanner"
+  }
+}

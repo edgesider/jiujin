@@ -28,7 +28,6 @@ Page({
     })
   },
   onUnload() {
-    console.log(this.subscription);
     this.subscription?.unsubscribe()
   },
   async onShow() {

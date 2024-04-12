@@ -29,7 +29,7 @@ export async function openConversationDetail(conv: Conversation | string) {
     conv = conv.conversationID;
   }
   await wx.navigateTo({
-    url: `/pages/chat/chat_detail/index?conversationId=${conv}`,
+    url: `/pages/chat/chat_detail_v2/index?conversationId=${conv}`,
   });
 }
 
