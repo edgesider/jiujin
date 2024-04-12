@@ -117,7 +117,6 @@ Page({
       count: COUNT_PER_PAGE,
       status: COMMODITY_STATUS_SELLING,
     });
-    await sleep(300000);
     if (resp.isError) {
       await wx.showToast({
         title: '网络错误',
