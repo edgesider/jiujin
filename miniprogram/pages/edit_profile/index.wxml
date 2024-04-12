@@ -55,5 +55,3 @@
     {{isEdit ? '保存' : '注册'}}
   </button>
 </view>
-
-<van-dialog id="van-dialog" />

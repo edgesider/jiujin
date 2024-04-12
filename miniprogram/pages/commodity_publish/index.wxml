@@ -54,6 +54,4 @@
   </view>
 </view>
 
-<van-dialog id="van-dialog" />
-
 <button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'#21AC39'}};" class="submit">{{buttonText}}</button>

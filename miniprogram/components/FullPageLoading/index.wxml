@@ -1,0 +1,8 @@
+<view class="loading-container">
+  <image
+    class="loading-icon"
+    mode="aspectFit"
+    src="/images/loading.png"
+  />
+  <text class="loading-text">加载中</text>
+</view>
