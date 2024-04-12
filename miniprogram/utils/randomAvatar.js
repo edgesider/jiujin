@@ -224,15 +224,19 @@
 (function () {
   var PNGlib = globalThis.PNGlib;
 
+  function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
   var Identicon = function (hash, options) {
     if (typeof (hash) !== 'string' || hash.length < 15) {
       throw 'A hash of at least 15 characters is required.';
     }
 
     this.defaults = {
-      background: [240, 240, 240, 255],
+      background: [0, 0, 0, 0].map(() => randomNumber(0, 255)),
       margin: 0,
-      size: 64,
+      size: 128,
       saturation: 0.7,
       brightness: 0.5,
       format: 'png'

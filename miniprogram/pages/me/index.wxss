@@ -36,6 +36,11 @@ page {
   gap: 4rpx;
 }
 
+.info .gender {
+  width: 40rpx;
+  height: 40rpx;
+}
+
 .info .men {
   color: blue;
   font-size: 30rpx;

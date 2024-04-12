@@ -193,3 +193,42 @@ page {
   border-radius: 16rpx;
   box-shadow: 0 0 4px 0 #17007333;
 }
+
+.commodity-list-container .state-image {
+  margin-top: 200rpx;
+  align-self: center;
+  height: 500rpx;
+}
+
+.loading-container {
+  margin-top: 500rpx;
+  width: 100rpx;
+  height: min-content;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.loading-container .loading-icon {
+  height: 120rpx;
+  width: 120rpx;
+  animation: rotate 2s forwards infinite linear;
+}
+
+.loading-container .loading-text {
+  font-weight: 600;
+  font-size: 32rpx;
+  line-height: 112rpx;
+  color: #00000080;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

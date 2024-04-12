@@ -37,7 +37,7 @@
       </view>
     </view>
   </view>
-  <view wx:elif="{{state === 'shown' || state === 'loading'}}" class="commodity-list-container">
+  <view wx:elif="{{state === 'shown' || state === 'loading' || state === 'error'}}" class="commodity-list-container">
     <view class="filters">
       <view class="item" bindtap="onRegionFilterClick">
         区域：{{regionFilter ? regionFilter.name : '不限'}}
@@ -72,23 +72,32 @@
         </view>
       </view>
     </view>
-    <scroll-view
-      class="scroll"
-      scroll-y="{{true}}"
-      bindscrolltolower="onReachBottom"
-      wx:if="{{commodityList.length > 0}}"
-    >
-      <view class="list">
-        <CommodityCard
-          wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
-          class="card"
-          commodity="{{item}}"
+
+    <block wx:if="{{state === 'shown' || state === 'loading'}}">
+      <scroll-view
+        class="scroll"
+        scroll-y="{{true}}"
+        bindscrolltolower="onReachBottom"
+        wx:if="{{commodityList.length > 0}}"
+      >
+        <view class="list">
+          <CommodityCard
+            wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
+            class="card"
+            commodity="{{item}}"
+          />
+        </view>
+      </scroll-view>
+      <view wx:elif="{{state === 'loading'}}" class="loading-container">
+        <image
+          class="loading-icon"
+          mode="aspectFit"
+          src="/images/loading.png"
         />
+        <text class="loading-text">加载中</text>
       </view>
-      <view
-        wx:if="{{state === 'shown' || state === 'loading'}}"
-        class="cu-load {{state === 'loading' ? 'loading' : 'over'}}"
-      />
-    </scroll-view>
+      <image wx:else src="/images/empty.png" class="state-image" mode="aspectFit"/>
+    </block>
+    <image wx:elif="{{state === 'error'}}" src="/images/error.png" class="state-image" mode="aspectFit"/>
   </view>
 </view>

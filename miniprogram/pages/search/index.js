@@ -1,6 +1,6 @@
 import api from "../../api/api";
 import getConstants, { COMMODITY_STATUS_SELLING, GENDER } from "../../constants";
-import { getRegionPath } from "../../utils/other";
+import { getRegionPath, sleep } from "../../utils/other";
 
 const COUNT_PER_PAGE = 12
 const MAX_HISTORIES = 10;
@@ -13,7 +13,7 @@ Page({
 
     commodityList: [],
     cursor: 0,
-    state: 'inputting', // inputting | loading | shown
+    state: 'inputting', // inputting | loading | shown | error
     isFocused: true,
     text: '',
 
@@ -94,7 +94,11 @@ Page({
         commodityList: [],
         cursor: 0,
         state: 'loading',
-      })
+      });
+    } else {
+      this.setData({
+        state: 'loading'
+      });
     }
     const token = ++this.fetchToken;
     const {
@@ -113,11 +117,15 @@ Page({
       count: COUNT_PER_PAGE,
       status: COMMODITY_STATUS_SELLING,
     });
+    await sleep(300000);
     if (resp.isError) {
       await wx.showToast({
         title: '网络错误',
         icon: 'error',
       });
+      if (clear) {
+        this.setData({ state: 'error' });
+      }
       return;
     }
     if (token !== this.fetchToken) {

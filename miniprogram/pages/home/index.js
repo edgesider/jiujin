@@ -52,7 +52,6 @@ Page({
 
     const { shareInfo: shareInfoStr } = options;
     const shareInfo = parseShareInfo(shareInfoStr);
-    console.log(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
       reportShareInfo(shareInfo).then();
