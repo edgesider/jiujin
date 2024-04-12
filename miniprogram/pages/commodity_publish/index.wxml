@@ -4,8 +4,13 @@
             bindinput="onChangeCommodityContent" placeholder="描述一下物品基本信息…"></textarea>
 
   <view class="images">
-    <image wx:for="{{commodityImg}}" wx:key="index" bindtap="onViewCommodityImg" data-url="{{commodityImg[index]}}"
-           class="image" src='{{commodityImg[index]}}' mode="aspectFill"></image>
+    <image
+      wx:for="{{commodityImg}}" wx:key="index"
+      bindtap="onViewCommodityImg"
+      bindlongpress="onDelCommodityImg"
+      data-url="{{commodityImg[index]}}"
+      class="image" src='{{commodityImg[index]}}' mode="aspectFill"
+    />
     <image
       wx:if="{{commodityImg.length<9}}"
       class="add_icon"

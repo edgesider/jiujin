@@ -158,11 +158,16 @@ Page({
       current: e.currentTarget.dataset.url
     });
   },
-  onDelCommodityImg(e) {
-    this.data.commodityImg.splice(e.currentTarget.dataset.index, 1);
-    this.setData({
-      commodityImg: this.data.commodityImg
-    })
+  async onDelCommodityImg(e) {
+    const res = await wx.showModal({
+      title: '确认删除这张照片？'
+    });
+    if (res.confirm) {
+      this.data.commodityImg.splice(e.currentTarget.dataset.index, 1);
+      this.setData({
+        commodityImg: this.data.commodityImg
+      })
+    }
   },
   onChangeQuality(ev) {
     const { currentTarget: { dataset: { idx } } } = ev;
