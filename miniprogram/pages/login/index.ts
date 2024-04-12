@@ -4,6 +4,7 @@ import randomName from '../../utils/randomName';
 import { sleep } from '../../utils/other';
 import Identicon from '../../utils/randomAvatar';
 import { getLastEnterByShareInfo } from '../../utils/share';
+import { decode } from 'base64-arraybuffer';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -43,18 +44,29 @@ Page({
       console.error(`getPhoneNumber failed, errno=${errno}, errMsg=${errMsg}`);
       return;
     }
-    const resp = await api.getPhoneNumber(code)
-    if (resp.isError) {
-      console.error('getPhoneNumber failed', resp);
-      return;
+    await wx.showLoading({ title: '注册中', });
+    let error: string = '';
+    try {
+      const resp = await api.getPhoneNumber(code)
+      if (resp.isError) {
+        console.error('getPhoneNumber failed', resp);
+        error = '获取手机号码失败';
+      }
+      await this.register(resp.data);
+    } catch (e: any) {
+      error = e?.message ?? '注册失败';
+    } finally {
+      await wx.hideLoading()
     }
-    const phone = resp.data;
-    console.log('got phone number', phone);
-    await this.register(phone);
+    if (error) {
+      await wx.showToast({
+        title: error,
+        icon: 'error',
+      });
+    }
   },
 
   async register(phone: string) {
-    await wx.showLoading({ title: '注册中', });
 
     const shareInfo = getLastEnterByShareInfo();
     console.log('lastShareInfo', shareInfo);
@@ -69,7 +81,6 @@ Page({
 
     const resp = await api.registerUser(params);
     if (resp.isError) {
-      await wx.hideLoading()
       await wx.showToast({
         title: '注册失败\n' + JSON.stringify(resp),
         icon: 'error',
@@ -79,7 +90,6 @@ Page({
     }
     await app.fetchSelfInfo();
     await Promise.all([app.initTIM(), app.fetchRegions()]);
-    await wx.hideLoading();
     await wx.showToast({
       title: '注册成功',
       icon: 'success',
@@ -91,13 +101,14 @@ Page({
   },
 
   async generateAvatar() {
-    const avatar = (new Identicon(getOpenId())).toString() + Date.now().toString();
     return new Promise<string>((resolve, rej) => {
+      const avatarB64 = (new Identicon(getOpenId())).toString() + Date.now().toString();
+      const avatar = decode(avatarB64);
       const fs = wx.getFileSystemManager();
       fs.writeFile({
         filePath: `${wx.env.USER_DATA_PATH}/generated_avatar_tmp.png`,
         data: avatar,
-        encoding: 'base64',
+        encoding: 'binary',
         success: async (res) => {
           if (!res.errMsg.includes('ok')) {
             rej(`failed to write generated avatar ${res.errMsg}`);
@@ -112,6 +123,9 @@ Page({
             return;
           }
           resolve(resp.data);
+        },
+        fail(res) {
+          rej(res);
         }
       })
     })

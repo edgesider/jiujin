@@ -261,7 +261,7 @@ Page({
       method: 'card'
     });
     return {
-      title: '闲置交易，又近又快',
+      title: '闲置买卖，又近又快',
       path: `/pages/home/index?shareInfo=${encodeURIComponent(shareInfo)}`
     }
   },
