@@ -1,7 +1,10 @@
 import { Region } from '../types';
 import { openLogin } from './router';
 
-export function tryJsonParse<T = any>(str: string, defaultValue: T | null = null): T | null {
+export function tryJsonParse<T = any>(str: string | undefined | null, defaultValue: T | null = null): T | null {
+  if (!str) {
+    return defaultValue;
+  }
   try {
     return JSON.parse(str)
   } catch (e) {

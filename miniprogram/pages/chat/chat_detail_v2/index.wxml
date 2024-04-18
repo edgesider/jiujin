@@ -1,9 +1,19 @@
-<view class="container">
+<view class="container" style="margin-bottom: {{BottomIndicatorHeight}}px">
   <UserTitleBar user="{{isSeller ? buyer : seller}}" />
   <TransactionBanner
+    class="banner"
     wx:if="{{commodity && transaction}}"
     commodity="{{commodity}}"
     transaction="{{transaction}}"
     bind:onTransactionActionDone="onTransactionActionDone"
   />
+  <MessageList conversationId="{{conversationId}}" class="message-list" />
+
+
+  <view class="input">
+    <input placeholder="说点啥~" />
+    <image class="send-img" src="/images/send-img.png" mode="aspectFill" />
+  </view>
+
+  <view class="keyboard-space" />
 </view>

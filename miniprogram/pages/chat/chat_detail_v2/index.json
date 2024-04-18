@@ -1,6 +1,9 @@
 {
   "usingComponents": {
     "UserTitleBar": "/components/UserTitleBar",
-    "TransactionBanner": "./TransactionBanner"
-  }
+    "TransactionBanner": "./TransactionBanner",
+    "MessageList": "./MessageList"
+  },
+  "enablePullDownRefresh": false,
+  "disableScroll": true
 }

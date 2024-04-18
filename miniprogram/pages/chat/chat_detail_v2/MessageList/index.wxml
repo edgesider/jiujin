@@ -1,0 +1,15 @@
+<scroll-view class="scroll" scroll-y="true" scroll-into-view="{{scrollIntoView}}">
+  <view
+    wx:for="{{messageList}}" wx:key="ID" wx:for-item="msg"
+    id="seq-{{msg.sequence}}"
+    class="msg-item {{msg.from === selfImId ? 'msg-self' : 'msg-other'}}"
+  >
+    <image class="avatar" src="{{msg.avatar}}" mode="aspectFill" />
+    <view class="content">
+      <view wx:if="{{msg.type === 'TIMTextElem'}}" class="text">{{msg.payload.text}}</view>
+      <view wx:elif="{{msg.type === 'TIMImageElem'}}" class="image">
+        [图片]
+      </view>
+    </view>
+  </view>
+</scroll-view>

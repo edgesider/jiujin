@@ -6,6 +6,7 @@ import { getContentDesc } from '../../../utils/strings';
 import { Conversation, Group } from '@tencentcloud/chat';
 import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
+import { tryJsonParse } from '../../../utils/other';
 
 const app = getApp();
 
@@ -43,7 +44,7 @@ Page({
     const attrs = await getCommodityGroupAttributes(group.groupID);
     if (!attrs) {
       await wx.showToast({
-        title: '无效的对话',
+        title: '网络错误',
         icon: 'error',
       })
       return;
@@ -82,7 +83,7 @@ Page({
     });
 
     this.subscription = listenMessage(conversation.conversationID).subscribe(msg => {
-      const custom = JSON.parse(msg.cloudCustomData ?? '{}');
+      const custom = tryJsonParse(msg.cloudCustomData);
       if (custom?.needUpdateTransaction) {
         this.updateTransaction().then();
       }
@@ -116,7 +117,6 @@ Page({
       })
     });
     await tim.sendMessage(msg);
-    this.selectComponent('#MessageList').updateMessageList(msg);
   },
   async onTransactionActionDone({ messageToPeer }: { messageToPeer: string }) {
     console.log('messageToPeer', messageToPeer);
