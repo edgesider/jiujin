@@ -4,6 +4,6 @@
     wx:if="{{commodity && transaction}}"
     commodity="{{commodity}}"
     transaction="{{transaction}}"
-    on-transaction-action-done="{{onTransactionActionDone}}"
+    bind:onTransactionActionDone="onTransactionActionDone"
   />
 </view>

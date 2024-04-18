@@ -41,7 +41,7 @@ Component({
       })
     },
     afterTransactionActionDone(messageToPeer: string) {
-      this.triggerEvent('on-transaction-action-done', {
+      this.triggerEvent('onTransactionActionDone', {
         messageToPeer: messageToPeer,
       });
     },

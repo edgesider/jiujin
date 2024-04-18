@@ -32,6 +32,7 @@ Component({
         iconClass: 'cuIcon-add',
         useNavigateTo: true, // 是否使用navigateTo打开新的页面
         text: '发布',
+        requireRegistered: true,
         iconPath: '/images/add0.png',
         selectedIconPath: '/images/add1.png',
         hasDot: false,
