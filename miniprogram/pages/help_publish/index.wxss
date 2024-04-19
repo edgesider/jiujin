@@ -1,0 +1,140 @@
+/* pages/add/add.wxss */
+page {
+  background: #f6f6f6;
+}
+
+/* 基本信息与视频、图片 */
+.Content {
+  padding: 3%;
+  margin: 3%;
+  border-radius: 20rpx;
+  background: #ffffff;
+}
+
+.content {
+  width: 100%;
+  font-size: 28rpx;
+  height: 300rpx;
+  margin-bottom: 16rpx;
+}
+
+.video {
+  width: 200rpx;
+  height: 150rpx;
+}
+
+.images {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 10rpx;
+  background: #f6f6f6;
+}
+
+.add_icon {
+  width: 120rpx;
+  height: 120rpx;
+  padding: 30rpx;
+  border-radius: 10rpx;
+  background: #f6f6f6;
+}
+
+/* 价格 */
+.Price {
+  margin: 0 3%;
+  padding: 0 3%;
+  background: #ffffff;
+  border-radius: 20rpx;
+  display: flex;
+}
+
+.price_title {
+  font-size: 32rpx;
+  width: 100rpx;
+  line-height: 90rpx;
+  font-weight: bold;
+}
+
+.price {
+  width: 560rpx;
+  height: 90rpx;
+  text-align: right;
+  font-weight: bold;
+}
+
+/* 成色 */
+.Sort {
+  margin: 3%;
+  padding: 3%;
+  background: #ffffff;
+  border-radius: 20rpx;
+}
+
+.sort_title {
+  font-size: 32rpx;
+  font-weight: bold;
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.sort {
+  width: 120rpx;
+  height: 48rpx;
+  margin: 6rpx;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.sort_on {
+  padding: 0 20rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  border-radius: 14rpx;
+  font-weight: 500;
+  margin: 6rpx;
+  background: #FAC000;
+  color: #ffffff;
+  font-style: italic;
+  font-size: 25rpx;
+}
+
+.sort_off {
+  padding: 0 20rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  border-radius: 14rpx;
+  font-weight: 500;
+  margin: 6rpx;
+  background: #cccccc;
+  color: #ffffff;
+  font-style: italic;
+  font-size: 25rpx;
+}
+
+.submit {
+  width: 50%;
+  margin: 10% 25%;
+  line-height: 100rpx;
+  height: 100rpx;
+  color: #ffffff;
+  text-align: center;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 38rpx;
+  border-radius: 50rpx;
+  text-shadow: 0 3rpx 5rpx #666666;
+}

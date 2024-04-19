@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "TitleBar": "/components/TitleBar/index"
+  }
+}

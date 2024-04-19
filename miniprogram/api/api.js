@@ -10,7 +10,8 @@ axios.defaults.adapter = mpAdapter;
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  baseURL: 'https://lllw.ykai.cc',
+  baseURL: 'http://localhost:8080/',
+  // baseURL: 'https://lllw.ykai.cc',
   // baseURL: 'http://192.168.2.218:8080/',
   // baseURL: (version === 'release' || version === 'trial')
   //   ? 'https://lllw.ykai.cc'
@@ -178,6 +179,7 @@ const api = {
 
   async createCommodity(commodityInfo) {
     commodityInfo.img_urls = commodityInfo.img_urls.join(',');
+    console.log("bbbbb")
     return wrapResp(await request({
       path: "/commodity/create",
       method: "POST",
@@ -187,7 +189,18 @@ const api = {
       }
     }));
   },
+  async createHelp(helpInfo){
+    helpInfo.img_urls = helpInfo.img_urls.join(',');
+    return wrapResp(await request({
+      path: "/help/create",
+      method: "POST",
+      data: {
+        ...helpInfo,
+        openid: getOpenId()
+      }
+    }));
 
+  },
   // 擦亮商品
   async polishCommodity({ id }) {
     return wrapResp(await request({
@@ -205,6 +218,19 @@ const api = {
     info.img_urls = info.img_urls.join(',');
     return wrapResp(await request({
       path: "/commodity/modify",
+      method: "POST",
+      data: {
+        ...info,
+        openid: getOpenId()
+      }
+    }));
+  },
+
+  async updateHelp(id, info) {
+    Object.assign(info, { _id: id });
+    info.img_urls = info.img_urls.join(',');
+    return wrapResp(await request({
+      path: "/help/modify",
       method: "POST",
       data: {
         ...info,

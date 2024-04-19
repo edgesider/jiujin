@@ -199,9 +199,9 @@ Page({
     if (!rules.required(params.img_urls)) {
       return '请至少上传一张商品图片';
     }
-    if (!rules.required(params.cid)) {
-      return '请选择商品分类';
-    }
+    // if (!rules.required(params.cid)) {
+    //   return '请选择商品分类';
+    // }
     if (!rules.required(params.quality)) {
       return '请选择成色';
     }

@@ -11,7 +11,10 @@
     "pages/chat/chat_list/index",
     "pages/chat/chat_detail_v2/index",
     "pages/chat/system_chat_detail/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/help/index",
+    "pages/publish/index",
+    "pages/help_publish/index"
   ],
   "window": {
     "backgroundColor": "#f1f1f1",
@@ -28,6 +31,12 @@
     "list": [
       {
         "pagePath": "pages/home/index"
+      },
+      {
+        "pagePath": "pages/help/index"
+      },
+      {
+        "pagePath": "pages/publish/index"
       },
       {
         "pagePath": "pages/chat/chat_list/index"

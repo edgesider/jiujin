@@ -19,18 +19,18 @@ Component({
         hasDot: false,
       },
       {
-        pagePath: '/pages/commodity_publish/index',
+        pagePath: '/pages/help/index',
         iconClass: 'cuIcon-question',
-        toastText: '敬请期待！',
+        selectedIconClass: 'cuIcon-questionfill',
         text: '互助',
         iconPath: '/images/book0.png',
         selectedIconPath: '/images/book1.png',
         hasDot: false,
       },
       {
-        pagePath: '/pages/commodity_publish/index',
+        pagePath: '/pages/publish/index',
         iconClass: 'cuIcon-add',
-        useNavigateTo: true, // 是否使用navigateTo打开新的页面
+        selectedIconClass: 'cuIcon-addfill',
         text: '发布',
         iconPath: '/images/add0.png',
         selectedIconPath: '/images/add1.png',

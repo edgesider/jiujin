@@ -1,0 +1,45 @@
+<!--pages/help_publish/index.wxml-->
+<TitleBar title="发布互助消息"/>
+<view class="Content">
+  <textarea class="content" name="content" value="{{helpContent}}" maxlength="-1"
+            bindinput="onChangeHelpContent" placeholder="可求助、可悬赏、可分享..."></textarea>
+
+  <view class="images">
+    <image
+      wx:for="{{helpImg}}" wx:key="index"
+      bindtap="onViewHelpImg"
+      bindlongpress="onDelHelpImg"
+      data-url="{{helpImg[index]}}"
+      class="image" src='{{helpImg[index]}}' mode="aspectFill"
+    />
+    <image
+      wx:if="{{helpImg.length<9}}"
+      class="add_icon"
+      src="/images/add.png"
+      bindtap="onUpdateHelpImg"
+    />
+  </view>
+</view>
+
+
+<!-- 赏金 -->
+<view class="Price">
+  <view class="price_title">赏金</view>
+  <input class="price" value="{{helpCurrentBountyText}}"
+         maxlength="10"
+         bindblur="onBountyInputBlur"
+         bindinput="onChangeHelpCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
+</view>
+<!-- 价格 -->
+<!-- <view class="Price">
+  <view class="price_title">价格</view>
+  <input class="price" value="{{commodityCurrentPriceText}}"
+         maxlength="10"
+         bindblur="onPriceInputBlur"
+         bindinput="onChangeCommodityCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
+</view> -->
+
+
+<van-dialog id="van-dialog"/>
+
+<button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'#21AC39'}};" class="submit">{{buttonText}}</button>

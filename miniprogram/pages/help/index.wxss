@@ -1,0 +1,4 @@
+/* pages/my/my.wxss */
+page {
+  background: #f6f6f6;
+}

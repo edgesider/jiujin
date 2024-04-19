@@ -1,0 +1,4 @@
+<!--pages/publish/index.wxml-->
+<TitleBar title="发布"  />
+<button bindtap="createHelp">创建求助</button>
+<button bindtap="createCommodity">创建商品</button>
