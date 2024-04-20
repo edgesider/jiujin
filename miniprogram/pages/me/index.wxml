@@ -1,73 +1,95 @@
 <TitleBar title="我的" hasBack="{{false}}" />
   <!-- 头像、昵称、位置、设置入口 -->
-<view class="User" style="margin-top: {{0}}px">
-  <image class="avatar" src="{{selfInfo.avatar_url || DEFAULT_AVATAR}}" mode="aspectFill"></image>
-  <view class="info">
-    <view class="username">
-      <text>{{selfInfo.name || '欢迎来到楼里楼外'}}</text>
-      <image
-        wx:if="{{selfInfo}}"
-        class="gender"
-        src="{{selfInfo.sex === GENDER.MALE ? '/images/male.png' : '/images/female.png'}}"
-      />
+
+  <view class="User" style="margin-top: {{0}}px">
+    <image class="avatar" src="{{selfInfo.avatar_url || DEFAULT_AVATAR}}" mode="aspectFill"></image>
+    <view class="info">
+      <view class="username">
+        <text>{{selfInfo.name || '欢迎来到楼里楼外'}}</text>
+        <image
+          wx:if="{{selfInfo}}"
+          class="gender"
+          src="{{selfInfo.sex === GENDER.MALE ? '/images/male.png' : '/images/female.png'}}"
+        />
+      </view>
+      <view class="region" wx:if="{{selfInfo.rid > 0}}">
+        <image class="icon" src="/images/location.png" />
+        <view class="name">{{regionName}}</view>
+      </view>
     </view>
-    <view class="region" wx:if="{{selfInfo.rid > 0}}">
-      <image class="icon" src="/images/location.png" />
-      <view class="name">{{regionName}}</view>
+    <view class="spacer" />
+    <view bindtap="onEditMyInfo" class="settings">资料设置</view>
+  </view>
+<scroll-view>
+  <view class="List">
+    <view class="list" bindtap="gotoList" data-type="selling">
+      <view class="list_title">我发布的闲置</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
+    <view class="divider" />
+    <view class="list" bindtap="gotoHelpList" data-type="selling">
+      <view class="list_title">我发布的互助</view>
+      <image class="right" src="/images/right.png"></image>
     </view>
   </view>
-  <view class="spacer" />
-  <view bindtap="onEditMyInfo" class="settings">资料设置</view>
-</view>
 
-<view class="List">
-  <view class="list" bindtap="gotoList" data-type="selling">
-    <view class="list_title">我发布的闲置</view>
-    <image class="right" src="/images/right.png"></image>
-  </view>
-<!--  <view class="divider" />-->
-<!--  <view class="list" bindtap="gotoList" data-type="">-->
-<!--    <view class="list_title">我发布的互助</view>-->
-<!--    <image class="right" src="/images/right.png"></image>-->
-<!--  </view>-->
-</view>
+  <view class="List">
+    <!-- 商品相关-->
+    <view class="list" bindtap="gotoList" data-type="bought">
+      <view class="list_title">我买到的商品</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
+    <view class="divider" />
+    <view class="list" bindtap="gotoList" data-type="sold">
+      <view class="list_title">我卖出的商品</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
+    <view class="divider" />
+    <view class="list" bindtap="gotoList" data-type="deactivated">
+      <view class="list_title">我下架的商品</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
+    <view class="divider" />
+    <view class="list" bindtap="gotoList" data-type="stared">
+      <view class="list_title">我收藏的商品</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
 
-<view class="List">
-  <view class="list" bindtap="gotoList" data-type="bought">
-    <view class="list_title">我买到的</view>
-    <image class="right" src="/images/right.png"></image>
-  </view>
-  <view class="divider" />
-  <view class="list" bindtap="gotoList" data-type="sold">
-    <view class="list_title">我卖出的</view>
-    <image class="right" src="/images/right.png"></image>
-  </view>
-  <view class="divider" />
-  <view class="list" bindtap="gotoList" data-type="deactivated">
-    <view class="list_title">我下架的</view>
-    <image class="right" src="/images/right.png"></image>
-  </view>
-  <view class="divider" />
-  <view class="list" bindtap="gotoList" data-type="stared">
-    <view class="list_title">我收藏的</view>
-    <image class="right" src="/images/right.png"></image>
-  </view>
-</view>
 
-<view class="List">
-  <view class="list">
-    <view class="list_title">联系我们</view>
-    <image class="right" src="/images/right.png"></image>
+
+    <!--求助相关-->
+    <view class="divider" />
+    <view class="list" bindtap="gotoHelpList" data-type="collected">
+      <view class="list_title">我收藏的求助</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
+    <view class="divider" />
+    <view class="list" bindtap="gotoHelpList" data-type="liked">
+      <view class="list_title">我点赞的求助</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
+
+
   </view>
-  <view class="divider" />
-  <view class="list">
-    <view class="list_title">意见反馈</view>
-    <image class="right" src="/images/right.png"></image>
-    <button open-type="feedback" class="feedback-btn" />
+
+  <view class="List">
+    <view class="list">
+      <view class="list_title">联系我们</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
+    <view class="divider" />
+    <view class="list">
+      <view class="list_title">意见反馈</view>
+      <image class="right" src="/images/right.png"></image>
+      <button open-type="feedback" class="feedback-btn" />
+    </view>
+    <view class="divider" />
+    <view class="list">
+      <view class="list_title">关于我们</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
   </view>
-  <view class="divider" />
-  <view class="list">
-    <view class="list_title">关于我们</view>
-    <image class="right" src="/images/right.png"></image>
-  </view>
-</view>
+  <!-- 占位，否则导航栏会遮挡意见反馈等内容，也可采用其他方法 -->
+  <view style="margin-bottom: 100px;"></view>
+</scroll-view>
+

@@ -2,9 +2,9 @@ import { ensureRegistered, getRegionPath, setTabBar } from "../../utils/other";
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
-  COMMODITY_STATUS_DEACTIVATED
+  COMMODITY_STATUS_DEACTIVATED, HELP_STATUS_RUNNING
 } from "../../constants";
-import api, { CollectApi, getOpenId } from "../../api/api";
+import api, { CollectApi, getOpenId, HelpCollectApi } from "../../api/api";
 import { openProfile } from "../../utils/router";
 
 const app = getApp()
@@ -64,7 +64,7 @@ Page({
             bought: '我买到的',
             sold: '我卖出的',
             deactivated: '我下架的',
-            stared: '我收藏的',
+            stared: '我收藏的商品',
           })[type],
           fetcher: async ({ start, count }) => {
             let resp;
@@ -200,6 +200,105 @@ Page({
       }
     });
   },
+
+  gotoHelpList(ev) {
+    ensureRegistered();
+    const { type } = ev.currentTarget.dataset;
+    wx.navigateTo({
+      url: `../help_list/index?type=${type}`,
+      success: res => {
+        res.eventChannel.emit('onParams', {
+          title: ({
+            selling: '我发布的求助',
+            collected: '我收藏的求助',
+            liked: '我点赞的求助'
+          })[type],
+
+          fetcher: async ({ start, count }) => {
+            let resp;
+            if (type === 'collected') {
+              resp = await HelpCollectApi.getAllCollectedHelp(start, count);
+            }else {
+              const status = ({
+                selling: HELP_STATUS_RUNNING
+              })[type];
+              const self = app.globalData.self._id;
+              const filter = { status, start, count };
+
+              resp = await api.getHelpList(filter);
+            }
+
+
+            // console.log(resp);
+            if (resp.isError) {
+              console.error(resp);
+              return null;
+            }
+            return resp.data;
+          },
+
+          onClick: async ({ type, help }) => {
+            return await ({
+              'click-card': () => {
+                wx.navigateTo({
+                  url: `../help_detail/index?id=${help._id}`
+                })
+              },
+              deactivate: async () => {
+                await wx.showLoading({ mask: true, title: '求助已解决' });
+                const resp = await api.deactivateHelp({ id: help._id, });
+                await wx.hideLoading();
+                if (resp.isError) {
+                  console.error(resp)
+                  await wx.showToast({ title: '求助解决失败', icon: 'error', mask: true });
+                  return;
+                }
+                await wx.showToast({ title: '求助解决成功', icon: 'success', mask: true });
+                return {
+                  action: 'fetchSingle'
+                };
+              },
+              edit: async () => {
+                return new Promise(async (res) => {
+                  await wx.navigateTo({
+                    url: `../help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
+                    events: {
+                      afterEdited: async () => {
+                        res({ action: 'fetchSingle', });
+                      }
+                    },
+                  })
+                });
+              },
+              delete: async () => {
+                return new Promise(async (resolve) => {
+                  wx.showModal({
+                    title: '提示',
+                    content: `确认删除`,
+                    success: async (response) => {
+                      if (response.confirm) {
+                        await wx.showLoading({ title: '删除中...', mask: true })
+                        const resp = await api.deleteHelp({ id: help._id })
+                        if (resp.isError) {
+                          await wx.showToast({ title: '删除失败', icon: 'error', mask: true });
+                        } else {
+                          await wx.hideLoading();
+                          resolve({ action: 'fetchAll', });
+                        }
+                      } else if (response.cancel) {
+                        // pass
+                      }
+                    }
+                  })
+                });
+              },
+            })[type]?.();
+          },
+        })
+      }
+    });
+  },
+
 
   openProfile() {
     ensureRegistered();

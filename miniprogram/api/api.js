@@ -168,6 +168,19 @@ const api = {
     return wrapResp(resp);
   },
 
+  async getHelpList(filter) {
+    const resp = await request({
+      path: "/help/getList",
+      method: "POST",
+      data: {
+        ...filter,
+        openid: getOpenId()
+      }
+    });
+    resp.data.data = (resp.data?.data ?? []).map(convertCommodity);
+    return wrapResp(resp);
+  },
+
   // 获取单个商品
   async getCommodityInfo({ id }) {
     const listResp = await this.getCommodityList({ _id: id });
@@ -177,9 +190,17 @@ const api = {
     return listResp;
   },
 
+  // 获取单个商品
+  async getHelpInfo({ id }) {
+    const listResp = await this.getHelpList({ _id: id });
+    if (!listResp.isError) {
+      listResp.data = listResp.data?.[0] ?? null;
+    }
+    return listResp;
+  },
+
   async createCommodity(commodityInfo) {
     commodityInfo.img_urls = commodityInfo.img_urls.join(',');
-    console.log("bbbbb")
     return wrapResp(await request({
       path: "/commodity/create",
       method: "POST",
@@ -263,9 +284,31 @@ const api = {
     }));
   },
 
+  async deactivateHelp({ id }) {
+    return wrapResp(await request({
+      path: "/help/deactivateHelp",
+      method: "POST",
+      data: {
+        _id: id,
+        openid: getOpenId()
+      }
+    }));
+  },
+
   async deleteCommodity({ id }) {
     return wrapResp(await request({
       path: "/commodity/delete",
+      method: "POST",
+      data: {
+        _id: id,
+        openid: getOpenId()
+      }
+    }));
+  },
+
+  async deleteHelp({ id }) {
+    return wrapResp(await request({
+      path: "/help/delete",
       method: "POST",
       data: {
         _id: id,
@@ -520,6 +563,43 @@ export const CollectApi = {
         .replaceAll(" ", "")
         .split(",") ?? [];
     })
+    return resp;
+  },
+}
+/**
+ * 求助收藏相关的API
+ */
+export const HelpCollectApi = {
+  // 收藏求助
+  async collectHelp(cid) {
+    return wrapResp(await request({
+      path: "/collect/commodity",
+      method: "POST",
+      data: {
+        cid,
+        openid: getOpenId()
+      }
+    }));
+  },
+  // 获取某人所有收藏的求助
+  async getAllCollectedHelp(start, count) {
+    const resp = wrapResp(await request({
+      path: "/helpCollect/getInfo",
+      method: "POST",
+      data: {
+        start,
+        count,
+        openid: getOpenId()
+      }
+    }));
+
+    resp.data?.forEach(h => {
+      h.img_urls = h.img_urls
+        ?.replaceAll("\"", "")
+        .replaceAll(" ", "")
+        .split(",") ?? [];
+    })
+    console.log(resp)
     return resp;
   },
 }

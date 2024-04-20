@@ -1,0 +1,95 @@
+page {
+  background-color: white !important;
+}
+
+.root {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: center;
+  padding: 24rpx 0;
+  background: white;
+}
+
+.image {
+  flex: 0 0 112rpx;
+  height: 112rpx;
+  border-radius: 16rpx;
+  align-self: center;
+}
+
+.middle {
+  height: 100%;
+  margin: 0 16rpx;
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.middle .title {
+  margin: 8rpx 0 0;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #000;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.middle .price {
+  margin-top: 16rpx;
+  font-size: 40rpx;
+  font-weight: bold;
+  font-style: italic;
+  color: #21ac39;
+}
+
+.middle .status {
+  width: 136rpx;
+  height: 96rpx;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.right {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.right .button {
+  width: 180rpx;
+  height: 54rpx;
+  border-radius: 12rpx;
+  padding: 4rpx 0;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right .button.green {
+  background-color: #21ac39;
+}
+
+.right .button.greenyellow {
+  background-color: #a7d000;
+}
+
+.right .button.yellow {
+  background-color: #fac000;
+}
+
+.right .button-disabled {
+  opacity: 0.3;
+}

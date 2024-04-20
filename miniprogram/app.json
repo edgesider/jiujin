@@ -14,7 +14,9 @@
     "pages/login/index",
     "pages/help/index",
     "pages/publish/index",
-    "pages/help_publish/index"
+    "pages/help_publish/index",
+    "pages/help_detail/index",
+    "pages/help_list/index"
   ],
   "window": {
     "backgroundColor": "#f1f1f1",

@@ -1,0 +1,45 @@
+<TitleBar title="{{title}}" class="title-bar" />
+
+<view
+  class="content-container"
+  style="margin-top: {{TopBarHeight}}px; height: calc(100vh - {{TopBarHeight + BottomIndicatorHeight}}px)"
+>
+  <view class="tabs" wx:if="{{tabs && tabs.length > 0}}">
+    <view
+      class="tab {{currTab === tab.key ? 'selected' : ''}}"
+      bind:tap="onSwitchTab"
+      wx:for="{{tabs}}"
+      wx:for-item="tab"
+      wx:key="key"
+      data-tab-key="{{tab.key}}"
+    >
+      {{tab.text}}
+    </view>
+  </view>
+
+  <scroll-view
+    scroll-y
+    refresher-enabled="{{pullDownRefreshing || !isLoading}}"
+    refresher-triggered="{{pullDownRefreshing}}"
+    bindrefresherrefresh="onRefresherRefresh"
+    bindscrolltolower="onReachBottom"
+  >
+    <view class="list">
+      <HelpListCard
+        wx:for="{{helpList}}"
+        wx:for-item="help"
+        wx:for-index="idx"
+        wx:key="_id"
+        class="card"
+        help="{{help}}"
+        bind:onClickCard="onClickCard"
+        bind:onDeactivate="onDeactivate"
+        bind:onEdit="onEdit"
+        bind:onDelete="onDelete"
+        data-idx="{{idx}}"
+      />
+    </view>
+
+    <view class="cu-load {{isLoading ? 'loading' : ''}}"></view>
+  </scroll-view>
+</view>
