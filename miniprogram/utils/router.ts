@@ -53,3 +53,9 @@ export async function redirectToHome() {
     url: '/pages/home/index'
   });
 }
+
+export async function openVerify() {
+  await wx.navigateTo({
+    url: `/pages/verify/index`
+  });
+}

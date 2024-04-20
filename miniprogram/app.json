@@ -11,7 +11,8 @@
     "pages/chat/chat_list/index",
     "pages/chat/chat_detail_v2/index",
     "pages/chat/system_chat_detail/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/verify/index"
   ],
   "window": {
     "backgroundColor": "#f1f1f1",

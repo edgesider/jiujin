@@ -1,5 +1,4 @@
-<TitleBar title="详情" hasBack="true">
-</TitleBar>
+<TitleBar title="详情" />
 
 <scroll-view
   class="content-container"

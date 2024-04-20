@@ -1,0 +1,7 @@
+<TitleBar title="身份认证" />
+
+<view class="cu-form-group">
+  <view class="title">邮箱</view>
+  <input />
+</view>
+<button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr">认证</button>

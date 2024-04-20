@@ -15,20 +15,18 @@ Component({
       type: String,
       value: null,
     },
-    hasBack: {
-      type: Boolean,
-      value: true
-    }
   },
   data: {
     ...getConstants(),
+    isTabBarPage: false,
     isFirstPage: false,
   },
   attached() {
     const pages = getCurrentPages();
     this.setData({
       isFirstPage: pages.length === 1,
-    });
+      isTabBarPage: pages[pages.length - 1].getTabBar(),
+    })
   },
   methods: {
     userUpdated(user) {

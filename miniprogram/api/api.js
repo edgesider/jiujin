@@ -341,7 +341,14 @@ const api = {
         _id: commodity_id,
       }
     }));
-  }
+  },
+
+  async verifyByEmail(email) {
+    return wrapResp(await request({
+      path: '/user/verify',
+      data: { email, }
+    }))
+  },
 }
 
 export default api;

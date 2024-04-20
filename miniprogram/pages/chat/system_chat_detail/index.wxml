@@ -1,4 +1,4 @@
-<TitleBar title="{{convName}}" hasBack="{{true}}" />
+<TitleBar title="{{convName}}" />
 
 <scroll-view
   class="container"

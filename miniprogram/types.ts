@@ -14,6 +14,7 @@ export interface User {
   like_group_id: string;
   collect_group_id: string;
   comment_group_id: string;
+  authentication_status: boolean;
 }
 
 export interface Commodity {

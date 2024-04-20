@@ -4,8 +4,8 @@ import getConstants, {
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED
 } from "../../constants";
-import api, { CollectApi, getOpenId } from "../../api/api";
-import { openProfile } from "../../utils/router";
+import api, { CollectApi } from "../../api/api";
+import { openProfile, openVerify } from "../../utils/router";
 
 const app = getApp()
 
@@ -218,5 +218,12 @@ Page({
       return;
     }
     console.log(resp.data);
+  },
+  gotoVerify() {
+    const self = this.data.selfInfo;
+    if (!self || self.authentication_status) {
+      return;
+    }
+    openVerify();
   },
 })

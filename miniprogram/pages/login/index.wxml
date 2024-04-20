@@ -1,4 +1,4 @@
-<TitleBar title="登录" hasBack="{{true}}" hasDivider="{{false}}" />
+<TitleBar title="登录" hasDivider="{{false}}" />
 
 <view class="container">
   <image class="app-logo" src="/images/LOGO-notext.png" />

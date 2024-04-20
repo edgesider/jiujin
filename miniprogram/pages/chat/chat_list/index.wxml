@@ -1,4 +1,4 @@
-<TitleBar title="消息" hasBack="{{false}}" />
+<TitleBar title="消息" />
 
 <view class="header">
   <SystemConversation
