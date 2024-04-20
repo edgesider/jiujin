@@ -2,8 +2,9 @@ import getConstants from '../../../constants';
 import { setTabBar, sleep } from '../../../utils/other';
 import { Conversation, Message } from '@tencentcloud/chat';
 import { User } from '../../../types';
-import { isGroupIdForTransaction, listenConversationListUpdate } from '../../../utils/im';
+import { isCreateGroupMsg, isTransactionGroup, listenConversationListUpdate } from '../../../utils/im';
 import { Subscription } from 'rxjs';
+import { getOpenId } from '../../../api/api';
 
 const app = getApp();
 
@@ -36,7 +37,10 @@ Page({
   async onConversationListUpdate(conversationList: Conversation[]) {
     this.setData({
       conversations: conversationList
-        .filter(conv => conv.groupProfile && isGroupIdForTransaction(conv.groupProfile.groupID)),
+        .filter(conv =>
+          conv.groupProfile && isTransactionGroup(conv.groupProfile.groupID)
+           && !(isCreateGroupMsg(conv.lastMessage) && conv.groupProfile.ownerID !== getOpenId())
+        ),
     });
 
     const { self } = this.data;

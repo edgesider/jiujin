@@ -104,12 +104,23 @@ export function getGroupIdForTransaction(): string {
 /**
  * 是否是用于交易的群组ID
  */
-export function isGroupIdForTransaction(groupId: string): boolean {
+export function isTransactionGroup(groupId: string): boolean {
   return groupId.startsWith('CO_');
 }
 
+/**
+ * 是否是新发起群聊时发送的消息
+ */
+export function isCreateGroupMsg(msg: Message): boolean {
+  return msg.type === tim.TYPES.MSG_CUSTOM
+    && tryJsonParse(msg?.payload?.data as string)?.businessID === 'group_create';
+}
+
 export async function getConversationByGroup(groupId: string, reties: number = 8): Promise<Conversation | undefined> {
-  let res: Conversation | undefined;
+  let res = groupIdToConversation.get(groupId);
+  if (res) {
+    return res;
+  }
   for (let i = reties; i--; i > 0) {
     res = groupIdToConversation.get(groupId);
     if (res) {
@@ -122,7 +133,10 @@ export async function getConversationByGroup(groupId: string, reties: number = 8
 }
 
 export async function getConversationById(convId: string, reties: number = 8): Promise<Conversation | undefined> {
-  let res: Conversation | undefined;
+  let res = idToConversation.get(convId);
+  if (res) {
+    return res;
+  }
   for (let i = reties; i--; i > 0) {
     res = idToConversation.get(convId);
     if (res) {
@@ -208,6 +222,9 @@ export function listenConversationListUpdate(): Observable<Conversation[]> {
   return conversationsUpdateSubject;
 }
 
+/**
+ * 监听会话消息，也包括自己发送的消息
+ */
 export function listenMessage(conversationId: string): Observable<Message> {
   let subject = messageSubjects.get(conversationId);
   if (!subject) {
@@ -233,4 +250,14 @@ export function listenConversation(conversationId: string): Observable<Conversat
     conversationSubjects.set(conversationId, subject);
   }
   return subject;
+}
+
+export async function sendMessage(msg: Message) {
+  msg = (await tim.sendMessage(msg)).data.message;
+  if (msg && msg.conversationType === tim.TYPES.CONV_GROUP) {
+    const conv = await getConversationByGroup(msg.to, 0);
+    if (conv) {
+      messageSubjects.get(conv.conversationID)?.next(msg);
+    }
+  }
 }

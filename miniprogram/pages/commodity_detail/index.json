@@ -3,5 +3,7 @@
     "Comments": "/components/Comments/index",
     "CommodityCard": "/components/CommodityCard/index",
     "UserTitleBar": "/components/UserTitleBar/index"
-  }
+  },
+  "enablePullDownRefresh": false,
+  "disableScroll": true
 }

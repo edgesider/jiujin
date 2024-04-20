@@ -2,6 +2,7 @@ import getConstants from '../../../../constants';
 import { Message } from '@tencentcloud/chat';
 import { getConversationById, getImUidFromUid, listenMessage } from '../../../../utils/im';
 
+type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
 const COUNT_PER_PAGE = 20;
 
@@ -38,23 +39,28 @@ Component({
       }
 
       await this.fetchOlderMessages();
-      setTimeout(() => {
-        this.scrollToEnd();
-      }, 50);
+      this.scrollToEnd();
       tim.setMessageRead({ conversationID: conversationId, }).then();
       listenMessage(conversationId).subscribe(rawMsg => {
         this.onMessageUpdate([rawMsg], 'newer');
+        this.scrollToEnd();
+        tim.setMessageRead({ conversationID: conversationId });
       });
     },
     scrollToEnd() {
       const { messageList } = this.data;
       if (messageList.length > 0) {
         const last = messageList[messageList.length - 1];
-        this.setData({ scrollIntoView: `seq-${last.sequence}` });
+        setTimeout(() => {
+          this.setData({ scrollIntoView: `seq-${last.sequence}` });
+        }, 50);
       }
     },
     onMessageUpdate(newList: Message[], type: 'older' | 'newer') {
-      this.data.messageList.splice(type === 'older' ? 0 : this.data.messageList.length - 1, 0, ...newList);
+      newList = newList.filter(msg => {
+        return msg.type === tim.TYPES.MSG_TEXT || msg.type === tim.TYPES.MSG_IMAGE;
+      });
+      this.data.messageList.splice(type === 'older' ? 0 : this.data.messageList.length, 0, ...newList);
       this.setData({ messageList: this.data.messageList });
     },
     async fetchOlderMessages() {
@@ -74,6 +80,20 @@ Component({
         nextMsgId: newList.data.nextReqMessageID,
       })
       this.onMessageUpdate(newList.data.messageList, 'older');
+    },
+    onImageMessageClick(ev: TouchEvent) {
+      const { idx } = ev.currentTarget.dataset;
+      const msg = this.data.messageList[idx];
+      if (msg && msg.type === tim.TYPES.MSG_IMAGE) {
+        const url = msg.payload.imageInfoArray[0].url;
+        const msgs = this.data.messageList
+          .filter(msg => msg.type === tim.TYPES.MSG_IMAGE)
+          .map(msg => msg.payload.imageInfoArray[0].url);
+        wx.previewImage({
+          current: url,
+          urls: msgs
+        })
+      }
     },
   }
 });

@@ -11,8 +11,21 @@
 
 
   <view class="input">
-    <input placeholder="说点啥~" />
-    <image class="send-img" src="/images/send-img.png" mode="aspectFill" />
+    <input
+      placeholder="说点啥~" bind:confirm=""
+      confirm-type="send"
+      focus="{{inputFocused}}"
+      maxlength="10240"
+      value="{{input}}"
+      bindtap="onInputTap"
+      bindblur="onInputBlur"
+      bindinput="onInput"
+      bindconfirm="onInputConfirm"
+    />
+    <image
+      class="send-img" src="/images/send-img.png" mode="aspectFill"
+      bindtap="onSendImageIconClick"
+    />
   </view>
 
   <view class="keyboard-space" />
