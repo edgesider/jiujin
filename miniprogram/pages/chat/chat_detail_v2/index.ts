@@ -7,6 +7,7 @@ import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { tryJsonParse } from '../../../utils/other';
 
+type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
 type InputConfirm = WechatMiniprogram.InputConfirm;
@@ -24,13 +25,15 @@ Page({
     group: null as Group | null,
     commodity: null as Commodity | null,
     transaction: null as Transaction | null,
-    tip: '',
 
+    keyboardHeight: 0,
     input: '',
     inputFocused: false,
   },
   subscription: null as Subscription | null,
   async onLoad(options) {
+    this.subscription = new Subscription();
+
     const { conversationId } = options;
     if (!conversationId) {
       await wx.showToast({
@@ -40,6 +43,16 @@ Page({
       return;
     }
     this.setData({ conversationId, });
+
+    const kbHeightChanged = (res: OnKeyboardHeightChangeCallbackResult) => {
+      this.setData({
+        keyboardHeight: res.height,
+      })
+    };
+    wx.onKeyboardHeightChange(kbHeightChanged);
+    this.subscription!!.add(() => {
+      wx.offKeyboardHeightChange(kbHeightChanged);
+    });
 
     const { conversation } = (await tim.getConversationProfile(conversationId)).data;
     tim.setMessageRead({ conversationID: conversation.conversationID }).then();
@@ -83,12 +96,15 @@ Page({
       transaction,
     });
 
-    this.subscription = listenMessage(conversation.conversationID).subscribe(msg => {
+    this.subscription!!.add(listenMessage(conversation.conversationID).subscribe(msg => {
       const custom = tryJsonParse(msg.cloudCustomData);
       if (custom?.needUpdateTransaction) {
         this.updateTransaction().then();
       }
-    })
+    }));
+  },
+  onUnload() {
+    this.subscription?.unsubscribe();
   },
   getConversationName(conversation: Conversation) {
     if (conversation.type === '@TIM#SYSTEM') {
@@ -135,7 +151,17 @@ Page({
         file: img
       },
     });
-    await sendMessage(msg);
+    await wx.showLoading({ title: '发送中' });
+    try {
+      await sendMessage(msg);
+    } catch (e) {
+      console.error(e);
+      await wx.showToast({
+        title: '网络错误',
+      });
+    } finally {
+      await wx.hideLoading();
+    }
   },
   async onTransactionActionDone(ev: any) {
     const messageToPeer = ev.detail.messageToPeer || '交易状态已变更';

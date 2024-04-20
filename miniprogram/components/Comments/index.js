@@ -2,6 +2,7 @@ import api, { CommentAPI } from '../../api/api';
 import { openProfile } from "../../utils/router";
 import { ensureRegistered } from "../../utils/other";
 import getConstants from "../../constants";
+import { Subscription } from "rxjs";
 
 const app = getApp();
 
@@ -22,15 +23,24 @@ Component({
     commentingText: '',
   },
   async attached() {
+    this.subscription = new Subscription();
+
     this.setData({ selfInfo: app.globalData.self, })
-    wx.onKeyboardHeightChange((res) => {
+    const kbHeightChanged = res => {
       this.setData({
         keyboardHeight: res.height,
       })
-    })
-    await this.fetchComments();
+    };
+    wx.onKeyboardHeightChange(kbHeightChanged);
+    this.subscription.add(() => {
+      wx.offKeyboardHeightChange(kbHeightChanged);
+    });
 
+    await this.fetchComments();
     this.triggerEvent('loadFinished');
+  },
+  async detached() {
+    this.subscription?.unsubscribe();
   },
   methods: {
     nop() {},

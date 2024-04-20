@@ -1,4 +1,4 @@
-<view class="container" style="margin-bottom: {{BottomIndicatorHeight}}px">
+<view class="container" style="margin-bottom: {{BottomIndicatorHeight + keyboardHeight}}px">
   <UserTitleBar user="{{isSeller ? buyer : seller}}" />
   <TransactionBanner
     class="banner"

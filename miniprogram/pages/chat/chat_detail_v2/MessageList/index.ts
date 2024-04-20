@@ -1,6 +1,7 @@
 import getConstants from '../../../../constants';
 import { Message } from '@tencentcloud/chat';
 import { getConversationById, getImUidFromUid, listenMessage } from '../../../../utils/im';
+import { Subscription } from 'rxjs';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -27,9 +28,21 @@ Component({
   },
   lifetimes: {
     attached() {
+      // @ts-ignore
+      this.subscription = new Subscription();
+    },
+    detached() {
+      // @ts-ignore
+      (this.subscription as Subscription)?.unsubscribe();
     }
   },
   methods: {
+    // @ts-ignore
+    subscription: null as Subscription | null,
+    getSubscription(): Subscription {
+      // @ts-ignore
+      return this.subscription!!;
+    },
     async init(conversationId: string) {
       this.setData({ selfImId: getImUidFromUid(app.globalData.self._id) });
       const conv = await getConversationById(conversationId);
@@ -41,11 +54,12 @@ Component({
       await this.fetchOlderMessages();
       this.scrollToEnd();
       tim.setMessageRead({ conversationID: conversationId, }).then();
-      listenMessage(conversationId).subscribe(rawMsg => {
+
+      this.getSubscription().add(listenMessage(conversationId).subscribe(rawMsg => {
         this.onMessageUpdate([rawMsg], 'newer');
         this.scrollToEnd();
         tim.setMessageRead({ conversationID: conversationId });
-      });
+      }));
     },
     scrollToEnd() {
       const { messageList } = this.data;
