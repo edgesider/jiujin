@@ -12,7 +12,11 @@
   >
     <image class="avatar" src="{{msg.avatar}}" mode="aspectFill" />
     <view class="content">
-      <text user-select wx:if="{{msg.type === 'TIMTextElem'}}" class="text">{{msg.payload.text}}</text>
+      <text
+        user-select
+        wx:if="{{msg.type === 'TIMTextElem'}}"
+        class="text {{msg.__isTransactionStatusMessage ? 'text-transaction' : ''}}"
+      >{{msg.payload.text}}</text>
       <image
         wx:elif="{{msg.type === 'TIMImageElem'}}" class="image"
         mode="aspectFill"

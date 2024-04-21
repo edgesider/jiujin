@@ -2,6 +2,7 @@ import getConstants from '../../../../constants';
 import { Message } from '@tencentcloud/chat';
 import { getConversationById, getImUidFromUid, listenMessage } from '../../../../utils/im';
 import { Subscription } from 'rxjs';
+import { tryJsonParse } from '../../../../utils/other';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -74,6 +75,13 @@ Component({
       newList = newList.filter(msg => {
         return msg.type === tim.TYPES.MSG_TEXT || msg.type === tim.TYPES.MSG_IMAGE;
       });
+      newList.forEach(msg => {
+        const custom = tryJsonParse(msg.cloudCustomData);
+        if (custom?.needUpdateTransaction) {
+          // @ts-ignore
+          msg.__isTransactionStatusMessage = true
+        }
+      })
       this.data.messageList.splice(type === 'older' ? 0 : this.data.messageList.length, 0, ...newList);
       this.setData({ messageList: this.data.messageList });
     },

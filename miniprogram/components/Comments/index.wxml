@@ -57,9 +57,9 @@
       class="input-line"
       style="margin-bottom: {{keyboardHeight}}px"
     >
-      <view class="hint">{{commentingTo ? '回复@' + commentingTo.user.name : '留言'}}：</view>
-      <input
+      <textarea
         class="input"
+        placeholder="{{commentingTo ? '回复@' + commentingTo.user.name : '留言'}}"
         value="{{commentingText}}"
         focus="{{true}}"
         adjust-position="{{false}}"
@@ -68,6 +68,7 @@
         bindinput="onPopupInput"
         bindconfirm="onConfirmComment"
       />
+      <view class="button" bind:tap="onPrivateMessage">发送</view>
     </view>
   </view>
 </view>

@@ -187,19 +187,33 @@
 
 .popup-input .input-line {
   width: 100%;
-  padding: 8rpx;
+  padding: 20rpx;
   background: white;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  gap: 20rpx;
 }
 
-.popup-input .hint {
-  flex: 0 0 auto;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.popup-input .input {
+.input-line .input {
+  height: 8em;
   flex: 1 0 40rpx;
+  border-radius: 16rpx;
+  background: #f1f1f1;
+  padding: 20rpx;
+  line-height: 1.5;
+}
+
+.input-line .button {
+  flex-shrink: 0;
+  border-radius: 16rpx;
+  padding: 16rpx 48rpx;
+  background: #21ac39;
+  font-size: 34rpx;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
 }
