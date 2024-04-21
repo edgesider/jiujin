@@ -1,7 +1,12 @@
 @import "/app.wxss";
 
+.top-space {
+  width: 100%;
+  background: #fff;
+}
+
 .top {
-  background: white;
+  background: #fff;
   position: relative;
   width: 100%;
   flex-grow: 0;

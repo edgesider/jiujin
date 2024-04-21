@@ -1,5 +1,5 @@
-<TitleBar title="发布闲置物品" />
-<view class="Content">
+<TitleBar title="发布闲置物品" class="title-bar" />
+<view class="Content" style="margin-top: calc({{StatusBar + CustomBar}}px + 3%)">
   <textarea
     class="content" name="content"
     value="{{commodityContent}}"

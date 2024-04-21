@@ -15,7 +15,6 @@ Page({
     pageIndex: 1,
     selfInfo: null,
     regionName: '',
-    totalUnread: 0,
   },
 
   async onLoad(options) {
@@ -23,26 +22,29 @@ Page({
     await app.waitForReady();
     const { self } = app.globalData;
     if (app.globalData.self) {
-      const regionPath = getRegionPath(self.rid);
-      this.setData({
-        selfInfo: self,
-        regionName: regionPath[2] ? `${regionPath[2].name}/${regionPath[0].name}` : regionPath[0].name,
-      });
+      this.updateSelfInfo(self);
     }
     app.userChangedSubject.subscribe(user => {
       this.setData({
         selfInfo: user ?? null
       })
     })
-    this.data.totalUnread = app.globalData.totalUnread;
+  },
+
+  updateSelfInfo(self) {
+    if (!self) {
+      return;
+    }
+    const regionPath = getRegionPath(self.rid);
+    this.setData({
+      selfInfo: self,
+      regionName: regionPath[2] ? `${regionPath[2].name}/${regionPath[0].name}` : regionPath[0].name,
+    });
   },
 
   async onShow() {
     await app.fetchSelfInfo();
-    const { self } = app.globalData;
-    this.setData({
-      selfInfo: self
-    });
+    this.updateSelfInfo(app.globalData.self)
   },
 
   onEditMyInfo() {

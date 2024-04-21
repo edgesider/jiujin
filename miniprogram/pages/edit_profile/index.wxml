@@ -19,6 +19,7 @@
     <view class="cu-form-group">
       <view class="title">昵称</view>
       <input
+        style="height: 100%"
         class="text-right"
         value="{{name}}"
         placeholder="请输入昵称"
@@ -31,7 +32,7 @@
       <view class="title">性别</view>
       <view class="title" bindtap="onClickGender">{{GENDER_NAME_MAP[gender]}}</view>
     </view>
-    <view class="cu-form-group region-option">
+    <view class="cu-form-group region-option" wx:if="{{availableRegions[0].length > 1}}">
       <view class="title">所在大学</view>
       <picker
         mode="selector"
@@ -40,7 +41,6 @@
         value="{{regionIndexes[0]}}"
         bindcolumnchange="onRegionChange"
         bindchange="onRegionConfirm"
-        data-level="l1"
       >
         <view class="picker">{{l1Text}}</view>
       </picker>

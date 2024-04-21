@@ -208,10 +208,14 @@ Page({
   },
 
   onShareAppMessage(options) {
+    const { commodity } = this.data;
+    if (!commodity) {
+      return;
+    }
     const shareInfo = buildShareParam({
       type: 'commodity',
       from: options.from,
-      commodityId: this.data.commodity._id,
+      commodityId: commodity._id,
       fromUid: getOpenId(),
       timestamp: Date.now(),
       method: 'card'
@@ -219,8 +223,9 @@ Page({
     return {
       title: '找到一个好东西，快来看看吧！',
       path: '/pages/commodity_detail/index' +
-        `?id=${this.data.commodity._id}` +
-        `&shareInfo=${encodeURIComponent(shareInfo)}`
+        `?id=${commodity._id}` +
+        `&shareInfo=${encodeURIComponent(shareInfo)}`,
+      imageUrl: commodity.img_urls[0]
     }
   },
   onCommentLoadFinished() {

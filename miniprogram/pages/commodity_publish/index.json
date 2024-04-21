@@ -2,5 +2,5 @@
   "usingComponents": {
     "TitleBar": "../../components/TitleBar/index"
   },
-  "navigationBarTitleText": "发布闲置物品"
+  "disableScroll": false
 }

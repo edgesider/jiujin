@@ -3,6 +3,13 @@ page {
   background: #f6f6f6;
 }
 
+.title-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
 /* 基本信息与视频、图片 */
 .Content {
   padding: 3%;

@@ -20,10 +20,10 @@
     "navigationStyle": "custom",
     "enablePullDownRefresh": false,
     "onReachBottomDistance": 200,
-    "disableScroll": true
+    "disableScroll": true,
+    "navigationBarTextStyle": "black"
   },
   "usingComponents": {
-    "cu-custom": "/colorui/components/cu-custom"
   },
   "tabBar": {
     "custom": true,
