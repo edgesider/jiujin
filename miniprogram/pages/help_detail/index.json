@@ -1,3 +1,6 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "HelpComments": "/components/HelpComments/index",
+    "UserTitleBar": "/components/UserTitleBar/index"
+  }
 }

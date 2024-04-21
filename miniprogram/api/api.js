@@ -190,7 +190,7 @@ const api = {
     return listResp;
   },
 
-  // 获取单个商品
+  // 获取单个求助
   async getHelpInfo({ id }) {
     const listResp = await this.getHelpList({ _id: id });
     if (!listResp.isError) {
@@ -522,6 +522,118 @@ export const CommentAPI = {
     }));
   },
 }
+/**
+ * 求助相关的help
+ * @type {{}}
+ */
+export const HelpCommentAPI = {
+  async createHelpQuestion(hid, content) {
+    return wrapResp(await request({
+      path: "/helpQA/createHelpQuestion",
+      method: "POST",
+      data: {
+        hid: hid,
+        content,
+        openid: getOpenId()
+      }
+    }));
+  },
+
+  async createHelpAnswer(hid, qid, content) {
+    return wrapResp(await request({
+      path: "/helpQA/createHelpAnswer",
+      method: "POST",
+      data: {
+        hid,
+        question_id: qid,
+        content,
+        openid: getOpenId()
+      }
+    }));
+  },
+
+  async getHelpQuestionsAndAnswers(hid, start, count) {
+    return wrapResp(await request({
+      path: "/helpQA/getHelpQuestionsAndAnswers",
+      method: "POST",
+      data: {
+        help_id: hid,
+        start, count,
+        openid: getOpenId()
+      }
+    }));
+  },
+  // async getQuestions(coid, start, count) {
+  //   var res = await request({
+  //     path: "/getCommodityQuestionsAndAnswers",
+  //     method: "POST",
+  //     data: {
+  //       commodity_id: coid,
+  //       start, count,
+  //       openid: getOpenId()
+  //     }
+  //   });
+  //   res.data = res.data.commodityQuestions;
+  //   return wrapResp(res);
+  // },
+  // async getAnswers(qid, start, count) {
+  //   var res = await request({
+  //     path: "/getCommodityQuestionsAndAnswers",
+  //     method: "POST",
+  //     data: {
+  //       commodity_id: coid,
+  //       start, count,
+  //       openid: getOpenId()
+  //     }
+  //   });
+  //   res.data = res.data.commodityAnswers;
+  //   return wrapResp(res);
+  // },
+
+  async delHelpQuestion(qid) {
+    return wrapResp(await request({
+      path: "/helpQA/deleteHelpQuestion",
+      method: "POST",
+      data: {
+        question_id: qid,
+        openid: getOpenId()
+      }
+    }));
+  },
+  async deleteHelpAnswer(answer_id) {
+    return wrapResp(await request({
+      path: "/helpQA/deleteHelpAnswer",
+      method: "POST",
+      data: {
+        answer_id,
+        openid: getOpenId()
+      }
+    }));
+  },
+  // async modifyQuestion(question_id, content) {
+  //   return wrapResp(await request({
+  //     path: "/modifyQuestion",
+  //     method: "POST",
+  //     data: {
+  //       question_id,
+  //       content,
+  //       openid: getOpenId()
+  //     }
+  //   }));
+  // },
+  // async modifyAnswer(answer_id, content) {
+  //   return wrapResp(await request({
+  //     path: "/modifyAnswer",
+  //     method: "POST",
+  //     data: {
+  //       answer_id,
+  //       content,
+  //       openid: getOpenId()
+  //     }
+  //   }));
+  // },
+
+}
 
 /**
  * 收藏相关的API
@@ -571,12 +683,23 @@ export const CollectApi = {
  */
 export const HelpCollectApi = {
   // 收藏求助
-  async collectHelp(cid) {
+  async collectHelp(hid) {
     return wrapResp(await request({
-      path: "/collect/commodity",
+      path: "/helpCollect/collectHelp",
       method: "POST",
       data: {
-        cid,
+        hid,
+        openid: getOpenId()
+      }
+    }));
+  },
+  // 取消收藏help
+  async cancel(hid) {
+    return wrapResp(await request({
+      path: "/helpCollect/cancelCollectHelp",
+      method: "POST",
+      data: {
+        hid,
         openid: getOpenId()
       }
     }));
@@ -585,6 +708,55 @@ export const HelpCollectApi = {
   async getAllCollectedHelp(start, count) {
     const resp = wrapResp(await request({
       path: "/helpCollect/getInfo",
+      method: "POST",
+      data: {
+        start,
+        count,
+        openid: getOpenId()
+      }
+    }));
+
+    resp.data?.forEach(h => {
+      h.img_urls = h.img_urls
+        ?.replaceAll("\"", "")
+        .replaceAll(" ", "")
+        .split(",") ?? [];
+    })
+    console.log(resp)
+    return resp;
+  },
+}
+
+/**
+ * 点赞收藏相关的API
+ */
+export const HelpLikedApi = {
+  // 收藏求助
+  async likedHelp(hid) {
+    return wrapResp(await request({
+      path: "/helpLiked/likeHelp",
+      method: "POST",
+      data: {
+        hid,
+        openid: getOpenId()
+      }
+    }));
+  },
+  // 取消收藏help
+  async cancelLiked(hid) {
+    return wrapResp(await request({
+      path: "/helpLiked/cancelLikeHelp",
+      method: "POST",
+      data: {
+        hid,
+        openid: getOpenId()
+      }
+    }));
+  },
+  // 获取某人所有收藏的求助
+  async getAllCollectedHelp(start, count) {
+    const resp = wrapResp(await request({
+      path: "/helpLiked/getInfo",
       method: "POST",
       data: {
         start,
