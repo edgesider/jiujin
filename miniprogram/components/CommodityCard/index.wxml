@@ -10,7 +10,7 @@
       <view class="price-unit">￥</view>
       <view class="price">{{commodity.price}}</view>
       <view class="spacer" />
-      <image class="region-icon" src="/images/location.png" />
+      <image class="region-icon" src="/images/region.png" />
       <view class="region">{{regionName}}</view>
     </view>
   </view>

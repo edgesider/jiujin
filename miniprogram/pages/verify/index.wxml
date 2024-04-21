@@ -2,6 +2,6 @@
 
 <view class="cu-form-group">
   <view class="title">邮箱</view>
-  <input />
+  <input bindinput="onEmailInput" />
 </view>
-<button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr">认证</button>
+<button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmVerify">认证</button>

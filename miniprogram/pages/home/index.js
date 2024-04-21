@@ -234,7 +234,7 @@ Page({
     wx.createSelectorQuery()
       .select('#ranking-switch')
       .boundingClientRect(res => {
-        const top = res.top + 40;
+        const top = res.top + 42;
         this.setData({
           showRankingPopup: true,
           rankingPopupTop: top,

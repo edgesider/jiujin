@@ -1,5 +1,5 @@
-import { Region } from '../types';
-import { openLogin } from './router';
+import { Region, User } from '../types';
+import { openLogin, openVerify } from './router';
 
 export function tryJsonParse<T = any>(str: string | undefined | null, defaultValue: T | null = null): T | null {
   if (!str) {
@@ -36,11 +36,22 @@ export function getRegionPath(rid: number, ridToRegion?: Record<number, Region |
   return regionPath;
 }
 
-export function ensureRegistered() {
-  if (!getApp().globalData.self) {
+export function ensureRegistered(): User {
+  const user = getApp().globalData.self;
+  if (!user) {
     openLogin().then();
     throw Error('not registered');
   }
+  return user;
+}
+
+export function ensureVerified() {
+  const self = ensureRegistered();
+  if (!self.verify_status) {
+    openVerify().then();
+    throw Error('not registered');
+  }
+  return self;
 }
 
 /**

@@ -60,7 +60,8 @@ export function getOpenId() {
 
 export function wrapResp(resp) {
   if (resp.status !== 200 || !resp.data?.succeed) {
-    return new RespError(`${resp.status} ${resp.statusText}`, resp.data?.errCode ?? -1);
+    const errMsg = resp.data.errMsg || `${resp.status} ${resp.statusText}`;
+    return new RespError(errMsg, resp.data?.errCode ?? -1);
   }
   return new RespSuccess(resp.data?.data);
 }

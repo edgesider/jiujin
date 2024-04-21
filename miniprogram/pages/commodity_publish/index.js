@@ -196,7 +196,7 @@ Page({
     if (!rules.required(params.content)) {
       return '请填写商品描述';
     }
-    if (!rules.required(params.img_urls)) {
+    if (params.img_urls.length === 0) {
       return '请至少上传一张商品图片';
     }
     if (!rules.required(params.cid)) {
@@ -262,10 +262,12 @@ Page({
       only_same_sex: filters.find(f => f.key === 'sex').selected,
       only_same_building: filters.find(f => f.key === 'building').selected,
     });
-    console.log(info);
     const error = this.checkForm(info);
     if (error) {
-      Dialog.alert({ title: error, })
+      await wx.showToast({
+        title: error,
+        icon: 'error',
+      })
       return;
     }
     console.log(editing ? 'editing commodity' : 'creating commodity', info);

@@ -28,8 +28,6 @@ page {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  /*padding-left: var(--logo-width);*/
-  /*border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
 
   --logo-width: 145rpx;
   --logo-ratio: calc(50 / 90);
@@ -75,7 +73,6 @@ page {
   z-index: -1;
   width: 100%;
   height: calc(32vw);
-  /*border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
 }
 
 .region-filter {
@@ -86,7 +83,7 @@ page {
   padding: 10rpx;
   box-sizing: content-box;
   align-self: stretch;
-  height: 64rpx;
+  height: 72rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -97,7 +94,7 @@ page {
   height: 100%;
   flex-grow: 1;
   background: #f1f1f1;
-  border-radius: 10rpx;
+  border-radius: 16rpx;
   overflow: hidden;
 }
 
@@ -132,20 +129,19 @@ page {
 }
 
 .region-filter .item-indicator {
-  display: block;
   background-color: #fac000;
   width: calc(100% - 16rpx);
-  height: 4rpx;
-  border-radius: 2rpx;
+  height: 6rpx;
+  border-radius: 6rpx;
   position: absolute;
-  bottom: 4rpx;
+  bottom: 10rpx;
   left: 8rpx;
 }
 
 .switch {
-  width: 50rpx;
-  height: 50rpx;
-  padding: 5rpx 5rpx 5rpx 10rpx;
+  width: 64rpx;
+  height: 64rpx;
+  padding: 0 15rpx;
   box-sizing: content-box;
 }
 
@@ -164,14 +160,14 @@ page {
   height: 100%;
   left: 0;
   top: 0;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .ranking {
   z-index: 4;
   position: absolute;
-  right: 8rpx;
+  right: 12rpx;
   background: #ffffff;
-  border: 2rpx solid #80899a;
   padding: 35rpx 23rpx;
   border-radius: 15rpx;
 }
@@ -182,12 +178,10 @@ page {
   width: 18rpx;
   height: 18rpx;
   z-index: 5;
-  border-top: 2rpx solid #80899a;
-  border-right: 2rpx solid #80899a;
   background-color: white;
   position: absolute;
-  right: 8rpx;
-  top: 0;
+  right: 24rpx;
+  top: 4rpx;
   transform: translate(-12rpx, -12rpx) rotate(-45deg);
 }
 

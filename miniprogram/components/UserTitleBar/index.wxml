@@ -1,6 +1,6 @@
 <view style="width: 100%; background: white; height: {{StatusBar}}px" />
 
-<view class="top-user">
+<view class="top-user" style="height: {{CustomBar}}px;">
   <text
     class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}"
     wx:if="{{!isTabBarPage}}"
@@ -17,7 +17,7 @@
       <text class="time" wx:if="{{time}}">{{time}}</text>
     </view>
     <view class="line2" wx:if="{{region}}">
-      <image src="/images/location.png" class="region-icon" />
+      <image src="/images/region.png" class="region-icon" />
       <text class="region">{{region}}</text>
     </view>
   </view>
