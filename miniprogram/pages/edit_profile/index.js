@@ -1,8 +1,7 @@
 import api, { getOpenId } from "../../api/api";
 import rules from "../../utils/rules";
-import getConstants, { DEFAULT_AVATAR, GENDER } from "../../constants";
-import { sleep } from "../../utils/other";
-import randomName from "../../utils/randomName";
+import getConstants, { GENDER } from "../../constants";
+import { getL1Regions, getRegionPath, getRegionsByParent, sleep } from "../../utils/other";
 
 const app = getApp();
 
@@ -12,81 +11,41 @@ const app = getApp();
 Page({
   data: {
     ...getConstants(),
-    isEdit: false,
 
     name: "",
     avatarUrl: "",
     gender: GENDER.MALE,
     genderOptions: ['男', '女'],
 
-    regions: [],
-    l1ToL4: {},
-    indexes: [0, 0],
-    l1L4Pair: [[], []],
+    availableRegions: [[], [], [], []],
+    regionIndexes: [0, 0, 0, 0],
+    l1Text: '',
+    l2l3l4Text: '',
   },
 
   async onLoad(options) {
     const { regions, ridToRegion, self } = app.globalData;
-    const isEdit = Boolean(self);
-    // 大学
-    const l1Regions = [];
-    // 大学 -> 楼号
-    const l1ToL4 = {};
-
-    for (const region of regions) {
-      if (region.level === 1) {
-        l1Regions.push(region);
-      }
-    }
-    // 从树根开始，找到所有的叶子节点（L4）
-    const tillL4 = (rid) => {
-      const region = ridToRegion[rid];
-      if (!region) {
-        return [];
-      }
-      if (region.level === 4) {
-        return [region._id];
-      } else {
-        const list = [];
-        for (const child of region.children) {
-          list.push(...tillL4(child));
-        }
-        return list;
-      }
-    }
-    for (const l1 of l1Regions) {
-      if (l1.level !== 1) {
-        continue;
-      }
-      l1ToL4[l1._id] = tillL4(l1._id).map(rid => ridToRegion[rid]);
-    }
-
-    if (isEdit) {
-      const self = app.globalData.self;
-      let [idxL1, idxL4] = [0, 0];
-      const l1 = Object.entries(l1ToL4).find(([l1, l4s]) => l4s.findIndex(l4 => l4._id === self.rid) >= 0)[0];
-      if (l1) {
-        idxL1 = l1Regions.findIndex(l => l._id === parseInt(l1));
-        idxL4 = l1ToL4[l1].findIndex(l => l._id === self.rid);
-      }
-      this.setData({
-        l1ToL4,
-        l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
-        indexes: [idxL1, idxL4],
-        isEdit: true,
-        avatarUrl: self.avatar_url,
-        name: self.name,
-        gender: self.sex,
-      });
-    } else {
-      this.setData({
-        l1ToL4,
-        l1L4Pair: [l1Regions, l1ToL4[l1Regions[0]._id]],
-        indexes: [0, 0],
-        name: randomName.getNickName(),
-        avatarUrl: DEFAULT_AVATAR,
-      });
-    }
+    const [l4, l3, l2, l1] = getRegionPath(self.rid, ridToRegion);
+    const availableRegions = [
+      getL1Regions(ridToRegion), // l1 list
+      getRegionsByParent(l1._id), // l2 list
+      getRegionsByParent(l2._id), // l3 list
+      getRegionsByParent(l3._id), // l4 list
+    ];
+    const regionIndexes = [
+      availableRegions[0].indexOf(l1),
+      availableRegions[1].indexOf(l2),
+      availableRegions[2].indexOf(l3),
+      availableRegions[3].indexOf(l4),
+    ];
+    this.setData({
+      avatarUrl: self.avatar_url,
+      name: self.name,
+      gender: self.sex,
+      availableRegions,
+      regionIndexes,
+      ...this.getRegionTexts(availableRegions, regionIndexes),
+    });
   },
 
   // 导航栏
@@ -113,30 +72,58 @@ Page({
     this.setData({ gender: parseInt(value), });
   },
 
-  onRegionPickerConfirm(event) {
-    const { detail: { value } } = event;
-    console.log(value, typeof value[0]);
-    this.setData({ indexes: value });
+  onRegionChange(ev) {
+    const { column, value } = ev.detail;
+    const level = column + 2; // 第0列对应的是level2
+    this.updateRegionIndex(level, value);
   },
-  onRegionPickerChange(event) {
-    const columnIndex = event.detail.column; // 被更新的列
-    const index = event.detail.value; // 更新的值
-
-    const { indexes, l1ToL4, l1L4Pair } = this.data;
-    // 先更新索引
-    indexes[columnIndex] = index;
-
-    // 根据索引更新数据（l1L4Pair）
-    const l1 = l1L4Pair[0][indexes[0]]; // 获取新的l1
-    const l4List = l1ToL4[l1._id]; // 获取新的l4
+  updateRegionIndex(level, index, isConfirm) {
+    const { availableRegions, regionIndexes } = this.data;
+    regionIndexes[level - 1] = index;
+    for (let i = level; i < regionIndexes.length; i++) {
+      availableRegions[i] = getRegionsByParent(availableRegions[i - 1][regionIndexes[i - 1]]._id);
+      regionIndexes[i] = 0;
+    }
     this.setData({
-      l1L4Pair: [l1L4Pair[0], l4List]
-    })
+      availableRegions,
+      regionIndexes,
+      ...(isConfirm ? this.getRegionTexts(availableRegions, regionIndexes) : {})
+    });
+  },
+  onRegionConfirm(ev) {
+    const { detail: { value } } = ev;
+    const { regionIndexes, availableRegions } = this.data;
+    if (typeof value === 'string') {
+      // 返回单个字符串，说明改的是l1
+      const newL1 = parseInt(value);
+      if (isNaN(newL1)) {
+        return;
+      }
+      this.updateRegionIndex(1, newL1, true);
+    } else if (Array.isArray(value)) {
+      // 返回数组，说明改的是l2/l3/l4
+      const newIndexes = [regionIndexes[0], ...value]
+      this.setData({
+        regionIndexes: newIndexes,
+        ...this.getRegionTexts(availableRegions, newIndexes),
+      });
+    }
+  },
+  getRegionTexts(availableRegions, regionIndexes) {
+    return {
+      l1Text: availableRegions[0][regionIndexes[0]].name,
+      l2l3l4Text: [
+        availableRegions[1][regionIndexes[1]].name,
+        availableRegions[2][regionIndexes[2]].name,
+        availableRegions[3][regionIndexes[3]].name,
+      ].join('/'),
+    };
   },
 
+  /** 获取当前选择的l4 */
   getSelectedRegion() {
-    const { l1L4Pair, indexes } = this.data;
-    return l1L4Pair[1][indexes[1]];
+    const { availableRegions, regionIndexes } = this.data;
+    return availableRegions[3][regionIndexes[3]];
   },
 
   async onClickGender() {
@@ -156,7 +143,7 @@ Page({
 
   // 提交注册信息
   async onRegister() {
-    const { isEdit, name, gender: sex } = this.data;
+    const { name, gender: sex } = this.data;
     let avatar_url = this.data.avatarUrl;
     const rid = this.getSelectedRegion()._id;
     if (avatar_url && !/^(cloud|http|https):\/\//.test(avatar_url) || /http:\/\/tmp\//.test(avatar_url)) {
@@ -192,11 +179,11 @@ Page({
 
     await wx.showLoading({ title: '正在提交中', });
 
-    const resp = isEdit ? await api.updateUser(params) : await api.registerUser(params);
+    const resp = await api.updateUser(params);
     if (resp.isError) {
       await wx.hideLoading()
-      let msg = (isEdit ? '保存' : '注册') + '失败\n' + JSON.stringify(resp);
-      if (isEdit && resp.errno === -2) {
+      let msg = '保存失败\n' + JSON.stringify(resp);
+      if (resp.errno === -2) {
         msg = '位置修改得太频繁啦！';
       }
       await wx.showToast({
@@ -209,7 +196,7 @@ Page({
     await Promise.all([app.initTIM(), app.fetchRegions()]);
     await wx.hideLoading();
     await wx.showToast({
-      title: (isEdit ? '已保存' : '注册成功'),
+      title: '已保存',
       icon: 'success',
     });
     await sleep(1500);

@@ -19,7 +19,8 @@
     "backgroundTextStyle": "light",
     "navigationStyle": "custom",
     "enablePullDownRefresh": false,
-    "onReachBottomDistance": 200
+    "onReachBottomDistance": 200,
+    "disableScroll": true
   },
   "usingComponents": {
     "cu-custom": "/colorui/components/cu-custom"

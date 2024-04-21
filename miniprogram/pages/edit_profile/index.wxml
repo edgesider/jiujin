@@ -1,4 +1,4 @@
-<TitleBar title="{{isEdit ? '我的信息' : '注册'}}" class="title-bar" />
+<TitleBar title="我的信息" class="title-bar" />
 <view style="width: 100%; height: {{TopBarHeight}}px" />
 
 <view class="cu-card">
@@ -32,22 +32,33 @@
       <view class="title" bindtap="onClickGender">{{GENDER_NAME_MAP[gender]}}</view>
     </view>
     <view class="cu-form-group region-option">
+      <view class="title">所在大学</view>
+      <picker
+        mode="selector"
+        range="{{availableRegions[0]}}"
+        range-key="name"
+        value="{{regionIndexes[0]}}"
+        bindcolumnchange="onRegionChange"
+        bindchange="onRegionConfirm"
+        data-level="l1"
+      >
+        <view class="picker">{{l1Text}}</view>
+      </picker>
+    </view>
+    <view class="cu-form-group region-option">
       <view class="title">常用位置</view>
       <picker
         mode="multiSelector"
-        bindcolumnchange="onRegionPickerChange"
-        bindchange="onRegionPickerConfirm"
-        value="{{indexes}}"
-        range="{{l1L4Pair}}"
-        range-key="{{'name'}}">
-        <view class="picker">
-          {{l1L4Pair[0][indexes[0]].name}}，{{l1L4Pair[1][indexes[1]].name}}
-        </view>
+        range="{{[availableRegions[1], availableRegions[2], availableRegions[3]]}}"
+        range-key="name"
+        value="{{[regionIndexes[1], regionIndexes[2], regionIndexes[3]]}}"
+        bindcolumnchange="onRegionChange"
+        bindchange="onRegionConfirm"
+      >
+        <view class="picker">{{l2l3l4Text}}</view>
       </picker>
     </view>
   </view>
 </view>
 
-<button bind:tap="onRegister" class="cu-btn block bg-gradual-green shadow lg margin-lr">
-  {{isEdit ? '保存' : '注册'}}
-</button>
+<button bind:tap="onRegister" class="cu-btn block bg-gradual-green shadow lg margin-lr">保存</button>

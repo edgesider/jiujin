@@ -1,7 +1,12 @@
 <TitleBar title="发布闲置物品" />
 <view class="Content">
-  <textarea class="content" name="content" value="{{commodityContent}}" maxlength="-1"
-            bindinput="onChangeCommodityContent" placeholder="描述一下物品基本信息…"></textarea>
+  <textarea
+    class="content" name="content"
+    value="{{commodityContent}}"
+    maxlength="-1"
+    bindinput="onChangeCommodityContent"
+    placeholder="描述一下物品基本信息…"
+  />
 
   <view class="images">
     <image
@@ -23,10 +28,16 @@
   <!-- 价格 -->
 <view class="Price">
   <view class="price_title">价格</view>
-  <input class="price" value="{{commodityCurrentPriceText}}"
-         maxlength="10"
-         bindblur="onPriceInputBlur"
-         bindinput="onChangeCommodityCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
+  <input
+    class="price"
+    value="{{commodityCurrentPriceText}}"
+    maxlength="10"
+    bindblur="onPriceInputBlur"
+    bindinput="onChangeCommodityCurrentPrice"
+    name="price"
+    placeholder="0"
+    type="digit"
+  />
 </view>
 
   <!-- 成色 -->

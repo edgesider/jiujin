@@ -24,7 +24,7 @@ Page({
     commodityImg: [],
     categoryIndex: 0,
     commodityContent: "",
-    commodityCurrentPriceText: '0',
+    commodityCurrentPriceText: '',
     commodityCurrentPrice: 0,
     qualityIndex: 0,
 
@@ -114,6 +114,13 @@ Page({
     })
   },
   onPriceInputBlur(event) {
+    if (this.data.commodityCurrentPriceText.length === 0) {
+      // 支持空白
+      this.setData({
+        commodityCurrentPrice: 0,
+      });
+      return;
+    }
     let price = parseFloat(this.data.commodityCurrentPriceText) || 0;
     price = Math.max(Math.min(price, 99999.9), 0)
     this.setData({
@@ -140,7 +147,7 @@ Page({
       count: 9, //默认9
       sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
       success: (res) => {
-        if (this.data.commodityImg.length != 0) {
+        if (this.data.commodityImg.length !== 0) {
           this.setData({
             commodityImg: this.data.commodityImg.concat(res.tempFilePaths)
           })

@@ -36,6 +36,26 @@ export function getRegionPath(rid: number, ridToRegion?: Record<number, Region |
   return regionPath;
 }
 
+export function getL1Regions(ridToRegion?: Record<number, Region | undefined>): Region[] {
+  ridToRegion = (ridToRegion ?? getApp().globalData.ridToRegion ?? {}) as Record<number, Region | undefined>;
+  return Object.values(ridToRegion)
+    .filter(region => region?.level === 1)
+    .filter((r): r is Region => Boolean(r));
+}
+
+/**
+ * 获取以某个rid为父区域的所有rid，只包含一级，不会递归往下找
+ */
+export function getRegionsByParent(parentRid: number, ridToRegion?: Record<number, Region | undefined>): Region[] {
+  ridToRegion = (ridToRegion ?? getApp().globalData.ridToRegion ?? {}) as Record<number, Region | undefined>;
+  if (!ridToRegion) {
+    return [];
+  }
+  return ridToRegion[parentRid]!!.children
+    .map(rid => ridToRegion!![rid])
+    .filter((r): r is Region => Boolean(r));
+}
+
 export function ensureRegistered(): User {
   const user = getApp().globalData.self;
   if (!user) {

@@ -54,6 +54,9 @@ page {
   background: #ffffff;
   border-radius: 20rpx;
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .price_title {
@@ -64,7 +67,8 @@ page {
 }
 
 .price {
-  width: 560rpx;
+  position: relative;
+  flex-grow: 1;
   height: 90rpx;
   text-align: right;
   font-weight: bold;

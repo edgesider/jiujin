@@ -73,8 +73,16 @@ Page({
       this.setData({ isLoading: false });
     }
   },
-  onClickLogo() {
-    // openLogin();
+  async onClickLogo() {
+    const privateMessageTmpId = 'QMlQmIOyZo90Tc9stZYHO8a8tWuG4J6jK8PI4hGy5MQ';
+    const res = await wx.requestSubscribeMessage({
+      tmplIds: [privateMessageTmpId]
+    });
+    if (res[privateMessageTmpId] !== 'accept') {
+      await wx.showToast({
+        title: '私信消息被拒绝'
+      });
+    }
   },
 
   onPageScroll(options) {
