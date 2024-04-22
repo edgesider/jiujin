@@ -43,6 +43,7 @@ Page({
     chosenRankingKey: 'polish_time-desc',
   },
 
+  initialized: false,
   fetchToken: 0,
 
   async onLoad(options) {
@@ -54,12 +55,16 @@ Page({
       console.log('shareInfo', shareInfo);
       reportShareInfo(shareInfo).then();
     }
-
+    await this.init();
+  },
+  async init() {
     this.setData({ isLoading: true })
     try {
       await app.waitForReady();
       this.updateRegions();
       await this.loadBanners();
+      this.initialized = true;
+
       await this.fetchList();
     } catch (e) {
       await wx.showToast({
@@ -142,6 +147,10 @@ Page({
   },
 
   async fetchList({ append } = {}) {
+    if (!this.initialized) {
+      await this.init();
+      return;
+    }
     console.log(`fetch: append=${append}, rid=${this.data.regions[this.data.selectedRegionIndex]._id}`);
     const rid = this.data.regions[this.data.selectedRegionIndex]._id;
 
@@ -202,7 +211,7 @@ Page({
 
   async onRefresherRefresh() {
     this.setData({ pullDownRefreshing: true, })
-    await this.fetchList();
+    await this.init();
     this.setData({ pullDownRefreshing: false, })
   },
 

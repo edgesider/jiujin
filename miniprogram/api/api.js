@@ -10,7 +10,7 @@ axios.defaults.adapter = mpAdapter;
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  baseURL: 'https://lllw.ykai.cc',
+  baseURL: 'https://lllw.cc',
   // baseURL: 'http://192.168.2.218:8080/',
   // baseURL: (version === 'release' || version === 'trial')
   //   ? 'https://lllw.ykai.cc'
