@@ -43,7 +43,7 @@ export function initTim(self: User) {
   }, 200);
 
   loadCache().then();
-  tim.getConversationList().then((result: any) => {
+  getConversations().then((result: any) => {
     updateConversations(result.data.conversationList);
   });
   tim.on(tim.EVENT.CONVERSATION_LIST_UPDATED, (event: any) => {
@@ -55,6 +55,10 @@ export function initTim(self: User) {
       messageSubjects.get(msg.conversationID)?.next(msg);
     }
   });
+}
+
+export async function getConversations(): Promise<Conversation[]> {
+  return (await tim.getConversationList()).data.conversationList ?? [];
 }
 
 export async function getGroup(id: string): Promise<Group | undefined> {
@@ -112,8 +116,9 @@ export function isTransactionGroup(groupId: string): boolean {
  * 是否是新发起群聊时发送的消息
  */
 export function isCreateGroupMsg(msg: Message): boolean {
-  return msg.type === tim.TYPES.MSG_CUSTOM
-    && tryJsonParse(msg?.payload?.data as string)?.businessID === 'group_create';
+  return msg.type === tim.TYPES.MSG_CUSTOM && tryJsonParse(msg?.payload?.data as string)?.businessID === 'group_create'
+    // @ts-ignore
+    || msg.messageForShow === '[群提示消息]';
 }
 
 export async function getConversationByGroup(groupId: string, reties: number = 8): Promise<Conversation | undefined> {

@@ -49,8 +49,10 @@ Page({
     this.setData({
       conversations: conversationList
         .filter(conv =>
-          conv.groupProfile && isTransactionGroup(conv.groupProfile.groupID)
-          && !(isCreateGroupMsg(conv.lastMessage) && conv.groupProfile.ownerID !== getOpenId())
+          conv.groupProfile
+          && isTransactionGroup(conv.groupProfile.groupID)
+          && conv.lastMessage && conv.lastMessage.fromAccount
+          && !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
         ),
     });
 

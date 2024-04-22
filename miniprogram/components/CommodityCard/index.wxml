@@ -1,7 +1,6 @@
 <view
   class="mall"
   bindtap="gotoDetail"
-  bindlongpress="onLongPress"
 >
   <image class="cover" src="{{commodity.img_urls[0]}}" mode="aspectFill"></image>
   <view class="info">
