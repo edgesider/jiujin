@@ -342,10 +342,10 @@ Page({
     showRankingPopup: false,
     rankingPopupTop: 0,
     rankingOptions: [
+      { key: 'bounty-asc', text: '悬赏由低到高' },
+      { key: 'bounty-desc', text: '悬赏由高到低' },
       { key: 'create_time-desc', text: '时间由近到远' },
       { key: 'create_time-asc', text: '时间由远到近' },
-      { key: 'bounty-asc', text: '价格由低到高' },
-      { key: 'bounty-desc', text: '价格由高到低' },
     ],
     chosenRankingKey: 'create_time-desc',
   },

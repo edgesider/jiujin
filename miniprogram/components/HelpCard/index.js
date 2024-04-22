@@ -161,9 +161,10 @@ Component({
       }
     },
 
-    onClickReport() {
+    async onClickReport() {
       ensureRegistered();
       // TODO
+      await wx.showToast({ title: '已举报' });
     },
 
     async onClickShare() {

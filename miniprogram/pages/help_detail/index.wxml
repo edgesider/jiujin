@@ -38,9 +38,6 @@
       </view>
       <view class="divider" />
       <HelpComments id="comments" class="comments" help="{{help}}" bind:loadFinished="onCommentLoadFinished" />
-      <viex>
-        <HelpCard id="comments" class="comments" help="{{help}}"></HelpCard>
-      </viex>
     </scroll-view>
     <view class="footer">
       <view class="left">

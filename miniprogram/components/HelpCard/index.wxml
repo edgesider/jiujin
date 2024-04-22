@@ -7,7 +7,7 @@
   </view>
   <block wx:else>
     <view class="body">
-      <UserTitleBar user="{{seller}}" hasBack="{{false}}" time="{{createTime}}" />
+      <HelpCardTitleBar user="{{seller}}" hasBack="{{false}}" time="{{createTime}}" bounty="{{help.bounty}}" />
       <view class="content">
         <!--      文章内容-->
         <view class="paragraphs">
@@ -29,13 +29,13 @@
           />
         </view>
         <view class="divider" />
-        <view class="info">
-          <text class="price">
-            <text class="unit">￥</text>
-            <text class="amount">{{help.bounty}}</text>
-          </text>
-          <view class="spacer" />
-        </view>
+<!--        <view class="info">-->
+<!--          <text class="price">-->
+<!--            <text class="unit">￥</text>-->
+<!--            <text class="amount">{{help.bounty}}</text>-->
+<!--          </text>-->
+<!--          <view class="spacer" />-->
+<!--        </view>-->
       </view>
       <view class="footer">
         <view class="left">
@@ -48,6 +48,11 @@
             <image class="icon"
                    src="{{help.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
             <text class="text">收藏</text>
+          </view>
+          <view wx:if="{{!isMine}}" class="button" catchtap="gotoDetail">
+            <image class="icon"
+                   src="{{'/images/chatting.png'}}" />
+            <text class="text">去评论</text>
           </view>
           <view class="button" catchtap="onClickShare">
             <image class="icon" src="/images/share.png" />

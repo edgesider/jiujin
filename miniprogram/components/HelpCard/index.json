@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "UserTitleBar": "/components/UserTitleBar/index"
+    "UserTitleBar": "/components/UserTitleBar/index",
+    "HelpCardTitleBar": "/components/HelpCardTitleBar/index"
   }
 }
