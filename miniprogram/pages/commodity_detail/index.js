@@ -34,6 +34,7 @@ Page({
     firstImageSize: [],
   },
   onLoad: async function (options) {
+    await app.waitForReady();
     const { id, scrollToComment, shareInfo: shareInfoStr } = options;
 
     const shareInfo = parseShareInfo(shareInfoStr);

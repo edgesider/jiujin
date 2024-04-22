@@ -34,6 +34,7 @@ Page({
   subscription: null as Subscription | null,
   async onLoad(options) {
     this.subscription = new Subscription();
+    await app.waitForReady();
 
     const { conversationId } = options;
     if (!conversationId) {
