@@ -74,13 +74,19 @@ Page({
     }
   },
   async onClickLogo() {
-    const privateMessageTmpId = 'QMlQmIOyZo90Tc9stZYHO8a8tWuG4J6jK8PI4hGy5MQ';
+    const bookingRequestTmpId = 'QMlQmIOyZo90Tc9stZYHO8a8tWuG4J6jK8PI4hGy5MQ';
+    const bookingSucceedTmpId = 'w_NyXTO4HoEMU3kY4u3ngfPnBnwYQ8eQ9iJykU19-Lg';
     const res = await wx.requestSubscribeMessage({
-      tmplIds: [privateMessageTmpId]
+      tmplIds: [bookingRequestTmpId, bookingSucceedTmpId]
     });
-    if (res[privateMessageTmpId] !== 'accept') {
+    if (res[bookingRequestTmpId] !== 'accept') {
       await wx.showToast({
-        title: '私信消息被拒绝'
+        title: '发起预定被拒绝'
+      });
+    }
+    if (res[bookingSucceedTmpId] !== 'accept') {
+      await wx.showToast({
+        title: '预定成功被拒绝'
       });
     }
   },

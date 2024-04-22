@@ -2,7 +2,8 @@
   "usingComponents": {
     "Comments": "/components/Comments/index",
     "CommodityCard": "/components/CommodityCard/index",
-    "UserTitleBar": "/components/UserTitleBar/index"
+    "UserTitleBar": "/components/UserTitleBar/index",
+    "FullPageLoading": "/components/FullPageLoading/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

@@ -55,7 +55,7 @@
     <view class="mask" bindtap="onEndComment" />
     <view
       class="input-line"
-      style="margin-bottom: {{keyboardHeight}}px"
+      style="padding-bottom: {{keyboardHeight}}px"
     >
       <textarea
         class="input"
@@ -68,7 +68,7 @@
         bindinput="onPopupInput"
         bindconfirm="onConfirmComment"
       />
-      <view class="button" bind:tap="onPrivateMessage">发送</view>
+      <view class="button" bind:tap="onConfirmComment">发送</view>
     </view>
   </view>
 </view>

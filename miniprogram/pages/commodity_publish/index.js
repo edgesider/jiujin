@@ -5,6 +5,7 @@ import { getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
 import { sleep } from "../../utils/other";
 import getConstants, { GENDER } from "../../constants";
+import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
 
 const app = getApp()
 
@@ -239,6 +240,8 @@ Page({
 
   // 上传商品信息
   async onSubmit() {
+    await requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed]);
+
     const {
       editingCommodity: editing,
       self,

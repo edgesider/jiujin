@@ -6,6 +6,7 @@ import { Conversation, Group } from '@tencentcloud/chat';
 import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { tryJsonParse } from '../../../utils/other';
+import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 
 type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
@@ -138,6 +139,7 @@ Page({
       cloudCustomData: customData,
     });
     await sendMessage(msg);
+    await requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed]);
   },
   async sendImageMessage(img: ChooseImageSuccessCallbackResult) {
     const { group } = this.data;
@@ -154,6 +156,7 @@ Page({
     await wx.showLoading({ title: '发送中' });
     try {
       await sendMessage(msg);
+      await requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed]);
     } catch (e) {
       console.error(e);
       await wx.showToast({

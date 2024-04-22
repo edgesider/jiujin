@@ -197,7 +197,7 @@
 }
 
 .input-line .input {
-  height: 8em;
+  height: 6em;
   flex: 1 0 40rpx;
   border-radius: 16rpx;
   background: #f1f1f1;
@@ -207,8 +207,9 @@
 
 .input-line .button {
   flex-shrink: 0;
-  border-radius: 16rpx;
   padding: 16rpx 48rpx;
+  height: 74rpx;
+  border-radius: 37rpx;
   background: #21ac39;
   font-size: 34rpx;
   font-weight: bold;

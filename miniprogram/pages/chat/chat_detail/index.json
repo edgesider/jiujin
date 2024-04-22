@@ -1,5 +1,9 @@
 {
   "usingComponents": {
-    "TUIChat": "./TUIChat/index"
-  }
+    "UserTitleBar": "/components/UserTitleBar",
+    "TransactionBanner": "./TransactionBanner",
+    "MessageList": "./MessageList"
+  },
+  "enablePullDownRefresh": false,
+  "disableScroll": true
 }

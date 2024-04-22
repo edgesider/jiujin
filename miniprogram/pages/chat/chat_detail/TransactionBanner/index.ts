@@ -77,15 +77,6 @@ Component({
       wx.showToast({ title: '已同意', }).then();
     },
     async denyBooking() {
-      const { confirm } = await wx.showModal({
-        content: '确认拒绝？',
-        confirmText: '确认',
-        cancelText: '取消',
-        showCancel: true,
-      });
-      if (!confirm) {
-        return;
-      }
       const { transaction } = this.data;
       if (!transaction) {
         return;
@@ -105,7 +96,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone(`因“${reason}”，我已拒绝你的预定`);
+      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的预定`);
       wx.showToast({ title: '已拒绝' }).then();
     },
     async requestBooking() {
@@ -166,15 +157,6 @@ Component({
       wx.showToast({ title: '已确认售出', }).then();
     },
     async confirmTerminated() {
-      const { confirm } = await wx.showModal({
-        content: '确认终止？',
-        confirmText: '确认',
-        cancelText: '取消',
-        showCancel: true,
-      });
-      if (!confirm) {
-        return;
-      }
       const { transaction } = this.data;
       if (!transaction) {
         return;
@@ -197,8 +179,8 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已确认终止');
-      wx.showToast({ title: '已确认终止', }).then();
+      this.afterTransactionActionDone(`因“${reason}”，我已确认终止交易`);
+      wx.showToast({ title: '已终止', }).then();
     },
     getTransactionStatusImage(transaction: Transaction) {
       return ({

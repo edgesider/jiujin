@@ -20,7 +20,7 @@ export async function openCommodityDetail(options: CommodityDetailOptions) {
     throw Error('commodity id is required');
   }
   await wx.navigateTo({
-    url: `/pages/commodity_detail/index?id=${options.id}&scrollToComment=${options.scrollToComment}`,
+    url: `/pages/commodity_detail/index?id=${options.id}&scrollToComment=${Boolean(options.scrollToComment)}`,
   })
 }
 
@@ -29,7 +29,7 @@ export async function openConversationDetail(conv: Conversation | string) {
     conv = conv.conversationID;
   }
   await wx.navigateTo({
-    url: `/pages/chat/chat_detail_v2/index?conversationId=${conv}`,
+    url: `/pages/chat/chat_detail/index?conversationId=${conv}`,
   });
 }
 
