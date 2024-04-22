@@ -3,6 +3,8 @@ import { Commodity } from '../../../../types';
 import { getContentDesc } from '../../../../utils/strings';
 import { Transaction, TransactionApi, TransactionStatus } from '../../../../api/transaction';
 import { openCommodityDetail } from '../../../../utils/router';
+import { NotifyType, requestNotifySubscribe } from '../../../../utils/notify';
+import { sleep } from '../../../../utils/other';
 
 const app = getApp();
 
@@ -114,6 +116,8 @@ Component({
       }
       this.afterTransactionActionDone('我已发出预约申请');
       wx.showToast({ title: '已申请预约' }).then();
+      await sleep(200);
+      requestNotifySubscribe([NotifyType.BookingAgreed]).then()
     },
     async cancelBooking() {
       const { transaction } = this.data;

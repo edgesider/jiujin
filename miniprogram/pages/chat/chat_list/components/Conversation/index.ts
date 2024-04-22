@@ -12,6 +12,7 @@ import { openConversationDetail } from '../../../../../utils/router';
 import { Subscription } from 'rxjs';
 import { sleep } from '../../../../../utils/other';
 import { DATETIME_FORMAT } from '../../../../../utils/time';
+import { NotifyType, requestNotifySubscribe } from '../../../../../utils/notify';
 
 Component({
   properties: {
@@ -95,8 +96,9 @@ Component({
         }
       }
     },
-    gotoDetail() {
-      openConversationDetail(this.properties.conversationId as string);
+    async gotoDetail() {
+      requestNotifySubscribe([NotifyType.Chat, NotifyType.BookingRequest, NotifyType.BookingAgreed]).then()
+      await openConversationDetail(this.properties.conversationId as string);
     },
   }
 })
