@@ -1,0 +1,247 @@
+/* components/HelpCard.wxss */
+.root {
+  background: white;
+  width: 100%;
+  /*min-height: 0;*/
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: stretch;
+  padding-bottom: calc(env(safe-area-inset-bottom) / 2);
+  overflow: auto; /* 处理内容溢出的情况 */
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.body {
+  height:auto;
+  width: 100%;
+  flex-grow: 0;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.body .content {
+  --content-padding: 20rpx;
+  background: white;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+}
+
+.divider {
+  flex-basis: 1px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  background-color: #f1f1f1;
+}
+
+.body .content .images {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: var(--content-padding);
+}
+
+.body .content .images-single {
+  width: 100%;
+  max-height: 120vw;
+}
+
+.body .content .images-single image {
+  width: 100%;
+  height: 100%;
+}
+
+.body .content .images-multi {
+  --gap: 10rpx;
+  flex: 1 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  padding: 0 var(--content-padding);
+}
+
+.body .content .images-multi image {
+  border-radius: 8rpx;
+  width: calc((90vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
+  height: calc((90vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
+}
+
+.body .content .info {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 var(--content-padding);
+}
+
+.body .content .info .price {
+  color: #21ac39;
+  display: flex;
+  align-self: flex-end;
+  font-style: italic;
+}
+
+.body .content .info .price .unit {
+  font-size: 28rpx;
+}
+
+.body .content .info .price .amount {
+  font-size: 48rpx;
+}
+
+.body .content .info .views {
+  margin-left: 8rpx;
+  font-size: 24rpx;
+  font-weight: 300;
+  color: #979797;
+}
+
+.body .content .info .spacer {
+  flex-grow: 1;
+}
+
+.body .content .info .quality {
+  width: 150rpx;
+  height: 60rpx;
+  align-self: flex-end;
+}
+
+.body .content .paragraphs {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 12rpx 0;
+  /*-webkit-box-orient: vertical;*/
+  /*-webkit-line-clamp: 1;*/
+  /*overflow: hidden; !* 隐藏溢出内容 *!*/
+}
+
+.body .content .paragraph {
+  font-size: 32rpx;
+  line-height: 48rpx;
+  padding: 0 var(--content-padding);
+  user-select: text;
+  color: #454545;
+  /*-webkit-box-orient: vertical;*/
+  /*-webkit-line-clamp: 5;*/
+}
+
+.body .comments {
+  background: white;
+}
+
+.footer {
+  flex-grow: 0;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 24rpx 20rpx;
+  /*height: 30rpx*/
+}
+
+.footer .left {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.footer .left .button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.footer .left .button .icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.footer .left .button .text {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #979797;
+}
+
+.footer .left .button button {
+  border: none;
+  background-color: transparent;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.footer .right {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.footer .right .polish-time {
+  margin-right: 24rpx;
+  flex-shrink: 1;
+  font-size: 24rpx;
+  text-align: right;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.footer .right .polish-time-hint {
+  flex-shrink: 1;
+  font-size: 20rpx;
+  color: rgba(0, 0, 0, 0.5);
+  text-align: right;
+}
+
+.footer .right .button {
+  flex-shrink: 0;
+  border-radius: 16rpx;
+  padding: 16rpx 48rpx;
+  background: #21ac39;
+  font-size: 28rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #ffeeb4;
+  font-weight: 500;
+}
+
+/*.footer .right .button image {*/
+/*  width: 84rpx;*/
+/*  height: 36rpx;*/
+/*}*/
+
+.button-disabled {
+  opacity: 0.3;
+}

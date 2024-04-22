@@ -1,0 +1,74 @@
+<!--components/HelpCard.wxml-->
+<!--pages/help_detail/index.wxml-->
+<view class="root"  catchtap="gotoDetail">
+  <view wx:if="{{loading}}" class="loading cu-load" />
+  <view wx:elif="{{!help}}" class="loading">
+    <text>求助走丢了</text>
+  </view>
+  <block wx:else>
+    <view class="body">
+      <UserTitleBar user="{{seller}}" hasBack="{{false}}" time="{{createTime}}" />
+      <view class="content">
+        <!--      文章内容-->
+        <view class="paragraphs">
+          <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+        </view>
+<!--        图片-->
+        <view
+          class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
+          style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
+        >
+          <image
+            wx:for="{{help.img_urls}}"
+            wx:for-item="img"
+            wx:key="*this"
+            mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
+            src="{{img}}"
+            data-curr="{{img}}"
+            catchtap="previewImages"
+          />
+        </view>
+        <view class="divider" />
+        <view class="info">
+          <text class="price">
+            <text class="unit">￥</text>
+            <text class="amount">{{help.bounty}}</text>
+          </text>
+          <view class="spacer" />
+        </view>
+      </view>
+      <view class="footer">
+        <view class="left">
+          <view wx:if="{{!isMine}}" class="button" catchtap="onToggleLike">
+            <image class="icon"
+                   src="{{help.is_liked ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
+            <text class="text">点赞</text>
+          </view>
+          <view wx:if="{{!isMine}}" class="button" catchtap="onToggleCollect">
+            <image class="icon"
+                   src="{{help.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
+            <text class="text">收藏</text>
+          </view>
+          <view class="button" catchtap="onClickShare">
+            <image class="icon" src="/images/share.png" />
+            <text class="text">分享</text>
+            <button
+              open-type="share" plain="true"
+              style="border: none; background-color: transparent; position: absolute"
+            />
+          </view>
+          <view wx:if="{{!isMine}}" class="button" catchtap="onClickReport">
+            <image class="icon" src="/images/report.png" />
+            <text class="text">举报</text>
+          </view>
+        </view>
+        <view class="right">
+          <block wx:if="{{help.status === HELP_STATUS_RUNNING && isMine}}">
+            <view class="button" catchtap="onPrivateMessage">去私聊</view>
+          </block>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+

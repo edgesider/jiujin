@@ -49,10 +49,7 @@ Component({
     nop() {},
     async fetchComments() {
       const comments = [];
-      console.log(this.properties.help)
       const { data: questions } = await HelpCommentAPI.getHelpQuestionsAndAnswers(this.properties.help._id, 0, 10);
-      console.log("questions")
-      console.log(questions)
       for (const question of questions) {
         const { data: user } = await api.getUserInfo(question.user_id);
         if (!user) {

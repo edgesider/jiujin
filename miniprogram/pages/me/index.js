@@ -4,7 +4,7 @@ import getConstants, {
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED, HELP_STATUS_RUNNING
 } from "../../constants";
-import api, { CollectApi, getOpenId, HelpCollectApi } from "../../api/api";
+import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import { openProfile } from "../../utils/router";
 
 const app = getApp()
@@ -218,12 +218,14 @@ Page({
             let resp;
             if (type === 'collected') {
               resp = await HelpCollectApi.getAllCollectedHelp(start, count);
-            }else {
+            }else if(type === 'liked'){
+              resp = await HelpLikedApi.getAllCollectedHelp(start, count);
+            } else {
               const status = ({
                 selling: HELP_STATUS_RUNNING
               })[type];
               const self = app.globalData.self._id;
-              const filter = { status, start, count };
+              const filter = { status, start, count ,isMine:1};
 
               resp = await api.getHelpList(filter);
             }

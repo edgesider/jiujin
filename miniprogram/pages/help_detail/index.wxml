@@ -5,7 +5,7 @@
     <text>求助走丢了</text>
   </view>
   <block wx:else>
-    <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{polishTimeGeneral}}" />
+    <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{createTime}}" />
     <scroll-view class="body" scroll-y="{{true}}" scroll-into-view="{{scrollToView}}" scroll-with-animation="{{true}}">
       <view class="content">
         <view
@@ -38,6 +38,9 @@
       </view>
       <view class="divider" />
       <HelpComments id="comments" class="comments" help="{{help}}" bind:loadFinished="onCommentLoadFinished" />
+      <viex>
+        <HelpCard id="comments" class="comments" help="{{help}}"></HelpCard>
+      </viex>
     </scroll-view>
     <view class="footer">
       <view class="left">
@@ -89,4 +92,7 @@
       </view>
     </view>
   </block>
+
+
 </view>
+

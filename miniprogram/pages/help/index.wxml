@@ -1,2 +1,78 @@
 <TitleBar title="互助" hasBack="{{false}}" />
   <!-- 头像、昵称、位置、设置入口 -->
+<scroll-view
+  class="content-scroll"
+  scroll-y="true"
+  scroll-with-animation="true"
+  refresher-enabled="{{pullDownRefreshing || !isLoading}}"
+  refresher-triggered="{{pullDownRefreshing}}"
+  bindrefresherrefresh="onRefresherRefresh"
+  bindscrolltolower="onReachBottom"
+  lower-threshold="400"
+>
+  <view>
+    <view class="region-filter">
+      <scroll-view scroll-x>
+        <view class="container">
+          <view
+            class="item {{selectedRegionIndex === idx ? 'item-on' : ''}}"
+            wx:for="{{regions}}"
+            wx:key="_id"
+            wx:for-index="idx"
+            bind:tap="onRegionClick"
+            data-idx="{{idx}}"
+          >
+            <text class="item-text">{{item.name}}</text>
+            <view class="item-indicator" wx:if="{{selectedRegionIndex === idx}}" />
+          </view>
+        </view>
+      </scroll-view>
+      <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />
+    </view>
+
+    <view class="list">
+      <HelpCard
+        wx:for="{{helpList}}" wx:key="_id" wx:for-item="item"
+        class="card"
+        help="{{item}}"
+        showRegionLevel="{{selectedRegionIndex - 1}}"
+      />
+    </view>
+    <view class="bottom">
+      <view wx:if="{{isLoading}}" class="cu-load loading">1111</view>
+      <block wx:else>
+        <view class="no-more">
+          <view class="actions">
+            <view>到底啦~</view>
+            <view class="action" bindtap="refreshCurrentTab">刷新</view>
+            <block wx:if="{{selectedRegionIndex < regions.length - 1}}">
+              <view>或</view>
+              <view
+                class="action"
+                bind:tap="onRegionClick"
+                data-idx="{{selectedRegionIndex + 1}}"
+              >去“{{regions[selectedRegionIndex + 1].name}}”看看
+              </view>
+            </block>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</scroll-view>
+
+
+<view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />
+
+<view class="ranking-container" wx:if="{{showRankingPopup}}">
+  <view class="ranking-mask" bind:tap="onToggleRankingSwitch" />
+  <view class="ranking" style="top: {{rankingPopupTop}}px">
+    <view
+      wx:for="{{rankingOptions}}" wx:key="unique" wx:for-index="idx"
+      class="{{chosenRankingKey === item.key ? 'ranking-on' : 'ranking-off'}}"
+      bind:tap="onRankingKeyChanged" data-ranking-key="{{item.key}}"
+    >
+      {{item.text}}
+    </view>
+  </view>
+</view>
