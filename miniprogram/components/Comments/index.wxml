@@ -51,11 +51,14 @@
       </view>
     </view>
   </view>
-  <view wx:if="{{commenting}}" class="popup-input">
+  <view
+    wx:if="{{commenting}}"
+    class="popup-input"
+  >
     <view class="mask" bindtap="onEndComment" />
     <view
       class="input-line"
-      style="padding-bottom: {{keyboardHeight}}px"
+      style="padding-bottom: calc({{keyboardHeight}}px + 20rpx)"
     >
       <textarea
         class="input"

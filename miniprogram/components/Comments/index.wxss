@@ -159,7 +159,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 100;
+  z-index: 1000000;
 
   opacity: 0;
   animation: popup-opacity ease-in-out 0.1s forwards;

@@ -15,6 +15,7 @@
       placeholder="说点啥~" bind:confirm=""
       confirm-type="send"
       focus="{{inputFocused}}"
+      adjust-position="{{false}}"
       maxlength="10240"
       value="{{input}}"
       bindtap="onInputTap"

@@ -127,7 +127,7 @@ Component({
       ensureRegistered();
       this.setData({
         commenting: true,
-        commentingTo: comment, // 如果是回复则有这个字段
+        commentingTo: comment ?? null, // 如果是回复则有这个字段
       })
     },
     async onLongPress({ currentTarget: { dataset: { comment } } }) {
