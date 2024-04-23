@@ -1,0 +1,91 @@
+/* components/HelpCardTitleBar/index.wxss */
+@import "/app.wxss";
+
+.top-user {
+  background: white;
+  padding: 0 0 16rpx;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.top-user .back {
+  padding: 0 16rpx;
+  font-size: 42rpx;
+}
+
+.top-user .avatar {
+  border-radius: 50%;
+  width: 80rpx;
+  height: 80rpx;
+}
+
+.top-user .info {
+  margin-left: 12rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.top-user .info .line1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.top-user .info .line1 .name {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.top-user .info .line1 .time {
+  font-size: 20rpx;
+  margin-left: 8rpx;
+  color: #979797;
+}
+
+.top-user .info .line2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 2rpx;
+}
+
+.top-user .info .line2 .region-icon {
+  width: 20rpx;
+  height: 30rpx;
+}
+
+.top-user .info .line2 .region {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #979797;
+}
+
+.right {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+.price {
+  color: #21ac39;
+  display: flex;
+  align-self: flex-end;
+  font-style: italic;
+}
+
+.unit {
+  font-size: 28rpx;
+}
+
+.amount {
+  font-size: 48rpx;
+}
