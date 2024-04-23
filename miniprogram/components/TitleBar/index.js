@@ -7,10 +7,6 @@ Component({
       type: String,
       value: '详情'
     },
-    hasBack: {
-      type: Boolean,
-      value: true
-    },
     hasDivider: {
       type: Boolean,
       value: true
@@ -18,16 +14,15 @@ Component({
   },
   data: {
     ...getConstants(),
+    isTabBarPage: false,
     isFirstPage: false,
   },
   attached() {
     const pages = getCurrentPages();
-    if (pages.length === 1 && !pages[0].getTabBar()) {
-      // 只有一个页面，并且这个页面不带TabBar（不是主页的）
-      this.setData({
-        isFirstPage: true,
-      });
-    }
+    this.setData({
+      isFirstPage: pages.length === 1,
+      isTabBarPage: pages[pages.length - 1].getTabBar(),
+    })
   },
   methods: {
     back() {

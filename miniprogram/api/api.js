@@ -10,8 +10,7 @@ axios.defaults.adapter = mpAdapter;
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  // baseURL: 'http://192.168.1.9:8080/',
-  baseURL: 'https://lllw.ykai.cc',
+  baseURL: 'https://lllw.cc',
   // baseURL: 'http://192.168.2.218:8080/',
   // baseURL: (version === 'release' || version === 'trial')
   //   ? 'https://lllw.ykai.cc'
@@ -61,7 +60,8 @@ export function getOpenId() {
 
 export function wrapResp(resp) {
   if (resp.status !== 200 || !resp.data?.succeed) {
-    return new RespError(`${resp.status} ${resp.statusText}`, resp.data?.errCode ?? -1);
+    const errMsg = resp.data.errMsg || `${resp.status} ${resp.statusText}`;
+    return new RespError(errMsg, resp.data?.errCode ?? -1);
   }
   return new RespSuccess(resp.data?.data);
 }
@@ -410,7 +410,14 @@ const api = {
         _id: commodity_id,
       }
     }));
-  }
+  },
+
+  async verifyByEmail(email) {
+    return wrapResp(await request({
+      path: '/user/verify',
+      data: { email, }
+    }))
+  },
 }
 
 export default api;

@@ -92,6 +92,7 @@
   display: flex;
   align-self: flex-end;
   font-style: italic;
+  font-weight: bold;
 }
 
 .body .content .info .price .unit {
@@ -99,7 +100,7 @@
 }
 
 .body .content .info .price .amount {
-  font-size: 48rpx;
+  font-size: 54rpx;
 }
 
 .body .content .info .views {
@@ -107,6 +108,7 @@
   font-size: 24rpx;
   font-weight: 300;
   color: #979797;
+  transform: translateY(12rpx);
 }
 
 .body .content .info .spacer {
@@ -218,19 +220,14 @@
   border-radius: 16rpx;
   padding: 16rpx 48rpx;
   background: #21ac39;
-  font-size: 28rpx;
+  font-size: 34rpx;
+  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  color: #ffeeb4;
-  font-weight: 500;
+  color: #fff;
 }
-
-/*.footer .right .button image {*/
-/*  width: 84rpx;*/
-/*  height: 36rpx;*/
-/*}*/
 
 .button-disabled {
   opacity: 0.3;

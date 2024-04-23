@@ -1,7 +1,10 @@
-import { Region } from '../types';
-import { openLogin } from './router';
+import { Region, User } from '../types';
+import { openLogin, openVerify } from './router';
 
-export function tryJsonParse<T = any>(str: string, defaultValue: T | null = null): T | null {
+export function tryJsonParse<T = any>(str: string | undefined | null, defaultValue: T | null = null): T | null {
+  if (!str) {
+    return defaultValue;
+  }
   try {
     return JSON.parse(str)
   } catch (e) {
@@ -33,11 +36,42 @@ export function getRegionPath(rid: number, ridToRegion?: Record<number, Region |
   return regionPath;
 }
 
-export function ensureRegistered() {
-  if (!getApp().globalData.self) {
+export function getL1Regions(ridToRegion?: Record<number, Region | undefined>): Region[] {
+  ridToRegion = (ridToRegion ?? getApp().globalData.ridToRegion ?? {}) as Record<number, Region | undefined>;
+  return Object.values(ridToRegion)
+    .filter(region => region?.level === 1)
+    .filter((r): r is Region => Boolean(r));
+}
+
+/**
+ * 获取以某个rid为父区域的所有rid，只包含一级，不会递归往下找
+ */
+export function getRegionsByParent(parentRid: number, ridToRegion?: Record<number, Region | undefined>): Region[] {
+  ridToRegion = (ridToRegion ?? getApp().globalData.ridToRegion ?? {}) as Record<number, Region | undefined>;
+  if (!ridToRegion) {
+    return [];
+  }
+  return ridToRegion[parentRid]!!.children
+    .map(rid => ridToRegion!![rid])
+    .filter((r): r is Region => Boolean(r));
+}
+
+export function ensureRegistered(): User {
+  const user = getApp().globalData.self;
+  if (!user) {
     openLogin().then();
     throw Error('not registered');
   }
+  return user;
+}
+
+export function ensureVerified() {
+  const self = ensureRegistered();
+  if (!self.verify_status) {
+    openVerify().then();
+    throw Error('not registered');
+  }
+  return self;
 }
 
 /**

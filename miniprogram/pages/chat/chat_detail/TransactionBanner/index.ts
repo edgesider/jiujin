@@ -3,6 +3,8 @@ import { Commodity } from '../../../../types';
 import { getContentDesc } from '../../../../utils/strings';
 import { Transaction, TransactionApi, TransactionStatus } from '../../../../api/transaction';
 import { openCommodityDetail } from '../../../../utils/router';
+import { NotifyType, requestNotifySubscribe } from '../../../../utils/notify';
+import { sleep } from '../../../../utils/other';
 
 const app = getApp();
 
@@ -25,8 +27,8 @@ Component({
     ...getConstants(),
     isSeller: false,
     commodityDesc: '',
-    statusImage: '',
-    tip: '',
+    statusImage: null as string | null,
+    tips: [] as string[],
   },
   lifetimes: {
     attached() {
@@ -35,13 +37,16 @@ Component({
   methods: {
     async update() {
       const commodity = this.properties.commodity as Commodity;
+      const transaction = this.properties.transaction as Transaction;
       this.setData({
         isSeller: commodity.seller_id === app.globalData.self._id,
         commodityDesc: getContentDesc(commodity.content, 40),
+        tips: this.getTransactionStatusTip(transaction),
+        statusImage: this.getTransactionStatusImage(transaction),
       })
     },
     afterTransactionActionDone(messageToPeer: string) {
-      this.triggerEvent('on-transaction-action-done', {
+      this.triggerEvent('onTransactionActionDone', {
         messageToPeer: messageToPeer,
       });
     },
@@ -50,7 +55,7 @@ Component({
     },
     async agreeBooking() {
       const { confirm } = await wx.showModal({
-        content: '该用户想你申请预订商品，预定期间商品暂时下架，其他人不可见，是否同意？',
+        content: '该用户向你申请预订商品，预定期间商品暂时下架',
         confirmText: '同意',
         cancelText: '取消',
         showCancel: true,
@@ -74,23 +79,16 @@ Component({
       wx.showToast({ title: '已同意', }).then();
     },
     async denyBooking() {
-      const { confirm } = await wx.showModal({
-        content: '确认拒绝？',
-        confirmText: '确认',
-        cancelText: '取消',
-        showCancel: true,
-      });
-      if (!confirm) {
-        return;
-      }
       const { transaction } = this.data;
       if (!transaction) {
         return;
       }
-      const reasons = ['商品已售出', '交易距离远', '不想卖了', '其他'];
-      const { tapIndex } = await wx.showActionSheet({
-        itemList: reasons
-      });
+      const reasons = [
+        '已通过其他方式出售',
+        '交易距离远',
+        '不想卖了',
+      ];
+      const { tapIndex } = await wx.showActionSheet({ itemList: reasons });
       const reason = reasons[tapIndex];
       const resp = await TransactionApi.denyBooking(transaction.id, reason);
       if (resp.isError) {
@@ -100,7 +98,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone(`因“${reason}”，我已拒绝你的预定`);
+      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的预定`);
       wx.showToast({ title: '已拒绝' }).then();
     },
     async requestBooking() {
@@ -118,6 +116,8 @@ Component({
       }
       this.afterTransactionActionDone('我已发出预约申请');
       wx.showToast({ title: '已申请预约' }).then();
+      await sleep(200);
+      requestNotifySubscribe([NotifyType.BookingAgreed]).then()
     },
     async cancelBooking() {
       const { transaction } = this.data;
@@ -137,7 +137,7 @@ Component({
     },
     async confirmSold() {
       const { confirm } = await wx.showModal({
-        content: '售出后该商品可参与抽奖……确认已售出？',
+        content: '点击确认，该商品将被标注为“已售出”状态，其他人不可购买。',
         confirmText: '确认',
         cancelText: '取消',
         showCancel: true,
@@ -161,20 +161,16 @@ Component({
       wx.showToast({ title: '已确认售出', }).then();
     },
     async confirmTerminated() {
-      const { confirm } = await wx.showModal({
-        content: '确认终止？',
-        confirmText: '确认',
-        cancelText: '取消',
-        showCancel: true,
-      });
-      if (!confirm) {
-        return;
-      }
       const { transaction } = this.data;
       if (!transaction) {
         return;
       }
-      const reasons = ['商品已售出', '交易距离远', '不想卖了', '其他'];
+      const reasons = [
+        '已通过其他方式出售',
+        '交易距离远',
+        '买家不想买了',
+        '不想卖了',
+      ];
       const { tapIndex } = await wx.showActionSheet({
         itemList: reasons
       });
@@ -187,8 +183,8 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已确认终止');
-      wx.showToast({ title: '已确认终止', }).then();
+      this.afterTransactionActionDone(`因“${reason}”，我已确认终止交易`);
+      wx.showToast({ title: '已终止', }).then();
     },
     getTransactionStatusImage(transaction: Transaction) {
       return ({
@@ -198,18 +194,23 @@ Component({
         [TransactionStatus.Finished]: '/images/已成交.png',
       })[transaction.status] ?? null;
     },
-    getTransactionStatusTip(transaction: Transaction) {
-      let tip;
+    getTransactionStatusTip(transaction: Transaction): string[] {
+      let tips;
       if (this.data.isSeller) {
-        tip = ({
-          [TransactionStatus.Booked]: '点击“已售出”商品正式下架，点击“未售出”后商品擦亮置顶',
+        tips = ({
+          [TransactionStatus.Booked]: [
+            '点击“已售出”商品正式下架，点击“未售出”后商品擦亮置顶',
+            '如12小时内无任何操作，会自动转为“已售出”状态',
+          ],
         })[transaction.status];
       } else {
-        tip = ({
-          [TransactionStatus.Idle]: '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品',
+        tips = ({
+          [TransactionStatus.Idle]: [
+            '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品'
+          ],
         })[transaction.status];
       }
-      return tip ?? null;
+      return tips ?? [];
     }
   }
 });

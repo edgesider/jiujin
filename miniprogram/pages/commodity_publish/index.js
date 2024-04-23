@@ -5,6 +5,7 @@ import { getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
 import { sleep } from "../../utils/other";
 import getConstants, { GENDER } from "../../constants";
+import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
 
 const app = getApp()
 
@@ -24,7 +25,7 @@ Page({
     commodityImg: [],
     categoryIndex: 0,
     commodityContent: "",
-    commodityCurrentPriceText: '0',
+    commodityCurrentPriceText: '',
     commodityCurrentPrice: 0,
     qualityIndex: 0,
 
@@ -114,6 +115,13 @@ Page({
     })
   },
   onPriceInputBlur(event) {
+    if (this.data.commodityCurrentPriceText.length === 0) {
+      // 支持空白
+      this.setData({
+        commodityCurrentPrice: 0,
+      });
+      return;
+    }
     let price = parseFloat(this.data.commodityCurrentPriceText) || 0;
     price = Math.max(Math.min(price, 99999.9), 0)
     this.setData({
@@ -140,7 +148,7 @@ Page({
       count: 9, //默认9
       sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
       success: (res) => {
-        if (this.data.commodityImg.length != 0) {
+        if (this.data.commodityImg.length !== 0) {
           this.setData({
             commodityImg: this.data.commodityImg.concat(res.tempFilePaths)
           })
@@ -196,7 +204,7 @@ Page({
     if (!rules.required(params.content)) {
       return '请填写商品描述';
     }
-    if (!rules.required(params.img_urls)) {
+    if (params.img_urls.length === 0) {
       return '请至少上传一张商品图片';
     }
     // if (!rules.required(params.cid)) {
@@ -232,6 +240,8 @@ Page({
 
   // 上传商品信息
   async onSubmit() {
+    await requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed]);
+
     const {
       editingCommodity: editing,
       self,
@@ -262,10 +272,12 @@ Page({
       only_same_sex: filters.find(f => f.key === 'sex').selected,
       only_same_building: filters.find(f => f.key === 'building').selected,
     });
-    console.log(info);
     const error = this.checkForm(info);
     if (error) {
-      Dialog.alert({ title: error, })
+      await wx.showToast({
+        title: error,
+        icon: 'error',
+      })
       return;
     }
     console.log(editing ? 'editing commodity' : 'creating commodity', info);

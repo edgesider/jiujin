@@ -8,7 +8,7 @@ Page({
   data: {
     ...getConstants(),
     pullDownRefreshing: false,
-    isLoading: false,
+    isLoading: true,
     cursor: 0,
     commodityList: [],
 
@@ -18,6 +18,7 @@ Page({
   },
   fetcher: async () => ({}),
   onClick: () => {},
+  fetchToken: 0,
   async onLoad() {
     this.getOpenerEventChannel().on(
       'onParams',
@@ -37,15 +38,16 @@ Page({
   },
 
   async fetchMore() {
-    if (this.data.isLoading) {
-      return;
-    }
+    const token = ++this.fetchToken;
     this.setData({ isLoading: true, })
     const res = await this.fetcher({
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
       currTab: this.data.currTab,
     })
+    if (token !== this.fetchToken) {
+      return;
+    }
     if (!res || res instanceof Error || !Array.isArray(res)) {
       await wx.showToast({
         title: '网络错误',

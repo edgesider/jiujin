@@ -3,6 +3,13 @@ page {
   background: #f6f6f6;
 }
 
+.title-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
 /* 基本信息与视频、图片 */
 .Content {
   padding: 3%;
@@ -54,6 +61,9 @@ page {
   background: #ffffff;
   border-radius: 20rpx;
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .price_title {
@@ -64,7 +74,8 @@ page {
 }
 
 .price {
-  width: 560rpx;
+  position: relative;
+  flex-grow: 1;
   height: 90rpx;
   text-align: right;
   font-weight: bold;

@@ -88,14 +88,7 @@
           />
         </view>
       </scroll-view>
-      <view wx:elif="{{state === 'loading'}}" class="loading-container">
-        <image
-          class="loading-icon"
-          mode="aspectFit"
-          src="/images/loading.png"
-        />
-        <text class="loading-text">加载中</text>
-      </view>
+      <FullPageLoading wx:elif="{{state === 'loading'}}" style="margin-top: 400rpx; align-self: center;" />
       <image wx:else src="/images/empty.png" class="state-image" mode="aspectFit"/>
     </block>
     <image wx:elif="{{state === 'error'}}" src="/images/error.png" class="state-image" mode="aspectFit"/>

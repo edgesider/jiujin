@@ -1,11 +1,17 @@
 import getConstants from '../../../constants';
-import { getCommodityGroupAttributes, listenMessage } from '../../../utils/im';
+import { getCommodityGroupAttributes, listenMessage, sendMessage } from '../../../utils/im';
 import api from '../../../api/api';
 import { Transaction, TransactionApi, TransactionStatus } from '../../../api/transaction';
-import { getContentDesc } from '../../../utils/strings';
 import { Conversation, Group } from '@tencentcloud/chat';
 import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
+import { tryJsonParse } from '../../../utils/other';
+import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
+
+type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
+type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
+type Input = WechatMiniprogram.Input;
+type InputConfirm = WechatMiniprogram.InputConfirm;
 
 const app = getApp();
 
@@ -15,18 +21,21 @@ Page({
     isSeller: false,
     seller: null as User | null,
     buyer: null as User | null,
-    conversationName: '',
     conversationId: null as string | null,
     conversation: null as Conversation | null,
     group: null as Group | null,
     commodity: null as Commodity | null,
-    commodityDesc: '',
     transaction: null as Transaction | null,
-    statusImage: null as string | null,
-    tip: '',
+
+    keyboardHeight: 0,
+    input: '',
+    inputFocused: false,
   },
   subscription: null as Subscription | null,
   async onLoad(options) {
+    this.subscription = new Subscription();
+    await app.waitForReady();
+
     const { conversationId } = options;
     if (!conversationId) {
       await wx.showToast({
@@ -37,13 +46,23 @@ Page({
     }
     this.setData({ conversationId, });
 
+    const kbHeightChanged = (res: OnKeyboardHeightChangeCallbackResult) => {
+      this.setData({
+        keyboardHeight: res.height,
+      })
+    };
+    wx.onKeyboardHeightChange(kbHeightChanged);
+    this.subscription!!.add(() => {
+      wx.offKeyboardHeightChange(kbHeightChanged);
+    });
+
     const { conversation } = (await tim.getConversationProfile(conversationId)).data;
     tim.setMessageRead({ conversationID: conversation.conversationID }).then();
     const group = conversation.groupProfile;
     const attrs = await getCommodityGroupAttributes(group.groupID);
     if (!attrs) {
       await wx.showToast({
-        title: '无效的对话',
+        title: '网络错误',
         icon: 'error',
       })
       return;
@@ -71,9 +90,7 @@ Page({
     const buyer = buyerResp.data!!;
     this.setData({
       commodity: commodity,
-      commodityDesc: getContentDesc(commodity.content, 40),
       isSeller: sellerId === app.globalData.self._id,
-      conversationName: this.getConversationName(conversation),
       seller,
       buyer,
       conversation,
@@ -81,12 +98,15 @@ Page({
       transaction,
     });
 
-    this.subscription = listenMessage(conversation.conversationID).subscribe(msg => {
-      const custom = JSON.parse(msg.cloudCustomData ?? '{}');
+    this.subscription!!.add(listenMessage(conversation.conversationID).subscribe(msg => {
+      const custom = tryJsonParse(msg.cloudCustomData);
       if (custom?.needUpdateTransaction) {
         this.updateTransaction().then();
       }
-    })
+    }));
+  },
+  onUnload() {
+    this.subscription?.unsubscribe();
   },
   getConversationName(conversation: Conversation) {
     if (conversation.type === '@TIM#SYSTEM') {
@@ -107,19 +127,46 @@ Page({
     if (!group) {
       return;
     }
+    let customData: string | undefined = undefined;
+    if (updatePeerTransaction) {
+      customData = JSON.stringify({
+        needUpdateTransaction: updatePeerTransaction
+      });
+    }
     const msg = tim.createTextMessage({
       to: group.groupID,
       conversationType: tim.TYPES.CONV_GROUP,
       payload: { text },
-      cloudCustomData: JSON.stringify({
-        needUpdateTransaction: updatePeerTransaction
-      })
+      cloudCustomData: customData,
     });
-    await tim.sendMessage(msg);
-    this.selectComponent('#MessageList').updateMessageList(msg);
+    await sendMessage(msg);
   },
-  async onTransactionActionDone({ messageToPeer }: { messageToPeer: string }) {
-    console.log('messageToPeer', messageToPeer);
+  async sendImageMessage(img: ChooseImageSuccessCallbackResult) {
+    const { group } = this.data;
+    if (!group) {
+      return;
+    }
+    const msg = tim.createImageMessage({
+      to: group.groupID,
+      conversationType: tim.TYPES.CONV_GROUP,
+      payload: {
+        file: img
+      },
+    });
+    await wx.showLoading({ title: '发送中' });
+    try {
+      await sendMessage(msg);
+    } catch (e) {
+      console.error(e);
+      await wx.showToast({
+        title: '网络错误',
+      });
+    } finally {
+      await wx.hideLoading();
+    }
+  },
+  async onTransactionActionDone(ev: any) {
+    const messageToPeer = ev.detail.messageToPeer || '交易状态已变更';
     this.updateTransaction().then();
     this.sendTextMessage(messageToPeer, true).then();
   },
@@ -127,11 +174,39 @@ Page({
     if (!this.data.transaction) {
       return;
     }
-    console.log('updating transaction');
     const transaction = (await TransactionApi.getById(this.data.transaction.id)).data;
     if (!transaction) {
       return;
     }
     this.setData({ transaction, });
+  },
+  onInputTap() {
+    this.setData({
+      inputFocused: true,
+    });
+  },
+  onInputBlur() {
+    this.setData({
+      inputFocused: false,
+    });
+  },
+  onInput(ev: Input) {
+    this.setData({ input: ev.detail.value });
+  },
+  async onInputConfirm(ev: InputConfirm) {
+    const input = ev.detail.value.trim();
+    this.setData({ input: '', });
+    if (!input) {
+      return;
+    }
+    await this.sendTextMessage(input);
+  },
+  async onSendImageIconClick() {
+    const res = await wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+    });
+    await this.sendImageMessage(res);
   },
 });

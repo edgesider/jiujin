@@ -9,7 +9,7 @@
     "pages/commodity_list/index",
     "pages/profile/index",
     "pages/chat/chat_list/index",
-    "pages/chat/chat_detail_v2/index",
+    "pages/chat/chat_detail/index",
     "pages/chat/system_chat_detail/index",
     "pages/login/index",
     "pages/help/index",
@@ -23,10 +23,11 @@
     "backgroundTextStyle": "light",
     "navigationStyle": "custom",
     "enablePullDownRefresh": false,
-    "onReachBottomDistance": 200
+    "onReachBottomDistance": 200,
+    "disableScroll": true,
+    "navigationBarTextStyle": "black"
   },
   "usingComponents": {
-    "cu-custom": "/colorui/components/cu-custom"
   },
   "tabBar": {
     "custom": true,

@@ -1,0 +1,5 @@
+<TUIChat
+  id="TUIChat"
+  currentConversationID="{{conversationId}}"
+  unreadCount="{{unreadCount}}"
+/>

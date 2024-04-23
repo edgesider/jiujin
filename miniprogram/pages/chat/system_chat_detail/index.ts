@@ -10,7 +10,6 @@ import { DATETIME_FORMAT } from '../../../utils/time';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
-const app = getApp();
 const COUNT_PER_PAGE = 20;
 
 interface BaseNotifyPayload {
@@ -47,7 +46,7 @@ Page({
     convName: '',
     state: 'loading' as 'loading' | 'empty' | 'error',
     conversation: null as Conversation | null,
-    messages: [] as NotifyMsg[],
+    messages: [] as NotifyMsg[], // 消息列表，新消息在前
     nextMsgId: null,
     isCompleted: false,
   },
@@ -74,7 +73,7 @@ Page({
       this.setData({ conversation: conv });
     }));
     subscription.add(listenMessage(conv.conversationID).subscribe(rawMsg => {
-      this.onMessageUpdate([rawMsg], 'prepend');
+      this.onMessageUpdate([rawMsg], 'newer');
     }));
     this.subscription = subscription;
     await this.fetchMoreMessages();
@@ -90,8 +89,7 @@ Page({
    * @param rawMsgList 原始的消息列表，需要确保最新的消息在前面
    * @param mode 添加方式
    */
-  onMessageUpdate(rawMsgList: Message[], mode: 'prepend' | 'append' | 'replace') {
-    console.log(rawMsgList);
+  onMessageUpdate(rawMsgList: Message[], mode: 'newer' | 'older' | 'replace') {
     const msgList = rawMsgList
       .map(this.convertRawMsg)
       .filter((msg): msg is NotifyMsg => Boolean(msg));
@@ -99,9 +97,9 @@ Page({
       this.setData({ messages: msgList });
     } else {
       const { messages } = this.data;
-      if (mode === 'prepend') {
+      if (mode === 'newer') {
         messages.splice(0, 0, ...msgList);
-      } else if (mode === 'append') {
+      } else if (mode === 'older') {
         messages.push(...msgList);
       }
       this.setData({ messages });
@@ -109,7 +107,7 @@ Page({
   },
   convertRawMsg(rawMsg: Message): NotifyMsg | undefined {
     try {
-      const payload: NotifyPayload = tryJsonParse(rawMsg.payload.text);
+      const payload: NotifyPayload | null = tryJsonParse(rawMsg.payload.text);
       if (!payload || !payload.type) {
         return;
       }
@@ -125,7 +123,7 @@ Page({
         ...payload
       };
     } catch (e) {
-      console.error(e);
+      console.warn(e);
       return undefined;
     }
   },
@@ -144,7 +142,7 @@ Page({
       isCompleted: newList.data.isCompleted,
       nextMsgId: newList.data.nextReqMessageID,
     })
-    this.onMessageUpdate(newList.data.messageList.reverse(), 'append');
+    this.onMessageUpdate(newList.data.messageList.reverse(), 'older');
   },
   async onReachBottom() {
     await this.fetchMoreMessages();

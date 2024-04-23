@@ -15,29 +15,54 @@
 }
 
 .user {
-  margin-top: 24rpx;
   width: 100%;
   height: auto;
-  padding: 0 24rpx;
+  padding: 24rpx 12rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: white;
 }
 
 .user .avatar {
   width: 96rpx;
   height: 96rpx;
   border-radius: 50%;
-}
-
-.user .infos .username {
+  margin-right: 12rpx;
 }
 
 .user .infos .region-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.user .infos .region-name image {
+  width: 28rpx;
+  height: 28rpx;
 }
 
 .user .infos .last-seen {
+  font-size: 22rpx;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.state-text {
+  width: 100%;
+  padding-left: 20rpx;
+  margin-top: 12rpx;
+  color: #3c3c3c;
+  font-size: 32rpx;
+  font-weight: bold;
 }
 
 .filters {
@@ -70,7 +95,7 @@
   align-items: flex-start;
   flex-wrap: wrap;
 
-  --gap: 24rpx;
+  --gap: 12rpx;
   gap: var(--gap);
   padding: var(--gap);
 }

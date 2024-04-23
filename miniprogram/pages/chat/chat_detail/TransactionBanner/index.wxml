@@ -2,7 +2,10 @@
   <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}" bindtap="gotoCommodityDetail" />
   <view class="info" bindtap="gotoCommodityDetail">
     <text class="title">{{commodityDesc}}</text>
-    <text class="price">￥{{commodity.price}}</text>
+    <text>
+      <text class="price-unit">￥</text>
+      <text class="price">{{commodity.price}}</text>
+    </text>
     <image class="status" src="{{statusImage}}" />
   </view>
   <view class="actions">
@@ -51,5 +54,7 @@
     </block>
   </view>
 </view>
-<view class="tip" wx:if="{{tip}}">{{tip}}</view>
+<view class="tip" wx:if="{{tips.length > 0}}">
+  <text wx:for="{{tips}}" wx:for-item="tip">{{tip}}</text>
+</view>
 <view class="divider" wx:else />

@@ -14,6 +14,9 @@ export interface User {
   like_group_id: string;
   collect_group_id: string;
   comment_group_id: string;
+  verify_status: boolean;
+  verify_email?: string;
+  verify_time?: number;
 }
 
 export interface Commodity {
@@ -46,6 +49,7 @@ export function convertCommodity(raw: any) {
 export interface Region {
   _id: number;
   name: string;
+  level: number;
   parents: number[];
   children: number[];
 }

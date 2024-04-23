@@ -1,9 +1,11 @@
 import getConstants from '../../../constants';
 import { setTabBar, sleep } from '../../../utils/other';
-import { Conversation, Message } from '@tencentcloud/chat';
+import { Conversation } from '@tencentcloud/chat';
 import { User } from '../../../types';
-import { isGroupIdForTransaction, listenConversationListUpdate } from '../../../utils/im';
+import { isCreateGroupMsg, isTransactionGroup, listenConversationListUpdate } from '../../../utils/im';
 import { Subscription } from 'rxjs';
+import { getOpenId } from '../../../api/api';
+import { getNotifySwitches, NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 
 const app = getApp();
 
@@ -13,19 +15,29 @@ Page({
     conversations: [] as Conversation[],
     refreshing: false,
     self: null as User | null,
+    showNotifyTip: false,
   },
   subscription: null as Subscription | null,
   async onLoad() {
     setTabBar(this, () => {
       this.onRefresh();
     });
-    this.setData({
-      self: app.globalData.self
-    });
+    this.setData({ self: app.globalData.self });
 
     this.subscription = listenConversationListUpdate().subscribe(list => {
       this.onConversationListUpdate(list);
     })
+
+    // const switches = await getNotifySwitches();
+    // if (switches.mainSwitch) {
+    //   if (![
+    //     NotifyType.BookingRequest, NotifyType.BookingAgreed, NotifyType.Chat
+    //   ].every(t => switches[t])) {
+    //     this.setData({
+    //       showNotifyTip: true
+    //     })
+    //   }
+    // }
   },
   onUnload() {
     this.subscription?.unsubscribe()
@@ -36,7 +48,12 @@ Page({
   async onConversationListUpdate(conversationList: Conversation[]) {
     this.setData({
       conversations: conversationList
-        .filter(conv => conv.groupProfile && isGroupIdForTransaction(conv.groupProfile.groupID)),
+        .filter(conv =>
+          conv.groupProfile
+          && isTransactionGroup(conv.groupProfile.groupID)
+          && conv.lastMessage && conv.lastMessage.fromAccount
+          && !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
+        ),
     });
 
     const { self } = this.data;
@@ -76,5 +93,8 @@ Page({
       await sleep(500);
       this.setData({ refreshing: false });
     }
+  },
+  requestNotifySubscribe() {
+    requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed, NotifyType.Chat]).then();
   },
 })

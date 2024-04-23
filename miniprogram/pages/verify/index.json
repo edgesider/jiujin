@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+  "TitleBar": "/components/TitleBar/index"
+  },
+  "enablePullDownRefresh": false,
+  "disableScroll": true
+}

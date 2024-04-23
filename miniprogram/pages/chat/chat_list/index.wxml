@@ -1,4 +1,9 @@
-<TitleBar title="消息" hasBack="{{false}}" />
+<TitleBar title="消息" />
+
+<view class="notify-tip" wx:if="{{showNotifyTip}}">
+  <text>订阅消息后可及时收到交易通知</text>
+  <view class="button" bindtap="requestNotifySubscribe">去订阅</view>
+</view>
 
 <view class="header">
   <SystemConversation

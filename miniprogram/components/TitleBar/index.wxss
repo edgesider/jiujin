@@ -1,7 +1,12 @@
 @import "/app.wxss";
 
+.top-space {
+  width: 100%;
+  background: #fff;
+}
+
 .top {
-  background: white;
+  background: #fff;
   position: relative;
   width: 100%;
   flex-grow: 0;
@@ -13,12 +18,12 @@
 }
 
 .top .back {
-  height: 100%;
   padding: 0 16rpx;
   font-size: 42rpx;
   position: absolute;
   left: 0;
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   justify-content: center;
   align-items: center;

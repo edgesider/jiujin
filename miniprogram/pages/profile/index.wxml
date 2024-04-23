@@ -1,5 +1,4 @@
-<TitleBar title="详情" hasBack="true">
-</TitleBar>
+<TitleBar title="{{user.name}}的主页" />
 
 <scroll-view
   class="content-container"
@@ -19,23 +18,26 @@
     <view class="user">
       <image class="avatar" src="{{user.avatar_url}}" />
       <view class="infos">
-        <view class="username">{{user.name}}</view>
-        <view class="region-name">{{regionName}}</view>
+        <view class="region-name">
+          <image src="/images/region.png" />
+          {{regionName}}
+        </view>
         <view class="last-seen">{{lastSeenTime}}来过</view>
       </view>
     </view>
 
-    <view class="filters">
-      <view
-        class="filter {{item.key === currFilter ? 'selected' : ''}}"
-        wx:for="{{filters}}"
-        wx:for-index="idx" wx:key="key"
-        data-key="{{item.key}}"
-        bindtap="onChangeFilter"
-      >
-        {{item.name}}
-      </view>
-    </view>
+    <!--    <view class="filters">-->
+    <!--      <view-->
+    <!--        class="filter {{item.key === currFilter ? 'selected' : ''}}"-->
+    <!--        wx:for="{{filters}}"-->
+    <!--        wx:for-index="idx" wx:key="key"-->
+    <!--        data-key="{{item.key}}"-->
+    <!--        bindtap="onChangeFilter"-->
+    <!--      >-->
+    <!--        {{item.name}}-->
+    <!--      </view>-->
+    <!--    </view>-->
+    <text class="state-text">出售中</text>
     <view class="list">
       <CommodityCard
         wx:for="{{commodityList}}"

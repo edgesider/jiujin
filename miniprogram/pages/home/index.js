@@ -2,8 +2,6 @@ import { getRegionPath, setTabBar } from "../../utils/other";
 import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
-import { openLogin } from "../../utils/router";
-import Identicon from "../../utils/randomAvatar";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -45,6 +43,7 @@ Page({
     chosenRankingKey: 'polish_time-desc',
   },
 
+  initialized: false,
   fetchToken: 0,
 
   async onLoad(options) {
@@ -56,12 +55,16 @@ Page({
       console.log('shareInfo', shareInfo);
       reportShareInfo(shareInfo).then();
     }
-
+    await this.init();
+  },
+  async init() {
     this.setData({ isLoading: true })
     try {
       await app.waitForReady();
       this.updateRegions();
       await this.loadBanners();
+      this.initialized = true;
+
       await this.fetchList();
     } catch (e) {
       await wx.showToast({
@@ -73,8 +76,22 @@ Page({
       this.setData({ isLoading: false });
     }
   },
-  onClickLogo() {
-    // openLogin();
+  async onClickLogo() {
+    const bookingRequestTmpId = 'QMlQmIOyZo90Tc9stZYHO8a8tWuG4J6jK8PI4hGy5MQ';
+    const bookingSucceedTmpId = 'w_NyXTO4HoEMU3kY4u3ngfPnBnwYQ8eQ9iJykU19-Lg';
+    const res = await wx.requestSubscribeMessage({
+      tmplIds: [bookingRequestTmpId, bookingSucceedTmpId]
+    });
+    if (res[bookingRequestTmpId] !== 'accept') {
+      await wx.showToast({
+        title: '发起预定被拒绝'
+      });
+    }
+    if (res[bookingSucceedTmpId] !== 'accept') {
+      await wx.showToast({
+        title: '预定成功被拒绝'
+      });
+    }
   },
 
   onPageScroll(options) {
@@ -130,6 +147,10 @@ Page({
   },
 
   async fetchList({ append } = {}) {
+    if (!this.initialized) {
+      await this.init();
+      return;
+    }
     console.log(`fetch: append=${append}, rid=${this.data.regions[this.data.selectedRegionIndex]._id}`);
     const rid = this.data.regions[this.data.selectedRegionIndex]._id;
 
@@ -190,7 +211,7 @@ Page({
 
   async onRefresherRefresh() {
     this.setData({ pullDownRefreshing: true, })
-    await this.fetchList();
+    await this.init();
     this.setData({ pullDownRefreshing: false, })
   },
 
@@ -234,7 +255,7 @@ Page({
     wx.createSelectorQuery()
       .select('#ranking-switch')
       .boundingClientRect(res => {
-        const top = res.top + 40;
+        const top = res.top + 42;
         this.setData({
           showRankingPopup: true,
           rankingPopupTop: top,

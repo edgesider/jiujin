@@ -1,4 +1,4 @@
-<TitleBar title="{{convName}}" hasBack="{{true}}" />
+<TitleBar title="{{convName}}" />
 
 <scroll-view
   class="container"
@@ -26,4 +26,5 @@
     </view>
     <image class="image" src="{{msg.commodity.img_urls[0]}}" mode="aspectFill" />
   </view>
+  <image wx:if="{{messages.length === 0}}" src="/images/empty.png" mode="aspectFit" class="empty" />
 </scroll-view>

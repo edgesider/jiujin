@@ -30,6 +30,7 @@ App({
     onUnreadCountUpdate: (count) => {},
   },
 
+  launchFailed: false,
   userChangedSubject: new BehaviorSubject(null),
 
   async onLaunch() {
@@ -48,8 +49,12 @@ App({
       console.warn('initialized. globalData=', this.globalData);
       this._ready = true;
       this._readyWaiters.forEach(waiter => waiter[0]());
+      this._readyWaiters.length = 0;
     } catch (e) {
+      console.error('app initialize failed');
+      this.launchFailed = true;
       this._readyWaiters.forEach(waiter => waiter[1](e));
+      this._readyWaiters.length = 0;
     }
   },
 
@@ -213,7 +218,12 @@ App({
   },
 
   async fetchRegions() {
-    const regions = (await api.getRegions()).data ?? [];
+    const resp = await api.getRegions();
+    if (resp.isError || (resp.data?.length ?? 0) === 0) {
+      console.error(resp);
+      throw Error('fetch regions failed');
+    }
+    const regions = resp.data ?? [];
     const ridToRegion = {};
     for (const region of regions) {
       ridToRegion[region._id] = region;
@@ -228,6 +238,9 @@ App({
   },
 
   async waitForReady() {
+    if (this.launchFailed) {
+      await this.onLaunch();
+    }
     return new Promise((resolve, reject) => {
       if (this._ready) {
         resolve();

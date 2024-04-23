@@ -1,9 +1,0 @@
-<view class="container">
-  <UserTitleBar user="{{isSeller ? buyer : seller}}" />
-  <TransactionBanner
-    wx:if="{{commodity && transaction}}"
-    commodity="{{commodity}}"
-    transaction="{{transaction}}"
-    on-transaction-action-done="{{onTransactionActionDone}}"
-  />
-</view>

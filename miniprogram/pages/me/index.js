@@ -6,6 +6,8 @@ import getConstants, {
 } from "../../constants";
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import { openProfile } from "../../utils/router";
+import api, { CollectApi } from "../../api/api";
+import { openProfile, openVerify } from "../../utils/router";
 
 const app = getApp()
 
@@ -23,26 +25,29 @@ Page({
     await app.waitForReady();
     const { self } = app.globalData;
     if (app.globalData.self) {
-      const regionPath = getRegionPath(self.rid);
-      this.setData({
-        selfInfo: self,
-        regionName: regionPath[2] ? `${regionPath[2].name}/${regionPath[0].name}` : regionPath[0].name,
-      });
+      this.updateSelfInfo(self);
     }
     app.userChangedSubject.subscribe(user => {
       this.setData({
         selfInfo: user ?? null
       })
     })
-    this.data.totalUnread = app.globalData.totalUnread;
+  },
+
+  updateSelfInfo(self) {
+    if (!self) {
+      return;
+    }
+    const regionPath = getRegionPath(self.rid);
+    this.setData({
+      selfInfo: self,
+      regionName: regionPath[2] ? `${regionPath[2].name}/${regionPath[0].name}` : regionPath[0].name,
+    });
   },
 
   async onShow() {
     await app.fetchSelfInfo();
-    const { self } = app.globalData;
-    this.setData({
-      selfInfo: self
-    });
+    this.updateSelfInfo(app.globalData.self)
   },
 
   onEditMyInfo() {
@@ -319,5 +324,12 @@ Page({
       return;
     }
     console.log(resp.data);
+  },
+  gotoVerify() {
+    const self = this.data.selfInfo;
+    if (!self || self.authentication_status) {
+      return;
+    }
+    openVerify();
   },
 })

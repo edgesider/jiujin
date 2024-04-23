@@ -1,6 +1,9 @@
 // custom-tab-bar/index.js
 import getConstants from '../constants';
 import { ensureRegistered } from '../utils/other';
+import { Conversation } from "@tencentcloud/chat";
+import { getConversations, isCreateGroupMsg } from "../utils/im";
+import { getOpenId } from "../api/api";
 
 Component({
   data: {
@@ -32,6 +35,7 @@ Component({
         iconClass: 'cuIcon-add',
         selectedIconClass: 'cuIcon-addfill',
         text: '发布',
+        requireRegistered: true,
         iconPath: '/images/add0.png',
         selectedIconPath: '/images/add1.png',
         hasDot: false,
@@ -69,7 +73,13 @@ Component({
       }
 
       await getApp().waitForReady();
-      const unreadChanged = count => {
+      const unreadChanged = async () => {
+        const convList = await getConversations();
+        const count = convList
+          .filter(conv => {
+            return !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
+          })
+          .reduce((count, conv) => count + conv.unreadCount, 0);
         this.data.list.find(item => item.text === '私信').hasDot = count > 0;
         this.setData({
           list: [...this.data.list],

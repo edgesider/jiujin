@@ -1,7 +1,11 @@
 <view style="width: 100%; background: white; height: {{StatusBar}}px" />
 
-<view class="top-user">
-  <text class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}" bindtap="back" wx:if="{{hasBack}}" />
+<view class="top-user" style="height: {{CustomBar}}px;">
+  <text
+    class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}"
+    wx:if="{{!isTabBarPage}}"
+    bindtap="back"
+  />
   <image
     bindtap="onAvatarClick"
     class="avatar"
@@ -13,7 +17,7 @@
       <text class="time" wx:if="{{time}}">{{time}}</text>
     </view>
     <view class="line2" wx:if="{{region}}">
-      <image src="/images/location.png" class="region-icon" />
+      <image src="/images/region.png" class="region-icon" />
       <text class="region">{{region}}</text>
     </view>
   </view>

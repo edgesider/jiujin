@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "CommodityCard": "/components/CommodityCard/index"
+    "CommodityCard": "/components/CommodityCard/index",
+    "FullPageLoading": "/components/FullPageLoading/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

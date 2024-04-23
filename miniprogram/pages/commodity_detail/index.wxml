@@ -1,10 +1,10 @@
 <view class="root">
-  <view wx:if="{{loading}}" class="loading cu-load" />
-  <view wx:elif="{{!commodity}}" class="loading">
+  <FullPageLoading wx:if="{{loading}}" class="loading" src="/images/loading.png" />
+  <view wx:elif="{{!commodity}}">
     <text>商品走丢了</text>
   </view>
   <block wx:else>
-    <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{polishTimeGeneral}}" />
+    <UserTitleBar user="{{seller}}" time="{{polishTimeGeneral}}" />
     <scroll-view class="body" scroll-y="{{true}}" scroll-into-view="{{scrollToView}}" scroll-with-animation="{{true}}">
       <view class="content">
         <view
@@ -32,7 +32,7 @@
           <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
         </view>
         <view class="paragraphs">
-          <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+          <text class="paragraph" user-select wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
         </view>
       </view>
       <view class="divider" />
@@ -53,10 +53,10 @@
             style="border: none; background-color: transparent; position: absolute"
           />
         </view>
-        <view wx:if="{{!isMine}}" class="button" bindtap="onClickReport">
-          <image class="icon" src="/images/report.png" />
-          <text class="text">举报</text>
-        </view>
+        <!--        <view wx:if="{{!isMine}}" class="button" bindtap="onClickReport">-->
+        <!--          <image class="icon" src="/images/report.png" />-->
+        <!--          <text class="text">举报</text>-->
+        <!--        </view>-->
       </view>
       <view class="right">
         <block wx:if="{{commodity.status === COMMODITY_STATUS_SELLING}}">
