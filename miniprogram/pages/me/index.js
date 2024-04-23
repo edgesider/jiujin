@@ -6,8 +6,6 @@ import getConstants, {
 } from "../../constants";
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import { openProfile } from "../../utils/router";
-import api, { CollectApi } from "../../api/api";
-import { openProfile, openVerify } from "../../utils/router";
 
 const app = getApp()
 

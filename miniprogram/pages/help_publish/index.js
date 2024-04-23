@@ -137,7 +137,6 @@ Page({
   // 上传图片
   async uploadImages(paths) {
     const fileIDs = [];
-    console.log("kaishi")
     for (const path of paths) {
       if (/^(cloud|http|https):\/\//.test(path) && !/http:\/\/tmp\//.test(path)) {
         fileIDs.push(path);
@@ -147,9 +146,6 @@ Page({
           `help/${getOpenId()}_${Date.now()}_${Math.random() * 10000000}`
         );
         if (resp.isError) {
-          console.log("1111111111111111")
-          console.log(resp)
-          console.log("11111111111")
           throw resp.message;
         }
         fileIDs.push(resp.data);

@@ -270,18 +270,7 @@ Component({
       isMine: self && self._id === help.uid,
       firstImageSize,
     });
-    console.log("this.data.contentParagraphs")
-    console.log(this.data.contentParagraphs)
-
-
   },
-
-
-
-
-
-
-
 })
 
 /**
