@@ -48,6 +48,7 @@ Component({
     seller: null,
     contentParagraphs: [],
     firstImageSize: [],
+    hasImg:true
   },
 
   /**
@@ -249,13 +250,24 @@ Component({
     const seller = sellerResp.isError ? null : sellerResp.data;
 
     let firstImageSize = [0, 1];
-    if (help.img_urls.length === 1) {
+    if((help.img_urls.length === 0)||(help.img_urls.length === 1&&help.img_urls[0]==="")){
+      firstImageSize = [500, 500];
+      this.setData({
+        hasImg:false
+      })
+    }else {
       try {
         const size = await wx.getImageInfo({ src: help.img_urls[0] });
         firstImageSize = [size.width, size.height];
-      } catch (e) {
+      }catch (e) {
         firstImageSize = [500, 500];
+        this.setData({
+          hasImg:false
+        })
       }
+      this.setData({
+        hasImg:true
+      })
     }
     const { self } = app.globalData;
 

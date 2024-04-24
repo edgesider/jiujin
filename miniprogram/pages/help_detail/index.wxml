@@ -8,21 +8,35 @@
     <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{createTime}}" />
     <scroll-view class="body" scroll-y="{{true}}" scroll-into-view="{{scrollToView}}" scroll-with-animation="{{true}}">
       <view class="content">
-        <view
-          class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
-          style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
-        >
-          <image
-            wx:for="{{help.img_urls}}"
-            wx:for-item="img"
-            wx:key="*this"
-            mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
-            src="{{img}}"
-            data-curr="{{img}}"
-            bindtap="previewImages"
-          />
+        <view>
+          <view wx:if="{{hasImg===false}}" >
+<!--          <view>-->
+            <view class="divider" />
+            <text>条件为jia时展示的内容</text>
+          </view>
+          <view
+            wx:else
+            class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
+            style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
+          >
+<!--          <view-->
+<!--            class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"-->
+<!--            style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"-->
+<!--          >-->
+
+            <image
+              wx:for="{{help.img_urls}}"
+              wx:for-item="img"
+              wx:key="*this"
+              mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
+              src="{{img}}"
+              data-curr="{{img}}"
+              bindtap="previewImages"
+            />
+            <text>条件为真时展示的内容</text>
+            <view class="divider" />
+          </view>
         </view>
-        <view class="divider" />
         <view class="info">
           <text class="price">
             <text class="unit">￥</text>
@@ -38,12 +52,13 @@
       </view>
       <view class="divider" />
       <HelpComments id="comments" class="comments" help="{{help}}" bind:loadFinished="onCommentLoadFinished" />
+<!--      <HelpCard  id="comments" class="comments" help="{{help}}" ></HelpCard>-->
     </scroll-view>
     <view class="footer">
       <view class="left">
         <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">
           <image class="icon"
-                 src="{{help.is_liked ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
+                 src="{{help.is_liked ? '/images/like1.png' : '/images/like0.png'}}" />
           <text class="text">点赞</text>
         </view>
         <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">

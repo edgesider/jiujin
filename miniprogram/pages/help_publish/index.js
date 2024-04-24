@@ -55,6 +55,7 @@ Page({
         helpImg: help.img_urls,
         helpContent: help.content,
         helpCurrentBounty: help.bounty,
+        helpCurrentBountyText: help. bounty.toString(10),
       });
     }
     data.buttonText = isEdit ? '保存' : '发布';
@@ -126,9 +127,9 @@ Page({
     if (!rules.required(params.content)) {
       return '请填写求助描述';
     }
-    if (!rules.required(params.img_urls)) {
-      return '请至少上传一张求助图片';
-    }
+    // if (!rules.required(params.img_urls)) {
+    //   return '请至少上传一张求助图片';
+    // }
     if (typeof params.bounty !== 'number' || params.price < 0) {
       return '无效的悬赏';
     }
@@ -178,7 +179,10 @@ Page({
     console.log(info);
     const error = this.checkForm(info);
     if (error) {
-      Dialog.alert({ title: error, })
+      await wx.showToast({
+        title: error,
+        icon: 'error',
+      })
       return;
     }
     console.log(editing ? 'editing Help' : 'creating help', info);
@@ -186,7 +190,6 @@ Page({
     console.log('uploading images', info.img_urls);
     await wx.showLoading({ title: '正在上传图片', mask: true });
     try {
-      console.log("1212")
       console.log(info.img_urls)
       info.img_urls = await this.uploadImages(info.img_urls);
     } catch (e) {

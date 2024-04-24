@@ -14,7 +14,11 @@
           <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
         </view>
 <!--        图片-->
+        <view wx:if="{{hasImg===false}}" >
+          <view class="divider" />
+        </view>
         <view
+          wx:else="{{hasImg===true}}"
           class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
           style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
         >
@@ -27,8 +31,8 @@
             data-curr="{{img}}"
             catchtap="previewImages"
           />
+          <view class="divider" />
         </view>
-        <view class="divider" />
 <!--        <view class="info">-->
 <!--          <text class="price">-->
 <!--            <text class="unit">￥</text>-->
@@ -41,7 +45,7 @@
         <view class="left">
           <view wx:if="{{!isMine}}" class="button" catchtap="onToggleLike">
             <image class="icon"
-                   src="{{help.is_liked ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
+                   src="{{help.is_liked ? '/images/like1.png' : '/images/like0.png'}}" />
             <text class="text">点赞</text>
           </view>
           <view wx:if="{{!isMine}}" class="button" catchtap="onToggleCollect">
