@@ -51,8 +51,16 @@ Page({
       editingHelp: isEdit ? help : null,
     };
     if (help) {
+      if((help.img_urls.length === 0)||(help.img_urls.length === 1&&help.img_urls[0]==="")){
+        Object.assign(data, {
+          helpImg: [],
+        });
+      }else {
+        Object.assign(data, {
+          helpImg: help.img_urls,
+        });
+      }
       Object.assign(data, {
-        helpImg: help.img_urls,
         helpContent: help.content,
         helpCurrentBounty: help.bounty,
         helpCurrentBountyText: help. bounty.toString(10),
@@ -175,8 +183,6 @@ Page({
       img_urls: helpImg,
       bounty: helpCurrentBounty
     });
-    console.log("info")
-    console.log(info);
     const error = this.checkForm(info);
     if (error) {
       await wx.showToast({
@@ -185,9 +191,6 @@ Page({
       })
       return;
     }
-    console.log(editing ? 'editing Help' : 'creating help', info);
-
-    console.log('uploading images', info.img_urls);
     await wx.showLoading({ title: '正在上传图片', mask: true });
     try {
       console.log(info.img_urls)

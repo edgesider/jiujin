@@ -18,7 +18,7 @@
       <text class="region">{{region}}</text>
     </view>
   </view>
-  <view class="right" >
+  <view class="right" wx:if="{{bounty>0}}">
     <text class="price">
       <text class="unit">￥</text>
       <text class="amount">{{bounty}}</text>

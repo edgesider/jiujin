@@ -28,11 +28,10 @@
               data-curr="{{img}}"
               bindtap="previewImages"
             />
-            <text>条件为真时展示的内容</text>
             <view class="divider" />
           </view>
         </view>
-        <view class="info">
+        <view class="info" wx:if="{{help.bounty>0}}">
           <text class="price">
             <text class="unit">￥</text>
             <text class="amount">{{help.bounty}}</text>

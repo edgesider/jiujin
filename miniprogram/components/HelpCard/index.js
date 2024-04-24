@@ -5,7 +5,7 @@ import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/sh
 import api, { getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import moment from 'moment';
 import { DATETIME_FORMAT } from "../../utils/time";
-import { ensureRegistered, getRegionPath } from "../../utils/other";
+import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
 import { openConversationDetail, openProfile } from "../../utils/router";
 import { TransactionApi } from "../../api/transaction";
 import {
@@ -15,6 +15,7 @@ import {
   getOrCreateGroup, setCommodityGroupAttributes,
   tryDeleteConversationAndGroup
 } from "../../utils/im";
+import { setNeedRefresh } from "../../pages/home/index";
 
 const app = getApp();
 Component({
@@ -48,7 +49,8 @@ Component({
     seller: null,
     contentParagraphs: [],
     firstImageSize: [],
-    hasImg:true
+    hasImg:true,
+    reportReasons: ['广告营销', '色情营销','侵犯个人隐私 ','辱骂诽谤他人','虚假冒充'], // 可选择的举报原因列表
   },
 
   /**
@@ -165,7 +167,32 @@ Component({
     async onClickReport() {
       ensureRegistered();
       // TODO
-      await wx.showToast({ title: '已举报' });
+      const that = this;
+      wx.showActionSheet({
+        itemList: that.data.reportReasons,
+        async success(res) {
+          const selectedReason = that.data.reportReasons[res.tapIndex];
+          const helpResp = await api.reportHelp({ id: that.data.help._id ,report:selectedReason});
+          if (helpResp.isError) {
+            await wx.showToast({
+              icon: 'error',
+              title: '网络错误'
+            });
+            return;
+          }else {
+            wx.showToast({
+              title: '举报成功',
+              icon: 'success',
+              duration: 2000,
+            });
+            await sleep(500);
+            setNeedRefresh();
+            this.back();
+          }
+        },
+      });
+
+      // await wx.showToast({ title: '已举报' });
     },
 
     async onClickShare() {

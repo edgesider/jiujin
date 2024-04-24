@@ -328,7 +328,17 @@ const api = {
       }
     }));
   },
-
+  async reportHelp({ id ,report}) {
+    return wrapResp(await request({
+      path: "/help/updateHelpReport",
+      method: "POST",
+      data: {
+        _id: id,
+        report:report,
+        openid: getOpenId()
+      }
+    }));
+  },
   /**
    * 上传本地图片到云存储
    * TODO 压缩上传

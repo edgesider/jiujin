@@ -27,7 +27,9 @@
           </view>
         </view>
       </scroll-view>
-      <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />
+<!--      <view class="button green" catch:tap="polish">擦亮</view>-->
+      <button class="switch" catch:tap="showBounty">仅看悬赏</button>
+<!--      <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />-->
     </view>
 
     <view class="list">
