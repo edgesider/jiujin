@@ -12,17 +12,12 @@
           <view wx:if="{{hasImg===false}}" >
 <!--          <view>-->
             <view class="divider" />
-            <text>条件为jia时展示的内容</text>
           </view>
           <view
             wx:else
             class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
             style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
           >
-<!--          <view-->
-<!--            class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"-->
-<!--            style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"-->
-<!--          >-->
 
             <image
               wx:for="{{help.img_urls}}"
@@ -80,12 +75,14 @@
         </view>
       </view>
       <view class="right">
-        <block wx:if="{{help.status === HELP_STATUS_RUNNING && isMine}}">
-<!--          <block wx:if="{{isMine}}">-->
-<!--            <text class="polish-time">{{polishTime}}\n<text class="polish-time-hint">上次擦亮</text></text>-->
-<!--            <view class="button" bindtap="polish">擦亮</view>-->
-<!--          </block>-->
+        <block wx:if="{{help.status === 0}}">
+          <block wx:if="{{isMine}}">
+            <text class="polish-time">{{helpPolishTime}}\n<text class="polish-time-hint">上次擦亮</text></text>
+            <view class="button" bindtap="polish">擦亮</view>
+          </block>
+          <block wx:else>
             <view class="button" bind:tap="onPrivateMessage">去私聊</view>
+          </block>
         </block>
 <!--        <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">-->
 <!--          <block wx:if="{{isMine}}">-->

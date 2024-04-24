@@ -234,6 +234,18 @@ const api = {
     }));
   },
 
+  // 擦亮商品
+  async polishHelp({ id }) {
+    return wrapResp(await request({
+      path: "/help/polishHelp",
+      method: "POST",
+      data: {
+        _id: id,
+        openid: getOpenId()
+      }
+    }));
+  },
+
   async updateCommodity(id, info) {
     Object.assign(info, { _id: id });
     info.img_urls = info.img_urls.join(',');

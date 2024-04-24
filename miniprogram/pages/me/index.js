@@ -232,9 +232,6 @@ Page({
 
               resp = await api.getHelpList(filter);
             }
-
-
-            // console.log(resp);
             if (resp.isError) {
               console.error(resp);
               return null;
@@ -248,6 +245,28 @@ Page({
                 wx.navigateTo({
                   url: `../help_detail/index?id=${help._id}`
                 })
+              },
+              polish: async () => {
+                await wx.showLoading({ mask: true, title: '擦亮中...' });
+                const resp = await api.polishHelp({ id: help._id });
+                await wx.hideLoading();
+                if (resp.isError) {
+                  await wx.showToast({
+                    title: '擦亮太频繁啦',
+                    icon: 'error',
+                    mask: true,
+                  });
+                  return;
+                }
+                await wx.showToast({
+                  title: '擦亮成功',
+                  icon: 'success',
+                  mask: true,
+                  duration: 500,
+                });
+                return {
+                  action: 'fetchSingle'
+                };
               },
               deactivate: async () => {
                 await wx.showLoading({ mask: true, title: '求助已解决' });

@@ -8,6 +8,7 @@
   </view>
   <view class="right" wx:if="{{help.uid === self._id}}">
     <block wx:if="{{help.status === 0}}">
+      <view class="button green" catch:tap="polish">擦亮</view>
       <view class="button green" catch:tap="gotoEdit">编辑</view>
       <view class="button greenyellow" catch:tap="deactivate">结束</view>
     </block>

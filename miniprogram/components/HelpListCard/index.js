@@ -23,6 +23,7 @@ Component({
     self: null,
     desc: '',
     createTime: '',
+    polishAt: '',
     ridToRegion: app.globalData.ridToRegion,
     statusImage: '',
   },
@@ -34,6 +35,11 @@ Component({
     },
     delete() {
       this.triggerEvent('onDelete', {
+        help: this.properties.help,
+      })
+    },
+    polish() {
+      this.triggerEvent('onPolish', {
         help: this.properties.help,
       })
     },

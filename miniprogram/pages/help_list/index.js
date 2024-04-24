@@ -100,6 +100,9 @@ Page({
     await this.processClick('click-card', ev);
   },
 
+  async onPolish(ev) {
+    await this.processClick('polish', ev);
+  },
   // 变更为已完成
   async onDeactivate(ev) {
     await this.processClick('deactivate', ev);

@@ -14,6 +14,7 @@ import {
   getOrCreateGroup, setCommodityGroupAttributes,
   tryDeleteConversationAndGroup
 } from "../../utils/im";
+import { setNeedRefresh } from "../home/index";
 
 const app = getApp();
 
@@ -35,7 +36,9 @@ Page({
     seller: null,
     contentParagraphs: [],
     firstImageSize: [],
-    hasImg:true
+    hasImg:true,
+    helpPolishTime: '',
+    polishTimeGeneral: '',
   },
 
   /**
@@ -59,7 +62,6 @@ Page({
       return;
     }
     const help = helpResp.data;
-
     const sellerResp = await api.getUserInfo(help.uid);
     const seller = sellerResp.isError ? null : sellerResp.data;
     let firstImageSize = [0, 1];
@@ -95,19 +97,20 @@ Page({
 
     const { self } = app.globalData;
 
+
     this.setData({
       loading: false,
       scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
       help,
       createTime: moment(help.create_time).format(DATETIME_FORMAT),
+      helpPolishTime: moment(help.polish_time ?? help.create_time).fromNow(),
+      polishTimeGeneral: moment(help.polish_time ?? help.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: help.content.split('\n').map(s => s.trim()),
       regionName: this.getRegionName(help.rid),
       isMine: self && self._id === help.uid,
       firstImageSize,
     });
-
-    console.log(this.data)
 
   },
 
@@ -124,6 +127,34 @@ Page({
 
   back() {
     wx.navigateBack().then();
+  },
+
+  polishing: false,
+  async polish() {
+    if (this.polishing)
+      return;
+    this.polishing = true;
+    await wx.showLoading({ mask: true, title: '擦亮中...' });
+    const resp = await api.polishHelp({ id: this.data.help._id });
+    await wx.hideLoading();
+    this.polishing = false;
+    if (resp.isError) {
+      await wx.showToast({
+        title: '擦亮太频繁啦',
+        icon: 'error',
+        mask: true,
+      });
+      return;
+    }
+    await wx.showToast({
+      title: '擦亮成功',
+      icon: 'success',
+      mask: true,
+      duration: 500,
+    });
+    await sleep(500);
+    setNeedRefresh();
+    this.back();
   },
 
   async previewImages(param) {

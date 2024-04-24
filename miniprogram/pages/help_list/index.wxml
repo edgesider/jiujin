@@ -33,6 +33,7 @@
         class="card"
         help="{{help}}"
         bind:onClickCard="onClickCard"
+        bind:onPolish="onPolish"
         bind:onDeactivate="onDeactivate"
         bind:onEdit="onEdit"
         bind:onDelete="onDelete"
