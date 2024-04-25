@@ -27,9 +27,7 @@
           </view>
         </view>
       </scroll-view>
-<!--      <view class="button green" catch:tap="polish">擦亮</view>-->
-      <button class="switch" catch:tap="showBounty">仅看悬赏</button>
-<!--      <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />-->
+      <view class="switch {{onlyBounty ? 'on' : 'off'}}" bind:tap="toggleOnlyBounty">仅看悬赏</view>
     </view>
 
     <view class="list">
@@ -41,7 +39,7 @@
       />
     </view>
     <view class="bottom">
-      <view wx:if="{{isLoading}}" class="cu-load loading">1111</view>
+      <view wx:if="{{isLoading}}" class="cu-load loading" />
       <block wx:else>
         <view class="no-more">
           <view class="actions">

@@ -143,19 +143,30 @@ page {
 }
 
 .switch {
-  width: 200rpx;
+  width: 180rpx;
   height: 50rpx;
   font-size: 30rpx;
-  padding: 5rpx 5rpx 5rpx 10rpx;
+  padding: 5rpx;
   box-sizing: content-box;
   display: flex; /* 使用Flexbox布局 */
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
-  background-color: #fac000; /* 设置背景色为红色 */
-  color: white; /* 设置字体颜色为白色 */
   border-radius: 15rpx; /* 设置按钮圆角 */
+  border: 1rpx solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   margin-left: 5px; /* 设置左边距为10像素（根据需要调整） */
 }
+
+.switch.on {
+  background-color: #fac000; /* 设置背景色为红色 */
+  color: white; /* 设置字体颜色为白色 */
+}
+
+.switch.off {
+  background-color: #fff; /* 设置背景色为红色 */
+  color: rgba(0, 0, 0, 0.3); /* 设置字体颜色为白色 */
+}
+
 .ranking-container {
   position: fixed;
   z-index: 10;
@@ -216,7 +227,7 @@ page {
 
   --gap: 12rpx;
   padding: var(--gap);
-  padding-top: 0;
+  /*padding-top: 0;*/
   gap: var(--gap);
   display: flex;
   flex-wrap: wrap;
@@ -233,6 +244,7 @@ page {
   min-height: 0;
   border-radius: 16rpx;
   box-shadow: 0 0 4px 0 #17007333;
+  overflow: hidden;
 }
 
 .bottom {

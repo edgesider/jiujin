@@ -3,7 +3,7 @@ import Dialog from '@vant/weapp/dialog/dialog';
 import rules from "../../utils/rules";
 import { getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
-import { sleep } from "../../utils/other";
+import { sleep, textToPrice } from "../../utils/other";
 import getConstants, { GENDER } from "../../constants";
 import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
 
@@ -114,7 +114,7 @@ Page({
       commodityContent: event.detail.value
     })
   },
-  onPriceInputBlur(event) {
+  onPriceInputBlur() {
     if (this.data.commodityCurrentPriceText.length === 0) {
       // 支持空白
       this.setData({
@@ -241,6 +241,8 @@ Page({
   // 上传商品信息
   async onSubmit() {
     await requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed]);
+    // 更新一下输入的价格值
+    this.onPriceInputBlur();
 
     const {
       editingCommodity: editing,

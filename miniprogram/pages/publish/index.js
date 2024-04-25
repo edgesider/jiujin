@@ -1,5 +1,6 @@
 // pages/publish/index.ts
 import { ensureRegistered, getRegionPath, setTabBar } from "../../utils/other";
+import getConstants from "../../constants";
 Page({
   createCommodity: function() {
     wx.navigateTo({
@@ -15,7 +16,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    
+    ...getConstants(),
   },
   
   /**

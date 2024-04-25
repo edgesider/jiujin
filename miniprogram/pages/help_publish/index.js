@@ -16,7 +16,7 @@ Page({
     // 编辑模式下正在编辑的求助，如果是新建则为null
     helpImg: [],
     helpContent: "",
-    helpCurrentBountyText: '0',
+    helpCurrentBountyText: '',
     helpCurrentBounty: 0,
     editingHelp: null,
     // 按钮文案
@@ -76,7 +76,14 @@ Page({
     })
   },
   // 赏金失去焦点时
-  onBountyInputBlur(event) {
+  onBountyInputBlur() {
+    if (this.data.helpCurrentBountyText.length === 0) {
+      // 支持空白
+      this.setData({
+        helpCurrentBounty: 0,
+      });
+      return;
+    }
     let bounty = parseFloat(this.data.helpCurrentBountyText) || 0;
     bounty = Math.max(Math.min(bounty, 99999.9), 0)
     this.setData({
@@ -163,8 +170,8 @@ Page({
     return fileIDs;
   },
 
-
   async onSubmit() {
+    this.onBountyInputBlur();
     const {
       editingHelp: editing,
       self,
@@ -235,53 +242,4 @@ Page({
     await sleep(1500);
     await wx.navigateBack();
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
-  }
 })

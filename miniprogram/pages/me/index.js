@@ -67,7 +67,7 @@ Page({
             bought: '我买到的',
             sold: '我卖出的',
             deactivated: '我下架的',
-            stared: '我收藏的商品',
+            stared: '我收藏的闲置',
           })[type],
           fetcher: async ({ start, count }) => {
             let resp;
@@ -109,7 +109,7 @@ Page({
                 await wx.hideLoading();
                 if (resp.isError) {
                   await wx.showToast({
-                    title: '擦亮太频繁啦',
+                    title: '三小时可擦亮一次',
                     icon: 'error',
                     mask: true,
                   });
@@ -252,7 +252,7 @@ Page({
                 await wx.hideLoading();
                 if (resp.isError) {
                   await wx.showToast({
-                    title: '擦亮太频繁啦',
+                    title: '三小时可擦亮一次',
                     icon: 'error',
                     mask: true,
                   });

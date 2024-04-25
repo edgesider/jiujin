@@ -114,7 +114,7 @@ Page({
     const { self, ridToRegion } = app.globalData;
     const rid = self?.rid ?? DEFAULT_REGION_ID;
 
-    const regionPath = getRegionPath(rid);
+    const regionPath = getRegionPath(rid).reverse();
     if (self) {
       // 已登录
       this.setData({
@@ -211,7 +211,7 @@ Page({
 
   async onRefresherRefresh() {
     this.setData({ pullDownRefreshing: true, })
-    await this.init();
+    await this.fetchList();
     this.setData({ pullDownRefreshing: false, })
   },
 

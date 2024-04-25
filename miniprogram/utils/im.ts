@@ -43,8 +43,8 @@ export function initTim(self: User) {
   }, 200);
 
   loadCache().then();
-  getConversations().then((result: any) => {
-    updateConversations(result.data.conversationList);
+  getConversations().then(list => {
+    updateConversations(list);
   });
   tim.on(tim.EVENT.CONVERSATION_LIST_UPDATED, (event: any) => {
     updateConversations(event.data as Conversation[]);

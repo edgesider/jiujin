@@ -8,7 +8,6 @@
   flex-direction: column;
   justify-content: stretch;
   align-items: stretch;
-  padding-bottom: calc(env(safe-area-inset-bottom) / 2);
   overflow: auto; /* 处理内容溢出的情况 */
 }
 

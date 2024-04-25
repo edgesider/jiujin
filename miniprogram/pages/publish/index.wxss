@@ -1,4 +1,50 @@
-/* pages/publish/index.wxss */
 page {
-  background: #f6f6f6;
+  background-color: #fff !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 100%;
+}
+
+.root {
+  width: 100%;
+  padding: 20rpx;
+  gap: 20rpx;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+}
+
+.button {
+  height: 200rpx;
+  border-radius: 32rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 32rpx;
+  gap: 6rpx;
+}
+
+.button.green {
+  background-color: #21ac39;
+}
+
+.button.yellow {
+  background-color: #fac000;
+}
+
+.button .title {
+  color: #000000e5;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 40rpx;
+}
+
+.button .subtitle {
+  color: #00000099;
+  font-size: 24rpx;
 }

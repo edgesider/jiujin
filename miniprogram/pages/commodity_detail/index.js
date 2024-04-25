@@ -109,7 +109,7 @@ Page({
     this.polishing = false;
     if (resp.isError) {
       await wx.showToast({
-        title: '擦亮太频繁啦',
+        title: '三小时可擦亮一次',
         icon: 'error',
         mask: true,
       });

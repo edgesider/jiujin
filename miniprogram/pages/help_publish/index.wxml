@@ -1,5 +1,5 @@
 <!--pages/help_publish/index.wxml-->
-<TitleBar title="发布互助消息"/>
+<TitleBar title="发布互助消息" />
 <view class="Content">
   <textarea class="content" name="content" value="{{helpContent}}" maxlength="-1"
             bindinput="onChangeHelpContent" placeholder="可求助、可悬赏、可分享..."></textarea>
@@ -22,24 +22,27 @@
 </view>
 
 
-<!-- 赏金 -->
+  <!-- 赏金 -->
 <view class="Price">
   <view class="price_title">赏金</view>
-  <input class="price" value="{{helpCurrentBountyText}}"
-         maxlength="10"
-         bindblur="onBountyInputBlur"
-         bindinput="onChangeHelpCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
+  <input
+    class="price" value="{{helpCurrentBountyText}}"
+    maxlength="10"
+    bindblur="onBountyInputBlur"
+    bindinput="onChangeHelpCurrentPrice"
+    name="price"
+    placeholder="0"
+    type="digit"
+  />
 </view>
-<!-- 价格 -->
-<!-- <view class="Price">
-  <view class="price_title">价格</view>
-  <input class="price" value="{{commodityCurrentPriceText}}"
-         maxlength="10"
-         bindblur="onPriceInputBlur"
-         bindinput="onChangeCommodityCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
-</view> -->
+  <!-- 价格 -->
+  <!-- <view class="Price">
+    <view class="price_title">价格</view>
+    <input class="price" value="{{commodityCurrentPriceText}}"
+           maxlength="10"
+           bindblur="onPriceInputBlur"
+           bindinput="onChangeCommodityCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
+  </view> -->
 
-
-<van-dialog id="van-dialog"/>
 
 <button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'#21AC39'}};" class="submit">{{buttonText}}</button>

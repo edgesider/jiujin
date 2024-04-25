@@ -125,3 +125,17 @@ export function debounce<T extends AnyFunc>(func: T, wait: number): (...args: Pa
     }
   };
 }
+
+export function textToPrice(text: string) {
+  // 支持空白或者两位小数
+  const valid = /^\d*(\.\d{0,2})?$/.test(text);
+  if (!valid) {
+    return;
+  }
+  if (!text) {
+    return 0;
+  }
+  let price = parseFloat(text) || 0;
+  price = Math.max(Math.min(price, 99999.9), 0)
+  return price;
+}

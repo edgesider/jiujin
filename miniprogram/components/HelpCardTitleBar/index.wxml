@@ -1,6 +1,3 @@
-<!--components/HelpCardTitleBar/index.wxml-->
-<view style="width: 100%; background: white; height: {{StatusBar}}px" />
-
 <view class="top-user">
   <text class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}" bindtap="back" wx:if="{{hasBack}}" />
   <image

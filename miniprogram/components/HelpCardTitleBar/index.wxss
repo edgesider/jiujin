@@ -3,7 +3,7 @@
 
 .top-user {
   background: white;
-  padding: 0 0 16rpx;
+  padding: 16rpx;
 
   display: flex;
   flex-direction: row;

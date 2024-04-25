@@ -11,6 +11,7 @@ let needRefresh = false;
 export function setNeedRefresh() {
   needRefresh = true;
 }
+
 Page({
 
   data: {
@@ -41,6 +42,8 @@ Page({
       { key: 'polish_time-asc', text: '时间由远到近' },
     ],
     chosenRankingKey: 'polish_time-desc',
+
+    onlyBounty: false,
   },
   fetchToken: 0,
   async onLoad(options) {
@@ -93,7 +96,7 @@ Page({
     const { self, ridToRegion } = app.globalData;
     const rid = self?.rid ?? DEFAULT_REGION_ID;
 
-    const regionPath = getRegionPath(rid);
+    const regionPath = getRegionPath(rid).reverse();
     if (self) {
       // 已登录
       this.setData({
@@ -129,7 +132,11 @@ Page({
       helpList: append ? oldList : [],
     });
     try {
-      const [orderBy, order] = this.data.chosenRankingKey.split('-');
+      // const [orderBy, order] = this.data.chosenRankingKey.split('-');
+      const [orderBy, order] =
+        this.data.onlyBounty
+          ? ['bounty', 'desc']
+          : ['polish_time', 'desc'];
       const resp = await api.getHelpList({
         rid, status: HELP_STATUS_RUNNING,
         start, count: COUNT_PER_PAGE,
@@ -162,11 +169,9 @@ Page({
       console.error(e);
     }
   },
-  async showBounty(){
-    console.log("ssss")
+  async toggleOnlyBounty() {
     this.setData({
-      showRankingPopup: false,
-      chosenRankingKey: 'bounty-desc'
+      onlyBounty: !this.data.onlyBounty,
     });
     this.fetchList();
   },

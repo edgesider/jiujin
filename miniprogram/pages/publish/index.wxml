@@ -1,4 +1,11 @@
-<!--pages/publish/index.wxml-->
-<TitleBar title="发布"  />
-<button bindtap="createHelp">创建求助</button>
-<button bindtap="createCommodity">创建商品</button>
+<TitleBar title="发布" hasDivider="{{false}}" />
+<view class="root" style="margin-bottom: calc({{TabBarHeight}}px + 30rpx)">
+  <view class="button green" bindtap="createCommodity">
+    <view class="title">闲置物品</view>
+    <view class="subtitle">每一分价值都值得被传递</view>
+  </view>
+  <view class="button yellow" bindtap="createHelp">
+    <view class="title">互助信息</view>
+    <view class="subtitle">谁还没个需要帮助的时候呢</view>
+  </view>
+</view>
