@@ -148,8 +148,14 @@ page {
   font-size: 30rpx;
   padding: 5rpx 5rpx 5rpx 10rpx;
   box-sizing: content-box;
+  display: flex; /* 使用Flexbox布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  background-color: #fac000; /* 设置背景色为红色 */
+  color: white; /* 设置字体颜色为白色 */
+  border-radius: 15rpx; /* 设置按钮圆角 */
+  margin-left: 5px; /* 设置左边距为10像素（根据需要调整） */
 }
-
 .ranking-container {
   position: fixed;
   z-index: 10;

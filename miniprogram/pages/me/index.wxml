@@ -37,22 +37,22 @@
   <view class="List">
     <!-- 商品相关-->
     <view class="list" bindtap="gotoList" data-type="bought">
-      <view class="list_title">我买到的商品</view>
+      <view class="list_title">我买到的</view>
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
     <view class="list" bindtap="gotoList" data-type="sold">
-      <view class="list_title">我卖出的商品</view>
+      <view class="list_title">我卖出的</view>
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
     <view class="list" bindtap="gotoList" data-type="deactivated">
-      <view class="list_title">我下架的商品</view>
+      <view class="list_title">我下架的</view>
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
     <view class="list" bindtap="gotoList" data-type="stared">
-      <view class="list_title">我收藏的商品</view>
+      <view class="list_title">我收藏的闲置</view>
       <image class="right" src="/images/right.png"></image>
     </view>
 
@@ -61,12 +61,13 @@
     <!--求助相关-->
     <view class="divider" />
     <view class="list" bindtap="gotoHelpList" data-type="collected">
-      <view class="list_title">我收藏的求助</view>
+      <view class="list_title">我收藏的互助</view>
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
     <view class="list" bindtap="gotoHelpList" data-type="liked">
-      <view class="list_title">我点赞的求助</view>
+      <view class="list_title">我点赞的互助
+      </view>
       <image class="right" src="/images/right.png"></image>
     </view>
 

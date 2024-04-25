@@ -19,9 +19,21 @@
     </view>
   </view>
   <view class="right" wx:if="{{bounty>0}}">
-    <text class="price">
-      <text class="unit">￥</text>
-      <text class="amount">{{bounty}}</text>
-    </text>
+
+      <view class="new-view">
+        <text class="new-text">悬赏</text>
+      </view>
+      <text class="price">
+        <text class="unit">￥</text>
+        <text class="amount">{{bounty}}</text>
+      </text>
+
+
   </view>
+<!--  <view class="container">-->
+<!--    <view class="background">-->
+<!--      <text class="title">悬赏</text>-->
+<!--      <text class="subtitle">数组</text>-->
+<!--    </view>-->
+<!--  </view>-->
 </view>

@@ -56,7 +56,7 @@
           <view wx:if="{{!isMine}}" class="button" catchtap="gotoDetail">
             <image class="icon"
                    src="{{'/images/chatting.png'}}" />
-            <text class="text">去评论</text>
+            <text class="text">评论</text>
           </view>
           <view class="button" catchtap="onClickShare">
             <image class="icon" src="/images/share.png" />
