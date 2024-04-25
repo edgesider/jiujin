@@ -38,11 +38,11 @@ Component({
   attached() {
     const { showRegionLevel } = this.properties;
     const { content, rid } = this.properties.commodity;
-    const path = getRegionPath(rid).splice(0, showRegionLevel + 1).map(r => r.name);
-    path.reverse();
+    const path = getRegionPath(rid).reverse(); // 北航-学院路-...
+    path.splice(0, showRegionLevel);
     this.setData({
       desc: getContentDesc(content),
-      regionName: path.length > 0 ? path.join('/') : '楼里', // 没有要展示的就展示“楼里”
+      regionName: path.length > 0 ? path.map(p => p.name).join('/') : '楼里', // 没有要展示的就展示“楼里”
     });
   }
 });
