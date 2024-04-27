@@ -103,7 +103,7 @@ Page({
       needRefresh = false;
       await this.fetchList();
     }
-    if (this.data.self?.rid !== app.globalData.self?.rid) {
+    if (this.initialized && this.data.self?.rid !== app.globalData.self?.rid) {
       this.updateRegions();
       await Promise.all([this.fetchList(), this.loadBanners()]);
     }

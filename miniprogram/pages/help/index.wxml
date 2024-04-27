@@ -61,18 +61,4 @@
   </view>
 </scroll-view>
 
-
 <view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />
-
-<view class="ranking-container" wx:if="{{showRankingPopup}}">
-  <view class="ranking-mask" bind:tap="onToggleRankingSwitch" />
-  <view class="ranking" style="top: {{rankingPopupTop}}px">
-    <view
-      wx:for="{{rankingOptions}}" wx:key="unique" wx:for-index="idx"
-      class="{{chosenRankingKey === item.key ? 'ranking-on' : 'ranking-off'}}"
-      bind:tap="onRankingKeyChanged" data-ranking-key="{{item.key}}"
-    >
-      {{item.text}}
-    </view>
-  </view>
-</view>

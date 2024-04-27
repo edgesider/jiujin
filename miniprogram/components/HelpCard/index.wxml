@@ -1,6 +1,4 @@
-<!--components/HelpCard.wxml-->
-<!--pages/help_detail/index.wxml-->
-<view class="root"  catchtap="gotoDetail">
+<view class="root" catchtap="gotoDetail">
   <view wx:if="{{loading}}" class="loading cu-load" />
   <view wx:elif="{{!help}}" class="loading">
     <text>求助走丢了</text>
@@ -9,12 +7,10 @@
     <view class="body">
       <HelpCardTitleBar user="{{seller}}" hasBack="{{false}}" time="{{createTime}}" bounty="{{help.bounty}}" />
       <view class="content">
-        <!--      文章内容-->
         <view class="paragraphs">
           <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
         </view>
-<!--        图片-->
-        <view wx:if="{{hasImg===false}}" >
+        <view wx:if="{{hasImg===false}}">
           <view class="divider" />
         </view>
         <view
@@ -33,13 +29,6 @@
           />
           <view class="divider" />
         </view>
-<!--        <view class="info">-->
-<!--          <text class="price">-->
-<!--            <text class="unit">￥</text>-->
-<!--            <text class="amount">{{help.bounty}}</text>-->
-<!--          </text>-->
-<!--          <view class="spacer" />-->
-<!--        </view>-->
       </view>
       <view class="footer">
         <view class="left">
@@ -70,11 +59,6 @@
             <image class="icon" src="/images/report.png" />
             <text class="text">举报</text>
           </view>
-        </view>
-        <view class="right">
-          <block wx:if="{{help.status === HELP_STATUS_RUNNING && isMine}}">
-            <view class="button" catchtap="onPrivateMessage">去私聊</view>
-          </block>
         </view>
       </view>
     </view>

@@ -1,5 +1,6 @@
 {
   "usingComponents": {
+    "HelpListCard": "/components/HelpListCard/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

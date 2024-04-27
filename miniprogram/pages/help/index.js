@@ -45,6 +45,7 @@ Page({
 
     onlyBounty: false,
   },
+  initialized: false,
   fetchToken: 0,
   async onLoad(options) {
     setTabBar(this);
@@ -56,12 +57,14 @@ Page({
       reportShareInfo(shareInfo).then();
     }
 
-    this.setData({ isLoading: true })
+    this.setData({
+      isLoading: true,
+    })
     try {
       await app.waitForReady();
       this.updateRegions();
-      // await this.loadBanners();
       await this.fetchList();
+      this.initialized = true;
     } catch (e) {
       await wx.showToast({
         title: '网络错误',
@@ -72,22 +75,17 @@ Page({
       this.setData({ isLoading: false });
     }
   },
-  onClickLogo() {
-    // openLogin();
-  },
-
   onPageScroll(options) {
     const { scrollTop } = options;
     this.setData({ scrollTop });
   },
-
 
   async onShow() {
     if (needRefresh) {
       needRefresh = false;
       await this.fetchList();
     }
-    if (this.data.self?.rid !== app.globalData.self?.rid) {
+    if (this.initialized && this.data.self?.rid !== app.globalData.self?.rid) {
       this.updateRegions();
       await Promise.all([this.fetchList()]);
     }
@@ -132,7 +130,6 @@ Page({
       helpList: append ? oldList : [],
     });
     try {
-      // const [orderBy, order] = this.data.chosenRankingKey.split('-');
       const [orderBy, order] =
         this.data.onlyBounty
           ? ['bounty', 'desc']
@@ -173,7 +170,7 @@ Page({
     this.setData({
       onlyBounty: !this.data.onlyBounty,
     });
-    this.fetchList();
+    await this.fetchList();
   },
   async loadMore() {
     await this.fetchList({ append: true });
@@ -203,35 +200,6 @@ Page({
       await this.fetchList();
     });
   },
-  // 前端筛选 第一个方法
-  onToggleRankingSwitch() {
-    if (this.data.showRankingPopup) {
-      this.setData({
-        showRankingPopup: false,
-      });
-      return;
-    }
-    wx.createSelectorQuery()
-      .select('#ranking-switch')
-      .boundingClientRect(res => {
-        const top = res.top + 40;
-        this.setData({
-          showRankingPopup: true,
-          rankingPopupTop: top,
-        })
-      })
-      .exec();
-  },
-
-  // 应该是 最下面的函数 跟换区域的
-  onRankingKeyChanged(event) {
-    const { rankingKey } = event.currentTarget.dataset;
-    this.setData({
-      showRankingPopup: false,
-      chosenRankingKey: rankingKey
-    });
-    this.fetchList();
-  },
 
   onShareAppMessage(options) {
     const shareInfo = buildShareParam({
@@ -243,9 +211,7 @@ Page({
     });
     return {
       title: '闲置买卖，又近又快',
-      path: `/pages/home/index?shareInfo=${encodeURIComponent(shareInfo)}`
+      path: `/pages/help/index?shareInfo=${encodeURIComponent(shareInfo)}`
     }
   },
-
-
 })

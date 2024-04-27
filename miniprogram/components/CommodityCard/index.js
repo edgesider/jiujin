@@ -38,7 +38,6 @@ Component({
   attached() {
     const { showRegionLevel = 1 } = this.properties;
     const { content, rid } = this.properties.commodity;
-    console.log(showRegionLevel);
     this.setData({
       desc: getContentDesc(content),
       regionName: getRegionPathName(

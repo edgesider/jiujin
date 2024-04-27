@@ -1,28 +1,13 @@
-// components/HelpCard.ts
-
 import getConstants from "../../constants";
-import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { buildShareParam } from "../../utils/share";
 import api, { getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import moment from 'moment';
 import { DATETIME_FORMAT } from "../../utils/time";
-import { ensureRegistered, getRegionPath, getRegionPathName, sleep } from "../../utils/other";
+import { ensureRegistered, getRegionPathName, sleep } from "../../utils/other";
 import { openConversationDetail, openProfile } from "../../utils/router";
-import { TransactionApi } from "../../api/transaction";
-import {
-  getConversationByGroup,
-  getGroupIdForTransaction,
-  getImUidFromUid,
-  getOrCreateGroup, setCommodityGroupAttributes,
-  tryDeleteConversationAndGroup
-} from "../../utils/im";
-import { setNeedRefresh } from "../../pages/home/index";
 
 const app = getApp();
 Component({
-
-  /**
-   * 组件的属性列表
-   */
   properties: {
     help: {
       type: Object,
@@ -33,9 +18,6 @@ Component({
     }
   },
 
-  /**
-   * 组件的初始数据
-   */
   data: {
     ...getConstants(),
     scrollToView: '',
@@ -43,7 +25,6 @@ Component({
     ridToRegion: {},
     loading: true,
     isMine: false,
-    help: null,
     createTime: '',
     regionName: '',
     seller: null,
@@ -52,10 +33,43 @@ Component({
     hasImg: true,
     reportReasons: ['广告营销', '色情营销', '侵犯个人隐私 ', '辱骂诽谤他人', '虚假冒充'], // 可选择的举报原因列表
   },
+  attached: async function () {
+    const help = this.properties.help;
+    const sellerResp = await api.getUserInfo(help.uid);
+    const seller = sellerResp.isError ? null : sellerResp.data;
 
-  /**
-   * 组件的方法列表
-   */
+    let firstImageSize = [0, 1];
+    if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === "")) {
+      firstImageSize = [500, 500];
+      this.setData({
+        hasImg: false
+      })
+    } else {
+      try {
+        const size = await wx.getImageInfo({ src: help.img_urls[0] });
+        firstImageSize = [size.width, size.height];
+      } catch (e) {
+        firstImageSize = [500, 500];
+        this.setData({
+          hasImg: false
+        })
+      }
+      this.setData({
+        hasImg: true
+      })
+    }
+    const { self } = app.globalData;
+
+    this.setData({
+      loading: false,
+      createTime: moment(help.create_time).format(DATETIME_FORMAT),
+      seller,
+      contentParagraphs: help.content.split('\n').map(s => s.trim()),
+      regionName: getRegionPathName(help.rid),
+      isMine: self && self._id === help.uid,
+      firstImageSize,
+    });
+  },
   methods: {
 
     async gotoDetail() {
@@ -65,9 +79,6 @@ Component({
       await wx.navigateTo({
         url: `../help_detail/index?id=${this.properties.help._id}`
       })
-    },
-    back() {
-      wx.navigateBack().then();
     },
     async previewImages(param) {
       const { curr } = param.currentTarget.dataset;
@@ -176,7 +187,6 @@ Component({
               duration: 2000,
             });
             await sleep(500);
-            setNeedRefresh();
             this.back();
           }
         },
@@ -243,109 +253,4 @@ Component({
     },
 
   },
-
-  attached: async function () {
-    const options = this.properties.help;
-    const { scrollToComment, shareInfo: shareInfoStr } = options;
-    const helpId = options._id;
-    const shareInfo = parseShareInfo(shareInfoStr);
-    if (shareInfo) {
-      console.log('shareInfo', shareInfo);
-      reportShareInfo(shareInfo).then();
-    }
-
-    const helpResp = await api.getHelpInfo({ id: helpId });
-    if (helpResp.isError) {
-      await wx.showToast({
-        icon: 'error',
-        title: '网络错误'
-      });
-      return;
-    }
-    const help = helpResp.data;
-    const sellerResp = await api.getUserInfo(help.uid);
-    const seller = sellerResp.isError ? null : sellerResp.data;
-
-    let firstImageSize = [0, 1];
-    if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === "")) {
-      firstImageSize = [500, 500];
-      this.setData({
-        hasImg: false
-      })
-    } else {
-      try {
-        const size = await wx.getImageInfo({ src: help.img_urls[0] });
-        firstImageSize = [size.width, size.height];
-      } catch (e) {
-        firstImageSize = [500, 500];
-        this.setData({
-          hasImg: false
-        })
-      }
-      this.setData({
-        hasImg: true
-      })
-    }
-    const { self } = app.globalData;
-
-    this.setData({
-      loading: false,
-      scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
-      help,
-      createTime: moment(help.create_time).format(DATETIME_FORMAT),
-      seller,
-      contentParagraphs: help.content.split('\n').map(s => s.trim()),
-      regionName: getRegionPathName(help.rid),
-      isMine: self && self._id === help.uid,
-      firstImageSize,
-    });
-  },
 })
-
-/**
- * 根据商品和卖家创建群聊
- * TODO
- */
-export async function startHelpTransaction(commodity, seller) {
-  const transactions = await TransactionApi.listByCommodity(commodity._id);
-  if (transactions.isError) {
-    console.error('failed to query existed transactions');
-    return;
-  }
-  const transaction = transactions.data?.[0];
-  if (transaction) {
-    return transaction;
-  }
-  const [group, newCreate] = await getOrCreateGroup(
-    getGroupIdForTransaction(),
-    {
-      name: seller.name,
-      avatar: commodity.img_urls[0],
-      members: [
-        getImUidFromUid(getOpenId()),
-        getImUidFromUid(seller._id),
-      ],
-    }
-  );
-  console.log(`created group ${group.groupID} for commodity ${commodity._id}`);
-  const conv = await getConversationByGroup(group.groupID);
-  if (!conv) {
-    console.error('failed to get conversation');
-    return;
-  }
-  console.log(`starting transaction: commodity=${commodity._id} conversation=${conv.conversationID}`)
-  const resp = await TransactionApi.start(commodity._id, conv.conversationID);
-  if (resp.isError) {
-    console.error('failed to start a new transaction');
-    await tryDeleteConversationAndGroup(conv);
-    return;
-  }
-  const tact = resp.data;
-  await setCommodityGroupAttributes(group.groupID, {
-    commodityId: commodity._id,
-    sellerId: seller._id,
-    transactionId: tact.id,
-    buyerId: getOpenId(),
-  });
-  return tact;
-}
