@@ -40,6 +40,8 @@ Page({
       { key: 'price-desc', text: '价格由高到低' },
     ],
     chosenRankingKey: 'polish_time-desc',
+
+    scrollIntoView: null as string | null,
   },
   initialized: false,
   fetchToken: 0,
@@ -60,6 +62,7 @@ Page({
     this.setData({ isLoading: true })
     try {
       await app.waitForReady();
+      this.setData({ self: app.globalData.self, });
       this.updateRegions();
       await this.loadBanners();
       this.initialized = true;
@@ -117,14 +120,12 @@ Page({
     if (self) {
       // 已登录
       this.setData({
-        self,
         regions: regionPath,
         selectedRegionIndex: 0,
       });
     } else {
       // 未登录，展示默认的区域
       this.setData({
-        self,
         regions: regionPath,
         selectedRegionIndex: 0,
       });
@@ -143,7 +144,7 @@ Page({
     });
   },
 
-  async fetchList({ append }: { append?: boolean } = {}) {
+  async fetchList({ append, scrollToTop }: { append?: boolean, scrollToTop?: boolean } = {}) {
     if (!this.initialized) {
       await this.init();
       return;
@@ -154,14 +155,13 @@ Page({
     const start = append ? this.data.cursor : 0;
     const token = ++this.fetchToken;
     if (!append) {
-      await wx.pageScrollTo({ scrollTop: 0, smooth: true });
       this.loadBanners().then();
     }
     const oldList = this.data.commodityList;
     this.setData({
       cursor: start,
       isLoading: true,
-      commodityList: append ? oldList : [],
+      // commodityList: append ? oldList : [],
     });
     try {
       const [orderBy, order] = this.data.chosenRankingKey.split('-');
@@ -192,6 +192,7 @@ Page({
         isLoading: false,
         cursor,
         commodityList: data,
+        scrollIntoView: scrollToTop ? 'region-filter' : null,
       });
     } catch (e) {
       console.error(e);
@@ -203,7 +204,7 @@ Page({
   },
 
   async refreshCurrentTab() {
-    await this.fetchList();
+    await this.fetchList({ scrollToTop: true });
   },
 
   async onRefresherRefresh() {
@@ -230,7 +231,7 @@ Page({
     this.setData({
       selectedRegionIndex: targetIdx,
     }, async () => {
-      await this.fetchList();
+      await this.fetchList({ scrollToTop: true });
     });
   },
 

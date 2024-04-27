@@ -24,6 +24,7 @@
   bindrefresherrefresh="onRefresherRefresh"
   bindscrolltolower="onReachBottom"
   lower-threshold="400"
+  scroll-into-view="{{scrollIntoView}}"
 >
   <view>
     <swiper autoplay circular class="top-swiper">
@@ -38,7 +39,7 @@
       </swiper-item>
     </swiper>
 
-    <view class="region-filter">
+    <view class="region-filter" id="region-filter">
       <scroll-view scroll-x>
         <view class="container">
           <view
