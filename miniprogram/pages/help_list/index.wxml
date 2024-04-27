@@ -41,6 +41,15 @@
       />
     </view>
 
-    <view class="cu-load {{isLoading ? 'loading' : ''}}"></view>
+    <block wx:if="{{isLoading}}">
+      <FullPageLoading wx:if="{{helpList.length === 0}}" class="full-loading" />
+      <view wx:else class="cu-load loading"></view>
+    </block>
+    <image
+      wx:elif="{{helpList.length === 0}}"
+      class="empty"
+      src="/images/empty.png"
+      mode="aspectFit"
+    />
   </scroll-view>
 </view>

@@ -29,7 +29,8 @@
   },
   "usingComponents": {
     "TitleBar": "/components/TitleBar/index",
-    "UserTitleBar": "/components/UserTitleBar/index"
+    "UserTitleBar": "/components/UserTitleBar/index",
+    "FullPageLoading": "/components/FullPageLoading/index"
   },
   "tabBar": {
     "custom": true,

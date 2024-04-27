@@ -58,3 +58,18 @@ scroll-view {
 .card:last-of-type {
   border-bottom: none;
 }
+
+.full-loading {
+  position: absolute;
+  left: 50%;
+  top: 400rpx;
+  transform: translateX(-50%);
+}
+
+.empty {
+  position: absolute;
+  height: 500rpx;
+  left: 50%;
+  top: 200rpx;
+  transform: translateX(-50%);
+}
