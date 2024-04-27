@@ -1,8 +1,10 @@
-import { getRegionPath, setTabBar } from "../../utils/other";
+import { getRegionPath, setTabBar } from '../../utils/other';
 import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
-import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/share';
+import { Commodity, Region, User } from '../../types';
 
+type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
 const COUNT_PER_PAGE = 12;
 
@@ -17,13 +19,12 @@ Page({
     ...getConstants(),
     scrollTop: 0,
 
-    self: null,
-    ridToRegion: null,
+    self: null as User | null,
     // 可选的区域，按照层级排列L4、L3、L2、L1
-    regions: [],
+    regions: [] as Region[],
     selectedRegionIndex: 0, // 选中的区域
 
-    commodityList: [],
+    commodityList: [] as Commodity[],
     cursor: 0,
     isLoading: false,
     pullDownRefreshing: false,
@@ -40,11 +41,11 @@ Page({
     ],
     chosenRankingKey: 'polish_time-desc',
   },
-
   initialized: false,
   fetchToken: 0,
 
   async onLoad(options) {
+    console.log('onLoad', options);
     setTabBar(this);
 
     const { shareInfo: shareInfoStr } = options;
@@ -109,7 +110,7 @@ Page({
   },
 
   updateRegions() {
-    const { self, ridToRegion } = app.globalData;
+    const { self } = app.globalData;
     const rid = self?.rid ?? DEFAULT_REGION_ID;
 
     const regionPath = getRegionPath(rid).reverse();
@@ -117,7 +118,6 @@ Page({
       // 已登录
       this.setData({
         self,
-        ridToRegion,
         regions: regionPath,
         selectedRegionIndex: 0,
       });
@@ -125,7 +125,6 @@ Page({
       // 未登录，展示默认的区域
       this.setData({
         self,
-        ridToRegion,
         regions: regionPath,
         selectedRegionIndex: 0,
       });
@@ -144,7 +143,7 @@ Page({
     });
   },
 
-  async fetchList({ append } = {}) {
+  async fetchList({ append }: { append?: boolean } = {}) {
     if (!this.initialized) {
       await this.init();
       return;
@@ -223,7 +222,7 @@ Page({
     })
   },
 
-  async onRegionClick(ev) {
+  async onRegionClick(ev: TouchEvent) {
     const targetIdx = ev.currentTarget.dataset.idx;
     if (typeof targetIdx !== 'number') {
       return;
@@ -235,11 +234,11 @@ Page({
     });
   },
 
-  onClickBanner(ev) {
+  onClickBanner(ev: TouchEvent) {
     const { url } = ev.currentTarget.dataset;
     wx.previewImage({
       current: url,
-      urls: this.data.banners.map(b => b.url),
+      urls: this.data.banners.map((b: any) => b.url),
     })
   },
 
@@ -262,7 +261,7 @@ Page({
       .exec();
   },
 
-  onRankingKeyChanged(event) {
+  onRankingKeyChanged(event: TouchEvent) {
     const { rankingKey } = event.currentTarget.dataset;
     this.setData({
       showRankingPopup: false,

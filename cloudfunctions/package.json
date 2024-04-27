@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "tcb-router": "^1.1.2",
-    "wx-server-sdk": "^2.6.3"
-  }
-}

@@ -1,15 +1,5 @@
 {
   "usingComponents": {
-    "van-uploader": "@vant/weapp/uploader/index",
-    "van-field": "@vant/weapp/field/index",
-    "van-picker": "@vant/weapp/picker/index",
-    "van-overlay": "@vant/weapp/overlay/index",
-    "van-button": "@vant/weapp/button/index",
-    "van-image": "@vant/weapp/image/index",
-    "van-toast": "@vant/weapp/toast/index",
-    "van-empty": "@vant/weapp/empty/index",
-    "TitleBar": "/components/TitleBar/index",
-    "HelpListCard": "/components/HelpListCard/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

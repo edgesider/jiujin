@@ -1,7 +1,5 @@
-// custom-tab-bar/index.js
 import getConstants from '../constants';
 import { ensureRegistered } from '../utils/other';
-import { Conversation } from "@tencentcloud/chat";
 import { getConversations, isCreateGroupMsg } from "../utils/im";
 import { getOpenId } from "../api/api";
 

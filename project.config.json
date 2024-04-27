@@ -1,57 +1,34 @@
 {
   "miniprogramRoot": "miniprogram/",
+  "srcMiniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
   "setting": {
-    "urlCheck": true,
-    "es6": true,
-    "enhance": true,
-    "postcss": true,
-    "preloadBackgroundData": false,
-    "minified": true,
-    "newFeature": true,
-    "coverView": true,
-    "nodeModules": true,
-    "autoAudits": false,
-    "showShadowRootInWxmlPanel": true,
-    "scopeDataCheck": false,
-    "uglifyFileName": false,
-    "checkInvalidKey": true,
-    "checkSiteMap": true,
-    "uploadWithSourceMap": true,
-    "compileHotReLoad": false,
+    "ignoreUploadUnusedFiles": true,
+    "useCompilerPlugins": [
+      "typescript",
+      "less"
+    ],
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
     },
-    "useIsolateContext": true,
-    "useCompilerModule": false,
-    "userConfirmedUseCompilerModuleSwitch": false,
-    "ignoreUploadUnusedFiles": true,
-    "ignoreDevUnusedFiles": true,
-    "useCompilerPlugins": [
-      "typescript",
-      "less"
-    ],
-    "condition": true
+    "es6": true,
+    "enhance": true,
+    "minifyWXML": true,
+    "minified": true
   },
   "appid": "wxc89ea56f592e89c4",
   "projectname": "JiuJin",
   "libVersion": "3.4.2",
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {
-    "wxext14566970e7e9f62": "3.0.2-8"
-  },
   "compileType": "miniprogram",
-  "srcMiniprogramRoot": "miniprogram/",
   "packOptions": {
     "ignore": [],
     "include": []
   },
+  "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  },
-  "condition": {},
-  "projectArchitecture": "multiPlatform"
+  }
 }

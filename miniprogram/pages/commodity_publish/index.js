@@ -1,5 +1,4 @@
 import api, { getOpenId } from "../../api/api";
-import Dialog from '@vant/weapp/dialog/dialog';
 import rules from "../../utils/rules";
 import { getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";

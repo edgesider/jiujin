@@ -5,7 +5,7 @@ import { User } from '../../../types';
 import { isCreateGroupMsg, isTransactionGroup, listenConversationListUpdate } from '../../../utils/im';
 import { Subscription } from 'rxjs';
 import { getOpenId } from '../../../api/api';
-import { getNotifySwitches, NotifyType, requestNotifySubscribe } from '../../../utils/notify';
+import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 
 const app = getApp();
 

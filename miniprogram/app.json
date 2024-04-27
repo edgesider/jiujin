@@ -25,7 +25,6 @@
     "navigationStyle": "custom",
     "enablePullDownRefresh": false,
     "onReachBottomDistance": 200,
-    "disableScroll": true,
     "navigationBarTextStyle": "black"
   },
   "usingComponents": {
