@@ -28,11 +28,6 @@
   height: 100rpx;
 }
 
-.tab-bar-item view {
-  font-size: 26rpx;
-  line-height: 50rpx;
-}
-
 .tab-bar-item-dot::after {
   content: ' ';
   font-size: 0;

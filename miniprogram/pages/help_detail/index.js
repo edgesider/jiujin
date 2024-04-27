@@ -4,7 +4,7 @@ import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/sh
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
-import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
+import { ensureRegistered, getRegionPath, getRegionPathName, sleep } from "../../utils/other";
 import { openConversationDetail, openProfile } from "../../utils/router";
 import { TransactionApi } from "../../api/transaction";
 import {
@@ -107,22 +107,11 @@ Page({
       polishTimeGeneral: moment(help.polish_time ?? help.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: help.content.split('\n').map(s => s.trim()),
-      regionName: this.getRegionName(help.rid),
+      regionName: getRegionPathName(help.rid),
       isMine: self && self._id === help.uid,
       firstImageSize,
     });
 
-  },
-
-
-  /**
-   * 获取展示的区域名，显示第1、3级
-   */
-  getRegionName(rid) {
-    const path = getRegionPath(rid);
-    const region = path[0];
-    const parentParent = path[2];
-    return parentParent ? `${parentParent.name} / ${region.name}` : region.name;
   },
 
   back() {

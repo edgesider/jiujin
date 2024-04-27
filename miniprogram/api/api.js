@@ -1,9 +1,8 @@
-import axios from "axios";
-import mpAdapter from 'axios-miniprogram-adapter'
-import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from "../constants";
-import { convertCommodity } from "../types";
-
-const { RespSuccess, RespError } = require('./resp')
+import axios from 'axios';
+import mpAdapter from 'axios-miniprogram-adapter';
+import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../constants';
+import { convertCommodity } from '../types';
+import { RespSuccess, RespError } from './resp';
 
 axios.defaults.adapter = mpAdapter;
 

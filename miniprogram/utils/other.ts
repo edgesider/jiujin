@@ -23,7 +23,15 @@ export async function sleep(ms: number) {
 /**
  * 从{@param rid}向上找到顶，返回中途的所有区域
  */
-export function getRegionPath(rid: number, ridToRegion?: Record<number, Region | undefined>) {
+export function getRegionPath(rid: number, {
+  ridToRegion,
+  maxLevel = Infinity,
+  minLevel = -1,
+}: {
+  ridToRegion?: Record<number, Region | undefined>;
+  maxLevel?: number;
+  minLevel?: number;
+} = {}) {
   ridToRegion = (ridToRegion ?? getApp().globalData.ridToRegion ?? {}) as Record<number, Region | undefined>;
   const regionPath: Region[] = [];
   for (
@@ -31,9 +39,19 @@ export function getRegionPath(rid: number, ridToRegion?: Record<number, Region |
     Boolean(region);
     region = region!.parents[0] ? ridToRegion[region!.parents[0]] : undefined
   ) {
+    if (region!.level > maxLevel || region!.level < minLevel) {
+      break;
+    }
     regionPath.push(region!);
   }
   return regionPath;
+}
+
+/**
+ * @return 学院路/大运村/1公寓
+ */
+export function getRegionPathName(rid: number, minLevel = 2) {
+  return getRegionPath(rid, { minLevel }).map(r => r.name).reverse().join('/')
 }
 
 export function getL1Regions(ridToRegion?: Record<number, Region | undefined>): Region[] {

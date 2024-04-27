@@ -1,5 +1,5 @@
 import getConstants from "../../constants";
-import { getRegionPath } from "../../utils/other";
+import { getRegionPath, getRegionPathName } from "../../utils/other";
 import { openProfile, redirectToHome } from "../../utils/router";
 
 Component({
@@ -30,10 +30,9 @@ Component({
   },
   methods: {
     userUpdated(user) {
-      const path = getRegionPath(user.rid);
       this.setData({
         user,
-        region: path[2] ? `${path[2].name}/${path[0].name}` : path[0].name
+        region: getRegionPathName(user.rid)
       })
     },
     onAvatarClick() {

@@ -1,7 +1,7 @@
 import api, { CollectApi, getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
-import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
+import { ensureRegistered, getRegionPath, getRegionPathName, sleep } from "../../utils/other";
 import moment from "moment";
 import { openConversationDetail, openProfile } from "../../utils/router";
 import {
@@ -77,23 +77,13 @@ Page({
       polishTimeGeneral: moment(commodity.polish_time ?? commodity.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
-      regionName: this.getRegionName(commodity.rid),
+      regionName: getRegionPathName(commodity.rid),
       isMine: self && self._id === commodity.seller_id,
       firstImageSize,
     });
 
     await api.addViewCount(id);
   },
-  /**
-   * 获取展示的区域名，显示第1、3级
-   */
-  getRegionName(rid) {
-    const path = getRegionPath(rid);
-    const region = path[0];
-    const parentParent = path[2];
-    return parentParent ? `${parentParent.name} / ${region.name}` : region.name;
-  },
-
   back() {
     wx.navigateBack().then();
   },

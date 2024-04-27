@@ -3,8 +3,8 @@ import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID } from '../..
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
 
-const app = getApp()
-const COUNT_PER_PAGE = 12
+const app = getApp();
+const COUNT_PER_PAGE = 12;
 
 let needRefresh = false;
 
@@ -16,8 +16,6 @@ Page({
   data: {
     ...getConstants(),
     scrollTop: 0,
-    pageIndex: 0,
-    searchInput: "",
 
     self: null,
     ridToRegion: null,

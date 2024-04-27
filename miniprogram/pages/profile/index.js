@@ -1,7 +1,7 @@
 import getConstants, { COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from "../../constants";
 import api from "../../api/api";
 import moment from "moment";
-import { getRegionPath } from "../../utils/other";
+import { getRegionPath, getRegionPathName } from "../../utils/other";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -36,11 +36,10 @@ Page({
       return;
     }
     const user = resp.data;
-    const regionName = getRegionPath(user.rid).reverse().map(r => r.name).join('/');
     this.setData({
       userLoadState: 'loaded',
       user,
-      regionName,
+      regionName: getRegionPathName(user.rid, 1),
       lastSeenTime: !user.last_seen_time ? '很久前' : moment(user.last_seen_time).fromNow(),
     });
   },

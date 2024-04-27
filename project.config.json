@@ -32,14 +32,16 @@
     "useCompilerPlugins": [
       "typescript",
       "less"
-    ]
+    ],
+    "condition": true
   },
   "appid": "wxc89ea56f592e89c4",
   "projectname": "JiuJin",
-  "libVersion": "3.4.3",
+  "libVersion": "3.4.2",
   "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
+  "simulatorPluginLibVersion": {
+    "wxext14566970e7e9f62": "3.0.2-8"
+  },
   "compileType": "miniprogram",
   "srcMiniprogramRoot": "miniprogram/",
   "packOptions": {
@@ -50,5 +52,6 @@
     "tabIndent": "insertSpaces",
     "tabSize": 2
   },
-  "condition": {}
+  "condition": {},
+  "projectArchitecture": "multiPlatform"
 }

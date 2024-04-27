@@ -1,4 +1,4 @@
-import { ensureRegistered, getRegionPath, setTabBar } from "../../utils/other";
+import { ensureRegistered, getRegionPath, getRegionPathName, setTabBar } from "../../utils/other";
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
@@ -36,10 +36,9 @@ Page({
     if (!self) {
       return;
     }
-    const regionPath = getRegionPath(self.rid);
     this.setData({
       selfInfo: self,
-      regionName: regionPath[2] ? `${regionPath[2].name}/${regionPath[0].name}` : regionPath[0].name,
+      regionName: getRegionPathName(self.rid)
     });
   },
 
@@ -221,14 +220,14 @@ Page({
             let resp;
             if (type === 'collected') {
               resp = await HelpCollectApi.getAllCollectedHelp(start, count);
-            }else if(type === 'liked'){
+            } else if (type === 'liked') {
               resp = await HelpLikedApi.getAllCollectedHelp(start, count);
             } else {
               const status = ({
                 selling: HELP_STATUS_RUNNING
               })[type];
               const self = app.globalData.self._id;
-              const filter = { status, start, count ,isMine:1};
+              const filter = { status, start, count, isMine: 1 };
 
               resp = await api.getHelpList(filter);
             }

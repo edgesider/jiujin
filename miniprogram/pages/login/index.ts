@@ -67,7 +67,6 @@ Page({
   },
 
   async register(phone: string) {
-
     const shareInfo = getLastEnterByShareInfo();
     console.log('lastShareInfo', shareInfo);
     const params = {

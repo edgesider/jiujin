@@ -10,7 +10,7 @@
     "esModuleInterop": true
   },
   "include": [
-    "./custom.d.ts",
+    "./ext.d.ts",
     "./**/*.js",
     "./**/*.ts"
   ],

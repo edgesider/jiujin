@@ -3,7 +3,6 @@ import rules from "../../utils/rules";
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import { sleep } from "../../utils/other";
-import Dialog from '@vant/weapp/dialog/dialog';
 
 const app = getApp()
 Page({

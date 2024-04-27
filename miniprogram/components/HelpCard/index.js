@@ -5,7 +5,7 @@ import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/sh
 import api, { getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import moment from 'moment';
 import { DATETIME_FORMAT } from "../../utils/time";
-import { ensureRegistered, getRegionPath, sleep } from "../../utils/other";
+import { ensureRegistered, getRegionPath, getRegionPathName, sleep } from "../../utils/other";
 import { openConversationDetail, openProfile } from "../../utils/router";
 import { TransactionApi } from "../../api/transaction";
 import {
@@ -49,8 +49,8 @@ Component({
     seller: null,
     contentParagraphs: [],
     firstImageSize: [],
-    hasImg:true,
-    reportReasons: ['广告营销', '色情营销','侵犯个人隐私 ','辱骂诽谤他人','虚假冒充'], // 可选择的举报原因列表
+    hasImg: true,
+    reportReasons: ['广告营销', '色情营销', '侵犯个人隐私 ', '辱骂诽谤他人', '虚假冒充'], // 可选择的举报原因列表
   },
 
   /**
@@ -66,16 +66,6 @@ Component({
         url: `../help_detail/index?id=${this.properties.help._id}`
       })
     },
-    /**
-     * 获取展示的区域名，显示第1、3级
-     */
-    getRegionName(rid) {
-      const path = getRegionPath(rid);
-      const region = path[0];
-      const parentParent = path[2];
-      return parentParent ? `${parentParent.name} / ${region.name}` : region.name;
-    },
-
     back() {
       wx.navigateBack().then();
     },
@@ -172,14 +162,14 @@ Component({
         itemList: that.data.reportReasons,
         async success(res) {
           const selectedReason = that.data.reportReasons[res.tapIndex];
-          const helpResp = await api.reportHelp({ id: that.data.help._id ,report:selectedReason});
+          const helpResp = await api.reportHelp({ id: that.data.help._id, report: selectedReason });
           if (helpResp.isError) {
             await wx.showToast({
               icon: 'error',
               title: '网络错误'
             });
             return;
-          }else {
+          } else {
             wx.showToast({
               title: '举报成功',
               icon: 'success',
@@ -254,17 +244,17 @@ Component({
 
   },
 
-  attached:async function(){
+  attached: async function () {
     const options = this.properties.help;
-    const {scrollToComment, shareInfo: shareInfoStr } = options;
-    const helpId=options._id;
+    const { scrollToComment, shareInfo: shareInfoStr } = options;
+    const helpId = options._id;
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
       reportShareInfo(shareInfo).then();
     }
 
-    const helpResp = await api.getHelpInfo({ id:helpId });
+    const helpResp = await api.getHelpInfo({ id: helpId });
     if (helpResp.isError) {
       await wx.showToast({
         icon: 'error',
@@ -277,23 +267,23 @@ Component({
     const seller = sellerResp.isError ? null : sellerResp.data;
 
     let firstImageSize = [0, 1];
-    if((help.img_urls.length === 0)||(help.img_urls.length === 1&&help.img_urls[0]==="")){
+    if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === "")) {
       firstImageSize = [500, 500];
       this.setData({
-        hasImg:false
+        hasImg: false
       })
-    }else {
+    } else {
       try {
         const size = await wx.getImageInfo({ src: help.img_urls[0] });
         firstImageSize = [size.width, size.height];
-      }catch (e) {
+      } catch (e) {
         firstImageSize = [500, 500];
         this.setData({
-          hasImg:false
+          hasImg: false
         })
       }
       this.setData({
-        hasImg:true
+        hasImg: true
       })
     }
     const { self } = app.globalData;
@@ -305,7 +295,7 @@ Component({
       createTime: moment(help.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: help.content.split('\n').map(s => s.trim()),
-      regionName: this.getRegionName(help.rid),
+      regionName: getRegionPathName(help.rid),
       isMine: self && self._id === help.uid,
       firstImageSize,
     });

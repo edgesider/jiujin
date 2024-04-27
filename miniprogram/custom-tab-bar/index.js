@@ -60,8 +60,6 @@ Component({
         hasDot: false,
       },
     ],
-    url: '',
-    unreadCount: 0,
   },
   lifetimes: {
     async created() {

@@ -24,8 +24,8 @@ Page({
   },
 
   async onLoad(options) {
-    const { regions, ridToRegion, self } = app.globalData;
-    const [l4, l3, l2, l1] = getRegionPath(self.rid, ridToRegion);
+    const { ridToRegion, self } = app.globalData;
+    const [l4, l3, l2, l1] = getRegionPath(self.rid);
     const availableRegions = [
       getL1Regions(ridToRegion), // l1 list
       getRegionsByParent(l1._id), // l2 list

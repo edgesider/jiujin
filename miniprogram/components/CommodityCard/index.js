@@ -1,5 +1,5 @@
 import { getContentDesc, getQualitiesMap } from "../../utils/strings";
-import { getRegionPath } from "../../utils/other";
+import { getRegionPath, getRegionPathName } from "../../utils/other";
 
 const app = getApp();
 
@@ -10,7 +10,7 @@ Component({
     },
     showRegionLevel: {
       type: Number,
-      value: 0,
+      value: 1
     }
   },
   data: {
@@ -36,13 +36,15 @@ Component({
     }
   },
   attached() {
-    const { showRegionLevel } = this.properties;
+    const { showRegionLevel = 1 } = this.properties;
     const { content, rid } = this.properties.commodity;
-    const path = getRegionPath(rid).reverse(); // 北航-学院路-...
-    path.splice(0, showRegionLevel);
+    console.log(showRegionLevel);
     this.setData({
       desc: getContentDesc(content),
-      regionName: path.length > 0 ? path.map(p => p.name).join('/') : '楼里', // 没有要展示的就展示“楼里”
+      regionName: getRegionPathName(
+        rid,
+        showRegionLevel + 1 // 最多展示到当前级别的下一级
+      ) || '楼里', // 没有要展示的就展示“楼里”
     });
   }
 });
