@@ -18,11 +18,11 @@
     <view class="user">
       <image class="avatar" src="{{user.avatar_url}}" />
       <view class="infos">
+        <view class="last-seen">{{lastSeenTime}}来过</view>
         <view class="region-name">
           <image src="/images/region.png" />
           {{regionName}}
         </view>
-        <view class="last-seen">{{lastSeenTime}}来过</view>
       </view>
     </view>
 

@@ -73,6 +73,7 @@ Page({
         commodityImg: commodity.img_urls,
         commodityContent: commodity.content,
         commodityCurrentPrice: commodity.price,
+        commodityCurrentPriceText: commodity.price.toString(),
         categoryIndex: this.data.categories.findIndex(c => c._id === commodity.cid),
         qualityIndex: this.data.qualities.findIndex(q => q.value === commodity.quality),
         filters: [

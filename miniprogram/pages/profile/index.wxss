@@ -1,4 +1,5 @@
 .content-container {
+  background-color: white;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -22,8 +23,6 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  position: sticky;
-  top: 0;
   z-index: 100;
   background-color: white;
 }
@@ -37,8 +36,8 @@
 
 .user .infos .region-name {
   font-size: 28rpx;
-  font-weight: 600;
-  color: rgba(0, 0, 0, 0.8);
+  /*font-weight: 600;*/
+  color: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -54,15 +53,17 @@
 .user .infos .last-seen {
   font-size: 22rpx;
   color: rgba(0, 0, 0, 0.6);
+  transform: translateX(4rpx);
 }
 
 .state-text {
   width: 100%;
   padding-left: 20rpx;
-  margin-top: 12rpx;
+  padding-top: 12rpx;
   color: #3c3c3c;
   font-size: 32rpx;
   font-weight: bold;
+  background-color: white;
 }
 
 .filters {
@@ -94,6 +95,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   flex-wrap: wrap;
+  background-color: white;
 
   --gap: 12rpx;
   gap: var(--gap);
@@ -103,6 +105,7 @@
 .list .commodity {
   width: calc((100% - var(--gap)) / 2);
   border-radius: 16rpx;
+  box-shadow: 0 0 4px 0 #17007333;
 }
 
 .list .commodity-container {

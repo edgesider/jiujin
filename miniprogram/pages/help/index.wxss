@@ -152,19 +152,18 @@ page {
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
   border-radius: 15rpx; /* 设置按钮圆角 */
-  border: 1rpx solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin-left: 5px; /* 设置左边距为10像素（根据需要调整） */
 }
 
 .switch.on {
-  background-color: #fac000; /* 设置背景色为红色 */
-  color: white; /* 设置字体颜色为白色 */
+  background-color: #fac000;
+  color: white;
 }
 
 .switch.off {
-  background-color: #fff; /* 设置背景色为红色 */
-  color: rgba(0, 0, 0, 0.3); /* 设置字体颜色为白色 */
+  background-color: #d7d7d7;
+  color: #fff;
 }
 
 .ranking-container {

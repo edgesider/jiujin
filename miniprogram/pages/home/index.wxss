@@ -15,7 +15,6 @@ page {
   width: 100%;
   z-index: 10;
   background-color: white;
-  padding-bottom: 10rpx;
 }
 
 .top {
@@ -71,8 +70,16 @@ page {
 .top-swiper {
   flex: 0;
   z-index: -1;
-  width: 100%;
   height: calc(32vw);
+  width: 100%;
+  margin-top: 10rpx;
+}
+
+.top-swiper .banner-image {
+  width: calc(100% - 20rpx);
+  height: 100%;
+  margin: 0 10rpx;
+  border-radius: 16rpx;
 }
 
 .region-filter {
@@ -203,7 +210,7 @@ page {
 
   --gap: 12rpx;
   padding: var(--gap);
-  /*padding-top: 0;*/
+  padding-top: 0;
   gap: var(--gap);
   display: flex;
   flex-wrap: wrap;
@@ -217,7 +224,7 @@ page {
 .list .card {
   width: calc((100% - var(--gap)) / 2);
   border-radius: 16rpx;
-  box-shadow: 0 0 4px 0 #17007333;
+  box-shadow: 0 2px 4px 0 #17007333;
 }
 
 .bottom {

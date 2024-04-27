@@ -1,7 +1,7 @@
 import getConstants, { COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from "../../constants";
 import api from "../../api/api";
 import moment from "moment";
-import { getRegionPath, getRegionPathName } from "../../utils/other";
+import { getRegionPathName } from "../../utils/other";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -16,7 +16,7 @@ Page({
       { key: 'selling', name: '出售中' },
       { key: 'sold', name: '已售出' },
     ],
-    currFilter: 'all',
+    currFilter: 'selling',
     cursor: 0,
     commodityList: [],
     listLoading: false,
@@ -39,7 +39,7 @@ Page({
     this.setData({
       userLoadState: 'loaded',
       user,
-      regionName: getRegionPathName(user.rid, 1),
+      regionName: getRegionPathName(user.rid, 2),
       lastSeenTime: !user.last_seen_time ? '很久前' : moment(user.last_seen_time).fromNow(),
     });
   },

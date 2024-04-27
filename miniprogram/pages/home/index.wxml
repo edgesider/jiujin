@@ -30,8 +30,8 @@
     <swiper autoplay circular class="top-swiper">
       <swiper-item wx:for="{{banners}}" wx:key="url">
         <image
+          class="banner-image"
           src="{{item.url}}"
-          style="width: 100%; height: 100%;"
           mode="aspectFill"
           data-url="{{item.url}}"
           bindtap="onClickBanner"
