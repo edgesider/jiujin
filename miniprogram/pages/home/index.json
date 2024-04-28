@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "CommodityCard": "/components/CommodityCard/index"
+    "CommodityCard": "/components/CommodityCard/index",
+    "RegionFilter": "/components/RegionFilter/index"
   },
   "disableScroll": true
 }

@@ -3,6 +3,7 @@ import rules from "../../utils/rules";
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import { sleep } from "../../utils/other";
+import { waitForAppReady } from "../../utils/globals";
 
 const app = getApp()
 Page({
@@ -27,7 +28,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    await app.waitForReady();
+    await waitForAppReady();
     //获取一些全局变量
     const { self } = app.globalData;
     this.setData({

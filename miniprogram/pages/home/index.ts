@@ -3,6 +3,8 @@ import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID } from '../..
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/share';
 import { Commodity, Region, User } from '../../types';
+import { waitForAppReady } from '../../utils/globals';
+import { RegionClickEvent } from '../../components/RegionFilter';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -60,7 +62,7 @@ Page({
   async init() {
     this.setData({ isLoading: true })
     try {
-      await app.waitForReady();
+      await waitForAppReady();
       this.setData({ self: app.globalData.self, });
       this.updateRegions();
       await this.loadBanners();
@@ -218,13 +220,9 @@ Page({
     })
   },
 
-  async onRegionClick(ev: TouchEvent) {
-    const targetIdx = ev.currentTarget.dataset.idx;
-    if (typeof targetIdx !== 'number') {
-      return;
-    }
+  async onRegionClick(ev: RegionClickEvent) {
     this.setData({
-      selectedRegionIndex: targetIdx,
+      selectedRegionIndex: ev.detail.index,
     }, async () => {
       await this.fetchList({ scrollToTop: true });
     });

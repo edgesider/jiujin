@@ -34,7 +34,7 @@ export function getRegionPath(rid: number, {
   ridToRegion?: Record<number, Region | undefined>;
   maxLevel?: number;
   minLevel?: number;
-} = {}) {
+} = {}): Region[] {
   ridToRegion = (ridToRegion ?? getApp().globalData.ridToRegion ?? {}) as Record<number, Region | undefined>;
   const regionPath: Region[] = [];
   for (

@@ -6,6 +6,7 @@ import getConstants, {
 } from "../../constants";
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import { openProfile } from "../../utils/router";
+import { waitForAppReady } from "../../utils/globals";
 
 const app = getApp()
 
@@ -20,7 +21,7 @@ Page({
 
   async onLoad(options) {
     setTabBar(this);
-    await app.waitForReady();
+    await waitForAppReady();
     const { self } = app.globalData;
     if (app.globalData.self) {
       this.updateSelfInfo(self);

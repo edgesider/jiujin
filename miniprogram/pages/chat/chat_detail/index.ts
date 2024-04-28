@@ -1,11 +1,12 @@
 import getConstants from '../../../constants';
 import { getCommodityGroupAttributes, listenMessage, sendMessage } from '../../../utils/im';
 import api from '../../../api/api';
-import { Transaction, TransactionApi, TransactionStatus } from '../../../api/transaction';
+import { Transaction, TransactionApi } from '../../../api/transaction';
 import { Conversation, Group } from '@tencentcloud/chat';
 import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { kbHeightChanged, tryJsonParse } from '../../../utils/other';
+import { waitForAppReady } from '../../../utils/globals';
 
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
@@ -32,7 +33,7 @@ Page({
   subscription: null as Subscription | null,
   async onLoad(options) {
     this.subscription = new Subscription();
-    await app.waitForReady();
+    await waitForAppReady();
 
     const { conversationId } = options;
     if (!conversationId) {

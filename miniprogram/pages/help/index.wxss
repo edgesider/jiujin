@@ -78,92 +78,49 @@ page {
   /*border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);*/
 }
 
-.region-filter {
+.filters {
+  width: 100%;
+  height: 92rpx;
   background: white;
   z-index: 5;
   position: sticky;
   top: 0;
   padding: 10rpx;
-  box-sizing: content-box;
   align-self: stretch;
-  height: 64rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }
 
-.region-filter scroll-view {
-  height: 100%;
+.filters .region-filter {
+  width: 1px;
   flex-grow: 1;
-  background: #f1f1f1;
-  border-radius: 10rpx;
-  overflow: hidden;
+  flex-shrink: 1;
 }
 
-.region-filter .container {
+.filters .switch {
+  flex-shrink: 0;
+  flex-grow: 0;
+  width: 180rpx;
   height: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.region-filter .item {
-  position: relative;
-  margin-left: 24rpx;
-  height: 100%;
-  font-size: 32rpx;
-  color: #0000004D;
-  font-weight: 400;
-  white-space: nowrap;
+  font-size: 30rpx;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 16rpx;
+  margin-left: 5px;
 }
 
-.region-filter .item:last-of-type {
-  margin-right: 24rpx;
-}
-
-.region-filter .item-on {
-  color: #21ac39;
-  font-weight: 600;
-}
-
-.region-filter .item-indicator {
-  display: block;
-  background-color: #fac000;
-  width: calc(100% - 16rpx);
-  height: 4rpx;
-  border-radius: 2rpx;
-  position: absolute;
-  bottom: 4rpx;
-  left: 8rpx;
-}
-
-.switch {
-  width: 180rpx;
-  height: 50rpx;
-  font-size: 30rpx;
-  padding: 5rpx;
-  box-sizing: content-box;
-  display: flex; /* 使用Flexbox布局 */
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
-  border-radius: 15rpx; /* 设置按钮圆角 */
-  overflow: hidden;
-  margin-left: 5px; /* 设置左边距为10像素（根据需要调整） */
-}
-
-.switch.on {
+.filters .switch.on {
   background-color: #fac000;
   color: white;
+  font-weight: bold;
 }
 
-.switch.off {
-  background-color: #d7d7d7;
-  color: #fff;
+.filters .switch.off {
+  background-color: #f1f1f1;
+  color: #0000004d;
 }
 
 .ranking-container {

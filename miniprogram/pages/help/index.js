@@ -2,6 +2,7 @@ import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID, HELP_STATUS_
 import { getRegionPath, setTabBar } from "../../utils/other";
 import { buildShareParam, onShareHelp, parseShareInfo, reportShareInfo } from "../../utils/share";
 import api, { getOpenId } from "../../api/api";
+import { waitForAppReady } from "../../utils/globals";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -61,7 +62,7 @@ Page({
       isLoading: true,
     })
     try {
-      await app.waitForReady();
+      await waitForAppReady();
       this.updateRegions();
       await this.fetchList();
       this.initialized = true;
@@ -190,12 +191,8 @@ Page({
     await this.loadMore();
   },
   async onRegionClick(ev) {
-    const targetIdx = ev.currentTarget.dataset.idx;
-    if (typeof targetIdx !== 'number') {
-      return;
-    }
     this.setData({
-      selectedRegionIndex: targetIdx,
+      selectedRegionIndex: ev.detail.index,
     }, async () => {
       await this.fetchList();
     });

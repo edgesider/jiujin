@@ -5,6 +5,7 @@ import { setNeedRefresh } from "../home/index";
 import { sleep, textToPrice } from "../../utils/other";
 import getConstants, { GENDER } from "../../constants";
 import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
+import { waitForAppReady } from "../../utils/globals";
 
 const app = getApp()
 
@@ -43,7 +44,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    await app.waitForReady();
+    await waitForAppReady();
     const { self, categories } = app.globalData;
     this.setData({
       self, categories

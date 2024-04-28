@@ -16,8 +16,6 @@ App({
   globalData: {
     self: null,
     ridToRegion: null,
-    StatusBar: 0,
-    CustomBar: 0,
     config: {
       userID: '', // User ID
       commodity: null,

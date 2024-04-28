@@ -42,22 +42,9 @@
     </swiper>
 
     <view id="top" style="width: 100%; height: 0" />
-    <view class="region-filter" id="region-filter">
-      <scroll-view scroll-x>
-        <view class="container">
-          <view
-            class="item {{selectedRegionIndex === idx ? 'item-on' : ''}}"
-            wx:for="{{regions}}"
-            wx:key="_id"
-            wx:for-index="idx"
-            bind:tap="onRegionClick"
-            data-idx="{{idx}}"
-          >
-            <text class="item-text">{{item.name}}</text>
-            <view class="item-indicator" wx:if="{{selectedRegionIndex === idx}}" />
-          </view>
-        </view>
-      </scroll-view>
+
+    <view class="filters">
+      <RegionFilter class="region-filter" selected="{{selectedRegionIndex}}" bind:regionClick="onRegionClick" />
       <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />
     </view>
 

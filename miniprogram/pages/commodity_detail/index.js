@@ -13,6 +13,7 @@ import {
 import { TransactionApi } from "../../api/transaction";
 import { DATETIME_FORMAT } from "../../utils/time";
 import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { waitForAppReady } from "../../utils/globals";
 
 const app = getApp();
 
@@ -34,7 +35,7 @@ Page({
     firstImageSize: [],
   },
   onLoad: async function (options) {
-    await app.waitForReady();
+    await waitForAppReady();
     const { id, scrollToComment, shareInfo: shareInfoStr } = options;
 
     const shareInfo = parseShareInfo(shareInfoStr);

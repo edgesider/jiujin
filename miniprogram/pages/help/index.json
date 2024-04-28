@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "HelpCard": "/components/HelpCard/index"
+    "HelpCard": "/components/HelpCard/index",
+    "RegionFilter": "/components/RegionFilter/index"
   },
   "enablePullDownRefresh": true,
   "disableScroll": true
