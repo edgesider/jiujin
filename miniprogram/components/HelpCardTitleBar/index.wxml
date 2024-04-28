@@ -22,7 +22,7 @@
       </view>
       <text class="price">
         <text class="unit">￥</text>
-        <text class="amount">{{bounty}}</text>
+        <text class="amount">{{bounty / 100}}</text>
       </text>
 
 

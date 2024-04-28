@@ -3,7 +3,7 @@
 
   <view class="middle">
     <view class="title">{{desc}}</view>
-    <view class="price">￥{{commodity.price}}</view>
+    <view class="price">￥{{commodity.price / 100}}</view>
     <image class="status" src="{{statusImage}}"/>
   </view>
   <view class="right" wx:if="{{commodity.seller_id === self._id}}">

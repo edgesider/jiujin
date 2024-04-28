@@ -34,7 +34,7 @@
         <view class="info" wx:if="{{help.bounty>0}}">
           <text class="price">
             <text class="unit">￥</text>
-            <text class="amount">{{help.bounty}}</text>
+            <text class="amount">{{help.bounty / 100}}</text>
           </text>
 <!--          <text class="views">{{commodity.view_count}}浏览</text>-->
           <view class="spacer" />

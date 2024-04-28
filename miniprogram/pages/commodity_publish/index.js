@@ -25,7 +25,8 @@ Page({
     categoryIndex: 0,
     commodityContent: "",
     commodityCurrentPriceText: '',
-    commodityCurrentPrice: 0,
+    // 单位：分
+    priceFen: 0,
     qualityIndex: 0,
 
     filters: [
@@ -72,8 +73,7 @@ Page({
       Object.assign(data, {
         commodityImg: commodity.img_urls,
         commodityContent: commodity.content,
-        commodityCurrentPrice: commodity.price,
-        commodityCurrentPriceText: commodity.price.toString(),
+        commodityCurrentPriceText: (commodity.price / 100).toString(),
         categoryIndex: this.data.categories.findIndex(c => c._id === commodity.cid),
         qualityIndex: this.data.qualities.findIndex(q => q.value === commodity.quality),
         filters: [
@@ -118,15 +118,15 @@ Page({
     if (this.data.commodityCurrentPriceText.length === 0) {
       // 支持空白
       this.setData({
-        commodityCurrentPrice: 0,
+        priceFen: 0,
       });
       return;
     }
-    let price = parseFloat(this.data.commodityCurrentPriceText) || 0;
-    price = Math.max(Math.min(price, 99999.9), 0)
+    let priceYuan = parseFloat(this.data.commodityCurrentPriceText) || 0;
+    priceYuan = Math.max(Math.min(priceYuan, 9999999), 0)
     this.setData({
-      commodityCurrentPrice: price,
-      commodityCurrentPriceText: price.toString(10),
+      priceFen: priceYuan * 100,
+      commodityCurrentPriceText: priceYuan.toString(10),
     })
   },
   onChangeCommodityCurrentPrice(event) {
@@ -250,7 +250,7 @@ Page({
       categories,
       categoryIndex,
       commodityContent,
-      commodityCurrentPrice,
+      priceFen,
       qualityIndex,
       qualities,
       commodityImg,
@@ -266,7 +266,7 @@ Page({
       // 从表单中更新
       cid: categories[categoryIndex]?._id,
       content: commodityContent,
-      price: commodityCurrentPrice,
+      price: priceFen,
       quality: qualities[qualityIndex].value,
       img_urls: commodityImg,
       all_visible: filters.find(f => f.key === 'all').selected,

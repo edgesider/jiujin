@@ -1,5 +1,5 @@
-import { getContentDesc, getQualitiesMap } from "../../utils/strings";
-import { getRegionPath, getRegionPathName } from "../../utils/other";
+import { getContentDesc } from "../../utils/strings";
+import { getRegionPathName } from "../../utils/other";
 
 const app = getApp();
 

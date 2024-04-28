@@ -7,7 +7,7 @@
     <view class="name">{{desc}}</view>
     <view class="line2">
       <view class="price-unit">￥</view>
-      <view class="price">{{commodity.price}}</view>
+      <view class="price">{{commodity.price / 100}}</view>
       <view class="spacer" />
       <image class="region-icon" src="/images/region.png" />
       <view class="region">{{regionName}}</view>

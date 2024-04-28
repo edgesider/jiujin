@@ -25,7 +25,7 @@
         <view class="info">
           <text class="price">
             <text class="unit">￥</text>
-            <text class="amount">{{commodity.price}}</text>
+            <text class="amount">{{commodity.price / 100}}</text>
           </text>
           <text class="views">{{commodity.view_count}}浏览</text>
           <view class="spacer" />
