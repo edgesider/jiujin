@@ -224,7 +224,7 @@ page {
 .list .card {
   width: calc((100% - var(--gap)) / 2);
   border-radius: 16rpx;
-  box-shadow: 0 2px 4px 0 #17007333;
+  box-shadow: 0 2rpx 4rpx 0 rgba(0, 0, 0, 0.2);
 }
 
 .bottom {
