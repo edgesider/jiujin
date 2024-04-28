@@ -17,7 +17,6 @@ export function setNeedRefresh() {
 Page({
   data: {
     ...getConstants(),
-    scrollTop: 0,
 
     self: null as User | null,
     // 可选的区域，按照层级排列L4、L3、L2、L1
@@ -96,11 +95,6 @@ Page({
     }
   },
 
-  onPageScroll(options) {
-    const { scrollTop } = options;
-    this.setData({ scrollTop });
-  },
-
   async onShow() {
     if (needRefresh) {
       needRefresh = false;
@@ -161,6 +155,7 @@ Page({
     this.setData({
       cursor: start,
       isLoading: true,
+      scrollIntoView: null,
       // commodityList: append ? oldList : [],
     });
     try {
@@ -192,7 +187,7 @@ Page({
         isLoading: false,
         cursor,
         commodityList: data,
-        scrollIntoView: scrollToTop ? 'region-filter' : null,
+        scrollIntoView: scrollToTop ? 'top' : null,
       });
     } catch (e) {
       console.error(e);

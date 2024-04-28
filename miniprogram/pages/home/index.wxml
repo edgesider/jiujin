@@ -18,13 +18,15 @@
   class="content-scroll"
   style="margin-top: {{TopBarHeight}}px;"
   scroll-y="true"
-  scroll-with-animation="true"
   refresher-enabled="{{pullDownRefreshing || !isLoading}}"
   refresher-triggered="{{pullDownRefreshing}}"
   bindrefresherrefresh="onRefresherRefresh"
   bindscrolltolower="onReachBottom"
   lower-threshold="400"
   scroll-into-view="{{scrollIntoView}}"
+  scroll-with-animation="false"
+  enhanced="true"
+  using-sticky="true"
 >
   <view>
     <swiper autoplay circular class="top-swiper">
@@ -39,6 +41,7 @@
       </swiper-item>
     </swiper>
 
+    <view id="top" style="width: 100%; height: 0" />
     <view class="region-filter" id="region-filter">
       <scroll-view scroll-x>
         <view class="container">
