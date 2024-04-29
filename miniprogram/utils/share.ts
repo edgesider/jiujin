@@ -1,5 +1,6 @@
 import { tryJsonParse } from './other';
 import { getOpenId } from '../api/api';
+import IShareAppMessageOption = WechatMiniprogram.Page.IShareAppMessageOption;
 
 export interface BaseShareInfo {
   /**
@@ -22,9 +23,15 @@ export interface CommodityShareInfo extends BaseShareInfo {
   commodityId: string;
 }
 
+export interface HelpShareInfo extends BaseShareInfo {
+  type: 'help';
+  helpId: string;
+}
+
 export type ShareInfo =
   | AppShareInfo
   | CommodityShareInfo
+  | HelpShareInfo
   ;
 
 export function buildShareParam(shareInfo: ShareInfo): string {
@@ -70,5 +77,27 @@ export async function reportShareInfo(shareInfo: ShareInfo) {
   }
   if (shareInfo.fromUid !== getOpenId()) {
     saveLastEnterByShareInfo(shareInfo);
+  }
+}
+
+export function onShareHelp(options: IShareAppMessageOption) {
+  const help = options.target.dataset.help;
+  if (!help) {
+    throw Error('invalid help share')
+  }
+  const shareInfo = buildShareParam({
+    type: 'help',
+    from: options.from,
+    fromUid: getOpenId(),
+    timestamp: Date.now(),
+    method: 'card',
+    helpId: help._id,
+  });
+  return {
+    title: '我发现一个有趣的帖子，快来看看吧！',
+    path: '/pages/help_detail/index' +
+      `?id=${help._id}` +
+      `&shareInfo=${encodeURIComponent(shareInfo)}`,
+    imageUrl: help.img_urls[0] ?? '' // TODO 无图的
   }
 }

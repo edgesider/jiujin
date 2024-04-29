@@ -212,7 +212,7 @@ Page({
       method: 'card'
     });
     return {
-      title: '找到一个好东西，快来看看吧！',
+      title: '我找到一个好东西，快来看看吧！',
       path: '/pages/commodity_detail/index' +
         `?id=${commodity._id}` +
         `&shareInfo=${encodeURIComponent(shareInfo)}`,

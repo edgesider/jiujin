@@ -16,7 +16,7 @@
             wx:for-item="img"
             wx:key="*this"
             mode="{{commodity.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
-            src="{{img}}"
+            src="{{img}}/detail"
             data-curr="{{img}}"
             bindtap="previewImages"
           />

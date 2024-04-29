@@ -1,6 +1,6 @@
 import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID, HELP_STATUS_RUNNING } from "../../constants";
 import { getRegionPath, setTabBar } from "../../utils/other";
-import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { buildShareParam, onShareHelp, parseShareInfo, reportShareInfo } from "../../utils/share";
 import api, { getOpenId } from "../../api/api";
 
 const app = getApp()
@@ -202,16 +202,6 @@ Page({
   },
 
   onShareAppMessage(options) {
-    const shareInfo = buildShareParam({
-      type: 'app',
-      from: options.from,
-      fromUid: getOpenId(),
-      timestamp: Date.now(),
-      method: 'card'
-    });
-    return {
-      title: '闲置买卖，又近又快',
-      path: `/pages/help/index?shareInfo=${encodeURIComponent(shareInfo)}`
-    }
+    return onShareHelp(options)
   },
 })

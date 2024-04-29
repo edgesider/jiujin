@@ -1,6 +1,6 @@
 // pages/help_detail/index.ts
 import getConstants from "../../constants";
-import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { buildShareParam, onShareHelp, parseShareInfo, reportShareInfo } from "../../utils/share";
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
@@ -19,10 +19,6 @@ import { setNeedRefresh } from "../home/index";
 const app = getApp();
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     ...getConstants(),
     scrollToView: '',
@@ -41,10 +37,8 @@ Page({
     polishTimeGeneral: '',
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   onLoad: async function (options){
+    await app.waitForReady();
     const { id, scrollToComment, shareInfo: shareInfoStr } = options;
 
     const shareInfo = parseShareInfo(shareInfoStr);
@@ -268,24 +262,8 @@ Page({
     await openProfile(this.data.seller);
   },
 
-  /**
-   * 用户点击右上角分享
-   */
   onShareAppMessage(options) {
-    const shareInfo = buildShareParam({
-      type: 'help',
-      from: options.from,
-      helpId: this.data.help._id,
-      fromUid: getOpenId(),
-      timestamp: Date.now(),
-      method: 'card'
-    });
-    return {
-      title: '找到一个求助，快来看看吧！',
-      path: '/pages/help_detail/index' +
-        `?id=${this.data.help._id}` +
-        `&shareInfo=${encodeURIComponent(shareInfo)}`
-    }
+    return onShareHelp(options)
   },
   onCommentLoadFinished() {
     if (this.data.scrollToComment) {
@@ -294,50 +272,6 @@ Page({
       });
     }
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-
 })
 
 

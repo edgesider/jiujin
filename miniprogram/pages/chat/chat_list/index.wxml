@@ -33,7 +33,7 @@
   refresher-triggered="{{refreshing}}"
   bindrefresherrefresh="onRefresh"
 >
-  <block wx:if="{{false && conversations.length > 0}}">
+  <block wx:if="{{conversations.length > 0}}">
     <Conversation
       class="conversation"
       wx:for="{{conversations}}"

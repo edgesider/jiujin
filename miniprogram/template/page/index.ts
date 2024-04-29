@@ -9,6 +9,7 @@ Page({
   },
   _subscription: null as Subscription | null,
   onLoad() {
+    waitForAppReady();
     this._subscription = new Subscription();
   },
   onUnload() {

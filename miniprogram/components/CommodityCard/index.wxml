@@ -2,7 +2,7 @@
   class="mall"
   bindtap="gotoDetail"
 >
-  <image class="cover" src="{{commodity.img_urls[0]}}" mode="aspectFill"></image>
+  <image class="cover" src="{{commodity.img_urls[0]}}/card" mode="aspectFill"></image>
   <view class="info">
     <view class="name">{{desc}}</view>
     <view class="line2">
