@@ -33,13 +33,16 @@
   refresher-triggered="{{refreshing}}"
   bindrefresherrefresh="onRefresh"
 >
-  <Conversation
-    class="conversation"
-    wx:for="{{conversations}}"
-    wx:for-index="idx"
-    wx:key="conversationID"
-    conversationId="{{item.conversationID}}"
-    conversationIndex="{{idx}}"
-  />
+  <block wx:if="{{false && conversations.length > 0}}">
+    <Conversation
+      class="conversation"
+      wx:for="{{conversations}}"
+      wx:for-index="idx"
+      wx:key="conversationID"
+      conversationId="{{item.conversationID}}"
+      conversationIndex="{{idx}}"
+    />
+  </block>
+  <image wx:else src="/images/empty.png" class="empty" mode="aspectFit" />
 </scroll-view>
 <view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />

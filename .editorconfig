@@ -22,7 +22,7 @@ ij_editorconfig_space_before_colon = false
 ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
 
-[{*.ant,*.fxml,*.jhm,*.jnlp,*.jrxml,*.rng,*.tld,*.wsdl,*.xml,*.xsd,*.xsl,*.xslt,*.xul}]
+[{*.ant,*.fxml,*.jhm,*.jnlp,*.jrxml,*.pom,*.rng,*.tld,*.wadl,*.wsdl,*.xml,*.xsd,*.xsl,*.xslt,*.xul}]
 ij_xml_align_attributes = true
 ij_xml_align_text = false
 ij_xml_attribute_wrap = normal
@@ -40,6 +40,7 @@ ij_xml_space_after_tag_name = false
 ij_xml_space_around_equals_in_attribute = false
 ij_xml_space_inside_empty_tag = true
 ij_xml_text_wrap = normal
+ij_xml_use_custom_settings = false
 
 [{*.ats,*.cts,*.mts,*.ts}]
 ij_typescript_align_imports = false
@@ -404,8 +405,8 @@ ij_html_keep_line_breaks_in_text = true
 ij_html_keep_whitespaces = false
 ij_html_keep_whitespaces_inside = span,pre,textarea
 ij_html_line_comment_at_first_column = true
-ij_html_new_line_after_last_attribute = never
-ij_html_new_line_before_first_attribute = never
+ij_html_new_line_after_last_attribute = when_multiline
+ij_html_new_line_before_first_attribute = when_multiline
 ij_html_quote_style = double
 ij_html_remove_new_line_before_tags = br
 ij_html_space_after_tag_name = false
