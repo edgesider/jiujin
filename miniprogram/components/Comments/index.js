@@ -1,6 +1,6 @@
 import api, { CommentAPI } from '../../api/api';
 import { openProfile } from "../../utils/router";
-import { ensureRegistered } from "../../utils/other";
+import { ensureRegistered, kbHeightChanged } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
 
@@ -26,15 +26,11 @@ Component({
     this.subscription = new Subscription();
 
     this.setData({ selfInfo: app.globalData.self, })
-    const kbHeightChanged = res => {
+    this.subscription.add(kbHeightChanged.subscribe(res => {
       this.setData({
         keyboardHeight: res.height,
       })
-    };
-    wx.onKeyboardHeightChange(kbHeightChanged);
-    this.subscription.add(() => {
-      wx.offKeyboardHeightChange(kbHeightChanged);
-    });
+    }));
 
     await this.fetchComments();
     this.triggerEvent('loadFinished');

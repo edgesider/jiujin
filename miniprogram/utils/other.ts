@@ -1,5 +1,8 @@
 import { Region, User } from '../types';
 import { openLogin, openVerify } from './router';
+import { Observable, Subject } from 'rxjs';
+
+type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
 
 export function tryJsonParse<T = any>(str: string | undefined | null, defaultValue: T | null = null): T | null {
   if (!str) {
@@ -157,3 +160,12 @@ export function textToPrice(text: string) {
   price = Math.max(Math.min(price, 99999.9), 0)
   return price;
 }
+
+export const kbHeightChanged: Observable<OnKeyboardHeightChangeCallbackResult>
+  = new Subject<OnKeyboardHeightChangeCallbackResult>();
+
+(() => {
+  wx.onKeyboardHeightChange(res => {
+    (kbHeightChanged as Subject<OnKeyboardHeightChangeCallbackResult>).next(res);
+  });
+})();

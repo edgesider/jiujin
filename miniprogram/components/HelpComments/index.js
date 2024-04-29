@@ -1,25 +1,17 @@
-// components/HelpComments/index.ts
 import getConstants from "../../constants";
 import api, {  HelpCommentAPI } from "../../api/api";
-import { ensureRegistered } from "../../utils/other";
+import { ensureRegistered, kbHeightChanged } from "../../utils/other";
 import { openProfile } from "../../utils/router";
+import { Subscription } from "rxjs";
 
 const app = getApp();
 
 Component({
-
-  /**
-   * 组件的属性列表
-   */
   properties: {
     help: {
       type: Object,
     },
   },
-
-  /**
-   * 组件的初始数据
-   */
   data: {
     ...getConstants(),
     selfInfo: null,
@@ -31,17 +23,20 @@ Component({
     commentingText: '',
   },
   async attached() {
+    this.subscription = new Subscription();
     this.setData({ selfInfo: app.globalData.self, })
-    wx.onKeyboardHeightChange((res) => {
+    this.subscription.add(kbHeightChanged.subscribe(res => {
       this.setData({
         keyboardHeight: res.height,
       })
-    })
+    }));
     await this.fetchComments();
 
     this.triggerEvent('loadFinished');
   },
-
+  async detached() {
+    this.subscription?.unsubscribe();
+  },
   /**
    * 组件的方法列表
    */

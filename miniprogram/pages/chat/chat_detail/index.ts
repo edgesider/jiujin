@@ -5,10 +5,8 @@ import { Transaction, TransactionApi, TransactionStatus } from '../../../api/tra
 import { Conversation, Group } from '@tencentcloud/chat';
 import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
-import { tryJsonParse } from '../../../utils/other';
-import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
+import { kbHeightChanged, tryJsonParse } from '../../../utils/other';
 
-type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
 type InputConfirm = WechatMiniprogram.InputConfirm;
@@ -46,15 +44,11 @@ Page({
     }
     this.setData({ conversationId, });
 
-    const kbHeightChanged = (res: OnKeyboardHeightChangeCallbackResult) => {
+    this.subscription!!.add(kbHeightChanged.subscribe(res => {
       this.setData({
         keyboardHeight: res.height,
       })
-    };
-    wx.onKeyboardHeightChange(kbHeightChanged);
-    this.subscription!!.add(() => {
-      wx.offKeyboardHeightChange(kbHeightChanged);
-    });
+    }));
 
     const { conversation } = (await tim.getConversationProfile(conversationId)).data;
     tim.setMessageRead({ conversationID: conversation.conversationID }).then();

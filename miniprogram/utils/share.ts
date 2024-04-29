@@ -1,6 +1,7 @@
 import { tryJsonParse } from './other';
 import { getOpenId } from '../api/api';
-import IShareAppMessageOption = WechatMiniprogram.Page.IShareAppMessageOption;
+
+type IShareAppMessageOption = WechatMiniprogram.Page.IShareAppMessageOption;
 
 export interface BaseShareInfo {
   /**
