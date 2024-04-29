@@ -50,11 +50,11 @@ Page({
       editingHelp: isEdit ? help : null,
     };
     if (help) {
-      if((help.img_urls.length === 0)||(help.img_urls.length === 1&&help.img_urls[0]==="")){
+      if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === "")) {
         Object.assign(data, {
           helpImg: [],
         });
-      }else {
+      } else {
         Object.assign(data, {
           helpImg: help.img_urls,
         });
@@ -62,7 +62,7 @@ Page({
       Object.assign(data, {
         helpContent: help.content,
         helpCurrentBounty: help.bounty,
-        helpCurrentBountyText: help. bounty.toString(10),
+        helpCurrentBountyText: help.bounty.toString(10),
       });
     }
     data.buttonText = isEdit ? '保存' : '发布';
@@ -169,7 +169,12 @@ Page({
     return fileIDs;
   },
 
+  submitting: false,
   async onSubmit() {
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     this.onBountyInputBlur();
     const {
       editingHelp: editing,

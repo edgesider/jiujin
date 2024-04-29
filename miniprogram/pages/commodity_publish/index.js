@@ -238,8 +238,13 @@ Page({
     return fileIDs;
   },
 
+  submitting: false,
   // 上传商品信息
   async onSubmit() {
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     await requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed]);
     // 更新一下输入的价格值
     this.onPriceInputBlur();
