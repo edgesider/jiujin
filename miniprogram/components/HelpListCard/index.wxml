@@ -1,10 +1,14 @@
 <view class="root" bind:tap="gotoHelpDetail">
-  <image class="image" mode="aspectFill" src="{{help.img_urls[0]}}" />
+  <image
+    wx:if="{{help.img_urls.length > 0}}"
+    class="image" mode="aspectFill" src="{{help.img_urls[0]}}"
+  />
+  <TextPreview wx:else content="{{desc}}" class="text-preview" />
 
   <view class="middle">
     <view class="title">{{desc}}</view>
     <view class="price">￥{{help.bounty / 100}}</view>
-    <image class="status" src="{{statusImage}}"/>
+    <image class="status" src="{{statusImage}}" />
   </view>
   <view class="right" wx:if="{{help.uid === self._id}}">
     <block wx:if="{{help.status === 0}}">

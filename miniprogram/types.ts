@@ -42,7 +42,7 @@ export interface Commodity {
 }
 
 export function convertCommodity(raw: any) {
-  raw.img_urls = raw.img_urls?.split(',') ?? [];
+  raw.img_urls = (raw.img_urls?.split(',') ?? []).filter(Boolean);
   return { ...raw };
 }
 

@@ -75,6 +75,4 @@ Component({
       this.onUpdate();
     }
   },
-
-
 })

@@ -697,12 +697,7 @@ export const CollectApi = {
         openid: getOpenId()
       }
     }));
-    resp.data?.forEach(c => {
-      c.img_urls = c.img_urls
-        ?.replaceAll("\"", "")
-        .replaceAll(" ", "")
-        .split(",") ?? [];
-    })
+    resp.data = resp.data?.map(convertCommodity);
     return resp;
   },
 }
@@ -744,12 +739,7 @@ export const HelpCollectApi = {
       }
     }));
 
-    resp.data?.forEach(h => {
-      h.img_urls = h.img_urls
-        ?.replaceAll("\"", "")
-        .replaceAll(" ", "")
-        .split(",") ?? [];
-    })
+    resp.data = resp.data?.map(convertCommodity);
     console.log(resp)
     return resp;
   },
@@ -793,12 +783,7 @@ export const HelpLikedApi = {
       }
     }));
 
-    resp.data?.forEach(h => {
-      h.img_urls = h.img_urls
-        ?.replaceAll("\"", "")
-        .replaceAll(" ", "")
-        .split(",") ?? [];
-    })
+    resp.data = resp.data?.map(convertCommodity);
     console.log(resp)
     return resp;
   },

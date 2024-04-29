@@ -5,10 +5,6 @@ import api from "../../api/api";
 const app = getApp();
 const COUNT_PER_PAGE = 12
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     ...getConstants(),
     pullDownRefreshing: false,
@@ -23,9 +19,6 @@ Page({
 
   fetcher: async () => ({}),
   onClick: () => {},
-  /**
-   * 生命周期函数--监听页面加载
-   */
   async onLoad() {
     this.getOpenerEventChannel().on(
       'onParams',

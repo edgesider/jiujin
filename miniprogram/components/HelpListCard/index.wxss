@@ -18,6 +18,11 @@ page {
   align-self: center;
 }
 
+.text-preview {
+  height: 112rpx;
+  width: 112rpx;
+}
+
 .middle {
   height: 100%;
   margin: 0 16rpx;
