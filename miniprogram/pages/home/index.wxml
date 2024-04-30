@@ -64,13 +64,13 @@
           <view class="actions">
             <view>到底啦~</view>
             <view class="action" bindtap="refreshCurrentTab">刷新</view>
-            <block wx:if="{{selectedRegionIndex < regions.length - 1}}">
+            <block wx:if="{{selectedRegionIndex > 0}}">
               <view>或</view>
               <view
                 class="action"
-                bind:tap="onRegionClick"
-                data-idx="{{selectedRegionIndex + 1}}"
-              >去“{{regions[selectedRegionIndex + 1].name}}”看看
+                bind:tap="onRegionSwitchClick"
+                data-idx="{{selectedRegionIndex - 1}}"
+              >去“{{regions[selectedRegionIndex - 1].name}}”看看
               </view>
             </block>
           </view>

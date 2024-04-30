@@ -190,11 +190,20 @@ Page({
   async onReachBottom() {
     await this.loadMore();
   },
+
   async onRegionClick(ev) {
     this.setData({
       selectedRegionIndex: ev.detail.index,
     }, async () => {
       await this.fetchList();
+    });
+  },
+
+  async onRegionSwitchClick(ev) {
+    this.setData({
+      selectedRegionIndex: ev.currentTarget.dataset.idx,
+    }, async () => {
+      await this.fetchList({ scrollToTop: true });
     });
   },
 

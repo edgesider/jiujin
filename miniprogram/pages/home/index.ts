@@ -227,6 +227,14 @@ Page({
     });
   },
 
+  async onRegionSwitchClick(ev: TouchEvent) {
+    this.setData({
+      selectedRegionIndex: ev.currentTarget.dataset.idx,
+    }, async () => {
+      await this.fetchList({ scrollToTop: true });
+    });
+  },
+
   onClickBanner(ev: TouchEvent) {
     const { url } = ev.currentTarget.dataset;
     wx.previewImage({
