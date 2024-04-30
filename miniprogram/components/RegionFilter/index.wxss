@@ -26,7 +26,6 @@
 
 .region-filter .item {
   position: relative;
-  margin-left: 24rpx;
   height: 100%;
   font-size: 32rpx;
   color: #0000004D;
@@ -37,10 +36,7 @@
   align-items: center;
 }
 
-.region-filter .item:last-of-type {
-}
-
-.region-filter .padding-end {
+.region-filter .space {
   width: 24rpx;
   height: 100%;
   flex-shrink: 0;

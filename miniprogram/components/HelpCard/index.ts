@@ -33,11 +33,10 @@ Component({
     regionName: '',
     user: null as User | null,
     contentParagraphs: [] as string[],
-    firstImageSize: [0, 0] as [number, number],
+    // 单个图片时，图片的样式
+    firstImageStyle: '',
     imgCount: 0,
     hasImg: true,
-    // [[...第一行],[...第二行]]
-    imageCells: [] as string[][],
     reportReasons: ['广告营销', '色情营销', '侵犯个人隐私 ', '辱骂诽谤他人', '虚假冒充'], // 可选择的举报原因列表
   },
   lifetimes: {
@@ -46,28 +45,18 @@ Component({
       const { self } = app.globalData;
 
       (async () => {
-        // let firstImageSize: [number, number];
-        // if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === '')) {
-        //   firstImageSize = [500, 500];
-        //   this.setData({
-        //     firstImageSize,
-        //     hasImg: false
-        //   })
-        // } else {
-        //   try {
-        //     const size = await wx.getImageInfo({ src: help.img_urls[0] });
-        //     firstImageSize = [size.width, size.height];
-        //   } catch (e) {
-        //     firstImageSize = [500, 500];
-        //     this.setData({
-        //       hasImg: false
-        //     })
-        //   }
-        //   this.setData({
-        //     firstImageSize,
-        //     hasImg: true
-        //   })
-        // }
+        if (help.img_urls.length === 1) {
+          let ratio = 0;
+          try {
+            const size = await wx.getImageInfo({ src: help.img_urls[0] });
+            ratio = size.width / size.height;
+          } catch (e) {
+            ratio = 0;
+          }
+          this.setData({
+            firstImageStyle: `height: 60vw; width: calc(60vw * ${ratio});`,
+          });
+        }
       })().then();
 
       this.setData({
@@ -76,7 +65,7 @@ Component({
         contentParagraphs: help.content.split('\n').map(s => s.trim()),
         regionName: getRegionPathName(help.rid),
         isMine: self && self._id === help.uid,
-        imageCells: this.getImageCells(help.img_urls),
+        hasImg: help.img_urls.length > 0
       });
 
       const userResp = await api.getUserInfo(help.uid);

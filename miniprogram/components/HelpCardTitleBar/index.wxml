@@ -1,7 +1,7 @@
 <view class="top-user">
   <text class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}" bindtap="back" wx:if="{{hasBack}}" />
   <image
-    bindtap="onAvatarClick"
+    catchtap="onAvatarClick"
     class="avatar"
     src="{{user.avatar_url || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"
   />

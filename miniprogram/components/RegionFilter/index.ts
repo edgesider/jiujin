@@ -4,7 +4,6 @@ import { getGlobals, waitForAppReady } from '../../utils/globals';
 import { Region } from '../../types';
 import { getRegionPath } from '../../utils/other';
 
-type CustomEvent = WechatMiniprogram.CustomEvent;
 type TouchEvent = WechatMiniprogram.TouchEvent;
 
 interface RegionClickDetail {
@@ -54,11 +53,9 @@ Component({
       if (typeof targetIdx !== 'number') {
         return;
       }
-      if (targetIdx > 0) {
-        this.setData({
-          scrollIntoView: `item-${targetIdx}`
-        });
-      }
+      this.setData({
+        scrollIntoView: `space-${targetIdx}`
+      });
       this.triggerEvent(
         'regionClick',
         { index: targetIdx, region: this.data.regions[targetIdx] } satisfies RegionClickDetail

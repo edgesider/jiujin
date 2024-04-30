@@ -1,19 +1,23 @@
 <view class="region-filter">
   <scroll-view scroll-x scroll-into-view="{{scrollIntoView}}">
     <view class="container">
-      <view
-        class="item {{selected === idx ? 'item-on' : ''}}"
-        id="item-{{idx}}"
+      <block
         wx:for="{{regions}}"
         wx:key="_id"
         wx:for-index="idx"
-        bind:tap="onRegionClick"
-        data-idx="{{idx}}"
       >
-        <text class="item-text">{{item.name}}</text>
-        <view class="item-indicator" wx:if="{{selected === idx}}" />
-      </view>
-      <view class="padding-end"/>
+        <view class="space" id="space-{{idx}}" />
+        <view
+          class="item {{selected === idx ? 'item-on' : ''}}"
+          id="item-{{idx}}"
+          bind:tap="onRegionClick"
+          data-idx="{{idx}}"
+        >
+          <text class="item-text">{{item.name}}</text>
+          <view class="item-indicator" wx:if="{{selected === idx}}" />
+        </view>
+      </block>
+      <view class="space" />
     </view>
   </scroll-view>
 </view>
