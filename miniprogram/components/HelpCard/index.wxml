@@ -22,7 +22,7 @@
             class="image"
             mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
             style="background-image: url('{{img}}')"
-            src="{{img}}"
+            src="{{img}}/detail"
             data-curr="{{img}}"
             catchtap="previewImages"
           />

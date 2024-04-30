@@ -54,6 +54,7 @@
   justify-content: flex-start;
   align-items: flex-end;
   gap: 2rpx;
+  transform: translateX(-6rpx);
 }
 
 .top-user .info .line2 .region-icon {

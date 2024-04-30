@@ -1,5 +1,5 @@
 <view class="root" bind:tap="gotoDetail">
-  <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}" />
+  <image class="image" mode="aspectFill" src="{{commodity.img_urls[0]}}/card" />
 
   <view class="middle">
     <view class="title">{{desc}}</view>

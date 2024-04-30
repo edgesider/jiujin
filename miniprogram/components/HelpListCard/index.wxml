@@ -1,7 +1,7 @@
 <view class="root" bind:tap="gotoHelpDetail">
   <image
     wx:if="{{help.img_urls.length > 0}}"
-    class="image" mode="aspectFill" src="{{help.img_urls[0]}}"
+    class="image" mode="aspectFill" src="{{help.img_urls[0]}}/card"
   />
   <TextPreview wx:else content="{{desc}}" class="text-preview" />
 
