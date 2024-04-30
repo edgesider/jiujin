@@ -67,17 +67,25 @@ export interface Help {
   content: string;
   status: 0;
   uid: string;
+  rid: number;
   img_urls: string[];
   is_collected: boolean;
   is_deleted: boolean;
   is_liked: boolean;
-  rid: number;
+  like_count: number;
+  collect_count: number;
+  comment_count: number;
   create_time: number;
   polish_time: number;
   update_time: number;
 }
 
 export function convertHelp(raw: any): Help {
-  return { ...raw, img_urls: convertImgUrls(raw.img_urls) } as Help;
+  return {
+    ...raw, img_urls: convertImgUrls(raw.img_urls),
+    like_count: 100,
+    collect_count: 300,
+    comment_count: 223,
+  } as Help;
 }
 
