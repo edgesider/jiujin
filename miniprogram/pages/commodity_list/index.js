@@ -33,13 +33,16 @@ Page({
         this.setData({
           tabs, title, currTab: defaultTab || tabs?.[0]?.key,
         });
-        await this.fetchMore();
+        await this.fetch();
       });
   },
 
-  async fetchMore() {
+  async fetch(clear = false) {
     const token = ++this.fetchToken;
-    this.setData({ isLoading: true, })
+    this.setData({ isLoading: true, });
+    if (clear) {
+      this.setData({ commodityList: [], cursor: 0 });
+    }
     const res = await this.fetcher({
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
@@ -81,17 +84,17 @@ Page({
       cursor: 0,
       commodityList: [],
     });
-    await this.fetchMore();
+    await this.fetch();
   },
 
   async onRefresherRefresh() {
     this.setData({ pullDownRefreshing: true, })
-    await this.fetchMore();
+    await this.fetch(true);
     this.setData({ pullDownRefreshing: false, })
   },
 
   async onReachBottom() {
-    await this.fetchMore();
+    await this.fetch();
   },
 
   async onClickCard(ev) {

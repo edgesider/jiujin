@@ -33,15 +33,18 @@ Page({
         this.setData({
           tabs, title, currTab: defaultTab || tabs?.[0]?.key,
         });
-        await this.fetchMore();
+        await this.fetch();
       });
   },
 
-  async fetchMore() {
+  async fetch(clear = false) {
     if (this.data.isLoading) {
       return;
     }
     this.setData({ isLoading: true, })
+    if (clear) {
+      this.setData({ commodityList: [], cursor: 0 });
+    }
     const res = await this.fetcher({
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
@@ -80,12 +83,12 @@ Page({
       cursor: 0,
       helpList: [],
     });
-    await this.fetchMore();
+    await this.fetch();
   },
 
   async onRefresherRefresh() {
     this.setData({ pullDownRefreshing: true, })
-    await this.fetchMore();
+    await this.fetch();
     this.setData({ pullDownRefreshing: false, })
   },
 
@@ -141,57 +144,11 @@ Page({
     await this.reload();
   },
 
+  async onReachBottom() {
+    await this.fetch();
+  },
+
   onNavigateBack() {
     wx.navigateBack({})
   },
-
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  async onReachBottom() {
-    await this.fetchMore();
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
-  }
 })

@@ -59,6 +59,6 @@
       </picker>
     </view>
   </view>
-</view>
 
-<button bind:tap="onRegister" class="cu-btn block bg-gradual-green shadow lg margin-lr">保存</button>
+  <button bind:tap="onRegister" class="cu-btn block bg-gradual-green lg" style="margin: 30rpx">保存</button>
+</view>

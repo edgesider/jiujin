@@ -1,6 +1,75 @@
+/*
+  ColorUi for MP-weixin  v2.1.4 | by 文晓港 2019年4月25日19:15:42
+  仅供学习交流，如作它用所承受的法律责任一概与作者无关
+  使用ColorUi开发扩展与插件时，请注明基于ColorUi开发
+  
+  （QQ交流群：240787041）
+*/
+
+/* ==================
+        初始化
+ ==================== */
 page {
-	background-color: #f1f1f1;
+	/* Color 可以自定义相关配色 */
+	/* var属性兼容性 --> https://www.caniuse.com/#feat=css-variables */
+	/* 标准色 */
+	--red: #e54d42;
+	--orange: #f37b1d;
+	--yellow: #fbbd08;
+	--olive: #8dc63f;
+	--green: #39b54a;
+	--cyan: #1cbbb4;
+	--blue: #0081ff;
+	--purple: #6739b6;
+	--mauve: #9c26b0;
+	--pink: #e03997;
+	--brown: #a5673f;
+	--grey: #8799a3;
+	--black: #333333;
+	--darkGray: #666666;
+	--gray: #aaaaaa;
+	--ghostWhite: #f1f1f1;
+	--white: #ffffff;
+	/* 浅色 */
+	--redLight: #fadbd9;
+	--orangeLight: #fde6d2;
+	--yellowLight: #fef2ce;
+	--oliveLight: #e8f4d9;
+	--greenLight: #d7f0db;
+	--cyanLight: #d2f1f0;
+	--blueLight: #cce6ff;
+	--purpleLight: #e1d7f0;
+	--mauveLight: #ebd4ef;
+	--pinkLight: #f9d7ea;
+	--brownLight: #ede1d9;
+	--greyLight: #e7ebed;
+	/* 渐变色 */
+	--gradualRed: linear-gradient(45deg, #f43f3b, #ec008c);
+	--gradualOrange: linear-gradient(45deg, #ff9700, #ed1c24);
+	--gradualGreen: linear-gradient(45deg, #39b54a, #8dc63f);
+	--gradualPurple: linear-gradient(45deg, #9000ff, #5e00ff);
+	--gradualPink: linear-gradient(45deg, #ec008c, #6739b6);
+	--gradualBlue: linear-gradient(45deg, #0081ff, #1cbbb4);
+	/* 阴影透明色 */
+	--ShadowSize: 6rpx 6rpx 8rpx;
+	--redShadow: rgba(204, 69, 59, 0.2);
+	--orangeShadow: rgba(217, 109, 26, 0.2);
+	--yellowShadow: rgba(224, 170, 7, 0.2);
+	--oliveShadow: rgba(124, 173, 55, 0.2);
+	--greenShadow: rgba(48, 156, 63, 0.2);
+	--cyanShadow: rgba(28, 187, 180, 0.2);
+	--blueShadow: rgba(0, 102, 204, 0.2);
+	--purpleShadow: rgba(88, 48, 156, 0.2);
+	--mauveShadow: rgba(133, 33, 150, 0.2);
+	--pinkShadow: rgba(199, 50, 134, 0.2);
+	--brownShadow: rgba(140, 88, 53, 0.2);
+	--greyShadow: rgba(114, 130, 138, 0.2);
+	--grayShadow: rgba(114, 130, 138, 0.2);
+	--blackShadow: rgba(26, 26, 26, 0.2);
+
+	background-color: var(--ghostWhite);
 	font-size: 28rpx;
+	color: var(--black);
 	font-family: Helvetica Neue, Helvetica, sans-serif;
 }
 
@@ -14,4 +83,516 @@ label,
 navigator,
 image {
 	box-sizing: border-box;
+}
+
+/* ==================
+          按钮
+ ==================== */
+
+.cu-btn {
+	position: relative;
+	border: 0rpx;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: 0 30rpx;
+	font-size: 28rpx;
+	height: 64rpx;
+	line-height: 1;
+	text-align: center;
+	text-decoration: none;
+	overflow: visible;
+	margin-left: initial;
+	transform: translate(0rpx, 0rpx);
+	margin-right: initial;
+}
+
+.cu-btn::after {
+	display: none;
+}
+
+.cu-btn:not([class*="bg-"]) {
+	background-color: #f0f0f0;
+}
+
+.cu-btn[class*="line"] {
+	background-color: transparent;
+}
+
+.cu-btn[class*="line"]::after {
+	content: " ";
+	display: block;
+	width: 200%;
+	height: 200%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	border: 1rpx solid currentColor;
+	transform: scale(0.5);
+	transform-origin: 0 0;
+	box-sizing: border-box;
+	border-radius: 12rpx;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.cu-btn.round[class*="line"]::after {
+	border-radius: 1000rpx;
+}
+
+.cu-btn[class*="lines"]::after {
+	border: 6rpx solid currentColor;
+}
+
+.cu-btn[class*="bg-"]::after {
+	display: none;
+}
+
+.cu-btn.sm {
+	padding: 0 20rpx;
+	font-size: 20rpx;
+	height: 48rpx;
+}
+
+.cu-btn.lg {
+	padding: 0 40rpx;
+	font-size: 32rpx;
+	height: 80rpx;
+}
+
+.cu-btn.icon.sm {
+	width: 48rpx;
+	height: 48rpx;
+}
+
+.cu-btn.icon {
+	width: 64rpx;
+	height: 64rpx;
+	border-radius: 500rpx;
+	padding: 0;
+}
+
+button.icon.lg {
+	width: 80rpx;
+	height: 80rpx;
+}
+
+.cu-btn.shadow-blur::before {
+	top: 4rpx;
+	left: 4rpx;
+	filter: blur(6rpx);
+	opacity: 0.6;
+}
+
+.cu-btn.button-hover {
+	transform: translate(1rpx, 1rpx);
+}
+
+.block {
+	display: block;
+}
+
+.cu-btn.block {
+	display: flex;
+}
+
+.cu-btn[disabled] {
+	opacity: 0.6;
+	color: var(--white);
+}
+
+/* ==================
+          头像
+ ==================== */
+
+.cu-avatar {
+	font-variant: small-caps;
+	margin: 0;
+	padding: 0;
+	display: inline-flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	background-color: #ccc;
+	color: var(--white);
+	white-space: nowrap;
+	position: relative;
+	width: 64rpx;
+	height: 64rpx;
+	background-size: cover;
+	background-position: center;
+	vertical-align: middle;
+	font-size: 1.5em;
+}
+
+.cu-avatar.sm {
+	width: 48rpx;
+	height: 48rpx;
+	font-size: 1em;
+}
+
+.cu-avatar.lg {
+	width: 96rpx;
+	height: 96rpx;
+	font-size: 2em;
+}
+
+.cu-avatar.xl {
+	width: 128rpx;
+	height: 128rpx;
+	font-size: 2.5em;
+}
+
+.cu-avatar .avatar-text {
+	font-size: 0.4em;
+}
+
+.cu-avatar-group {
+	direction: rtl;
+	unicode-bidi: bidi-override;
+	padding: 0 10rpx 0 40rpx;
+	display: inline-block;
+}
+
+.cu-avatar-group .cu-avatar {
+	margin-left: -30rpx;
+	border: 4rpx solid var(--ghostWhite);
+	vertical-align: middle;
+}
+
+.cu-avatar-group .cu-avatar.sm {
+	margin-left: -20rpx;
+	border: 1rpx solid var(--ghostWhite);
+}
+
+/* ==================
+          加载
+ ==================== */
+
+.cu-load {
+	display: block;
+	line-height: 3em;
+	text-align: center;
+}
+
+.cu-load::before {
+	font-family: "cuIcon";
+	display: inline-block;
+	margin-right: 6rpx;
+}
+
+.cu-load.loading::before {
+	content: "\e67a";
+	animation: cuIcon-spin 2s infinite linear;
+}
+
+.cu-load.loading::after {
+	content: "加载中...";
+}
+
+.cu-load.over::before {
+	content: "\e64a";
+}
+
+.cu-load.over::after {
+	content: "没有更多了";
+}
+
+.cu-load.erro::before {
+	content: "\e658";
+}
+
+.cu-load.erro::after {
+	content: "加载失败";
+}
+
+.cu-load.load-icon::before {
+	font-size: 32rpx;
+}
+
+.cu-load.load-icon::after {
+	display: none;
+}
+
+.cu-load.load-icon.over {
+	display: none;
+}
+
+.cu-load.load-modal {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 140rpx;
+	left: 0;
+	margin: auto;
+	width: 260rpx;
+	height: 260rpx;
+	background-color: var(--white);
+	border-radius: 10rpx;
+	box-shadow: 0 0 0rpx 2000rpx rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	font-size: 28rpx;
+	z-index: 9999;
+	line-height: 2.4em;
+}
+
+.cu-load.load-modal [class*="cuIcon-"] {
+	font-size: 60rpx;
+}
+
+.cu-load.load-modal image {
+	width: 70rpx;
+	height: 70rpx;
+}
+
+.cu-load.load-modal::after {
+	content: "";
+	position: absolute;
+	background-color: var(--white);
+	border-radius: 50%;
+	width: 200rpx;
+	height: 200rpx;
+	font-size: 10px;
+	border-top: 6rpx solid rgba(0, 0, 0, 0.05);
+	border-right: 6rpx solid rgba(0, 0, 0, 0.05);
+	border-bottom: 6rpx solid rgba(0, 0, 0, 0.05);
+	border-left: 6rpx solid var(--orange);
+	animation: cuIcon-spin 1s infinite linear;
+	z-index: -1;
+}
+
+/* ==================
+         卡片
+ ==================== */
+
+.cu-card {
+	display: block;
+	overflow: hidden;
+}
+
+.cu-card>.cu-item {
+	display: block;
+	background-color: var(--white);
+	overflow: hidden;
+	border-radius: 10rpx;
+	margin: 30rpx;
+}
+
+.cu-card>.cu-item.shadow-blur {
+	overflow: initial;
+}
+
+.cu-card.no-card>.cu-item {
+	margin: 0rpx;
+	border-radius: 0rpx;
+}
+
+.cu-card .grid.grid-square {
+	margin-bottom: -20rpx;
+}
+
+.cu-card.case .image {
+	position: relative;
+}
+
+.cu-card.case .image image {
+	width: 100%;
+}
+
+.cu-card.case .image .cu-tag {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.cu-card.case .image .cu-bar {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	background-color: transparent;
+	padding: 0rpx 30rpx;
+}
+
+.cu-card.case.no-card .image {
+	margin: 30rpx 30rpx 0;
+	overflow: hidden;
+	border-radius: 10rpx;
+}
+
+.cu-card.dynamic {
+	display: block;
+}
+
+.cu-card.dynamic>.cu-item {
+	display: block;
+	background-color: var(--white);
+	overflow: hidden;
+}
+
+.cu-card.dynamic>.cu-item>.text-content {
+	padding: 0 30rpx 0;
+	max-height: 6.4em;
+	overflow: hidden;
+	font-size: 30rpx;
+	margin-bottom: 20rpx;
+}
+
+.cu-card.dynamic>.cu-item .square-img {
+	width: 100%;
+	height: 200rpx;
+	border-radius: 6rpx;
+}
+
+.cu-card.dynamic>.cu-item .only-img {
+	width: 100%;
+	height: 320rpx;
+	border-radius: 6rpx;
+}
+
+.cu-card.article {
+	display: block;
+}
+
+.cu-card.article>.cu-item {
+	padding-bottom: 30rpx;
+}
+
+.cu-card.article>.cu-item .title {
+	font-size: 30rpx;
+	font-weight: 900;
+	color: var(--black);
+	line-height: 100rpx;
+	padding: 0 30rpx;
+}
+
+.cu-card.article>.cu-item .content {
+	display: flex;
+	padding: 0 30rpx;
+}
+
+.cu-card.article>.cu-item .content>image {
+	width: 240rpx;
+	height: 6.4em;
+	margin-right: 20rpx;
+	border-radius: 6rpx;
+}
+
+.cu-card.article>.cu-item .content .desc {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.cu-card.article>.cu-item .content .text-content {
+	font-size: 28rpx;
+	color: #888;
+	height: 4.8em;
+	overflow: hidden;
+}
+
+/* ==================
+         表单
+ ==================== */
+
+.cu-form-group {
+	background-color: var(--white);
+	padding: 1rpx 30rpx;
+	display: flex;
+	align-items: center;
+	min-height: 100rpx;
+	justify-content: space-between;
+}
+
+.cu-form-group+.cu-form-group {
+	border-top: 1rpx solid #eee;
+}
+
+.cu-form-group .title {
+	text-align: justify;
+	padding-right: 30rpx;
+	font-size: 30rpx;
+	position: relative;
+	height: 60rpx;
+	line-height: 60rpx;
+}
+
+.cu-form-group input {
+	flex: 1;
+	font-size: 30rpx;
+	color: #555;
+	padding-right: 20rpx;
+}
+
+.cu-form-group>text[class*="cuIcon-"] {
+	font-size: 36rpx;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.cu-form-group textarea {
+	margin: 32rpx 0 30rpx;
+	height: 4.6em;
+	width: 100%;
+	line-height: 1.2em;
+	flex: 1;
+	font-size: 28rpx;
+	padding: 0;
+}
+
+.cu-form-group.align-start .title {
+	height: 1em;
+	margin-top: 32rpx;
+	line-height: 1em;
+}
+
+.cu-form-group picker {
+	flex: 1;
+	padding-right: 40rpx;
+	overflow: hidden;
+	position: relative;
+}
+
+.cu-form-group picker .picker {
+	line-height: 100rpx;
+	font-size: 28rpx;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 100%;
+	text-align: right;
+}
+
+.cu-form-group picker::after {
+	font-family: "cuIcon";
+	display: block;
+	content: "\e6a3";
+	position: absolute;
+	font-size: 34rpx;
+	color: var(--grey);
+	line-height: 100rpx;
+	width: 60rpx;
+	text-align: center;
+	top: 0;
+	bottom: 0;
+	right: -20rpx;
+	margin: auto;
+}
+
+.cu-form-group textarea[disabled],
+.cu-form-group textarea[disabled] .placeholder {
+	color: transparent;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.bg-gradual-green {
+  background-image: var(--gradualGreen);
+  color: var(--white);
 }

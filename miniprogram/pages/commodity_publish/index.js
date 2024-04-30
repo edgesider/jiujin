@@ -40,9 +40,6 @@ Page({
     choose_filtration: "全部可见"
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   async onLoad(options) {
     await waitForAppReady();
     const { self, categories } = app.globalData;
