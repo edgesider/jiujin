@@ -101,7 +101,7 @@ Page({
 
   async generateAvatar() {
     return new Promise<string>((resolve, rej) => {
-      const avatarB64 = (new Identicon(getOpenId())).toString() + Date.now().toString();
+      const avatarB64 = (new Identicon(Date.now().toString() + Date.now().toString())).toString();
       const avatar = decode(avatarB64);
       const fs = wx.getFileSystemManager();
       fs.writeFile({
