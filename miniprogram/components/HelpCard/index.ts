@@ -1,18 +1,21 @@
-import getConstants from "../../constants";
-import { buildShareParam } from "../../utils/share";
-import api, { getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
+import getConstants from '../../constants';
+import api, { getOpenId, HelpCollectApi, HelpLikedApi } from '../../api/api';
 import moment from 'moment';
-import { DATETIME_FORMAT } from "../../utils/time";
-import { ensureRegistered, getRegionPathName, sleep } from "../../utils/other";
-import { openConversationDetail, openProfile } from "../../utils/router";
+import { DATETIME_FORMAT } from '../../utils/time';
+import { ensureRegistered, getRegionPathName, sleep } from '../../utils/other';
+import { openConversationDetail, openProfile } from '../../utils/router';
+import { Help, Region, User } from '../../types';
+import { startHelpTransaction } from '../../utils/transaction';
 
+type BaseEvent = WechatMiniprogram.BaseEvent;
 const app = getApp();
+
 Component({
   properties: {
     help: {
       type: Object,
     },
-    showRegionLevel: {
+    currRegionLevel: {
       type: Number,
       value: 0,
     }
@@ -20,58 +23,96 @@ Component({
 
   data: {
     ...getConstants(),
+    imageAreaHeight: 0,
     scrollToView: '',
     scrollToComment: false,
-    ridToRegion: {},
+    ridToRegion: {} as Record<number, Region>,
     loading: true,
     isMine: false,
     createTime: '',
     regionName: '',
-    seller: null,
-    contentParagraphs: [],
-    firstImageSize: [],
+    user: null as User | null,
+    contentParagraphs: [] as string[],
+    firstImageSize: [0, 0] as [number, number],
+    imgCount: 0,
     hasImg: true,
+    // [[...第一行],[...第二行]]
+    imageCells: [] as string[][],
     reportReasons: ['广告营销', '色情营销', '侵犯个人隐私 ', '辱骂诽谤他人', '虚假冒充'], // 可选择的举报原因列表
   },
-  attached: async function () {
-    const help = this.properties.help;
-    const sellerResp = await api.getUserInfo(help.uid);
-    const seller = sellerResp.isError ? null : sellerResp.data;
+  lifetimes: {
+    attached: async function () {
+      const help = this.properties.help as Help;
+      const { self } = app.globalData;
 
-    let firstImageSize = [0, 1];
-    if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === "")) {
-      firstImageSize = [500, 500];
-      this.setData({
-        hasImg: false
-      })
-    } else {
-      try {
-        const size = await wx.getImageInfo({ src: help.img_urls[0] });
-        firstImageSize = [size.width, size.height];
-      } catch (e) {
-        firstImageSize = [500, 500];
-        this.setData({
-          hasImg: false
-        })
-      }
-      this.setData({
-        hasImg: true
-      })
-    }
-    const { self } = app.globalData;
+      (async () => {
+        // let firstImageSize: [number, number];
+        // if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === '')) {
+        //   firstImageSize = [500, 500];
+        //   this.setData({
+        //     firstImageSize,
+        //     hasImg: false
+        //   })
+        // } else {
+        //   try {
+        //     const size = await wx.getImageInfo({ src: help.img_urls[0] });
+        //     firstImageSize = [size.width, size.height];
+        //   } catch (e) {
+        //     firstImageSize = [500, 500];
+        //     this.setData({
+        //       hasImg: false
+        //     })
+        //   }
+        //   this.setData({
+        //     firstImageSize,
+        //     hasImg: true
+        //   })
+        // }
+      })().then();
 
-    this.setData({
-      loading: false,
-      createTime: moment(help.create_time).format(DATETIME_FORMAT),
-      seller,
-      contentParagraphs: help.content.split('\n').map(s => s.trim()),
-      regionName: getRegionPathName(help.rid),
-      isMine: self && self._id === help.uid,
-      firstImageSize,
-    });
+      this.setData({
+        loading: false,
+        createTime: moment(help.create_time).format(DATETIME_FORMAT),
+        contentParagraphs: help.content.split('\n').map(s => s.trim()),
+        regionName: getRegionPathName(help.rid),
+        isMine: self && self._id === help.uid,
+        imageCells: this.getImageCells(help.img_urls),
+      });
+
+      const userResp = await api.getUserInfo(help.uid);
+      const user = userResp.isError ? null : userResp.data;
+      this.setData({ user });
+    },
   },
   methods: {
-
+    getImageCells(images: string[]): string[][] {
+      switch (images.length) {
+        case 0:
+          return [];
+        case 1:
+          return [images];
+        case 4:
+          return [
+            [images[0], images[1]],
+            [images[2], images[3]]
+          ];
+        default:
+          const rows: string[][] = [];
+          const row: string[] = [];
+          for (let i = 0; i < images.length; i++) {
+            if (row.length === 3) {
+              rows.push([...row]);
+              row.length = 0;
+            } else {
+              row.push(images[i]);
+            }
+          }
+          if (row.length > 0) {
+            rows.push(row);
+          }
+          return rows;
+      }
+    },
     async gotoDetail() {
       if (!this.properties.help) {
         return;
@@ -80,7 +121,7 @@ Component({
         url: `../help_detail/index?id=${this.properties.help._id}`
       })
     },
-    async previewImages(param) {
+    async previewImages(param: BaseEvent) {
       const { curr } = param.currentTarget.dataset;
       await wx.previewImage({
         current: curr,
@@ -88,12 +129,14 @@ Component({
       });
     },
 
+    // @ts-ignore
     togglingCollect: false,
     async onToggleCollect() {
       ensureRegistered();
       if (this.togglingCollect) {
         return;
       }
+      // @ts-ignore
       this.togglingCollect = true;
       try {
         if (this.data.help.is_collected) {
@@ -123,15 +166,19 @@ Component({
           )
         })
       } finally {
+        // @ts-ignore
         this.togglingCollect = false;
       }
     },
+
+    // @ts-ignore
     togglingLike: false,
     async onToggleLike() {
       ensureRegistered();
       if (this.togglingLike) {
         return;
       }
+      // @ts-ignore
       this.togglingLike = true;
       try {
         if (this.data.help.is_liked) {
@@ -161,6 +208,7 @@ Component({
           )
         })
       } finally {
+        // @ts-ignore
         this.togglingLike = false;
       }
     },
@@ -186,13 +234,10 @@ Component({
               icon: 'success',
               duration: 2000,
             });
-            await sleep(500);
-            this.back();
+            // TODO 移除
           }
         },
       });
-
-      // await wx.showToast({ title: '已举报' });
     },
 
     async onClickShare() {
@@ -209,7 +254,7 @@ Component({
         title: '请稍后',
         mask: true
       })
-      const tact = await startHelpTransaction(this.data.help, this.data.seller);
+      const tact = await startHelpTransaction(this.data.help as Help, this.data.user!!);
       await wx.hideLoading();
       if (!tact) {
         await wx.showToast({
@@ -222,35 +267,9 @@ Component({
     },
 
     async onAvatarClick() {
-      await openProfile(this.data.seller);
-    },
-
-    /**
-     * 用户点击右上角分享
-     */
-    onShareAppMessage(options) {
-      const shareInfo = buildShareParam({
-        type: 'help',
-        from: options.from,
-        helpId: this.data.help._id,
-        fromUid: getOpenId(),
-        timestamp: Date.now(),
-        method: 'card'
-      });
-      return {
-        title: '找到一个求助，快来看看吧！',
-        path: '/pages/help_detail/index' +
-          `?id=${this.data.help._id}` +
-          `&shareInfo=${encodeURIComponent(shareInfo)}`
+      if (this.data.user) {
+        await openProfile(this.data.user);
       }
     },
-    onCommentLoadFinished() {
-      if (this.data.scrollToComment) {
-        this.setData({
-          scrollToView: 'comments'
-        });
-      }
-    },
-
   },
 })

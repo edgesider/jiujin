@@ -1,3 +1,5 @@
+import { cloudProtocolToHttp } from './utils/other';
+
 export interface User {
   _id: string;
   avatar_url: string;
@@ -41,9 +43,14 @@ export interface Commodity {
   only_same_building: boolean;
 }
 
-export function convertCommodity(raw: any) {
-  raw.img_urls = (raw.img_urls?.split(',') ?? []).filter(Boolean);
-  return { ...raw };
+function convertImgUrls(urls: string | undefined): string[] {
+  return (urls?.split(',') ?? [])
+    .filter(Boolean)
+    .map((img: string) => cloudProtocolToHttp(img));
+}
+
+export function convertCommodity(raw: any): Commodity {
+  return { ...raw, img_urls: convertImgUrls(raw.img_urls) } as Commodity;
 }
 
 export interface Region {
@@ -53,3 +60,24 @@ export interface Region {
   parents: number[];
   children: number[];
 }
+
+export interface Help {
+  _id: string;
+  bounty: number;
+  content: string;
+  status: 0;
+  uid: string;
+  img_urls: string[];
+  is_collected: boolean;
+  is_deleted: boolean;
+  is_liked: boolean;
+  rid: number;
+  create_time: number;
+  polish_time: number;
+  update_time: number;
+}
+
+export function convertHelp(raw: any): Help {
+  return { ...raw, img_urls: convertImgUrls(raw.img_urls) } as Help;
+}
+

@@ -169,3 +169,10 @@ export const kbHeightChanged: Observable<OnKeyboardHeightChangeCallbackResult>
     (kbHeightChanged as Subject<OnKeyboardHeightChangeCallbackResult>).next(res);
   });
 })();
+
+/**
+ * cloud://... -> https://...
+ */
+export function cloudProtocolToHttp(url: string) {
+  return url.replace(/cloud:\/\/[^.]*?\.([^\/]*)(.*)/, 'https://$1.tcb.qcloud.la$2');
+}

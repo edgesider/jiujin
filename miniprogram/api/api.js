@@ -1,7 +1,7 @@
 import axios from 'axios';
 import mpAdapter from 'axios-miniprogram-adapter';
 import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../constants';
-import { convertCommodity } from '../types';
+import { convertCommodity, convertHelp } from '../types';
 import { RespSuccess, RespError } from './resp';
 
 axios.defaults.adapter = mpAdapter;
@@ -176,7 +176,7 @@ const api = {
         openid: getOpenId()
       }
     });
-    resp.data.data = (resp.data?.data ?? []).map(convertCommodity);
+    resp.data.data = (resp.data?.data ?? []).map(convertHelp);
     return wrapResp(resp);
   },
 

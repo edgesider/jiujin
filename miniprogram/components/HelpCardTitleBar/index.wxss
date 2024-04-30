@@ -68,37 +68,37 @@
 }
 
 .right {
-  flex-grow: 1;
-  flex-shrink: 1;
+  background: linear-gradient(180deg, #FAC000 0%, #FF4D4D 100%);
+  flex-grow: 0;
+  flex-shrink: 0;
+  border-radius: 8rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-
+  align-items: center;
+  padding: 6rpx 8rpx;
 }
-.price {
-  color: #21ac39;
+
+.right .text {
+  font-size: 18rpx;
+  color: #fff;
+}
+
+.right .price {
+  color: #fff;
   display: flex;
   align-self: flex-end;
   font-style: italic;
+  font-weight: bold;
+  transform: translateX(-4rpx);
 }
 
-.unit {
-  font-size: 28rpx;
+.right .unit {
+  font-size: 24rpx;
 }
 
-.amount {
-  font-size: 48rpx;
-}
-.new-view {
-  display: flex;
-  align-items: center;
-  align-self: flex-end;
-}
-
-.new-text {
-  font-size: 24rpx; /* 根据需要调整字体大小 */
-  margin-left: 10px; /* 根据需要调整左边距 */
+.right .amount {
+  font-size: 32rpx;
 }
 
 .container {
@@ -109,12 +109,6 @@
 }
 
 .background {
-  /*background-color: red;*/
-  /*padding: 10px;*/
-  /*display: flex;*/
-  /*flex-direction: column;*/
-  /*align-items: flex-end;*/
-  /*justify-content: flex-end;*/
 }
 
 .title {

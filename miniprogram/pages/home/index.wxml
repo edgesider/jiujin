@@ -53,7 +53,7 @@
         wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
         class="card"
         commodity="{{item}}"
-        showRegionLevel="{{selectedRegionIndex + 1}}"
+        currRegionLevel="{{selectedRegionIndex + 1}}"
       />
     </view>
 

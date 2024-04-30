@@ -48,7 +48,6 @@ Page({
   fetchToken: 0,
 
   async onLoad(options) {
-    console.log('onLoad', options);
     setTabBar(this);
 
     const { shareInfo: shareInfoStr } = options;

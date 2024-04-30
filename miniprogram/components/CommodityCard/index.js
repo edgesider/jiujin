@@ -8,7 +8,7 @@ Component({
     commodity: {
       type: Object,
     },
-    showRegionLevel: {
+    currRegionLevel: {
       type: Number,
       value: 1
     }
@@ -36,13 +36,13 @@ Component({
     }
   },
   attached() {
-    const { showRegionLevel = 1 } = this.properties;
+    const { currRegionLevel = 1 } = this.properties;
     const { content, rid } = this.properties.commodity;
     this.setData({
       desc: getContentDesc(content),
       regionName: getRegionPathName(
         rid,
-        showRegionLevel + 1 // 最多展示到当前级别的下一级
+        currRegionLevel + 1 // 最多展示到当前级别的下一级
       ) || '楼里', // 没有要展示的就展示“楼里”
     });
   }

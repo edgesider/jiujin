@@ -5,29 +5,27 @@
   </view>
   <block wx:else>
     <view class="body">
-      <HelpCardTitleBar user="{{seller}}" hasBack="{{false}}" time="{{createTime}}" bounty="{{help.bounty}}" />
+      <HelpCardTitleBar user="{{user}}" hasBack="{{false}}" time="{{createTime}}" bounty="{{help.bounty}}" />
       <view class="content">
         <view class="paragraphs">
           <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
         </view>
-        <view wx:if="{{hasImg===false}}">
-          <view class="divider" />
-        </view>
+
         <view
-          wx:else="{{hasImg===true}}"
+          wx:if="{{hasImg}}"
           class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
-          style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
         >
-          <image
+          <view
             wx:for="{{help.img_urls}}"
             wx:for-item="img"
             wx:key="*this"
+            class="image"
             mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
+            style="background-image: url('{{img}}')"
             src="{{img}}"
             data-curr="{{img}}"
             catchtap="previewImages"
           />
-          <view class="divider" />
         </view>
       </view>
       <view class="footer">
@@ -43,8 +41,7 @@
             <text class="text">收藏</text>
           </view>
           <view wx:if="{{!isMine}}" class="button" catchtap="gotoDetail">
-            <image class="icon"
-                   src="{{'/images/chatting.png'}}" />
+            <image class="icon" src="/images/comment-icon.png" />
             <text class="text">评论</text>
           </view>
           <view class="button" catchtap="onClickShare">

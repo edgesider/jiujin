@@ -55,12 +55,16 @@
 
 .body .content .images-single {
   width: 100%;
-  max-height: 120vw;
+  height: 60vw;
+  flex-grow: 0;
+  padding-left: var(--content-padding);
 }
 
-.body .content .images-single image {
-  width: 100%;
+.body .content .images-single .image {
   height: 100%;
+  background-position: left;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .body .content .images-multi {
@@ -75,10 +79,13 @@
   padding: 0 var(--content-padding);
 }
 
-.body .content .images-multi image {
+.body .content .images-multi .image {
   border-radius: 8rpx;
   width: calc((90vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
   height: calc((90vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .body .content .info {
@@ -151,13 +158,11 @@
 .footer {
   flex-grow: 0;
   flex-shrink: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 24rpx 20rpx;
-  /*height: 30rpx*/
+  padding: 0 20rpx 10rpx;
 }
 
 .footer .left {
