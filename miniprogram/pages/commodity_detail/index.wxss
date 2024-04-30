@@ -232,3 +232,10 @@
 .button-disabled {
   opacity: 0.3;
 }
+
+.right .button.button-small {
+  padding: 8rpx 16rpx;
+  font-size: 24rpx;
+  font-weight: normal;
+  margin-right: 8rpx;
+}

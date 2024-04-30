@@ -1,4 +1,4 @@
-import { User } from '../types';
+import { Commodity, User } from '../types';
 import { Conversation } from '@tencentcloud/chat';
 
 export async function openProfile(user: string | User) {
@@ -58,4 +58,22 @@ export async function openVerify() {
   await wx.navigateTo({
     url: `/pages/verify/index`
   });
+}
+
+export async function openCommodityEdit(commodity: Commodity, waitFinished = false) {
+  if (!waitFinished) {
+    await wx.navigateTo({
+      url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
+    });
+    return;
+  } else {
+    return new Promise<void>(res => {
+      wx.navigateTo({
+        url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
+        events: {
+          afterEdited: res
+        },
+      });
+    });
+  }
 }

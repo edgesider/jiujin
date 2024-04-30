@@ -5,7 +5,7 @@ import getConstants, {
   COMMODITY_STATUS_DEACTIVATED, HELP_STATUS_RUNNING
 } from "../../constants";
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
-import { openProfile } from "../../utils/router";
+import { openCommodityEdit, openProfile } from "../../utils/router";
 import { waitForAppReady } from "../../utils/globals";
 
 const app = getApp()
@@ -154,16 +154,8 @@ Page({
                 };
               },
               edit: async () => {
-                return new Promise(async (res) => {
-                  await wx.navigateTo({
-                    url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
-                    events: {
-                      afterEdited: async () => {
-                        res({ action: 'fetchSingle', });
-                      }
-                    },
-                  })
-                });
+                await openCommodityEdit(commodity, true);
+                return { action: 'fetchSingle' };
               },
               delete: async () => {
                 return new Promise(async (res) => {

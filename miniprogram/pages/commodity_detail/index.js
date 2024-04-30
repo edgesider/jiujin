@@ -1,9 +1,9 @@
 import api, { CollectApi, getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
-import { ensureRegistered, getRegionPath, getRegionPathName, sleep } from "../../utils/other";
+import { ensureRegistered, getRegionPathName, sleep } from "../../utils/other";
 import moment from "moment";
-import { openConversationDetail, openProfile } from "../../utils/router";
+import { openCommodityEdit, openConversationDetail, openProfile } from "../../utils/router";
 import {
   getConversationByGroup,
   getGroupIdForTransaction,
@@ -44,6 +44,17 @@ Page({
       reportShareInfo(shareInfo).then();
     }
 
+    await this.loadData(id);
+    this.setData({
+      scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
+    });
+
+    await api.addViewCount(id);
+  },
+  back() {
+    wx.navigateBack().then();
+  },
+  async loadData(id) {
     const commResp = await api.getCommodityInfo({ id });
     if (commResp.isError) {
       await wx.showToast({
@@ -71,7 +82,6 @@ Page({
 
     this.setData({
       loading: false,
-      scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
       commodity,
       createTime: moment(commodity.create_time).format(DATETIME_FORMAT),
       polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
@@ -82,15 +92,10 @@ Page({
       isMine: self && self._id === commodity.seller_id,
       firstImageSize,
     });
-
-    await api.addViewCount(id);
-  },
-  back() {
-    wx.navigateBack().then();
   },
 
   polishing: false,
-  async polish() {
+  async onPolish() {
     if (this.polishing)
       return;
     this.polishing = true;
@@ -115,6 +120,46 @@ Page({
     await sleep(500);
     setNeedRefresh();
     this.back();
+  },
+  async onDeactivate() {
+    const { commodity } = this.data;
+    if (!commodity) {
+      return;
+    }
+    await wx.showLoading({ mask: true, title: '正在下架...' });
+    const resp = await api.deactivateCommodity({ id: commodity._id, });
+    await wx.hideLoading();
+    if (resp.isError) {
+      console.error(resp)
+      await wx.showToast({ title: '下架失败', icon: 'error', mask: true });
+      return;
+    }
+    await wx.showToast({ title: '下架成功', icon: 'success', mask: true });
+    await this.loadData(commodity._id);
+  },
+  async onActivate() {
+    const { commodity } = this.data;
+    if (!commodity) {
+      return;
+    }
+    await wx.showLoading({ mask: true, title: '正在重新上架...' });
+    const resp = await api.activateCommodity({ id: commodity._id, });
+    await wx.hideLoading();
+    if (resp.isError) {
+      console.error(resp)
+      await wx.showToast({ title: '上架失败', icon: 'error', mask: true });
+      return;
+    }
+    await wx.showToast({ title: '上架成功', icon: 'success', mask: true });
+    await this.loadData(commodity._id);
+  },
+  async onEdit() {
+    const { commodity } = this.data;
+    if (!commodity) {
+      return;
+    }
+    await openCommodityEdit(this.data.commodity, true);
+    await this.loadData(commodity._id);
   },
 
   async previewImages(param) {
