@@ -50,15 +50,15 @@
     </scroll-view>
     <view class="footer">
       <view class="left">
-        <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">
+        <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleLike">
           <image class="icon"
                  src="{{help.is_liked ? '/images/like1.png' : '/images/like0.png'}}" />
-          <text class="text">点赞</text>
+          <text class="text">{{help.like_count > 0 ? help.like_count : '点赞'}}</text>
         </view>
         <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">
           <image class="icon"
                  src="{{help.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
-          <text class="text">收藏</text>
+          <text class="text">{{help.collect_count > 0 ? help.collect_count : '收藏'}}</text>
         </view>
         <view class="button" bindtap="onClickShare">
           <image class="icon" src="/images/share.png" />

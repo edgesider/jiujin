@@ -214,7 +214,7 @@ Page({
         )
       })
     } finally {
-      this.togglingCollect = false;
+      this.togglingLike = false;
     }
   },
 
