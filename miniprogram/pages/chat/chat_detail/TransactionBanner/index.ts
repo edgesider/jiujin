@@ -196,18 +196,30 @@ Component({
     },
     getTransactionStatusTip(transaction: Transaction): string[] {
       let tips;
+      let remain = '';
+      if (transaction.book_time) {
+        const remainMin = (transaction.book_time + 1000 * 60 * 60 * 12 - Date.now()) / 1000 / 60;
+        const min = Math.floor(remainMin % 60).toFixed();
+        const hour = Math.floor(remainMin / 60).toFixed();
+        console.log(remainMin / 60);
+        remain = `${hour}:${min}`
+      }
       if (this.data.isSeller) {
         tips = ({
           [TransactionStatus.Booked]: [
             '点击“已售出”商品正式下架，点击“未售出”后商品擦亮置顶',
-            '如12小时内无任何操作，会自动转为“已售出”状态',
+            `如12小时内无任何操作，会自动转为“已售出”状态（剩余${remain}）`,
           ],
         })[transaction.status];
       } else {
         tips = ({
           [TransactionStatus.Idle]: [
-            '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品'
+            '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品',
+            '如12小时内无任何操作，会自动转为“已售出”状态',
           ],
+          [TransactionStatus.Booked]: [
+            `如12小时内无任何操作，会自动转为“已售出”状态（剩余${remain}）`,
+          ]
         })[transaction.status];
       }
       return tips ?? [];
