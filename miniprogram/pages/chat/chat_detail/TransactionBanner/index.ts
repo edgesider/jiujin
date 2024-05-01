@@ -201,7 +201,6 @@ Component({
         const remainMin = (transaction.book_time + 1000 * 60 * 60 * 12 - Date.now()) / 1000 / 60;
         const min = Math.floor(remainMin % 60).toFixed();
         const hour = Math.floor(remainMin / 60).toFixed();
-        console.log(remainMin / 60);
         remain = `${hour}:${min}`
       }
       if (this.data.isSeller) {
