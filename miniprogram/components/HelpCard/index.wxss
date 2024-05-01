@@ -98,7 +98,7 @@
 }
 
 .body .content .info .price {
-  color: #21ac39;
+  color: var(--brand-green);
   display: flex;
   align-self: flex-end;
   font-style: italic;
@@ -231,7 +231,7 @@
   flex-shrink: 0;
   border-radius: 16rpx;
   padding: 16rpx 48rpx;
-  background: #21ac39;
+  background: var(--brand-green);
   font-size: 28rpx;
   display: flex;
   justify-content: center;

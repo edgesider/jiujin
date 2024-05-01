@@ -207,7 +207,7 @@ Component({
         tips = ({
           [TransactionStatus.Booked]: [
             '点击“已售出”商品正式下架，点击“未售出”后商品擦亮置顶',
-            `如12小时内无任何操作，会自动转为“已售出”状态（剩余${remain}）`,
+            `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
           ],
         })[transaction.status];
       } else {
@@ -217,7 +217,7 @@ Component({
             '如12小时内无任何操作，会自动转为“已售出”状态',
           ],
           [TransactionStatus.Booked]: [
-            `如12小时内无任何操作，会自动转为“已售出”状态（剩余${remain}）`,
+            `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
           ]
         })[transaction.status];
       }

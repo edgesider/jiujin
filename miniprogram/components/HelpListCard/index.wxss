@@ -50,7 +50,7 @@ page {
   font-size: 40rpx;
   font-weight: bold;
   font-style: italic;
-  color: #21ac39;
+  color: var(--brand-green);
 }
 
 .middle .status {
@@ -84,7 +84,7 @@ page {
 }
 
 .right .button.green {
-  background-color: #21ac39;
+  background-color: var(--brand-green);
 }
 
 .right .button.greenyellow {
@@ -92,7 +92,7 @@ page {
 }
 
 .right .button.yellow {
-  background-color: #fac000;
+  background-color: var(--brand-yellow);
 }
 
 .right .button-disabled {

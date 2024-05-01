@@ -44,12 +44,12 @@
 }
 
 .region-filter .item-on {
-  color: #21ac39;
+  color: var(--brand-green);
   font-weight: 600;
 }
 
 .region-filter .item-indicator {
-  background-color: #fac000;
+  background-color: var(--brand-yellow);
   width: calc(100% - 16rpx);
   height: 6rpx;
   border-radius: 6rpx;

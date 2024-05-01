@@ -67,6 +67,8 @@ page {
 	--grayShadow: rgba(114, 130, 138, 0.2);
 	--blackShadow: rgba(26, 26, 26, 0.2);
 
+  --brand-green: #21ac39;
+  --brand-yellow: #fac000;
 	background-color: var(--ghostWhite);
 	font-size: 28rpx;
 	color: var(--black);

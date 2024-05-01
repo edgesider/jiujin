@@ -106,7 +106,7 @@ page {
   border-radius: 14rpx;
   font-weight: 500;
   margin: 6rpx;
-  background: #FAC000;
+  background: var(--brand-yellow);
   color: #ffffff;
   font-style: italic;
   font-size: 25rpx;

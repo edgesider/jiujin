@@ -35,14 +35,5 @@
     type="digit"
   />
 </view>
-  <!-- 价格 -->
-  <!-- <view class="Price">
-    <view class="price_title">价格</view>
-    <input class="price" value="{{commodityCurrentPriceText}}"
-           maxlength="10"
-           bindblur="onPriceInputBlur"
-           bindinput="onChangeCommodityCurrentPrice" name="price" placeholder="¥0" type="digit"></input>
-  </view> -->
 
-
-<button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'#21AC39'}};" class="submit">{{buttonText}}</button>
+<button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'var(--brand-green)'}};" class="submit">{{buttonText}}</button>

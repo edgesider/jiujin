@@ -37,7 +37,7 @@ page {
   align-items: center;
   padding-left: 64rpx;
   padding-right: 24rpx;
-  border: 1px solid #21AC39;
+  border: 1px solid var(--brand-green);
 }
 
 .top-bar .search-icon {

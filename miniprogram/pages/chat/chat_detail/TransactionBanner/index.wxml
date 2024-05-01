@@ -55,6 +55,7 @@
   </view>
 </view>
 <view class="tip" wx:if="{{tips.length > 0}}">
-  <text wx:for="{{tips}}" wx:for-item="tip">{{tip}}</text>
+<!--  <text wx:for="{{tips}}" wx:for-item="tip">{{tip}}</text>-->
+  <rich-text wx:for="{{tips}}" wx:for-item="tip" nodes="{{tip}}" />
 </view>
 <view class="divider" wx:else />

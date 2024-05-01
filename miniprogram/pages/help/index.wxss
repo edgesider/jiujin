@@ -53,7 +53,7 @@ page {
   width: 100%;
   margin: 0 20rpx;
   border-radius: 32rpx;
-  border: 1px solid #21AC39
+  border: 1px solid var(--brand-green);
 }
 
 .top .search image {
@@ -112,7 +112,7 @@ page {
 }
 
 .filters .switch.on {
-  background-color: #fac000;
+  background-color: var(--brand-yellow);
   color: white;
   font-weight: bold;
 }

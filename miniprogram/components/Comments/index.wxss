@@ -210,7 +210,7 @@
   padding: 16rpx 48rpx;
   height: 74rpx;
   border-radius: 37rpx;
-  background: #21ac39;
+  background: var(--brand-green);
   font-size: 34rpx;
   font-weight: bold;
   display: flex;

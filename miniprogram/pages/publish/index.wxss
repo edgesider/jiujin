@@ -31,11 +31,11 @@ page {
 }
 
 .button.green {
-  background-color: #21ac39;
+  background-color: var(--brand-green);
 }
 
 .button.yellow {
-  background-color: #fac000;
+  background-color: var(--brand-yellow);
 }
 
 .button .title {

@@ -65,4 +65,4 @@
   </view>
 </view>
 
-<button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'#21AC39'}};" class="submit">{{buttonText}}</button>
+<button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'var(--brand-green)'}};" class="submit">{{buttonText}}</button>
