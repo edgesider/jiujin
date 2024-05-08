@@ -1,12 +1,18 @@
 import getConstants from '../../../constants';
-import { getCommodityGroupAttributes, listenMessage, sendMessage } from '../../../utils/im';
 import api from '../../../api/api';
 import { Transaction, TransactionApi } from '../../../api/transaction';
-import { Conversation, Group } from '@tencentcloud/chat';
 import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { kbHeightChanged, tryJsonParse } from '../../../utils/other';
 import { waitForAppReady } from '../../../utils/globals';
+import { ConversationItem, GroupItem, SessionType } from 'open-im-sdk';
+import {
+  checkOimResult,
+  getCommodityGroupAttributes,
+  getConversationById, getGroup,
+  listenMessage, markConvMessageAsRead,
+  sendMessage
+} from '../../../utils/oim';
 
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
@@ -21,8 +27,8 @@ Page({
     seller: null as User | null,
     buyer: null as User | null,
     conversationId: null as string | null,
-    conversation: null as Conversation | null,
-    group: null as Group | null,
+    conversation: null as ConversationItem | null,
+    group: null as GroupItem | null,
     commodity: null as Commodity | null,
     transaction: null as Transaction | null,
 
@@ -51,10 +57,24 @@ Page({
       })
     }));
 
-    const { conversation } = (await tim.getConversationProfile(conversationId)).data;
-    tim.setMessageRead({ conversationID: conversation.conversationID }).then();
-    const group = conversation.groupProfile;
-    const attrs = await getCommodityGroupAttributes(group.groupID);
+    const conversation = await getConversationById(conversationId);
+    if (!conversation) {
+      await wx.showToast({
+        title: '网络错误',
+        icon: 'error',
+      })
+      return;
+    }
+    const group = await getGroup(conversation.groupID);
+    if (!group) {
+      await wx.showToast({
+        title: '网络错误',
+        icon: 'error',
+      })
+      return;
+    }
+    markConvMessageAsRead(conversation).then();
+    const attrs = await getCommodityGroupAttributes(group);
     if (!attrs) {
       await wx.showToast({
         title: '网络错误',
@@ -94,7 +114,7 @@ Page({
     });
 
     this.subscription!!.add(listenMessage(conversation.conversationID).subscribe(msg => {
-      const custom = tryJsonParse(msg.cloudCustomData);
+      const custom = tryJsonParse(msg.ex);
       if (custom?.needUpdateTransaction) {
         this.updateTransaction().then();
       }
@@ -103,18 +123,9 @@ Page({
   onUnload() {
     this.subscription?.unsubscribe();
   },
-  getConversationName(conversation: Conversation) {
-    if (conversation.type === '@TIM#SYSTEM') {
-      this.setData({
-        showChat: false,
-      });
-      return '系统通知';
-    }
-    if (conversation.type === tim.TYPES.CONV_C2C) {
-      return conversation.remark || conversation.userProfile.nick || conversation.userProfile.userID;
-    }
-    if (conversation.type === tim.TYPES.CONV_GROUP) {
-      return conversation.groupProfile.name || conversation.groupProfile.groupID;
+  getConversationName(conversation: ConversationItem) {
+    if (conversation.conversationType === SessionType.Group) {
+      return conversation.showName;
     }
   },
   async sendTextMessage(text: string, updatePeerTransaction: boolean = false) {
@@ -128,37 +139,35 @@ Page({
         needUpdateTransaction: updatePeerTransaction
       });
     }
-    const msg = tim.createTextMessage({
-      to: group.groupID,
-      conversationType: tim.TYPES.CONV_GROUP,
-      payload: { text },
-      cloudCustomData: customData,
-    });
+    const msg = checkOimResult(await oim.createTextMessage(text));
+    msg.groupID = group.groupID;
+    msg.ex = JSON.stringify(customData);
     await sendMessage(msg);
   },
   async sendImageMessage(img: ChooseImageSuccessCallbackResult) {
-    const { group } = this.data;
-    if (!group) {
-      return;
-    }
-    const msg = tim.createImageMessage({
-      to: group.groupID,
-      conversationType: tim.TYPES.CONV_GROUP,
-      payload: {
-        file: img
-      },
-    });
-    await wx.showLoading({ title: '发送中' });
-    try {
-      await sendMessage(msg);
-    } catch (e) {
-      console.error(e);
-      await wx.showToast({
-        title: '网络错误',
-      });
-    } finally {
-      await wx.hideLoading();
-    }
+    throw Error('not implement');
+    // const { group } = this.data;
+    // if (!group) {
+    //   return;
+    // }
+    // const msg = await oim.createImageMessageByURL({
+    //   to: group.groupID,
+    //   conversationType: tim.TYPES.CONV_GROUP,
+    //   payload: {
+    //     file: img
+    //   },
+    // });
+    // await wx.showLoading({ title: '发送中' });
+    // try {
+    //   await sendMessage(msg);
+    // } catch (e) {
+    //   console.error(e);
+    //   await wx.showToast({
+    //     title: '网络错误',
+    //   });
+    // } finally {
+    //   await wx.hideLoading();
+    // }
   },
   async onTransactionActionDone(ev: any) {
     const messageToPeer = ev.detail.messageToPeer || '交易状态已变更';

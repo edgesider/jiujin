@@ -10,7 +10,7 @@ const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
   baseURL: 'https://lllw.cc',
-  // baseURL: 'http://127.0.0.1:8080/',
+  // baseURL: 'http://192.168.2.218:8080/',
   // baseURL: (version === 'release' || version === 'trial')
   //   ? 'https://lllw.ykai.cc'
   //   : 'http://localhost:8080/',
@@ -106,6 +106,12 @@ const api = {
     }));
   },
 
+  async getOimToken() {
+    return wrapResp(await request({
+      path: '/im/getToken',
+    }));
+  },
+
   async getRegions() {
     return wrapResp(await request({
       path: "/region/get",
@@ -156,7 +162,7 @@ const api = {
 
   async getCommodityList(filter) {
     const resp = await request({
-      path: "/commodity/getList",
+      path: "/commodity/getCommodities",
       method: "POST",
       data: {
         ...filter,
@@ -182,11 +188,14 @@ const api = {
 
   // 获取单个商品
   async getCommodityInfo({ id }) {
-    const listResp = await this.getCommodityList({ _id: id });
-    if (!listResp.isError) {
-      listResp.data = listResp.data?.[0] ?? null;
+    const resp = wrapResp(await request({
+      path: `/commodity/${id}`,
+      method: 'GET',
+    }));
+    if (!resp.isError) {
+      resp.data = convertCommodity(resp.data);
     }
-    return listResp;
+    return resp;
   },
 
   // 获取单个求助
@@ -209,7 +218,7 @@ const api = {
       }
     }));
   },
-  async createHelp(helpInfo){
+  async createHelp(helpInfo) {
     helpInfo.img_urls = helpInfo.img_urls.join(',');
     return wrapResp(await request({
       path: "/help/create",
@@ -327,13 +336,13 @@ const api = {
       }
     }));
   },
-  async reportHelp({ id ,report}) {
+  async reportHelp({ id, report }) {
     return wrapResp(await request({
       path: "/help/updateHelpReport",
       method: "POST",
       data: {
         _id: id,
-        report:report,
+        report: report,
         openid: getOpenId()
       }
     }));

@@ -1,7 +1,7 @@
 import getConstants from '../constants';
 import { ensureRegistered } from '../utils/other';
-import { getConversations, isCreateGroupMsg } from "../utils/im";
-import { getOpenId } from "../api/api";
+import { listenUnreadCount, waitForOimReady } from "../utils/oim";
+import { waitForAppReady } from "../utils/globals";
 
 Component({
   data: {
@@ -68,23 +68,15 @@ Component({
         this.setData({ selected: i, url })
       }
 
-      await getApp().waitForReady();
-      const unreadChanged = async () => {
-        const convList = await getConversations();
-        const count = convList
-          .filter(conv => {
-            return !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
-          })
-          .reduce((count, conv) => count + conv.unreadCount, 0);
+      await waitForAppReady();
+      await waitForOimReady();
+      const unreadChanged = async (count) => {
         this.data.list.find(item => item.text === '私信').hasDot = count > 0;
         this.setData({
           list: [...this.data.list],
         });
       }
-      unreadChanged(tim.getTotalUnreadMessageCount());
-      tim.on(tim.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, function ({ data: count }) {
-        unreadChanged(count)
-      }, this);
+      listenUnreadCount().subscribe(unreadChanged);
     },
   },
   methods: {

@@ -1,18 +1,22 @@
 import getConstants from '../../../constants';
 import { setTabBar, sleep } from '../../../utils/other';
-import { Conversation } from '@tencentcloud/chat';
 import { User } from '../../../types';
-import { isCreateGroupMsg, isTransactionGroup, listenConversationListUpdate } from '../../../utils/im';
 import { Subscription } from 'rxjs';
-import { getOpenId } from '../../../api/api';
 import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
+import {
+  getConversations,
+  isNewCreateConversation,
+  isTransactionGroup,
+  listenConversationListUpdate
+} from '../../../utils/oim';
+import { ConversationItem } from 'open-im-sdk';
 
 const app = getApp();
 
 Page({
   data: {
     ...getConstants(),
-    conversations: [] as Conversation[],
+    conversations: [] as ConversationItem[],
     refreshing: false,
     self: null as User | null,
     showNotifyTip: false,
@@ -40,32 +44,32 @@ Page({
     // }
   },
   onUnload() {
-    this.subscription?.unsubscribe()
+    this.subscription?.unsubscribe();
   },
   async onShow() {
     await this.refresh();
   },
-  async onConversationListUpdate(conversationList: Conversation[]) {
+  async onConversationListUpdate(convList: ConversationItem[]) {
     this.setData({
-      conversations: conversationList
+      conversations: convList
         .filter(conv =>
-          conv.groupProfile
-          && isTransactionGroup(conv.groupProfile.groupID)
-          && conv.lastMessage && conv.lastMessage.fromAccount
-          && !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
+          conv.groupID && isTransactionGroup(conv.groupID)
+          && !(isNewCreateConversation(conv))
+          // && conv.lastMessage && conv.lastMessage.fromAccount
+          // && !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
         ),
     });
 
     const { self } = this.data;
     if (self) {
-      for (const conv of conversationList) {
+      for (const conv of convList) {
         if ([self.collect_group_id, self.comment_group_id, self.like_group_id]
-          .indexOf(conv.groupProfile?.groupID) > 0) {
+          .indexOf(conv.groupID) > 0) {
           if (conv.isPinned) {
             continue;
           }
           console.log(`pinning system conversation ${conv.conversationID}`);
-          await tim.pinConversation({
+          await oim.pinConversation({
             conversationID: conv.conversationID,
             isPinned: true
           });
@@ -74,8 +78,7 @@ Page({
     }
   },
   async refresh() {
-    await this.onConversationListUpdate(
-      (await tim.getConversationList()).data.conversationList as Conversation[]);
+    await this.onConversationListUpdate(await getConversations());
   },
   async onRefresh() {
     if (this.data.refreshing) {

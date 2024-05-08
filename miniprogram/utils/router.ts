@@ -1,5 +1,6 @@
 import { Commodity, User } from '../types';
 import { Conversation } from '@tencentcloud/chat';
+import { ConversationItem } from 'open-im-sdk';
 
 export async function openProfile(user: string | User) {
   if (typeof user === 'object') {
@@ -24,7 +25,7 @@ export async function openCommodityDetail(options: CommodityDetailOptions) {
   })
 }
 
-export async function openConversationDetail(conv: Conversation | string) {
+export async function openConversationDetail(conv: ConversationItem | string) {
   if (typeof conv === 'object') {
     conv = conv.conversationID;
   }
@@ -33,7 +34,7 @@ export async function openConversationDetail(conv: Conversation | string) {
   });
 }
 
-export async function openSystemConversationDetail(conv: Conversation | string | null, convName: string) {
+export async function openSystemConversationDetail(conv: ConversationItem | string | null, convName: string) {
   if (conv && typeof conv === 'object') {
     conv = conv.conversationID;
   }

@@ -10,18 +10,19 @@
   >
     <view class="gap" />
     <view
-      id="seq-{{msg.sequence}}"
-      class="msg-item {{msg.from === selfImId ? 'msg-self' : 'msg-other'}}"
+      id="seq-{{msg.seq}}"
+      class="msg-item {{msg.sendID === selfImId ? 'msg-self' : 'msg-other'}}"
     >
-      <image class="avatar" src="{{msg.avatar}}" mode="aspectFill" />
+      <image class="avatar" src="{{msg.senderFaceUrl}}" mode="aspectFill" />
       <view class="content">
         <text
           user-select
-          wx:if="{{msg.type === 'TIMTextElem'}}"
+          wx:if="{{msg.contentType === MessageType.TextMessage}}"
           class="text {{msg.__isTransactionStatusMessage ? 'text-transaction' : ''}}"
-        >{{msg.payload.text}}</text>
+        >{{msg.textElem.content}}</text>
         <image
-          wx:elif="{{msg.type === 'TIMImageElem'}}" class="image"
+          wx:elif="{{msg.contentType === MessageType.PictureMessage}}"
+          class="image"
           mode="aspectFill"
           src="{{msg.payload.imageInfoArray[0].url}}"
           bindtap="onImageMessageClick"

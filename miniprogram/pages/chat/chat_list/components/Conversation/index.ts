@@ -1,10 +1,4 @@
 import moment from 'moment';
-import { Conversation } from '@tencentcloud/chat';
-import {
-  CommodityGroupAttributes,
-  getCommodityGroupAttributes,
-  getConversationById, getImUidFromUid, listenConversation, tryDeleteConversationAndGroup,
-} from '../../../../../utils/im';
 import api, { getOpenId } from '../../../../../api/api';
 import { Resp } from '../../../../../api/resp';
 import { User } from '../../../../../types';
@@ -13,6 +7,13 @@ import { Subscription } from 'rxjs';
 import { sleep } from '../../../../../utils/other';
 import { DATETIME_FORMAT } from '../../../../../utils/time';
 import { NotifyType, requestNotifySubscribe } from '../../../../../utils/notify';
+import {
+  CommodityGroupAttributes,
+  getCommodityGroupAttributes,
+  getConversationById, getGroup,
+  listenConversation
+} from '../../../../../utils/oim';
+import { ConversationItem, MessageItem, MessageType } from 'open-im-sdk';
 
 Component({
   properties: {
@@ -26,7 +27,7 @@ Component({
     },
   },
   data: {
-    conversation: null as Conversation | null,
+    conversation: null as ConversationItem | null,
     lastMessageText: '',
     lastTime: '',
     /** 对方用户的信息 */
@@ -39,6 +40,7 @@ Component({
         console.error(`invalid conversationId ${this.properties.conversationId}`);
         return;
       }
+      console.log(conversation);
       this.onConversationUpdate(conversation, true);
       // @ts-ignore
       this.subscription =
@@ -53,36 +55,32 @@ Component({
     }
   },
   methods: {
-    async onConversationUpdate(conversation: Conversation, updateOtherInfo: boolean) {
-      const { lastMessage } = conversation;
+    async onConversationUpdate(conversation: ConversationItem, updateOtherInfo: boolean) {
+      const { latestMsg } = conversation;
+      const lastMessage = JSON.parse(latestMsg) as MessageItem;
       let lastMessageText = '';
       if (!lastMessage) {
         lastMessageText = ''
-      } else if (lastMessage.isRevoked) {
-        lastMessageText = `${lastMessage.fromAccount === getImUidFromUid(getOpenId()) ? '我' : '对方'}撤回了一条消息`;
-      } else if (lastMessage.type !== 'TIMCustomElem' && lastMessage.type !== 'TIMGroupTipElem') {
-        lastMessageText = conversation.lastMessage.messageForShow;
+        // } else if (lastMessage.isRevoked) {
+        //   lastMessageText = `${lastMessage.fromAccount === getImUidFromUid(getOpenId()) ? '我' : '对方'}撤回了一条消息`;
+      } else if (lastMessage.contentType === MessageType.TextMessage) {
+        lastMessageText = lastMessage.textElem.content;
       }
       this.setData({
         conversation,
         lastMessageText,
-        lastTime: moment(conversation.lastMessage.lastTime * 1000).format(DATETIME_FORMAT),
+        lastTime: moment(lastMessage.sendTime).format(DATETIME_FORMAT),
       });
 
       // 由于tim频控限制比较严格，所以只在第一次更新属性信息
       if (updateOtherInfo) {
-        const group = conversation.groupProfile;
-        let attrs: CommodityGroupAttributes | undefined;
-        // 刚建好群属性可能还没同步，多等一下
-        for (let i = 0; i < 3; i++) {
-          attrs = await getCommodityGroupAttributes(group);
-          if (attrs) {
-            break;
-          }
-          await sleep(500);
+        const group = await getGroup(conversation.groupID);
+        if (!group) {
+          throw Error(`failed to get group: groupId=${conversation.groupID}`)
         }
+        const attrs = await getCommodityGroupAttributes(group);
         if (!attrs) {
-          console.error(`not commodity conversation ${group.groupID} ${group.ownerID}`);
+          console.error(`not commodity conversation ${group.groupID} ${group.ownerUserID}`);
           return;
         }
         const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;

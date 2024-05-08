@@ -193,7 +193,7 @@ Page({
       return;
     }
     await app.fetchSelfInfo();
-    await Promise.all([app.initTIM(), app.fetchRegions()]);
+    await Promise.all([app.fetchRegions()]);
     await wx.hideLoading();
     await wx.showToast({
       title: '已保存',

@@ -87,8 +87,6 @@ Page({
       console.error(resp);
       return;
     }
-    await app.fetchSelfInfo();
-    await Promise.all([app.initTIM(), app.fetchRegions()]);
     await wx.showToast({
       title: '注册成功',
       icon: 'success',

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "exnext",
+    "module": "esnext",
     "target": "es2017",
     "moduleResolution": "NodeNext",
     "sourceMap": true,

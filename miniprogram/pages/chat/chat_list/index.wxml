@@ -10,19 +10,19 @@
     class="item"
     icon="/images/chat-comment.png"
     name="留言"
-    groupId="{{self.comment_group_id}}"
+    groupId="{{self && (self._id + '_comment')}}"
   />
   <SystemConversation
     class="item"
     icon="/images/chat-like.png"
     name="点赞"
-    groupId="{{self.like_group_id}}"
+    groupId="{{self && (self._id + '_like')}}"
   />
   <SystemConversation
     class="item"
     icon="/images/chat-star.png"
     name="收藏"
-    groupId="{{self.collect_group_id}}"
+    groupId="{{self && (self._id + '_collect')}}"
   />
 </view>
 

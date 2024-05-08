@@ -1,5 +1,5 @@
-import TencentCloudChat, { ChatSDK } from '@tencentcloud/chat';
+import { OpenIMSDK } from 'open-im-sdk';
 
 declare global {
-  let tim: ChatSDK & typeof TencentCloudChat;
+  let oim: OpenIMSDK;
 }

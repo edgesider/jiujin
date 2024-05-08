@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -17,6 +16,7 @@
     "base64-arraybuffer": "^1.0.2",
     "miniprogram-sm-crypto": "^0.3.13",
     "moment": "^2.30.1",
+    "open-im-sdk": "^3.5.2",
     "rxjs": "^7.8.1",
     "tim-profanity-filter-plugin": "^0.9.0",
     "tim-upload-plugin": "^1.1.0"

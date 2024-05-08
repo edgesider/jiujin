@@ -75,10 +75,16 @@ page {
   margin-top: 10rpx;
 }
 
+.top-swiper swiper-item {
+  display: flex;
+  flex-direction: row;
+  padding: 0 10rpx;
+  box-sizing: border-box;
+}
+
 .top-swiper .banner-image {
-  width: calc(100% - 20rpx);
+  flex-grow: 1;
   height: 100%;
-  margin: 0 10rpx;
   border-radius: 16rpx;
 }
 
@@ -166,7 +172,7 @@ page {
   height: 100%;
   flex-shrink: 0;
 
-  --gap: 12rpx;
+  --gap: 10rpx;
   padding: var(--gap);
   padding-top: 0;
   gap: var(--gap);

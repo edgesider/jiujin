@@ -1,12 +1,18 @@
 import getConstants from '../../../constants';
-import { Conversation, Message } from '@tencentcloud/chat';
-import { getConversationById, listenConversation, listenMessage } from '../../../utils/im';
 import { tryJsonParse } from '../../../utils/other';
 import { Commodity, convertCommodity, User } from '../../../types';
 import moment from 'moment';
 import { openCommodityDetail } from '../../../utils/router';
 import { Subscription } from 'rxjs';
 import { DATETIME_FORMAT } from '../../../utils/time';
+import {
+  getConversationById,
+  getMessageList,
+  listenConversation,
+  listenMessage,
+  markConvMessageAsRead
+} from '../../../utils/oim';
+import { ConversationItem, MessageItem } from 'open-im-sdk';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -20,7 +26,6 @@ interface BaseNotifyPayload {
 interface CommentNotifyPayload extends BaseNotifyPayload {
   type: 'comment';
   commodity: Commodity;
-  commentId?: number; // TODO
 }
 
 interface StarNotifyPayload extends BaseNotifyPayload {
@@ -45,9 +50,9 @@ Page({
     ...getConstants(),
     convName: '',
     state: 'loading' as 'loading' | 'empty' | 'error',
-    conversation: null as Conversation | null,
+    conversation: null as ConversationItem | null,
     messages: [] as NotifyMsg[], // 消息列表，新消息在前
-    nextMsgId: null,
+    nextMsgId: 0,
     isCompleted: false,
   },
   subscription: null as Subscription | null,
@@ -81,7 +86,7 @@ Page({
   async onUnload() {
     this.subscription?.unsubscribe();
     if (this.data.conversation) {
-      tim.setMessageRead(this.data.conversation).then();
+      markConvMessageAsRead(this.data.conversation).then();
     }
   },
   /**
@@ -89,7 +94,7 @@ Page({
    * @param rawMsgList 原始的消息列表，需要确保最新的消息在前面
    * @param mode 添加方式
    */
-  onMessageUpdate(rawMsgList: Message[], mode: 'newer' | 'older' | 'replace') {
+  onMessageUpdate(rawMsgList: MessageItem[], mode: 'newer' | 'older' | 'replace') {
     const msgList = rawMsgList
       .map(this.convertRawMsg)
       .filter((msg): msg is NotifyMsg => Boolean(msg));
@@ -105,21 +110,21 @@ Page({
       this.setData({ messages });
     }
   },
-  convertRawMsg(rawMsg: Message): NotifyMsg | undefined {
+  convertRawMsg(rawMsg: MessageItem): NotifyMsg | undefined {
     try {
-      const payload: NotifyPayload | null = tryJsonParse(rawMsg.payload.text);
+      const payload: NotifyPayload | null = tryJsonParse(rawMsg.ex);
       if (!payload || !payload.type) {
         return;
       }
       if (payload.type === 'comment' || payload.type === 'collect') {
         payload.commodity = convertCommodity(payload.commodity);
       }
-      const time = rawMsg.time * 1000 + rawMsg.sequence;
+      const time = rawMsg.sendTime;
       return {
-        rawId: rawMsg.ID,
-        time: rawMsg.time * 1000 + rawMsg.sequence,
+        rawId: rawMsg.serverMsgID,
+        time,
         timeStr: moment(time).format(DATETIME_FORMAT),
-        seq: rawMsg.sequence,
+        seq: rawMsg.seq,
         ...payload
       };
     } catch (e) {
@@ -132,17 +137,12 @@ Page({
     if (!conversation || isCompleted) {
       return;
     }
-    const newList = await tim.getMessageList({
-      conversationID: conversation.conversationID,
-      nextReqMessageID: nextMsgId ?? undefined,
-      // @ts-ignore
-      count: COUNT_PER_PAGE,
-    });
+    const newList = await getMessageList(conversation);
     this.setData({
-      isCompleted: newList.data.isCompleted,
-      nextMsgId: newList.data.nextReqMessageID,
+      isCompleted: newList.isEnd,
+      nextMsgId: newList.lastMinSeq,
     })
-    this.onMessageUpdate(newList.data.messageList.reverse(), 'older');
+    this.onMessageUpdate(newList.messageList.reverse(), 'older');
   },
   async onReachBottom() {
     await this.fetchMoreMessages();

@@ -1,4 +1,4 @@
-<view class="conversation" bindtap="gotoDetail" wx:if="{{conversation && peerUser}}">
+<view class="conversation" bindtap="gotoDetail" wx:if="{{conversation}}">
   <image class="avatar" src="{{peerUser.avatar_url}}" mode="aspectFill" />
   <view class="dot" wx:if="{{conversation.unreadCount > 0}}" />
   <view class="info">
@@ -8,5 +8,5 @@
     </view>
     <view class="line2" wx:if="{{lastMessageText}}">{{lastMessageText}}</view>
   </view>
-  <image class="image" src="{{conversation.groupProfile.avatar}}" mode="aspectFill" />
+  <image class="image" src="{{conversation.faceURL}}" mode="aspectFill" />
 </view>

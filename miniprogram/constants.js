@@ -1,4 +1,5 @@
 import { TransactionFinishReason, TransactionStatus } from "./api/transaction";
+import { MessageStatus, MessageType, SessionType } from "open-im-sdk";
 
 export const COMMODITY_STATUS_SELLING = 0; // 出售中
 export const COMMODITY_STATUS_DEACTIVATED = 1; // 已下架
@@ -8,7 +9,6 @@ export const COMMODITY_STATUS_BOOKED = 3; // 已锁定
 
 export const HELP_STATUS_RUNNING = 0; // 运行中
 export const HELP_STATUS_FINISHED = 1; // 已结束
-
 
 
 export const DEFAULT_AVATAR = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132';
@@ -67,6 +67,11 @@ export function initConstants() {
         BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
         BottomIndicatorHeight,
         Platform: platform, // ios | android | devtools
+
+        // im
+        MessageType,
+        SessionType,
+        MessageStatus,
       });
       setConstants(constants)
     }
@@ -77,6 +82,10 @@ export default function getConstants() {
   return { ...constants };
 };
 
+/**
+ * 设置一些在wxml中也可以用的常量
+ * @param obj
+ */
 export function setConstants(obj) {
   Object.assign(constants, obj);
 }

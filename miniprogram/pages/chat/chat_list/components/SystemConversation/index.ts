@@ -1,10 +1,7 @@
-import { Conversation } from '@tencentcloud/chat';
-import {
-  getConversationByGroup,
-  listenConversationByGroup,
-} from '../../../../../utils/im';
 import { Subscription } from 'rxjs';
 import { openSystemConversationDetail } from '../../../../../utils/router';
+import { ConversationItem } from 'open-im-sdk';
+import { getConversationByGroup, listenConversationByGroup } from '../../../../../utils/oim';
 
 Component({
   properties: {
@@ -25,7 +22,7 @@ Component({
   },
   data: {
     usingGroupId: null as string | null,
-    conversation: null as Conversation | null,
+    conversation: null as ConversationItem | null,
   },
   lifetimes: {
     detached() {
@@ -36,7 +33,7 @@ Component({
   },
   methods: {
     async init(groupId: string) {
-      console.log('system conversation init');
+      console.log('system conversation init', groupId);
       const conversation = await getConversationByGroup(groupId);
       if (conversation) {
         await this.onConversationUpdate(conversation);
@@ -47,9 +44,8 @@ Component({
           this.onConversationUpdate(conv);
         });
     },
-    async onConversationUpdate(conversation: Conversation) {
-      const groupId = conversation!.groupProfile.groupID;
-      // console.log(`system conversation ${this.properties.name}(gid=${groupId}) updated`);
+    async onConversationUpdate(conversation: ConversationItem) {
+      const groupId = conversation.groupID;
       this.setData({ conversation, usingGroupId: groupId });
     },
     gotoDetail() {
