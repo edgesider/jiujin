@@ -40,7 +40,6 @@ Component({
         console.error(`invalid conversationId ${this.properties.conversationId}`);
         return;
       }
-      console.log(conversation);
       this.onConversationUpdate(conversation, true);
       // @ts-ignore
       this.subscription =

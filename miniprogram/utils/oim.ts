@@ -47,7 +47,7 @@ let loginWaiters: [(() => void), ((err: any) => void)][] = [];
 
 export async function initOpenIM(self: User) {
   if (hasLogin) {
-    await oim.logout();
+    return;
   }
   oim = new OpenIMSDK();
   // @ts-ignore
@@ -209,6 +209,12 @@ function listenEvents() {
   });
   oim.on(CbEvents.OnTotalUnreadMessageCountChanged, event => {
     console.log('unread changed', event);
+  });
+  oim.on(CbEvents.OnUserStatusChanged, event => {
+    console.log('user status changed', event);
+  });
+  oim.on(CbEvents.OnKickedOffline, event => {
+    console.log('kicked offline', event);
   })
 }
 

@@ -1,6 +1,6 @@
 import getConstants from '../../../../constants';
 import { Subscription } from 'rxjs';
-import { tryJsonParse } from '../../../../utils/other';
+import { kbHeightChanged, tryJsonParse } from '../../../../utils/other';
 import { MessageItem, MessageType } from 'open-im-sdk';
 import {
   checkOimResult,
@@ -68,6 +68,9 @@ Component({
         this.scrollToEnd();
         markConvMessageAsRead(conversationId).then();
       }));
+      this.getSubscription().add(kbHeightChanged.subscribe(() => {
+        this.scrollToEnd();
+      }))
     },
     scrollToEnd() {
       const { messageList } = this.data;

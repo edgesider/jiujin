@@ -3,5 +3,7 @@
     "HelpComments": "/components/HelpComments/index",
     "HelpCard": "/components/HelpCard/index",
     "UserTitleBar": "/components/UserTitleBar/index"
-  }
+  },
+  "enablePullDownRefresh": false,
+  "disableScroll": true
 }
