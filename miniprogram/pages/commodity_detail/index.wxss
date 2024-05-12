@@ -216,12 +216,14 @@
 }
 
 .footer .right .button {
+  margin-right: 10rpx;
+
+  padding: 14rpx 32rpx;
+  font-size: 28rpx;
+  font-weight: normal;
   flex-shrink: 0;
   border-radius: 16rpx;
-  padding: 16rpx 48rpx;
-  background: var(--brand-green);
-  font-size: 34rpx;
-  font-weight: bold;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -229,13 +231,21 @@
   color: #fff;
 }
 
+.button-yellow {
+  background: var(--brand-yellow);
+}
+
+.button-yellowgreen {
+  background: var(--brand-yellowgreen);
+}
+
+.button-green {
+  background: var(--brand-green);
+}
+
 .button-disabled {
   opacity: 0.3;
 }
 
 .right .button.button-small {
-  padding: 8rpx 16rpx;
-  font-size: 24rpx;
-  font-weight: normal;
-  margin-right: 8rpx;
 }

@@ -69,6 +69,7 @@ page {
 
   --brand-green: #21ac39;
   --brand-yellow: #fac000;
+  --brand-yellowgreen: #a7d000;
 	background-color: var(--ghostWhite);
 	font-size: 28rpx;
 	color: var(--black);

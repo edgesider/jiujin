@@ -61,10 +61,10 @@
       <view class="right">
         <block wx:if="{{commodity.status === COMMODITY_STATUS_SELLING}}">
           <block wx:if="{{isMine}}">
-            <view class="button button-small" bindtap="onDeactivate">下架</view>
-            <view class="button button-small" bindtap="onEdit">编辑</view>
             <text class="polish-time">{{polishTime}}\n<text class="polish-time-hint">上次擦亮</text></text>
-            <view class="button" bindtap="onPolish">擦亮</view>
+            <view class="button button-green" bindtap="onPolish">擦亮</view>
+            <view class="button button-yellowgreen" bindtap="onEdit">编辑</view>
+            <view class="button button-yellow" bindtap="onDeactivate">下架</view>
           </block>
           <block wx:else>
             <view class="button" bind:tap="onPrivateMessage">去私聊</view>

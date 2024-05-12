@@ -215,24 +215,33 @@
 }
 
 .footer .right .button {
+  margin-right: 10rpx;
+
+  padding: 14rpx 32rpx;
+  font-size: 28rpx;
+  font-weight: normal;
   flex-shrink: 0;
   border-radius: 16rpx;
-  padding: 16rpx 48rpx;
-  background: var(--brand-green);
-  font-size: 28rpx;
+
   display: flex;
   justify-content: center;
   align-items: center;
 
-  color: #ffeeb4;
-  font-weight: 500;
+  color: #fff;
 }
-
-/*.footer .right .button image {*/
-/*  width: 84rpx;*/
-/*  height: 36rpx;*/
-/*}*/
 
 .button-disabled {
   opacity: 0.3;
+}
+
+.button-yellow {
+  background: var(--brand-yellow);
+}
+
+.button-yellowgreen {
+  background: var(--brand-yellowgreen);
+}
+
+.button-green {
+  background: var(--brand-green);
 }
