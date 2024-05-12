@@ -4,6 +4,7 @@ import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../const
 import { convertCommodity, convertHelp } from '../types';
 import { RespError, RespSuccess } from './resp';
 import { cloudProtocolToHttp } from "../utils/other";
+import { Platform } from "open-im-sdk";
 
 axios.defaults.adapter = mpAdapter;
 
@@ -107,9 +108,13 @@ const api = {
     }));
   },
 
-  async getOimToken() {
+  async getOimToken(platform, forceUpdate) {
     return wrapResp(await request({
       path: '/im/getToken',
+      data: {
+        platform: platform ?? Platform.Web,
+        force_update: Boolean(forceUpdate)
+      }
     }));
   },
 

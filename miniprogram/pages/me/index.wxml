@@ -1,26 +1,26 @@
 <TitleBar title="我的" hasBack="{{false}}" />
   <!-- 头像、昵称、位置、设置入口 -->
 
-  <view class="User" style="margin-top: {{0}}px">
-    <image class="avatar" src="{{selfInfo.avatar_url || DEFAULT_AVATAR}}" mode="aspectFill"></image>
-    <view class="info">
-      <view class="username">
-        <text>{{selfInfo.name || '欢迎来到楼里楼外'}}</text>
-        <image
-          wx:if="{{selfInfo}}"
-          class="gender"
-          src="{{selfInfo.sex === GENDER.MALE ? '/images/male.png' : '/images/female.png'}}"
-        />
-      </view>
-      <view class="region" wx:if="{{selfInfo.rid > 0}}">
-        <image class="icon" src="/images/location.png" />
-        <view class="name">{{regionName}}</view>
+<view class="User">
+  <image class="avatar" src="{{selfInfo.avatar_url || DEFAULT_AVATAR}}" mode="aspectFill" bindtap="onClickAvatar" />
+  <view class="info">
+    <view class="username">
+      <text>{{selfInfo.name || '欢迎来到楼里楼外'}}</text>
+      <image
+        wx:if="{{selfInfo}}"
+        class="gender"
+        src="{{selfInfo.sex === GENDER.MALE ? '/images/male.png' : '/images/female.png'}}"
+      />
+    </view>
+    <view class="region" wx:if="{{selfInfo.rid > 0}}">
+      <image class="icon" src="/images/location.png" />
+      <view class="name">{{regionName}}</view>
       <!--      <text bindtap="gotoVerify">   {{selfInfo.authentication_status ? '已认证' : '未认证'}}</text>-->
     </view>
-    </view>
-    <view class="spacer" />
-    <view bindtap="onEditMyInfo" class="settings">资料设置</view>
   </view>
+  <view class="spacer" />
+  <view bindtap="onEditMyInfo" class="settings">资料设置</view>
+</view>
 <scroll-view>
   <view class="List">
     <view class="list" bindtap="gotoList" data-type="selling">
@@ -55,7 +55,6 @@
       <view class="list_title">我收藏的闲置</view>
       <image class="right" src="/images/right.png"></image>
     </view>
-
 
 
     <!--求助相关-->

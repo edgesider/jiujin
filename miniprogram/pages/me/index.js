@@ -316,9 +316,9 @@ Page({
   },
 
 
-  openProfile() {
+  onClickAvatar() {
     ensureRegistered();
-    openProfile(app.globalData.self);
+    openProfile(app.globalData.self).then();
   },
 
   async onGetPhone(ev) {

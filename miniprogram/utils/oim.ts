@@ -3,7 +3,7 @@ import {
   CbEvents,
   ConversationItem,
   GroupItem,
-  GroupType,
+  GroupType, LoginStatus,
   MessageItem,
   MessageType,
   OpenIMSDK,
@@ -15,6 +15,7 @@ import { generateUUID, tryJsonParse } from './other';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import api, { getOpenId } from '../api/api';
 import getConstants from '../constants';
+import { getGlobals } from './globals';
 
 /**
  * 通过交易创建出来群组的属性列表
@@ -48,7 +49,7 @@ let oim: OpenIMSDK;
 let hasLogin = false;
 let loginWaiters: [(() => void), ((err: any) => void)][] = [];
 
-export async function initOpenIM(self: User) {
+export async function initOpenIM(self: User, forceUpdateToken = false) {
   if (hasLogin) {
     return;
   }
@@ -57,13 +58,14 @@ export async function initOpenIM(self: User) {
   globalThis.oim = oim;
 
   try {
-    const token = (await api.getOimToken()).data;
+    const platform = getConstants().Platform === 'devtools' ? Platform.MacOSX : Platform.Web;
+    const token = (await api.getOimToken(platform, forceUpdateToken)).data;
     const res = await oim.login({
       userID: self._id,
       token,
       wsAddr: 'wss://im.lllw.cc/ws/',
       apiAddr: 'https://im.lllw.cc/api/',
-      platformID: getConstants().Platform === 'devtools' ? Platform.MacOSX : Platform.Web,
+      platformID: platform,
     });
     checkOimResult(res, true);
   } catch (e) {
@@ -211,16 +213,23 @@ function listenEvents() {
       }
     })
   });
-  oim.on(CbEvents.OnUserTokenExpired, event => {
-    console.log('user token expired');
+  oim.on(CbEvents.OnUserTokenExpired, async (event) => {
+    hasLogin = false;
+    const self = getGlobals().self; // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
+    if (!self) {
+      return;
+    }
+    await initOpenIM(self, true);
   });
   oim.on(CbEvents.OnTotalUnreadMessageCountChanged, event => {
     console.log('unread changed', event);
   });
   oim.on(CbEvents.OnUserStatusChanged, event => {
     console.log('user status changed', event);
+    hasLogin = event.data === LoginStatus.Logged;
   });
   oim.on(CbEvents.OnKickedOffline, event => {
+    hasLogin = false;
     console.log('kicked offline', event);
   })
 }
@@ -318,7 +327,7 @@ export interface CustomImageMsgData {
 
 export type CustomMsgData =
   | CustomImageMsgData
-  // ...
+// ...
   ;
 
 export async function createCustomMsg(data: CustomImageMsgData) {
