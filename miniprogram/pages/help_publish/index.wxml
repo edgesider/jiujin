@@ -9,6 +9,7 @@
       wx:for="{{helpImg}}" wx:key="index"
       bindtap="onViewHelpImg"
       bindlongpress="onDelHelpImg"
+      data-index="{{index}}"
       data-url="{{helpImg[index]}}"
       class="image" src='{{helpImg[index]}}' mode="aspectFill"
     />

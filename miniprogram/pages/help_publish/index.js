@@ -17,16 +17,12 @@ Page({
     helpImg: [],
     helpContent: "",
     helpCurrentBountyText: '',
-    helpCurrentBounty: 0,
+    helpCurrentBounty: 0, // 赏金，单位分
     editingHelp: null,
     // 按钮文案
     buttonText: '',
   },
 
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
   async onLoad(options) {
     await waitForAppReady();
     //获取一些全局变量
@@ -63,7 +59,7 @@ Page({
       Object.assign(data, {
         helpContent: help.content,
         helpCurrentBounty: help.bounty,
-        helpCurrentBountyText: help.bounty.toString(10),
+        helpCurrentBountyText: (help.bounty / 100).toString(10),
       });
     }
     data.buttonText = isEdit ? '保存' : '发布';
@@ -85,9 +81,9 @@ Page({
       return;
     }
     let bounty = parseFloat(this.data.helpCurrentBountyText) || 0;
-    bounty = Math.max(Math.min(bounty, 99999.9), 0)
+    bounty = Math.max(Math.min(bounty, 9999999), 0)
     this.setData({
-      helpCurrentBounty: bounty,
+      helpCurrentBounty: bounty * 100,
       helpCurrentBountyText: bounty.toString(10),
     })
   },
@@ -205,7 +201,6 @@ Page({
     }
     await wx.showLoading({ title: '正在上传图片', mask: true });
     try {
-      console.log(info.img_urls)
       info.img_urls = await this.uploadImages(info.img_urls);
     } catch (e) {
       console.error('upload failed', e);

@@ -13,6 +13,7 @@
       wx:for="{{commodityImg}}" wx:key="index"
       bindtap="onViewCommodityImg"
       bindlongpress="onDelCommodityImg"
+      data-index="{{index}}"
       data-url="{{commodityImg[index]}}"
       class="image" src='{{commodityImg[index]}}' mode="aspectFill"
     />
