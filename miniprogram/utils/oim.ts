@@ -7,12 +7,14 @@ import {
   MessageItem,
   MessageType,
   OpenIMSDK,
+  Platform,
   SessionType,
   WsResponse
 } from 'open-im-sdk';
 import { generateUUID, tryJsonParse } from './other';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import api, { getOpenId } from '../api/api';
+import getConstants from '../constants';
 
 /**
  * 通过交易创建出来群组的属性列表
@@ -61,7 +63,7 @@ export async function initOpenIM(self: User) {
       token,
       wsAddr: 'wss://im.lllw.cc/ws/',
       apiAddr: 'https://im.lllw.cc/api/',
-      platformID: 5,
+      platformID: getConstants().Platform === 'devtools' ? Platform.MacOSX : Platform.Web,
     });
     checkOimResult(res, true);
   } catch (e) {

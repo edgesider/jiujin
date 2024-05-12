@@ -78,7 +78,7 @@ export function initConstants() {
   })
 }
 
-export default function getConstants() {
+export default function getConstants(): Record<string, any> {
   return { ...constants };
 };
 
@@ -86,6 +86,6 @@ export default function getConstants() {
  * 设置一些在wxml中也可以用的常量
  * @param obj
  */
-export function setConstants(obj) {
+export function setConstants(obj: Record<string, any>) {
   Object.assign(constants, obj);
 }
