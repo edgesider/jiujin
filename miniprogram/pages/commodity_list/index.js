@@ -1,5 +1,6 @@
 import api from "../../api/api";
 import getConstants from "../../constants";
+import { CommodityAPI } from "../../api/commodity";
 
 const app = getApp();
 const COUNT_PER_PAGE = 12
@@ -69,7 +70,7 @@ Page({
 
   async fetchSingle(idx) {
     const commodity = this.data.commodityList[idx];
-    const resp = await api.getCommodityInfo({ id: commodity._id });
+    const resp = await CommodityAPI.getOne(commodity._id);
     if (resp.isError) {
       return;
     }

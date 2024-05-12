@@ -13,6 +13,7 @@ import {
   listenMessage, markConvMessageAsRead,
   sendMessage
 } from '../../../utils/oim';
+import { CommodityAPI } from '../../../api/commodity';
 
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
@@ -90,7 +91,7 @@ Page({
       buyerResp
     ] =
       await Promise.all([
-        api.getCommodityInfo({ id: commodityId }),
+        CommodityAPI.getOne(commodityId),
         TransactionApi.getById(transactionId),
         api.getUserInfo(sellerId),
         api.getUserInfo(buyerId),

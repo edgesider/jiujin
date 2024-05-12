@@ -9,6 +9,7 @@ import {
   listenMessage,
   markConvMessageAsRead
 } from '../../../../utils/oim';
+import { openProfile } from '../../../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -127,5 +128,9 @@ Component({
         })
       }
     },
+    onAvatarClick(ev: TouchEvent) {
+      const { uid } = ev.target.dataset;
+      openProfile(uid).then();
+    }
   }
 });

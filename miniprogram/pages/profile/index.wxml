@@ -16,7 +16,7 @@
   </view>
   <block wx:else>
     <view class="user">
-      <image class="avatar" src="{{user.avatar_url}}" />
+      <image class="avatar" src="{{user.avatar_url}}" bindtap="onAvatarClick" />
       <view class="infos">
         <view class="last-seen">{{lastSeenTime}}来过</view>
         <view class="region-name">

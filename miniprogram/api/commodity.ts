@@ -2,7 +2,7 @@ import { request, wrapResp } from './api';
 import { Resp } from './resp';
 import { convertCommodity } from '../types';
 
-function convertResp(resp: Resp<any>) {
+function convertListResp(resp: Resp<any>) {
   if (!resp.isError) {
     resp.data = (resp.data as any[]).map(convertCommodity);
   }
@@ -10,6 +10,16 @@ function convertResp(resp: Resp<any>) {
 }
 
 export const CommodityAPI = {
+  async getOne(id: string) {
+    const resp = wrapResp(await request({
+      path: `/commodity/${id}`,
+      method: 'GET',
+    }));
+    if (!resp.isError) {
+      resp.data = convertCommodity(resp.data);
+    }
+    return resp;
+  },
   async getCommodities(params: {
     rid: number;
     start?: number;
@@ -20,7 +30,7 @@ export const CommodityAPI = {
   }) {
     const { rid, count, order, orderBy, streamTime } = params;
     const start = streamTime ? undefined : params.start;
-    return convertResp(wrapResp(await request({
+    return convertListResp(wrapResp(await request({
       path: '/commodity/getCommodities',
       data: {
         rid, start, count, stream_time: streamTime,
@@ -37,7 +47,7 @@ export const CommodityAPI = {
     orderBy: 'polish_time';
   }) {
     const { rid, start, count, order, orderBy, keyword } = params;
-    return convertResp(wrapResp(await request({
+    return convertListResp(wrapResp(await request({
       path: '/commodity/getCommodities',
       data: {
         rid, start, count, keyword,
@@ -52,11 +62,20 @@ export const CommodityAPI = {
     count?: number;
   }) {
     const { uid, start, status, count } = params;
-    return convertResp(wrapResp(await request({
+    return convertListResp(wrapResp(await request({
       path: '/commodity/getCommoditiesByUser',
       data: {
         uid, start, count, status
       }
     })))
-  }
+  },
+  async listMine(params: {
+    status: number, role: 'buyer' | 'seller',
+    start: number, count: number
+  }) {
+    return convertListResp(wrapResp(await request({
+      path: '/commodity/getMyCommodities',
+      data: params,
+    })))
+  },
 }

@@ -101,4 +101,17 @@ Page({
 
   onClickCommodity() {
   },
+
+  onAvatarClick() {
+    const { user } = this.data;
+    if (!user) {
+      return;
+    }
+    console.log(user);
+
+    wx.previewImage({
+      current: user.avatar_url,
+      urls: [user.avatar_url]
+    });
+  },
 })

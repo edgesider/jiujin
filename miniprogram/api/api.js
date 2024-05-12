@@ -166,19 +166,6 @@ const api = {
     }));
   },
 
-  async getCommodityList(filter) {
-    const resp = await request({
-      path: "/commodity/getCommodities",
-      method: "POST",
-      data: {
-        ...filter,
-        openid: getOpenId()
-      }
-    });
-    resp.data.data = (resp.data?.data ?? []).map(convertCommodity);
-    return wrapResp(resp);
-  },
-
   async getHelpList(filter) {
     const resp = await request({
       path: "/help/getList",
@@ -190,18 +177,6 @@ const api = {
     });
     resp.data.data = (resp.data?.data ?? []).map(convertHelp);
     return wrapResp(resp);
-  },
-
-  // 获取单个商品
-  async getCommodityInfo({ id }) {
-    const resp = wrapResp(await request({
-      path: `/commodity/${id}`,
-      method: 'GET',
-    }));
-    if (!resp.isError) {
-      resp.data = convertCommodity(resp.data);
-    }
-    return resp;
   },
 
   // 获取单个求助

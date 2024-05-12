@@ -1,6 +1,7 @@
 import api from "../../api/api";
 import getConstants, { COMMODITY_STATUS_SELLING, GENDER } from "../../constants";
 import { getRegionPath, sleep } from "../../utils/other";
+import { CommodityAPI } from "../../api/commodity";
 
 const COUNT_PER_PAGE = 12
 const MAX_HISTORIES = 10;
@@ -108,14 +109,13 @@ Page({
       order: [orderBy, order],
       regionFilter,
     } = this.data;
-    const resp = await api.getCommodityList({
+    const resp = await CommodityAPI.search({
       keyword: text,
-      order_by: orderBy,
-      order: order,
+      orderBy,
+      order,
       start: cursor,
       rid: regionFilter ? regionFilter._id : undefined,
       count: COUNT_PER_PAGE,
-      status: COMMODITY_STATUS_SELLING,
     });
     if (resp.isError) {
       await wx.showToast({

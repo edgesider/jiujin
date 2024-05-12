@@ -13,7 +13,11 @@
       id="seq-{{msg.seq}}"
       class="msg-item {{msg.sendID === selfImId ? 'msg-self' : 'msg-other'}}"
     >
-      <image class="avatar" src="{{msg.senderFaceUrl}}" mode="aspectFill" />
+      <image
+        class="avatar" src="{{msg.senderFaceUrl}}" mode="aspectFill"
+        bindtap="onAvatarClick"
+        data-uid="{{msg.sendID}}"
+      />
       <view class="content">
         <text
           user-select

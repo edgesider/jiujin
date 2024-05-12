@@ -8,6 +8,7 @@ import { DATETIME_FORMAT } from "../../utils/time";
 import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
 import { waitForAppReady } from "../../utils/globals";
 import { startTransaction } from "../../utils/transaction";
+import { CommodityAPI } from "../../api/commodity";
 
 const app = getApp();
 
@@ -49,7 +50,7 @@ Page({
     wx.navigateBack().then();
   },
   async loadData(id) {
-    const commResp = await api.getCommodityInfo({ id });
+    const commResp = await CommodityAPI.getOne(id);
     if (commResp.isError) {
       await wx.showToast({
         icon: 'error',

@@ -7,6 +7,7 @@ import getConstants, {
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import { openCommodityEdit, openProfile } from "../../utils/router";
 import { waitForAppReady } from "../../utils/globals";
+import { CommodityAPI } from "../../api/commodity";
 
 const app = getApp()
 
@@ -79,15 +80,11 @@ Page({
                 sold: COMMODITY_STATUS_SOLD,
                 deactivated: COMMODITY_STATUS_DEACTIVATED,
               })[type];
-              const self = app.globalData.self._id;
-              const filter = { status, start, count };
-              if (type === 'bought') {
-                filter['buyer_id'] = self;
-              } else {
-                filter['seller_id'] = self;
-              }
-
-              resp = await api.getCommodityList(filter);
+              resp = await CommodityAPI.listMine({
+                status,
+                role: type === 'bought' ? 'buyer' : 'seller',
+                start, count,
+              });
             }
             if (resp.isError) {
               console.error(resp);
