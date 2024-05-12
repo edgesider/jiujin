@@ -9,7 +9,7 @@ import { NotifyType, requestNotifySubscribe } from '../../../../../utils/notify'
 import {
   getCommodityGroupAttributes,
   getConversationById,
-  getGroup,
+  getGroup, getHelpGroupAttributes, isOthersNewCreateConversation,
   listenConversation
 } from '../../../../../utils/oim';
 import { ConversationItem, MessageItem, MessageType } from 'open-im-sdk';
@@ -24,8 +24,14 @@ Component({
     conversationIndex: {
       type: Number
     },
+    // 是否一开始隐藏，在有信息之后再展示
+    hideAtFirst: {
+      type: Boolean,
+      value: false
+    }
   },
   data: {
+    hide: false,
     conversation: null as ConversationItem | null,
     lastMessageText: '',
     lastTime: '',
@@ -34,6 +40,11 @@ Component({
   },
   lifetimes: {
     async attached() {
+      if (this.properties.hideAtFirst) {
+        this.setData({
+          hide: true,
+        });
+      }
       const conversation = await getConversationById(this.properties.conversationId);
       if (!conversation) {
         console.error(`invalid conversationId ${this.properties.conversationId}`);
@@ -43,7 +54,7 @@ Component({
       // @ts-ignore
       this.subscription =
         listenConversation(this.properties.conversationId).subscribe(conv => {
-          this.onConversationUpdate(conversation, false);
+          this.onConversationUpdate(conv, false);
         });
     },
     detached() {
@@ -54,6 +65,9 @@ Component({
   },
   methods: {
     async onConversationUpdate(conversation: ConversationItem, updateOtherInfo: boolean) {
+      if (isOthersNewCreateConversation(conversation)) {
+        return;
+      }
       const { latestMsg } = conversation;
       const lastMessage = JSON.parse(latestMsg) as MessageItem;
       let lastMessageText = '';
@@ -78,9 +92,9 @@ Component({
         if (!group) {
           throw Error(`failed to get group: groupId=${conversation.groupID}`)
         }
-        const attrs = await getCommodityGroupAttributes(group);
+        const attrs = (await getCommodityGroupAttributes(group)) || (await getHelpGroupAttributes(group));
         if (!attrs) {
-          console.error(`not commodity conversation ${group.groupID} ${group.ownerUserID}`);
+          console.error(`not commodity/help conversation ${group.groupID} ${group.ownerUserID}`);
           return;
         }
         const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;

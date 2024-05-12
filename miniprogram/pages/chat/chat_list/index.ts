@@ -4,10 +4,9 @@ import { User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 import {
-  getConversations,
+  getConversationList,
   isOthersNewCreateConversation,
-  isTransactionGroup,
-  listenConversationListUpdate
+  isTransactionGroup, listenNewConvList,
 } from '../../../utils/oim';
 import { ConversationItem } from 'open-im-sdk';
 
@@ -28,8 +27,8 @@ Page({
     });
     this.setData({ self: app.globalData.self });
 
-    this.subscription = listenConversationListUpdate().subscribe(list => {
-      this.onConversationListUpdate(list);
+    this.subscription = listenNewConvList().subscribe(list => {
+      this.onConversationListUpdate([...list, ...this.data.conversations]);
     })
 
     // const switches = await getNotifySwitches();
@@ -50,14 +49,13 @@ Page({
     await this.refresh();
   },
   async onConversationListUpdate(convList: ConversationItem[]) {
+    const newList = convList
+      .filter(conv => conv.groupID && isTransactionGroup(conv.groupID));
+    newList.sort((convA, convB) => convA.latestMsgSendTime - convB.latestMsgSendTime);
     this.setData({
       conversations: convList
-        .filter(conv =>
-          conv.groupID && isTransactionGroup(conv.groupID)
-          && !(isOthersNewCreateConversation(conv))
-          // && conv.lastMessage && conv.lastMessage.fromAccount
-          // && !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
-        ),
+        .filter(conv => conv.groupID && isTransactionGroup(conv.groupID))
+      ,
     });
 
     const { self } = this.data;
@@ -78,7 +76,7 @@ Page({
     }
   },
   async refresh() {
-    await this.onConversationListUpdate(await getConversations());
+    await this.onConversationListUpdate(await getConversationList());
   },
   async onRefresh() {
     if (this.data.refreshing) {

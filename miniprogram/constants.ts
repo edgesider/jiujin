@@ -1,4 +1,5 @@
 import { TransactionFinishReason, TransactionStatus } from "./api/transaction";
+import { HelpTransactionFinishReason, HelpTransactionStatus } from "./api/helpTransaction";
 import { MessageStatus, MessageType, SessionType } from "open-im-sdk";
 
 export const COMMODITY_STATUS_SELLING = 0; // 出售中
@@ -37,6 +38,8 @@ const constants = {
   DEFAULT_AVATAR,
   TransactionStatus,
   TransactionFinishReason,
+  HelpTransactionStatus,
+  HelpTransactionFinishReason,
 };
 
 export function initConstants() {

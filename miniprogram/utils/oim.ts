@@ -29,6 +29,13 @@ export interface CommodityGroupAttributes {
   transactionId: number;
 }
 
+export interface HelpGroupAttributes {
+  sellerId: string;
+  buyerId: string;
+  helpId: string;
+  transactionId: number;
+}
+
 export function checkOimResult<T>(res: WsResponse<T>, raise: false): T | undefined
 export function checkOimResult<T>(res: WsResponse<T>, raise: true): T
 export function checkOimResult<T>(res: WsResponse<T>): T
@@ -87,7 +94,7 @@ export async function waitForOimReady() {
   })
 }
 
-export async function getConversations(): Promise<ConversationItem[]> {
+export async function getConversationList(): Promise<ConversationItem[]> {
   // TODO 支持分页
   return checkOimResult(await oim.getAllConversationList());
 }
@@ -126,18 +133,27 @@ export function getImUidFromUid(uid: string) {
   return uid;
 }
 
-/**
- * 创建用于交易的群组ID
- */
 export function getGroupIdForTransaction(): string {
   return 'CO_' + generateUUID();
+}
+
+export function getGroupIdForHelpTransaction(): string {
+  return 'HELP_' + generateUUID();
+}
+
+export function isCommodityTransactionGroup(groupId: string): boolean {
+  return groupId.startsWith('CO_');
+}
+
+export function isHelpTransactionGroup(groupId: string): boolean {
+  return groupId.startsWith('HELP_');
 }
 
 /**
  * 是否是用于交易的群组ID
  */
 export function isTransactionGroup(groupId: string): boolean {
-  return groupId.startsWith('CO_');
+  return isCommodityTransactionGroup(groupId) || isHelpTransactionGroup(groupId);
 }
 
 export function isOthersNewCreateConversation(conv: ConversationItem) {
@@ -172,7 +188,7 @@ export async function tryDeleteConversationAndGroup(conv: ConversationItem) {
 }
 
 export async function setCommodityGroupAttributes(groupID: string, attrs: CommodityGroupAttributes) {
-  if (!isTransactionGroup(groupID)) {
+  if (!isCommodityTransactionGroup(groupID)) {
     throw Error(`not transaction group: ${groupID}`);
   }
   checkOimResult(await oim.setGroupInfo({
@@ -185,14 +201,35 @@ export async function getCommodityGroupAttributes(group: string | GroupItem): Pr
   if (typeof group === 'object') {
     group = group.groupID;
   }
-  if (!isTransactionGroup(group)) {
+  if (!isCommodityTransactionGroup(group)) {
     return undefined;
   }
   const grp = await getGroup(group);
   return tryJsonParse<CommodityGroupAttributes>(grp?.ex) ?? undefined;
 }
 
-const convListSubject = new BehaviorSubject<ConversationItem[]>([]);
+export async function setHelpGroupAttributes(groupID: string, attrs: HelpGroupAttributes) {
+  if (!isHelpTransactionGroup(groupID)) {
+    throw Error(`not transaction group: ${groupID}`);
+  }
+  checkOimResult(await oim.setGroupInfo({
+    groupID,
+    ex: JSON.stringify(attrs)
+  }));
+}
+
+export async function getHelpGroupAttributes(group: string | GroupItem): Promise<HelpGroupAttributes | undefined> {
+  if (typeof group === 'object') {
+    group = group.groupID;
+  }
+  if (!isHelpTransactionGroup(group)) {
+    return undefined;
+  }
+  const grp = await getGroup(group);
+  return tryJsonParse<HelpGroupAttributes>(grp?.ex) ?? undefined;
+}
+
+const newConvListSubject = new Subject<ConversationItem[]>();
 const convSubjects = new Map<string, Subject<ConversationItem>>();
 const convByGroupIdSubjects = new Map<string, Subject<ConversationItem>>();
 const convMsgSubjects = new Map<string, Subject<MessageItem>>();
@@ -203,9 +240,15 @@ function listenEvents() {
     const msgList = event.data as MessageItem[];
     console.log('OnRecvNewMessages', msgList);
   });
-  oim.on(CbEvents.OnConversationChanged, event => {
+  oim.on(CbEvents.OnNewConversation, event => {
     const convList = event.data as ConversationItem[];
-    convListSubject.next(convList);
+    console.log('new conversation', convList);
+    newConvListSubject.next(convList);
+  })
+  // 会话更新
+  oim.on(CbEvents.OnConversationChanged, async (event) => {
+    console.log('onConversationChanged', event);
+    const convList = event.data as ConversationItem[];
     convList.forEach(conv => {
       convSubjects.get(conv.conversationID)?.next(conv);
       if (conv.groupID) {
@@ -223,19 +266,20 @@ function listenEvents() {
   });
   oim.on(CbEvents.OnTotalUnreadMessageCountChanged, event => {
     console.log('unread changed', event);
+    totalUnreadCountSubject.next(event.data as number);
   });
   oim.on(CbEvents.OnUserStatusChanged, event => {
     console.log('user status changed', event);
     hasLogin = event.data === LoginStatus.Logged;
   });
   oim.on(CbEvents.OnKickedOffline, event => {
-    hasLogin = false;
     console.log('kicked offline', event);
+    hasLogin = false;
   })
 }
 
-export function listenConversationListUpdate(): Observable<ConversationItem[]> {
-  return convListSubject;
+export function listenNewConvList(): Observable<ConversationItem[]> {
+  return newConvListSubject;
 }
 
 export function listenConversation(conv: string | ConversationItem): Observable<ConversationItem> {

@@ -1,7 +1,7 @@
 import getConstants from '../../../constants';
 import api, { getOpenId } from '../../../api/api';
 import { Transaction, TransactionApi } from '../../../api/transaction';
-import { Commodity, User } from '../../../types';
+import { Commodity, Help, User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { generateUUID, kbHeightChanged, tryJsonParse } from '../../../utils/other';
 import { waitForAppReady } from '../../../utils/globals';
@@ -9,11 +9,12 @@ import { ConversationItem, GroupItem, PicBaseInfo, SessionType } from 'open-im-s
 import {
   checkOimResult,
   getCommodityGroupAttributes,
-  getConversationById, getGroup,
+  getConversationById, getGroup, getHelpGroupAttributes,
   listenMessage, markConvMessageAsRead,
   sendMessage
 } from '../../../utils/oim';
 import { CommodityAPI } from '../../../api/commodity';
+import { HelpTransaction, HelpTransactionApi } from '../../../api/helpTransaction';
 
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
@@ -31,7 +32,8 @@ Page({
     conversation: null as ConversationItem | null,
     group: null as GroupItem | null,
     commodity: null as Commodity | null,
-    transaction: null as Transaction | null,
+    help: null as Help | null,
+    transaction: null as Transaction | HelpTransaction | null,
 
     keyboardHeight: 0,
     input: '',
@@ -75,38 +77,69 @@ Page({
       return;
     }
     markConvMessageAsRead(conversation).then();
-    const attrs = await getCommodityGroupAttributes(group);
-    if (!attrs) {
+    let commodity: Commodity | null = null;
+    let help: Help | null = null;
+    let transaction: Transaction | HelpTransaction;
+    let seller: User;
+    let buyer: User;
+
+    const coAttr = await getCommodityGroupAttributes(group);
+    const helpAttr = await getHelpGroupAttributes(group);
+    if (coAttr) {
+      const { commodityId, sellerId, buyerId, transactionId } = coAttr;
+      const [
+        commodityResp,
+        transactionResp,
+        sellerResp,
+        buyerResp
+      ] =
+        await Promise.all([
+          CommodityAPI.getOne(commodityId),
+          TransactionApi.getById(transactionId),
+          api.getUserInfo(sellerId),
+          api.getUserInfo(buyerId),
+        ])
+      if (commodityResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
+        await wx.showToast({ title: '网络错误', icon: 'error' });
+        return;
+      }
+      commodity = commodityResp.data!!;
+      transaction = transactionResp.data!!;
+      seller = sellerResp.data!!;
+      buyer = buyerResp.data!!;
+    } else if (helpAttr) {
+      const { helpId, sellerId, buyerId, transactionId } = helpAttr;
+      const [
+        commodityResp,
+        transactionResp,
+        sellerResp,
+        buyerResp
+      ] =
+        await Promise.all([
+          api.getHelpInfo({ id: helpId }),
+          HelpTransactionApi.getById(transactionId),
+          api.getUserInfo(sellerId),
+          api.getUserInfo(buyerId),
+        ])
+      if (commodityResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
+        await wx.showToast({ title: '网络错误', icon: 'error' });
+        return;
+      }
+      help = commodityResp.data!!;
+      transaction = transactionResp.data!!;
+      seller = sellerResp.data!!;
+      buyer = buyerResp.data!!;
+    } else {
       await wx.showToast({
         title: '网络错误',
         icon: 'error',
       })
       return;
     }
-    const { commodityId, sellerId, buyerId, transactionId } = attrs;
-    const [
-      commodityResp,
-      transactionResp,
-      sellerResp,
-      buyerResp
-    ] =
-      await Promise.all([
-        CommodityAPI.getOne(commodityId),
-        TransactionApi.getById(transactionId),
-        api.getUserInfo(sellerId),
-        api.getUserInfo(buyerId),
-      ])
-    if (commodityResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
-      await wx.showToast({ title: '网络错误', icon: 'error' });
-      return;
-    }
-    const commodity = commodityResp.data!!;
-    const transaction = transactionResp.data!!;
-    const seller = sellerResp.data!!;
-    const buyer = buyerResp.data!!;
     this.setData({
       commodity: commodity,
-      isSeller: sellerId === app.globalData.self._id,
+      help: help,
+      isSeller: seller._id === app.globalData.self._id,
       seller,
       buyer,
       conversation,
@@ -122,6 +155,9 @@ Page({
     }));
   },
   onUnload() {
+    if (this.data.conversationId) {
+      markConvMessageAsRead(this.data.conversationId).then();
+    }
     this.subscription?.unsubscribe();
   },
   getConversationName(conversation: ConversationItem) {

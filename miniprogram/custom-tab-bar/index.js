@@ -1,7 +1,7 @@
 import getConstants from '../constants';
 import { ensureRegistered } from '../utils/other';
 import {
-  getConversations,
+  getConversationList,
   isOthersNewCreateConversation,
   listenUnreadCount,
   markConvMessageAsRead,
@@ -77,7 +77,7 @@ Component({
       await waitForAppReady();
       await waitForOimReady();
       const unreadChanged = async () => {
-        const convList = await getConversations();
+        const convList = await getConversationList();
         const count = convList
           .filter(c => !isOthersNewCreateConversation(c))
           .map(c => c.unreadCount)

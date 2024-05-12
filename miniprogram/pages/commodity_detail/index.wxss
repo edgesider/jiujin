@@ -223,6 +223,7 @@
   font-weight: normal;
   flex-shrink: 0;
   border-radius: 16rpx;
+  background: var(--brand-green);
 
   display: flex;
   justify-content: center;

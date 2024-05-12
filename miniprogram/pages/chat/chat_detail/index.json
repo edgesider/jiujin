@@ -2,6 +2,7 @@
   "usingComponents": {
     "UserTitleBar": "/components/UserTitleBar",
     "TransactionBanner": "./TransactionBanner",
+    "HelpTransactionBanner": "./HelpTransactionBanner",
     "MessageList": "./MessageList"
   },
   "enablePullDownRefresh": false,

@@ -79,6 +79,20 @@ export async function openCommodityEdit(commodity: Commodity, waitFinished = fal
   }
 }
 
+interface HelpDetailOptions {
+  id: string;
+  scrollToComment?: boolean;
+}
+
+export async function openHelpDetail(options: HelpDetailOptions) {
+  if (!options.id) {
+    throw Error('help id is required');
+  }
+  await wx.navigateTo({
+    url: `/pages/help_detail/index?id=${options.id}&scrollToComment=${Boolean(options.scrollToComment)}`,
+  })
+}
+
 export async function openHelpEdit(help: Help, waitFinished = false) {
   if (!waitFinished) {
     await wx.navigateTo({

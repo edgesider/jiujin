@@ -4,6 +4,9 @@
   scroll-into-view="{{scrollIntoView}}"
   scroll-into-view-alignment="end"
   scroll-into-view-offset="1000"
+  refresher-enabled="true"
+  refresher-triggered="{{pullDownTriggered}}"
+  bindrefresherrefresh="onPullDown"
 >
   <block
     wx:for="{{messageList}}" wx:key="ID" wx:for-item="msg" wx:for-index="idx"

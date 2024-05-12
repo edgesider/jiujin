@@ -7,6 +7,13 @@
     transaction="{{transaction}}"
     bind:onTransactionActionDone="onTransactionActionDone"
   />
+  <HelpTransactionBanner
+    class="banner"
+    wx:elif="{{help && transaction}}"
+    help="{{help}}"
+    transaction="{{transaction}}"
+    bind:onTransactionActionDone="onTransactionActionDone"
+  />
   <MessageList conversationId="{{conversationId}}" class="message-list" />
 
 

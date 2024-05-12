@@ -13,7 +13,7 @@ import { openProfile } from '../../../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
-const COUNT_PER_PAGE = 20;
+const COUNT_PER_PAGE = 30;
 
 Component({
   properties: {
@@ -34,6 +34,7 @@ Component({
     lastMinSeq: 0,
     isCompleted: false,
     scrollIntoView: null as string | null,
+    pullDownTriggered: false,
   },
   lifetimes: {
     attached() {
@@ -61,12 +62,16 @@ Component({
       }
 
       await this.fetchOlderMessages();
-      this.scrollToEnd();
+      setTimeout(() => {
+        this.scrollToEnd();
+      }, 100);
       markConvMessageAsRead(conversationId).then();
 
       this.getSubscription().add(listenMessage(conversationId).subscribe(rawMsg => {
         this.onMessageUpdate([rawMsg], 'newer');
-        this.scrollToEnd();
+        setTimeout(() => {
+          this.scrollToEnd();
+        }, 100)
         markConvMessageAsRead(conversationId).then();
       }));
       this.getSubscription().add(kbHeightChanged.subscribe(() => {
@@ -102,10 +107,11 @@ Component({
       if (!conversationId || isCompleted) {
         return;
       }
+      const lastMsgId = this.data.messageList.length === 0 ? '' : this.data.messageList[0].clientMsgID;
       const newList = checkOimResult(await oim.getAdvancedHistoryMessageList({
         conversationID: conversationId,
-        count: 12,
-        startClientMsgID: '',
+        count: COUNT_PER_PAGE,
+        startClientMsgID: lastMsgId,
         lastMinSeq,
       }));
       this.setData({
@@ -113,6 +119,11 @@ Component({
         lastMinSeq: newList.lastMinSeq
       })
       this.onMessageUpdate(newList.messageList, 'older');
+    },
+    async onPullDown() {
+      this.setData({ pullDownTriggered: true });
+      await this.fetchOlderMessages();
+      this.setData({ pullDownTriggered: false });
     },
     onImageMessageClick(ev: TouchEvent) {
       const { idx } = ev.currentTarget.dataset;
