@@ -20,6 +20,7 @@ Page({
     currFilter: 'selling',
     cursor: 0,
     commodityList: [],
+    sumCount: -1,
     listLoading: false,
   },
 
@@ -58,6 +59,11 @@ Page({
         listLoading: true
       });
     }
+    const count = (await CommodityAPI.countByUser({
+      ...this.getApiParams(),
+      start: this.data.cursor,
+      count: COUNT_PER_PAGE,
+    })).data ?? -1;
     const resp = await CommodityAPI.listByUser({
       ...this.getApiParams(),
       start: this.data.cursor,
@@ -73,6 +79,7 @@ Page({
       cursor: newList.length,
       commodityList: newList,
       listLoading: false,
+      sumCount: count,
     })
   },
 

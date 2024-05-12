@@ -127,9 +127,10 @@ Component({
       }
       // @ts-ignore
       this.togglingCollect = true;
+      const { help } = this.data;
       try {
-        if (this.data.help.is_collected) {
-          const resp = await HelpCollectApi.cancel(this.data.help._id);
+        if (help.is_collected) {
+          const resp = await HelpCollectApi.cancel(help._id);
           if (resp.isError) {
             await wx.showToast({
               title: '取消收藏失败',
@@ -138,7 +139,7 @@ Component({
             return;
           }
         } else {
-          const resp = await HelpCollectApi.collectHelp(this.data.help._id);
+          const resp = await HelpCollectApi.collectHelp(help._id);
           if (resp.isError) {
             await wx.showToast({
               title: '收藏失败',
@@ -147,13 +148,10 @@ Component({
             return;
           }
         }
-        this.setData({
-          help: Object.assign(
-            {},
-            this.data.help,
-            { is_collected: !this.data.help.is_collected }
-          )
-        })
+        const newHelp = { ...help };
+        newHelp.is_collected = !help.is_collected;
+        newHelp.collected_count = newHelp.is_collected ? help.collected_count + 1 : help.collected_count - 1;
+        this.setData({ help: newHelp, })
       } finally {
         // @ts-ignore
         this.togglingCollect = false;
@@ -169,9 +167,10 @@ Component({
       }
       // @ts-ignore
       this.togglingLike = true;
+      const { help } = this.data;
       try {
-        if (this.data.help.is_liked) {
-          const resp = await HelpLikedApi.cancelLiked(this.data.help._id);
+        if (help.is_liked) {
+          const resp = await HelpLikedApi.cancelLiked(help._id);
           if (resp.isError) {
             await wx.showToast({
               title: '取消点赞失败',
@@ -180,7 +179,7 @@ Component({
             return;
           }
         } else {
-          const resp = await HelpLikedApi.likedHelp(this.data.help._id);
+          const resp = await HelpLikedApi.likedHelp(help._id);
           if (resp.isError) {
             await wx.showToast({
               title: '点赞失败',
@@ -189,13 +188,10 @@ Component({
             return;
           }
         }
-        this.setData({
-          help: Object.assign(
-            {},
-            this.data.help,
-            { is_liked: !this.data.help.is_liked }
-          )
-        })
+        const newHelp = { ...help };
+        newHelp.is_liked = !help.is_liked;
+        newHelp.liked_count = newHelp.is_liked ? help.liked_count + 1 : help.liked_count - 1;
+        this.setData({ help: newHelp, })
       } finally {
         // @ts-ignore
         this.togglingLike = false;

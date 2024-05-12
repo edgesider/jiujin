@@ -50,15 +50,15 @@
     </scroll-view>
     <view class="footer">
       <view class="left">
-        <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleLike">
+        <view class="button" bind:tap="onToggleLike">
           <image class="icon"
                  src="{{help.is_liked ? '/images/like1.png' : '/images/like0.png'}}" />
-          <text class="text">{{help.like_count > 0 ? help.like_count : '点赞'}}</text>
+          <text class="text">{{help.liked_count > 0 ? help.liked_count : '点赞'}}</text>
         </view>
-        <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">
+        <view class="button" bind:tap="onToggleCollect">
           <image class="icon"
                  src="{{help.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
-          <text class="text">{{help.collect_count > 0 ? help.collect_count : '收藏'}}</text>
+          <text class="text">{{help.collected_count > 0 ? help.collected_count : '收藏'}}</text>
         </view>
         <view class="button" bindtap="onClickShare">
           <image class="icon" src="/images/share.png" />
@@ -84,24 +84,8 @@
             <view class="button button-green" bind:tap="onPrivateMessage">去私聊</view>
           </block>
         </block>
-<!--        <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">-->
-<!--          <block wx:if="{{isMine}}">-->
-<!--            <view class="button" bindtap="polish">重新上架</view>-->
-<!--          </block>-->
-<!--          <block wx:else>-->
-<!--            <view class="button button-disabled">已下架</view>-->
-<!--          </block>-->
-<!--        </block>-->
-<!--        <block wx:elif="{{commodity.status === COMMODITY_STATUS_SOLD}}">-->
-<!--          <view class="button button-disabled">交易已完成</view>-->
-<!--        </block>-->
-<!--        <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">-->
-<!--          <view class="button button-disabled">已下架</view>-->
-<!--        </block>-->
       </view>
     </view>
   </block>
-
-
 </view>
 

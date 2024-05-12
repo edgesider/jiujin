@@ -72,8 +72,8 @@ export interface Help {
   is_collected: boolean;
   is_deleted: boolean;
   is_liked: boolean;
-  like_count: number;
-  collect_count: number;
+  liked_count: number;
+  collected_count: number;
   comment_count: number;
   create_time: number;
   polish_time: number;
@@ -82,10 +82,8 @@ export interface Help {
 
 export function convertHelp(raw: any): Help {
   return {
-    ...raw, img_urls: convertImgUrls(raw.img_urls),
-    like_count: 100,
-    collect_count: 300,
-    comment_count: 223,
+    ...raw,
+    img_urls: convertImgUrls(raw.img_urls),
   } as Help;
 }
 

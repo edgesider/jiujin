@@ -29,17 +29,17 @@
       </view>
       <view class="footer">
         <view class="left">
-          <view wx:if="{{!isMine}}" class="button" catchtap="onToggleLike">
+          <view class="button" catchtap="onToggleLike">
             <image class="icon"
                    src="{{help.is_liked ? '/images/like1.png' : '/images/like0.png'}}" />
-            <text class="text">{{help.like_count > 0 ? help.like_count : '点赞'}}</text>
+            <text class="text">{{help.liked_count > 0 ? help.liked_count : '点赞'}}</text>
           </view>
-          <view wx:if="{{!isMine}}" class="button" catchtap="onToggleCollect">
+          <view class="button" catchtap="onToggleCollect">
             <image
               class="icon"
               src="{{help.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}"
             />
-            <text class="text">{{help.collect_count > 0 ? help.collect_count : '收藏'}}</text>
+            <text class="text">{{help.collected_count > 0 ? help.collected_count : '收藏'}}</text>
           </view>
           <view wx:if="{{!isMine}}" class="button" catchtap="gotoDetail">
             <image class="icon" src="/images/comment-icon.png" />

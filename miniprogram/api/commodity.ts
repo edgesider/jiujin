@@ -61,13 +61,21 @@ export const CommodityAPI = {
     start?: number;
     count?: number;
   }) {
-    const { uid, start, status, count } = params;
     return convertListResp(wrapResp(await request({
       path: '/commodity/getCommoditiesByUser',
-      data: {
-        uid, start, count, status
-      }
-    })))
+      data: params
+    })));
+  },
+  async countByUser(params: {
+    uid: string;
+    status: number;
+    start?: number;
+    count?: number;
+  }) {
+    return wrapResp(await request({
+      path: '/commodity/getCommoditiesCountByUser',
+      data: params
+    }));
   },
   async listMine(params: {
     status: number, role: 'buyer' | 'seller',

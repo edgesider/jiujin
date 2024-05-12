@@ -37,7 +37,7 @@
     <!--        {{item.name}}-->
     <!--      </view>-->
     <!--    </view>-->
-    <text class="state-text">出售中</text>
+    <text class="state-text">出售中{{sumCount > 0 ? (" (" + sumCount + ")") : ""}}</text>
     <view class="list">
       <CommodityCard
         wx:for="{{commodityList}}"
