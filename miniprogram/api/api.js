@@ -2,7 +2,8 @@ import axios from 'axios';
 import mpAdapter from 'axios-miniprogram-adapter';
 import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../constants';
 import { convertCommodity, convertHelp } from '../types';
-import { RespSuccess, RespError } from './resp';
+import { RespError, RespSuccess } from './resp';
+import { cloudProtocolToHttp } from "../utils/other";
 
 axios.defaults.adapter = mpAdapter;
 
@@ -364,7 +365,7 @@ const api = {
     if (!res.fileID) {
       return new RespError('upload failed');
     }
-    return new RespSuccess(res.fileID);
+    return new RespSuccess(cloudProtocolToHttp(res.fileID));
   },
 
   async setViewed(cid) {
