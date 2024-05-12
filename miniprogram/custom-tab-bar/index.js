@@ -1,6 +1,12 @@
 import getConstants from '../constants';
 import { ensureRegistered } from '../utils/other';
-import { listenUnreadCount, waitForOimReady } from "../utils/oim";
+import {
+  getConversations,
+  isOthersNewCreateConversation,
+  listenUnreadCount,
+  markConvMessageAsRead,
+  waitForOimReady
+} from "../utils/oim";
 import { waitForAppReady } from "../utils/globals";
 
 Component({
@@ -70,11 +76,17 @@ Component({
 
       await waitForAppReady();
       await waitForOimReady();
-      const unreadChanged = async (count) => {
+      const unreadChanged = async () => {
+        const convList = await getConversations();
+        const count = convList
+          .filter(c => !isOthersNewCreateConversation(c))
+          .map(c => c.unreadCount)
+          .reduce((count, curr) => count + curr);
         this.data.list.find(item => item.text === '私信').hasDot = count > 0;
         this.setData({
           list: [...this.data.list],
         });
+        convList.filter(isOthersNewCreateConversation).forEach(markConvMessageAsRead);
       }
       listenUnreadCount().subscribe(unreadChanged);
     },

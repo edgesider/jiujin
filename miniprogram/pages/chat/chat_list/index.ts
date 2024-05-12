@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 import {
   getConversations,
-  isNewCreateConversation,
+  isOthersNewCreateConversation,
   isTransactionGroup,
   listenConversationListUpdate
 } from '../../../utils/oim';
@@ -54,7 +54,7 @@ Page({
       conversations: convList
         .filter(conv =>
           conv.groupID && isTransactionGroup(conv.groupID)
-          && !(isNewCreateConversation(conv))
+          && !(isOthersNewCreateConversation(conv))
           // && conv.lastMessage && conv.lastMessage.fromAccount
           // && !(isCreateGroupMsg(conv.lastMessage) && conv.lastMessage.fromAccount !== getOpenId()) // 不是别人刚创建的群聊
         ),

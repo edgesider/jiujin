@@ -5,13 +5,14 @@ import {
   GroupItem,
   GroupType,
   MessageItem,
+  MessageType,
   OpenIMSDK,
   SessionType,
   WsResponse
 } from 'open-im-sdk';
 import { generateUUID, tryJsonParse } from './other';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import api from '../api/api';
+import api, { getOpenId } from '../api/api';
 
 /**
  * 通过交易创建出来群组的属性列表
@@ -58,8 +59,8 @@ export async function initOpenIM(self: User) {
     const res = await oim.login({
       userID: self._id,
       token,
-      wsAddr: 'ws://39.106.69.23:10003',
-      apiAddr: 'http://39.106.69.23:10002',
+      wsAddr: 'wss://im.lllw.cc/ws/',
+      apiAddr: 'https://im.lllw.cc/api/',
       platformID: 5,
     });
     checkOimResult(res, true);
@@ -135,8 +136,12 @@ export function isTransactionGroup(groupId: string): boolean {
   return groupId.startsWith('CO_');
 }
 
-export function isNewCreateConversation(conv: ConversationItem) {
-  return false;
+export function isOthersNewCreateConversation(conv: ConversationItem) {
+  const lastMsg = tryJsonParse<MessageItem>(conv.latestMsg);
+  if (!lastMsg || lastMsg.contentType !== MessageType.GroupCreated) {
+    return false;
+  }
+  return lastMsg.sendID !== getOpenId();
 }
 
 export async function getConversationByGroup(group: string | GroupItem): Promise<ConversationItem | undefined> {

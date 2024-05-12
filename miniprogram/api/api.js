@@ -367,49 +367,6 @@ const api = {
     return new RespSuccess(res.fileID);
   },
 
-  async lockCommodity(id) {
-    return wrapResp(await request({
-      path: "/commodity/lock",
-      method: "POST",
-      data: {
-        _id: id
-      }
-    }));
-  },
-
-  async unlockCommodity(id) {
-    return wrapResp(await request({
-      path: "/commodity/unlock",
-      method: "POST",
-      data: {
-        _id: id
-      }
-    }));
-  },
-
-  async sellCommodity(id, buyer_id) {
-    return wrapResp(await request({
-      path: "/commodity/sell",
-      method: "POST",
-      data: {
-        _id: id,
-        buyer_id,
-        openid: getOpenId()
-      }
-    }));
-  },
-
-  async getViewed(start, count) {
-    return wrapResp(await request({
-      path: "/commodity/getViewed",
-      method: "POST",
-      data: {
-        start, count,
-        openid: getOpenId()
-      }
-    }));
-  },
-
   async setViewed(cid) {
   },
   async getMyViewed(start, count) {

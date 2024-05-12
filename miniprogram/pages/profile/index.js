@@ -2,6 +2,7 @@ import getConstants, { COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from ".
 import api from "../../api/api";
 import moment from "moment";
 import { getRegionPathName } from "../../utils/other";
+import { CommodityAPI } from "../../api/commodity";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -57,7 +58,7 @@ Page({
         listLoading: true
       });
     }
-    const resp = await api.getCommodityList({
+    const resp = await CommodityAPI.listByUser({
       ...this.getApiParams(),
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
@@ -82,11 +83,11 @@ Page({
   getApiParams() {
     const { currFilter, user: { _id: uid } } = this.data;
     if (currFilter === 'all') {
-      return { seller_id: uid, };
+      return { uid, };
     } else if (currFilter === 'selling') {
-      return { seller_id: uid, status: COMMODITY_STATUS_SELLING };
+      return { uid, status: COMMODITY_STATUS_SELLING };
     } else if (currFilter === 'sold') {
-      return { seller_id: uid, status: COMMODITY_STATUS_SOLD };
+      return { uid, status: COMMODITY_STATUS_SOLD };
     }
   },
 
