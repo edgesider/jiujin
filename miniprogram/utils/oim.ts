@@ -266,10 +266,10 @@ export function listenMessage(conv: string | ConversationItem): Observable<Messa
 /**
  * 监听会话消息，也包括自己发送的消息
  */
-export async function sendMessage(msg: MessageItem) {
+export async function sendMessage(msg: MessageItem, receiver: string, receiverType: 'group' | 'user') {
   checkOimResult(await oim.sendMessage({
-    groupID: msg.groupID || '',
-    recvID: msg.recvID || '',
+    groupID: receiverType === 'group' ? receiver : '',
+    recvID: receiverType === 'user' ? receiver : '',
     message: msg,
   }));
   if (msg.groupID) {
@@ -305,4 +305,24 @@ export async function markConvMessageAsRead(conv: string | ConversationItem) {
 export function listenUnreadCount(): Subject<number> {
   oim.getTotalUnreadMsgCount().then(res => res.errCode === 0 && totalUnreadCountSubject.next(res.data));
   return totalUnreadCountSubject;
+}
+
+export interface CustomImageMsgData {
+  type: 'image';
+  url: string;
+  width: number;
+  height: number;
+}
+
+export type CustomMsgData =
+  | CustomImageMsgData
+  // ...
+  ;
+
+export async function createCustomMsg(data: CustomImageMsgData) {
+  return checkOimResult(await oim.createCustomMessage({
+    data: JSON.stringify(data),
+    description: data.type,
+    extension: '',
+  }));
 }

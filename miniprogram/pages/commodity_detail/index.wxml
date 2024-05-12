@@ -67,7 +67,7 @@
             <view class="button button-yellow" bindtap="onDeactivate">下架</view>
           </block>
           <block wx:else>
-            <view class="button" bind:tap="onPrivateMessage">去私聊</view>
+            <view class="button button-green" bind:tap="onPrivateMessage">去私聊</view>
           </block>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">

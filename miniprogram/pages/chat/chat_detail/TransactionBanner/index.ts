@@ -214,7 +214,6 @@ Component({
         tips = ({
           [TransactionStatus.Idle]: [
             '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品',
-            '如12小时内无任何操作，会自动转为“已售出”状态',
           ],
           [TransactionStatus.Booked]: [
             `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,

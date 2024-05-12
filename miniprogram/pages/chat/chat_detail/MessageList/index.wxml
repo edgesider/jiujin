@@ -24,7 +24,7 @@
           wx:elif="{{msg.contentType === MessageType.PictureMessage}}"
           class="image"
           mode="aspectFill"
-          src="{{msg.payload.imageInfoArray[0].url}}"
+          src="{{msg.pictureElem.bigPicture.url}}"
           bindtap="onImageMessageClick"
           data-idx="{{idx}}"
         />

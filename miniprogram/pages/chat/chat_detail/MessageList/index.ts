@@ -117,15 +117,14 @@ Component({
       const { idx } = ev.currentTarget.dataset;
       const msg = this.data.messageList[idx];
       if (msg && msg.contentType === MessageType.PictureMessage) {
-        // TODO
-        // const url = msg.payload.imageInfoArray[0].url;
-        // const msgs = this.data.messageList
-        //   .filter(msg => msg.type === tim.TYPES.MSG_IMAGE)
-        //   .map(msg => msg.payload.imageInfoArray[0].url);
-        // wx.previewImage({
-        //   current: url,
-        //   urls: msgs
-        // })
+        const url = msg.pictureElem.bigPicture.url;
+        const urls = this.data.messageList
+          .filter(msg => msg.contentType === MessageType.PictureMessage)
+          .map(msg => msg.pictureElem.bigPicture.url);
+        wx.previewImage({
+          current: url,
+          urls
+        })
       }
     },
   }

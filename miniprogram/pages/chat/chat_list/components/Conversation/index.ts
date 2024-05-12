@@ -4,13 +4,12 @@ import { Resp } from '../../../../../api/resp';
 import { User } from '../../../../../types';
 import { openConversationDetail } from '../../../../../utils/router';
 import { Subscription } from 'rxjs';
-import { sleep } from '../../../../../utils/other';
 import { DATETIME_FORMAT } from '../../../../../utils/time';
 import { NotifyType, requestNotifySubscribe } from '../../../../../utils/notify';
 import {
-  CommodityGroupAttributes,
   getCommodityGroupAttributes,
-  getConversationById, getGroup,
+  getConversationById,
+  getGroup,
   listenConversation
 } from '../../../../../utils/oim';
 import { ConversationItem, MessageItem, MessageType } from 'open-im-sdk';
@@ -64,6 +63,8 @@ Component({
         //   lastMessageText = `${lastMessage.fromAccount === getImUidFromUid(getOpenId()) ? '我' : '对方'}撤回了一条消息`;
       } else if (lastMessage.contentType === MessageType.TextMessage) {
         lastMessageText = lastMessage.textElem.content;
+      } else if (lastMessage.contentType === MessageType.PictureMessage) {
+        lastMessageText = '[图片]';
       }
       this.setData({
         conversation,

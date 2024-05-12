@@ -1,11 +1,11 @@
 import getConstants from '../../../constants';
-import api from '../../../api/api';
+import api, { getOpenId } from '../../../api/api';
 import { Transaction, TransactionApi } from '../../../api/transaction';
 import { Commodity, User } from '../../../types';
 import { Subscription } from 'rxjs';
-import { kbHeightChanged, tryJsonParse } from '../../../utils/other';
+import { generateUUID, kbHeightChanged, tryJsonParse } from '../../../utils/other';
 import { waitForAppReady } from '../../../utils/globals';
-import { ConversationItem, GroupItem, SessionType } from 'open-im-sdk';
+import { ConversationItem, GroupItem, PicBaseInfo, SessionType } from 'open-im-sdk';
 import {
   checkOimResult,
   getCommodityGroupAttributes,
@@ -142,32 +142,47 @@ Page({
     const msg = checkOimResult(await oim.createTextMessage(text));
     msg.groupID = group.groupID;
     msg.ex = JSON.stringify(customData);
-    await sendMessage(msg);
+    await sendMessage(msg, group.groupID, 'group');
   },
-  async sendImageMessage(img: ChooseImageSuccessCallbackResult) {
-    throw Error('not implement');
-    // const { group } = this.data;
-    // if (!group) {
-    //   return;
-    // }
-    // const msg = await oim.createImageMessageByURL({
-    //   to: group.groupID,
-    //   conversationType: tim.TYPES.CONV_GROUP,
-    //   payload: {
-    //     file: img
-    //   },
-    // });
-    // await wx.showLoading({ title: '发送中' });
-    // try {
-    //   await sendMessage(msg);
-    // } catch (e) {
-    //   console.error(e);
-    //   await wx.showToast({
-    //     title: '网络错误',
-    //   });
-    // } finally {
-    //   await wx.hideLoading();
-    // }
+  async sendImageMessage(img: string, size: number) {
+    const { group } = this.data;
+    if (!group) {
+      return;
+    }
+    const info = await wx.getImageInfo({ src: img });
+    const uuid = generateUUID();
+    const res = await api.uploadImage(img, `chat/${getOpenId()}/${uuid}`);
+    if (res.isError) {
+      await wx.showToast({ title: '图片上传失败', icon: 'error' });
+      throw Error('upload file failed');
+    }
+    const url = res.data;
+    const pic = {
+      uuid: uuid,
+      type: 'png',
+      size,
+      width: info.width,
+      height: info.height,
+      url,
+    } satisfies PicBaseInfo;
+    const msg = checkOimResult(await oim.createImageMessageByURL({
+      sourcePath: url,
+      sourcePicture: pic,
+      bigPicture: pic,
+      snapshotPicture: pic,
+    }));
+    msg.groupID = group.groupID;
+    await wx.showLoading({ title: '发送中' });
+    try {
+      await sendMessage(msg, group.groupID, 'group');
+    } catch (e) {
+      console.error(e);
+      await wx.showToast({
+        title: '网络错误',
+      });
+    } finally {
+      await wx.hideLoading();
+    }
   },
   async onTransactionActionDone(ev: any) {
     const messageToPeer = ev.detail.messageToPeer || '交易状态已变更';
@@ -211,6 +226,6 @@ Page({
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
     });
-    await this.sendImageMessage(res);
+    await this.sendImageMessage(res.tempFiles[0].path, res.tempFiles[0].size);
   },
 });
