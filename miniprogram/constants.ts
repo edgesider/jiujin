@@ -10,6 +10,8 @@ export const COMMODITY_STATUS_BOOKED = 3; // 已锁定
 
 export const HELP_STATUS_RUNNING = 0; // 运行中
 export const HELP_STATUS_FINISHED = 1; // 已结束
+export const HELP_STATUS_RESOLVED = 2; // 已解决
+export const HELP_STATUS_REPORTED = 1; // 被举报
 
 
 export const DEFAULT_AVATAR = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132';

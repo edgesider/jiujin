@@ -43,7 +43,7 @@
 
     <view id="top" style="width: 100%; height: 0" />
 
-    <view class="filters">
+    <view class="filters" style="transform: translateY({{Platform === 'ios' ? '-4rpx' : '0'}})">
       <RegionFilter class="region-filter" selected="{{selectedRegionIndex}}" bind:regionClick="onRegionClick" />
       <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />
     </view>

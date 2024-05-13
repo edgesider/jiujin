@@ -234,14 +234,18 @@
   opacity: 0.3;
 }
 
-.button-yellow {
+.right .button {
+  background: var(--brand-green);
+}
+
+.right .button.button-yellow {
   background: var(--brand-yellow);
 }
 
-.button-yellowgreen {
+.right .button.button-yellowgreen {
   background: var(--brand-yellowgreen);
 }
 
-.button-green {
+.right .button.button-green {
   background: var(--brand-green);
 }

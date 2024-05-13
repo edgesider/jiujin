@@ -229,8 +229,16 @@ export async function getHelpGroupAttributes(group: string | GroupItem): Promise
   return tryJsonParse<HelpGroupAttributes>(grp?.ex) ?? undefined;
 }
 
+export function getConvIdFromGroup(group: GroupItem | string) {
+  if (typeof group === 'object') {
+    group = group.groupID;
+  }
+  return 'sg_' + group;
+}
+
 const newConvListSubject = new Subject<ConversationItem[]>();
 const convSubjects = new Map<string, Subject<ConversationItem>>();
+const convChangeSubjects = new Subject<ConversationItem[]>();
 const convByGroupIdSubjects = new Map<string, Subject<ConversationItem>>();
 const convMsgSubjects = new Map<string, Subject<MessageItem>>();
 const totalUnreadCountSubject = new BehaviorSubject(0);
@@ -238,6 +246,11 @@ const totalUnreadCountSubject = new BehaviorSubject(0);
 function listenEvents() {
   oim.on(CbEvents.OnRecvNewMessages, event => {
     const msgList = event.data as MessageItem[];
+    msgList.forEach(msg => {
+      if (msg.groupID) {
+        convMsgSubjects.get(getConvIdFromGroup(msg.groupID))?.next(msg);
+      }
+    })
     console.log('OnRecvNewMessages', msgList);
   });
   oim.on(CbEvents.OnNewConversation, event => {
@@ -249,6 +262,7 @@ function listenEvents() {
   oim.on(CbEvents.OnConversationChanged, async (event) => {
     console.log('onConversationChanged', event);
     const convList = event.data as ConversationItem[];
+    convChangeSubjects.next(convList);
     convList.forEach(conv => {
       convSubjects.get(conv.conversationID)?.next(conv);
       if (conv.groupID) {
@@ -280,6 +294,10 @@ function listenEvents() {
 
 export function listenNewConvList(): Observable<ConversationItem[]> {
   return newConvListSubject;
+}
+
+export function listenConversations(): Observable<ConversationItem[]> {
+  return convChangeSubjects;
 }
 
 export function listenConversation(conv: string | ConversationItem): Observable<ConversationItem> {

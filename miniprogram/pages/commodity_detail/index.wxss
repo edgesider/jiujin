@@ -223,7 +223,6 @@
   font-weight: normal;
   flex-shrink: 0;
   border-radius: 16rpx;
-  background: var(--brand-green);
 
   display: flex;
   justify-content: center;
@@ -232,15 +231,19 @@
   color: #fff;
 }
 
-.button-yellow {
+.right .button {
+  background: var(--brand-green);
+}
+
+.right .button.button-yellow {
   background: var(--brand-yellow);
 }
 
-.button-yellowgreen {
+.right .button.button-yellowgreen {
   background: var(--brand-yellowgreen);
 }
 
-.button-green {
+.right .button.button-green {
   background: var(--brand-green);
 }
 

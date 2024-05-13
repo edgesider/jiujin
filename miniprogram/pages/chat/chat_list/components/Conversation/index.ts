@@ -87,7 +87,7 @@ Component({
       });
 
       // 由于tim频控限制比较严格，所以只在第一次更新属性信息
-      if (updateOtherInfo) {
+      if (updateOtherInfo || !this.data.peerUser) {
         const group = await getGroup(conversation.groupID);
         if (!group) {
           throw Error(`failed to get group: groupId=${conversation.groupID}`)

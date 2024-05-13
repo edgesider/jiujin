@@ -6,7 +6,7 @@ import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 import {
   getConversationList,
   isOthersNewCreateConversation,
-  isTransactionGroup, listenNewConvList,
+  isTransactionGroup, listenConversation, listenConversations, listenNewConvList,
 } from '../../../utils/oim';
 import { ConversationItem } from 'open-im-sdk';
 
@@ -27,9 +27,22 @@ Page({
     });
     this.setData({ self: app.globalData.self });
 
-    this.subscription = listenNewConvList().subscribe(list => {
+    this.subscription = new Subscription();
+    this.subscription.add(listenNewConvList().subscribe(list => {
       this.onConversationListUpdate([...list, ...this.data.conversations]);
-    })
+    }));
+    this.subscription.add(listenConversations().subscribe(updated => {
+      const { conversations } = this.data;
+      for (const updatedConv of updated) {
+        const idx = conversations.findIndex(c => c.conversationID === updatedConv.conversationID);
+        if (idx >= 0) {
+          conversations[idx] = updatedConv;
+        }
+      }
+      this.setData({
+        conversations: conversations.sort(this.sorter),
+      });
+    }));
 
     // const switches = await getNotifySwitches();
     // if (switches.mainSwitch) {
@@ -48,14 +61,12 @@ Page({
   async onShow() {
     await this.refresh();
   },
+  sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   async onConversationListUpdate(convList: ConversationItem[]) {
-    const newList = convList
-      .filter(conv => conv.groupID && isTransactionGroup(conv.groupID));
-    newList.sort((convA, convB) => convA.latestMsgSendTime - convB.latestMsgSendTime);
     this.setData({
       conversations: convList
         .filter(conv => conv.groupID && isTransactionGroup(conv.groupID))
-      ,
+        .sort(this.sorter)
     });
 
     const { self } = this.data;
