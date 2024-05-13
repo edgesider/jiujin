@@ -24,7 +24,15 @@
       </view>
       <view class="line2">{{msg.text}}</view>
     </view>
-    <image class="image" src="{{msg.commodity.img_urls[0]}}" mode="aspectFill" />
+    <image
+      wx:if="{{msg.commodity && msg.commodity.img_urls.length > 0}}"
+      class="image" mode="aspectFill" src="{{msg.commodity.img_urls[0]}}/card"
+    />
+    <image
+      wx:elif="{{msg.help && msg.help.img_urls.length > 0}}"
+      class="image" mode="aspectFill" src="{{msg.help.img_urls[0]}}/card"
+    />
+    <TextPreview wx:else content="{{msg.commodityDesc || msg.helpDesc}}" class="text-preview" />
   </view>
   <image wx:if="{{messages.length === 0}}" src="/images/empty.png" mode="aspectFit" class="empty" />
 </scroll-view>

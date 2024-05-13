@@ -72,8 +72,7 @@ Page({
     const { self } = this.data;
     if (self) {
       for (const conv of convList) {
-        if ([self.collect_group_id, self.comment_group_id, self.like_group_id]
-          .indexOf(conv.groupID) > 0) {
+        if (conv.groupID.startsWith(self._id)) {
           if (conv.isPinned) {
             continue;
           }

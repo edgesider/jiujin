@@ -58,8 +58,10 @@
 }
 
 .top-user .info .line2 .region-icon {
-  width: 20rpx;
-  height: 30rpx;
+  width: 28rpx;
+  height: 28rpx;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .top-user .info .line2 .region {
@@ -69,6 +71,8 @@
 }
 
 .right {
+  height: 80rpx;
+  min-width: 80rpx;
   background: linear-gradient(180deg, var(--brand-yellow) 0%, #FF4D4D 100%);
   flex-grow: 0;
   flex-shrink: 0;
@@ -81,14 +85,15 @@
 }
 
 .right .text {
-  font-size: 18rpx;
+  font-size: 20rpx;
+  font-weight: bold;
   color: #fff;
 }
 
 .right .price {
   color: #fff;
   display: flex;
-  align-self: flex-end;
+  /*align-self: flex-end;*/
   font-style: italic;
   font-weight: bold;
   transform: translateX(-4rpx);

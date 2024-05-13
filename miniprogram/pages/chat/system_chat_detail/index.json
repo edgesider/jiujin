@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "TitleBar": "/components/TitleBar/index"
+    "TitleBar": "/components/TitleBar/index",
+    "TextPreview": "/components/TextPreview/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

@@ -48,7 +48,7 @@
       <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />
     </view>
 
-    <view class="list">
+    <view class="list" style="transform: translateY({{Platform === 'ios' ? '-4rpx' : '0'}})">
       <CommodityCard
         wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
         class="card"

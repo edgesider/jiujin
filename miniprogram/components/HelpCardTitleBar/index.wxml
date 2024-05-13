@@ -11,7 +11,7 @@
       <text class="time" wx:if="{{time}}">{{time}}</text>
     </view>
     <view class="line2" wx:if="{{region}}">
-      <image src="/images/location.png" class="region-icon" />
+      <image src="/images/location.png" class="region-icon" mode="aspectFit"/>
       <text class="region">{{region}}</text>
     </view>
   </view>

@@ -1,8 +1,8 @@
 import getConstants from '../../../constants';
 import { tryJsonParse } from '../../../utils/other';
-import { Commodity, convertCommodity, User } from '../../../types';
+import { Commodity, convertCommodity, convertHelp, Help, User } from '../../../types';
 import moment from 'moment';
-import { openCommodityDetail } from '../../../utils/router';
+import { openCommodityDetail, openHelpDetail } from '../../../utils/router';
 import { Subscription } from 'rxjs';
 import { DATETIME_FORMAT } from '../../../utils/time';
 import {
@@ -12,7 +12,8 @@ import {
   listenMessage,
   markConvMessageAsRead
 } from '../../../utils/oim';
-import { ConversationItem, MessageItem } from 'open-im-sdk';
+import { ConversationItem, MessageItem, MessageType } from 'open-im-sdk';
+import { getContentDesc } from '../../../utils/strings';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -23,21 +24,43 @@ interface BaseNotifyPayload {
   operator?: User;
 }
 
-interface CommentNotifyPayload extends BaseNotifyPayload {
+interface CommodityNotifyPayload extends BaseNotifyPayload {
+  commodity: Commodity;
+  commodityDesc: string;
+}
+
+interface CommodityCommentNotifyPayload extends CommodityNotifyPayload {
   type: 'comment';
-  commodity: Commodity;
 }
 
-interface StarNotifyPayload extends BaseNotifyPayload {
+interface CommodityStarNotifyPayload extends CommodityNotifyPayload {
   type: 'collect';
-  commodity: Commodity;
 }
 
-interface LikeNotifyPayload extends BaseNotifyPayload {
-  type: 'like';
+interface HelpNotifyPayload extends BaseNotifyPayload {
+  help: Help;
+  helpDesc: string;
 }
 
-type NotifyPayload = CommentNotifyPayload | StarNotifyPayload | LikeNotifyPayload;
+interface HelpCommentNotifyPayload extends HelpNotifyPayload {
+  type: 'help_comment';
+}
+
+interface HelpStarNotifyPayload extends HelpNotifyPayload {
+  type: 'help_collect';
+}
+
+interface HelpLikeNotifyPayload extends HelpNotifyPayload {
+  type: 'help_like';
+}
+
+type NotifyPayload =
+  | CommodityCommentNotifyPayload
+  | CommodityStarNotifyPayload
+  | HelpCommentNotifyPayload
+  | HelpStarNotifyPayload
+  | HelpLikeNotifyPayload
+  ;
 type NotifyMsg = NotifyPayload & {
   rawId: string;
   time: number;
@@ -82,6 +105,7 @@ Page({
     }));
     this.subscription = subscription;
     await this.fetchMoreMessages();
+    markConvMessageAsRead(conv).then();
   },
   async onUnload() {
     this.subscription?.unsubscribe();
@@ -112,12 +136,19 @@ Page({
   },
   convertRawMsg(rawMsg: MessageItem): NotifyMsg | undefined {
     try {
-      const payload: NotifyPayload | null = tryJsonParse(rawMsg.ex);
+      if (rawMsg.contentType !== MessageType.TextMessage) {
+        return;
+      }
+      const payload: NotifyPayload | null = tryJsonParse(rawMsg.textElem.content);
       if (!payload || !payload.type) {
         return;
       }
       if (payload.type === 'comment' || payload.type === 'collect') {
         payload.commodity = convertCommodity(payload.commodity);
+        payload.commodityDesc = getContentDesc(payload.commodity.content);
+      } else if (payload.type === 'help_like' || payload.type === 'help_collect' || payload.type === 'help_comment') {
+        payload.help = convertHelp(payload.help);
+        payload.helpDesc = getContentDesc(payload.help.content);
       }
       const time = rawMsg.sendTime;
       return {
@@ -151,6 +182,8 @@ Page({
     const msg = ev.currentTarget.dataset.msg as NotifyMsg;
     if (msg.type === 'comment' || msg.type === 'collect') {
       await openCommodityDetail({ id: msg.commodity._id, scrollToComment: msg.type === 'comment' });
+    } else if (msg.type === 'help_like' || msg.type === 'help_collect' || msg.type === 'help_comment') {
+      await openHelpDetail({ id: msg.help._id, scrollToComment: msg.type === 'help_comment' });
     }
   },
 })

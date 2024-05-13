@@ -78,7 +78,8 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
   } catch (e) {
     loginWaiters.forEach(([_, rej]) => rej(e));
     loginWaiters.length = 0;
-    return;
+    console.error('init openim failed', e);
+    throw e;
   }
   hasLogin = true;
   loginWaiters.forEach(([res, _]) => res());
