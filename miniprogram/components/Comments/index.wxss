@@ -62,9 +62,6 @@
 
 .comment {
   font-size: 28rpx;
-}
-
-.question {
   margin: 40rpx 0 0;
   width: 100%;
   flex-grow: 0;
@@ -74,72 +71,73 @@
   align-items: flex-start;
 }
 
-.question .avatar {
-  background: green;
-  width: 56rpx;
-  height: 56rpx;
+.comment .avatar {
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
-  margin-top: 8rpx;
   margin-right: 16rpx;
   flex: 0 0 auto;
 }
 
-.question .right {
+.comment .right {
   flex-grow: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+  gap: 4rpx;
 }
 
-.question .right .username {
-  max-width: 80%;
-  color: rgba(0, 0, 0, 0.5);
-  height: 1.2em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: keep-all;
-}
-
-.question .right .content {
-  margin-top: 8rpx;
+.comment .right .line1 {
   width: 100%;
-  word-break: break-all;
-  line-height: 1.5em;
-}
-
-.answer {
-  width: 100%;
-  flex-grow: 0;
-  overflow: hidden;
-  margin-top: 16rpx;
-  padding-left: 72rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: baseline;
-  font-size: 24rpx;
+  align-items: center;
 }
 
-.answer .username {
-  color: rgba(0, 0, 0, 0.5);
+.comment .right .line1 .reply-icon {
+  margin-left: 8rpx;
+  margin-right: 4rpx;
+  width: 9rpx;
+  height: 24rpx;
+  flex-grow: 0;
   flex-shrink: 0;
-  word-break: keep-all;
-  max-width: 100rpx;
+}
+
+.comment .right .username {
+  max-width: 80%;
+  color: rgba(0, 0, 0, 0.5);
+  height: 1.2em;
+  font-size: 22rpx;
   overflow: hidden;
   text-overflow: ellipsis;
+  word-break: keep-all;
 }
 
-.answer .colon {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.answer .content {
+.comment .right .content {
+  width: 100%;
   word-break: break-all;
-  flex-grow: 0;
-  user-select: text;
-  line-height: 1.4em;
+  font-weight: 500;
+  color: #5d5d5d;
+  font-size: 26rpx;
+  line-height: 1.5em;
+}
+
+.comment .right .time {
+  color: #979797;
+  font-size: 22rpx;
+}
+
+.comment.sub-comment {
+  margin-left: 76rpx;
+  margin-top: 20rpx;
+}
+
+.comment.sub-comment .avatar {
+  width: 40rpx;
+  height: 40rpx;
 }
 
 .delete-btn {

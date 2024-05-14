@@ -1,8 +1,11 @@
-import api, { CommentAPI } from '../../api/api';
 import { openProfile } from "../../utils/router";
 import { ensureRegistered, kbHeightChanged } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
+import { CommentAPIv2 } from "../../api/comment";
+import { CommentEntityType } from "../../types";
+import moment from "moment";
+import { DATETIME_FORMAT } from "../../utils/time";
 
 const app = getApp();
 
@@ -15,7 +18,9 @@ Component({
   data: {
     ...getConstants(),
     selfInfo: null,
+    error: false,
     comments: [],
+    idToComment: {},
     keyboardHeight: 0,
     commenting: false,
     // 正在回复的消息，一级留言时为空
@@ -41,45 +46,42 @@ Component({
   methods: {
     nop() {},
     async fetchComments() {
-      const comments = [];
-      const { data: questions } = await CommentAPI.getCommodityQuestionsAndAnswers(this.properties.commodity._id, 0, 10);
-      for (const question of questions) {
-        const { data: user } = await api.getUserInfo(question.user_id);
-        if (!user) {
-          continue;
+      const resp = await CommentAPIv2.get(this.properties.commodity._id);
+      if (resp.isError) {
+        console.error(resp);
+        this.setData({ error: true });
+        return;
+      }
+      const comments = resp.data;
+      const idToComment = {};
+      const idToChildren = new Map();
+      for (const c of comments) {
+        idToComment[c.id] = c;
+        const list = idToChildren.get(c.reply_to) ?? [];
+        list.push(c);
+        idToChildren.set(c.reply_to, list);
+      }
+      const collectChildren = (id, level) => {
+        const children = [];
+        for (const c of idToChildren.get(id) ?? []) {
+          children.push({
+            ...c,
+            level,
+            timeStr: moment(c.create_time).format(DATETIME_FORMAT)
+          });
+          children.push(...collectChildren(c.id, level + 1));
         }
-        comments.push({
-          type: 'question',
-          _id: question._id,
-          content: question.content,
-          user: {
-            _id: question.user_id,
-            name: user.name,
-            avatar_url: user.avatar_url,
-          }
-        })
-        const answers = question.answers;
-        for (const answer of answers) {
-          const { data: user } = await api.getUserInfo(answer.user_id);
-          comments.push({
-            type: 'answer',
-            _id: answer._id,
-            content: answer.content,
-            user: {
-              _id: answer.user_id,
-              name: user.name,
-              avatar_url: user.avatar_url,
-            }
-          })
-        }
+        return children;
       }
       this.setData({
-        comments: comments,
+        comments: collectChildren(-1, 0),
+        idToComment,
       })
     },
-    async sendQuestion(content) {
-      const resp = await CommentAPI.createQuestion(this.properties.commodity._id, content);
+    async sendComment(content, replyTo) {
+      const resp = await CommentAPIv2.add(this.properties.commodity._id, CommentEntityType.Commodity, content, replyTo ?? -1);
       if (resp.isError) {
+        console.error(resp);
         await wx.showToast({
           title: '发送失败',
           icon: 'error',
@@ -88,36 +90,14 @@ Component({
         return;
       }
       await this.fetchComments();
-    },
-    async sendAnswer(content, to) {
-      const question = to.type === 'answer' ? this.findQuestionByAnswer(to) : to;
-      const resp = await CommentAPI.createAnswer(this.properties.commodity._id, question._id, content);
-      if (resp.isError) {
-        await wx.showToast({
-          title: '发送失败',
-          icon: 'error',
-          mask: true,
-        })
-        return;
-      }
-      await this.fetchComments();
-    },
-    findQuestionByAnswer(answer) {
-      const { comments } = this.data;
-      const aIdx = comments.findIndex(c => c._id === answer._id);
-      for (let i = aIdx; i >= 0; i--) {
-        if (comments[i].type === 'question') {
-          return comments[i];
-        }
-      }
     },
     async openMyProfile() {
       ensureRegistered();
       await openProfile(app.globalData.self);
     },
     async openProfile(ev) {
-      const { user } = ev.currentTarget.dataset.comment;
-      await openProfile(user);
+      const { sender } = ev.currentTarget.dataset.comment;
+      await openProfile(sender);
     },
     onStartComment({ currentTarget: { dataset: { comment } } }) {
       ensureRegistered();
@@ -132,7 +112,7 @@ Component({
         text: '复制',
         action: 'copy',
       });
-      if (comment.user._id === app.globalData.self?._id) {
+      if (comment.sender._id === app.globalData.self?._id) {
         options.push({
           text: '删除',
           action: 'delete',
@@ -151,11 +131,7 @@ Component({
         if (!confirm) {
           return;
         }
-        if (comment.type === 'question') {
-          await CommentAPI.delQuestion(comment._id);
-        } else {
-          await CommentAPI.delAnswer(comment._id);
-        }
+        await CommentAPIv2.del(comment.id);
         await this.fetchComments();
       }
     },
@@ -166,11 +142,7 @@ Component({
       const { commentingText, commentingTo } = this.data;
       const text = commentingText.trim();
       if (text) {
-        if (commentingTo) {
-          this.sendAnswer(text, commentingTo).then();
-        } else {
-          this.sendQuestion(text).then();
-        }
+        await this.sendComment(text, commentingTo?.id);
       }
       this.onEndComment();
     },

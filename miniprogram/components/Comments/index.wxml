@@ -19,10 +19,10 @@
       wx:for-item="comment"
       wx:key="_id"
     >
-      <view wx:if="{{comment.type === 'question'}}" class="comment question">
+      <view class="comment {{comment.reply_to === -1 ? 'root-comment' : 'sub-comment'}}">
         <image
           class="avatar"
-          src="{{comment.user.avatar_url}}"
+          src="{{comment.sender.avatar_url}}"
           bindtap="openProfile"
           data-comment="{{comment}}"
         />
@@ -32,22 +32,20 @@
           bindlongpress="onLongPress"
           data-comment="{{comment}}"
         >
-          <view class="username">
-            {{comment.user.name}}
+          <view class="line1">
+            <view class="username">{{comment.sender.name}}</view>
+            <block wx:if="{{comment.level > 1 && comment.reply_to > -1}}">
+              <image class="reply-icon" src="/images/comment-reply.png" mode="aspectFit" />
+              <view class="username">{{idToComment[comment.reply_to].sender.name}}</view>
+            </block>
           </view>
           <view
             class="content"
             bindtap="onStartComment"
             data-comment="{{comment}}"
-          >
-            {{comment.content}}
-          </view>
+          >{{comment.content}}</view>
+          <view class="time">{{comment.timeStr}}</view>
         </view>
-      </view>
-      <view wx:else class="comment answer">
-        <view class="username">{{comment.user.name}}</view>
-        <view class="colon">：</view>
-        <view class="content">{{comment.content}}</view>
       </view>
     </view>
   </view>
@@ -62,7 +60,7 @@
     >
       <textarea
         class="input"
-        placeholder="{{commentingTo ? '回复@' + commentingTo.user.name : '留言'}}"
+        placeholder="{{commentingTo ? '回复@' + commentingTo.sender.name : '留言'}}"
         value="{{commentingText}}"
         focus="{{true}}"
         adjust-position="{{false}}"

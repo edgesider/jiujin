@@ -84,3 +84,29 @@ export function convertHelp(raw: any): Help {
   } as Help;
 }
 
+export interface Comment {
+  id: number;
+  content: string;
+  reply_to : number;
+  sender: User;
+  entity_id: string;
+  create_time: number;
+  root_comment: number;
+  entity_type: CommentEntityType;
+}
+
+export enum CommentEntityType {
+  Commodity = 0,
+  Help = 1,
+}
+
+export function convertComment(raw: any): Comment {
+  const entityType = CommentEntityType[raw.entity_type];
+  if (!entityType) {
+    throw Error('invalid comment');
+  }
+  return {
+    ...raw,
+    entity_type: entityType
+  };
+}

@@ -1,4 +1,4 @@
-import api, { Axios } from './api/api';
+import api from './api/api';
 import { BehaviorSubject } from "rxjs";
 
 import { initConstants } from "./constants";
@@ -13,16 +13,6 @@ App({
   globalData: {
     self: null,
     ridToRegion: null,
-    config: {
-      userID: '', // User ID
-      commodity: null,
-      SDKAPPID: 1600027557, // Your SDKAppID
-    },
-    timInitialized: false,
-    TUISDKReady: false,
-    totalUnread: 0,
-    targetCommodity: null,
-    onUnreadCountUpdate: (count) => {},
   },
 
   launchFailed: false,
@@ -58,68 +48,6 @@ App({
   },
   onHide() {
     InAppMonitor.stop();
-  },
-
-  timeString() {
-    const date = new Date();
-    const hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
-    const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-    const secs = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-    return `${hours}:${minutes}:${secs}`;
-  },
-
-  // 发送订阅消息
-  pushToUser(options) {
-    const { access_token, touser, template_id, data } = options;
-    Axios({
-      url: `https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}`,
-      data: {
-        touser,
-        template_id,
-        data,
-        page: 'index',
-        miniprogram_state: 'developer',
-        lang: 'zh_CN'
-      },
-      method: 'POST'
-    }).then((res) => {
-      console.log('pushToUser res.data ->', res.data);
-    }).catch((error) => {
-      console.log('pushToUser failed ->', error);
-    });
-  },
-
-  sendIMSubscribeMessage(msg) {
-    api.getAccessToken().then((res) => {
-      const { access_token } = res.data;
-      // 接入侧需处理腾讯云 IM userID，微信小程序 openID，订阅消息模板 ID 的映射关系
-      this.pushToUser({
-        access_token,
-        touser: this.globalData.self._id,
-        template_id: 'IHHmCTUl9XTY1PKLbQ9KBcrtuGEy836_8OqBAeZyuqg',
-        data: {
-          name1: {
-            value: msg.name,
-          },
-          thing2: {
-            value: msg.message,
-          },
-          time3: {
-            value: msg.time,
-          },
-          thing10: {
-            value: msg.commodity,
-          },
-        }
-      });
-    });
-  },
-
-  decodeReplyID(replyID) {
-    return {
-      openid: replyID.substr(4, 32),
-      commodity: replyID.substr(32),
-    }
   },
 
   async fetchSelfInfo() {
