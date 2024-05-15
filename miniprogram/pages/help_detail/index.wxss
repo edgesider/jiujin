@@ -63,6 +63,7 @@
 
 .body .content .images-multi {
   --gap: 10rpx;
+  --column: 3;
   flex: 1 0;
   display: flex;
   flex-direction: row;
@@ -75,8 +76,8 @@
 
 .body .content .images-multi image {
   border-radius: 8rpx;
-  width: calc((100vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
-  height: calc((100vw - var(--gap) * 2 - var(--content-padding) * 2) / 3);
+  width: calc((100vw - var(--gap) * (var(--column) - 1) - var(--content-padding) * 2) / var(--column));
+  height: calc((100vw - var(--gap) * (var(--column) - 1) - var(--content-padding) * 2) / var(--column));
 }
 
 .body .content .info {

@@ -16,7 +16,7 @@
           <view
             wx:else
             class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
-            style="{{help.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
+            style="{{help.img_urls.length === 1 ? 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw);' : ''}} --column: {{help.img_urls.length === 2 || help.img_urls.length === 4 ? 2 : 3}}"
           >
 
             <image

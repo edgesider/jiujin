@@ -1,6 +1,7 @@
 import { request, wrapResp } from './api';
 import { Resp } from './resp';
 import { convertCommodity } from '../types';
+import { getGlobals } from '../utils/globals';
 
 function convertListResp(resp: Resp<any>) {
   if (!resp.isError) {
@@ -31,7 +32,7 @@ export const CommodityAPI = {
     const { rid, count, order, orderBy, streamTime } = params;
     const start = streamTime ? undefined : params.start;
     return convertListResp(wrapResp(await request({
-      path: '/commodity/getCommodities',
+      path: getGlobals().self ? '/commodity/getCommodities' : '/tourist/getCommodities',
       data: {
         rid, start, count, stream_time: streamTime,
         order, order_by: orderBy,

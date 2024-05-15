@@ -9,7 +9,7 @@
       <view class="content">
         <view
           class="images {{commodity.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
-          style="{{commodity.img_urls.length === 1 && 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw)'}};"
+          style="{{commodity.img_urls.length === 1 ? 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw);' : ''}} --column: {{commodity.img_urls.length === 2 || commodity.img_urls.length === 4 ? 2 : 3}}"
         >
           <image
             wx:for="{{commodity.img_urls}}"

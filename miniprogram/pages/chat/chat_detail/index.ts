@@ -178,7 +178,7 @@ Page({
     }
     const msg = checkOimResult(await oim.createTextMessage(text));
     msg.groupID = group.groupID;
-    msg.ex = JSON.stringify(customData);
+    msg.ex = customData || '';
     await sendMessage(msg, group.groupID, 'group');
   },
   async sendImageMessage(img: string, size: number) {

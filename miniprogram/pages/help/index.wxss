@@ -194,7 +194,6 @@ page {
 .list .card {
   width: 100%;
   min-height: 0;
-  box-shadow: 0 0 4px 0 #17007333;
   overflow: hidden;
 }
 

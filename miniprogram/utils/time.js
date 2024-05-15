@@ -2,6 +2,7 @@ import moment from "moment";
 // import 'moment-timezone';
 
 export const DATETIME_FORMAT = 'YYYY/MM/DD HH:mm';
+export const IM_TIME_FORMAT = 'MM/DD HH:mm';
 
 export function initMoment() {
   wx.moment = moment;

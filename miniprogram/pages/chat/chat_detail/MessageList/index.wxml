@@ -12,6 +12,7 @@
     wx:for="{{messageList}}" wx:key="ID" wx:for-item="msg" wx:for-index="idx"
   >
     <view class="gap" />
+    <view wx:if="{{msg.__showTime}}" class="time">{{msg.__sendTimeStr}}</view>
     <view
       id="seq-{{msg.seq}}"
       class="msg-item {{msg.sendID === selfImId ? 'msg-self' : 'msg-other'}}"

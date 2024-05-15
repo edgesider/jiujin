@@ -10,6 +10,8 @@ import {
   markConvMessageAsRead
 } from '../../../../utils/oim';
 import { openProfile } from '../../../../utils/router';
+import moment from 'moment';
+import { IM_TIME_FORMAT } from '../../../../utils/time';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -91,13 +93,24 @@ Component({
       newList = newList.filter(msg => {
         return msg.contentType === MessageType.TextMessage || msg.contentType === MessageType.PictureMessage;
       });
-      newList.forEach(msg => {
+      for (let i = 0; i < newList.length; i++) {
+        const msg = newList[i];
         const custom = tryJsonParse(msg.ex);
         if (custom?.needUpdateTransaction) {
           // @ts-ignore
           msg.__isTransactionStatusMessage = true
         }
-      })
+
+        const prevMsg = newList[i - 1];
+        if (prevMsg) {
+          if (msg.sendTime - prevMsg.sendTime > 2 * 60 * 1000 /* 2min */) {
+            // @ts-ignore
+            msg.__showTime = true;
+            // @ts-ignore
+            msg.__sendTimeStr = moment(msg.sendTime).format(IM_TIME_FORMAT);
+          }
+        }
+      }
       this.data.messageList.splice(type === 'older' ? 0 : this.data.messageList.length, 0, ...newList);
       this.setData({ messageList: this.data.messageList });
     },
