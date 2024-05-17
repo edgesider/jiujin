@@ -6,6 +6,7 @@ import { Commodity, Region, User } from '../../types';
 import { waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/commodity';
+import { openVerify } from '../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -80,21 +81,7 @@ Page({
     }
   },
   async onClickLogo() {
-    const bookingRequestTmpId = 'QMlQmIOyZo90Tc9stZYHO8a8tWuG4J6jK8PI4hGy5MQ';
-    const bookingSucceedTmpId = 'w_NyXTO4HoEMU3kY4u3ngfPnBnwYQ8eQ9iJykU19-Lg';
-    const res = await wx.requestSubscribeMessage({
-      tmplIds: [bookingRequestTmpId, bookingSucceedTmpId]
-    });
-    if (res[bookingRequestTmpId] !== 'accept') {
-      await wx.showToast({
-        title: '发起预定被拒绝'
-      });
-    }
-    if (res[bookingSucceedTmpId] !== 'accept') {
-      await wx.showToast({
-        title: '预定成功被拒绝'
-      });
-    }
+    await openVerify();
   },
 
   async onShow() {

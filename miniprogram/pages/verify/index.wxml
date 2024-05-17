@@ -1,7 +1,19 @@
 <TitleBar title="身份认证" />
 
-<view class="cu-form-group">
-  <view class="title">邮箱</view>
-  <input bindinput="onEmailInput" />
+<view class="root">
+  <view>{{verified ? '已认证' : '未认证'}}</view>
+  <view class="cu-form-group">
+    <view class="title">邮箱</view>
+    <input bindinput="onEmailInput" />
+  </view>
+
+  <view class="cu-form-group" bindtap="onGPSVerify">
+    <view class="title">GPS</view>
+  </view>
+
+  <view class="cu-form-group" bindtap="onCardPhotoVerify">
+    <view class="title">图片</view>
+  </view>
+
+  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmVerify">认证</button>
 </view>
-<button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmVerify">认证</button>
