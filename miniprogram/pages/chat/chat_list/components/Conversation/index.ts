@@ -51,12 +51,12 @@ Component({
           hide: true,
         });
       }
-      await this.update();
       // @ts-ignore
       this.subscription =
         listenConversation(this.properties.conversationId).subscribe(conv => {
-          this.onConversationUpdate(conv, true);
+          this.onConversationUpdate(conv);
         });
+      this.update().then();
     },
     detached() {
       // @ts-ignore
@@ -71,9 +71,9 @@ Component({
         console.error(`invalid conversationId ${this.properties.conversationId}`);
         return;
       }
-      await this.onConversationUpdate(conversation, true);
+      await this.onConversationUpdate(conversation);
     },
-    async onConversationUpdate(conversation: ConversationItem, updateOtherInfo: boolean) {
+    async onConversationUpdate(conversation: ConversationItem) {
       if (isOthersNewCreateConversation(conversation)) {
         return;
       }
@@ -96,25 +96,23 @@ Component({
       });
 
       // 由于tim频控限制比较严格，所以只在第一次更新属性信息
-      if (updateOtherInfo || !this.data.peerUser) {
-        const group = await getGroup(conversation.groupID);
-        if (!group) {
-          throw Error(`failed to get group: groupId=${conversation.groupID}`)
-        }
-        const attrs = (await getCommodityGroupAttributes(group)) || (await getHelpGroupAttributes(group));
-        if (!attrs) {
-          console.error(`not commodity/help conversation ${group.groupID} ${group.ownerUserID}`);
-          return;
-        }
-        const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;
-        const peerUser: Resp<User> = await api.getUserInfo(peerUid);
-        if (peerUser.isError) {
-          console.error(`failed to get user info for ${peerUid}`);
-        } else {
-          this.setData({
-            peerUser: peerUser.data
-          })
-        }
+      const group = await getGroup(conversation.groupID);
+      if (!group) {
+        throw Error(`failed to get group: groupId=${conversation.groupID}`)
+      }
+      const attrs = (await getCommodityGroupAttributes(group)) || (await getHelpGroupAttributes(group));
+      if (!attrs) {
+        console.error(`not commodity/help conversation ${group.groupID} ${group.ownerUserID}`);
+        return;
+      }
+      const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;
+      const peerUser: Resp<User> = await api.getUserInfo(peerUid);
+      if (peerUser.isError) {
+        console.error(`failed to get user info for ${peerUid}`);
+      } else {
+        this.setData({
+          peerUser: peerUser.data
+        })
       }
     },
     async gotoDetail() {

@@ -11,7 +11,7 @@ import {
   getCommodityGroupAttributes,
   getConversationById, getGroup, getHelpGroupAttributes,
   listenMessage, markConvMessageAsRead,
-  sendMessage
+  sendMessage, waitForOimLogged
 } from '../../../utils/oim';
 import { CommodityAPI } from '../../../api/commodity';
 import { HelpTransaction, HelpTransactionApi } from '../../../api/helpTransaction';
@@ -43,6 +43,7 @@ Page({
   async onLoad(options) {
     this.subscription = new Subscription();
     await waitForAppReady();
+    await waitForOimLogged();
 
     const { conversationId } = options;
     if (!conversationId) {
