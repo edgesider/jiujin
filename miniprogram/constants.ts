@@ -1,6 +1,6 @@
 import { TransactionFinishReason, TransactionStatus } from "./api/transaction";
 import { HelpTransactionFinishReason, HelpTransactionStatus } from "./api/helpTransaction";
-import { MessageStatus, MessageType, SessionType } from "open-im-sdk";
+import { MessageStatus, MessageType, SessionType } from './lib/openim/index';
 
 export const COMMODITY_STATUS_SELLING = 0; // 出售中
 export const COMMODITY_STATUS_DEACTIVATED = 1; // 已下架

@@ -5,7 +5,7 @@ import {
   isOthersNewCreateConversation,
   listenUnreadCount,
   markConvMessageAsRead,
-  waitForOimReady
+  waitForOimLogged
 } from "../utils/oim";
 import { waitForAppReady } from "../utils/globals";
 
@@ -75,7 +75,7 @@ Component({
       }
 
       await waitForAppReady();
-      await waitForOimReady();
+      await waitForOimLogged();
       const unreadChanged = async () => {
         const convList = await getConversationList();
         const count = convList

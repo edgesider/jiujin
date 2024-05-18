@@ -5,7 +5,7 @@ import { Commodity, Help, User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { generateUUID, kbHeightChanged, tryJsonParse } from '../../../utils/other';
 import { waitForAppReady } from '../../../utils/globals';
-import { ConversationItem, GroupItem, PicBaseInfo, SessionType } from 'open-im-sdk';
+import { ConversationItem, GroupItem, PicBaseInfo, SessionType } from '../../../lib/openim/index';
 import {
   checkOimResult,
   getCommodityGroupAttributes,

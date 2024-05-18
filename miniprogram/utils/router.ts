@@ -1,6 +1,5 @@
 import { Commodity, Help, User } from '../types';
-import { Conversation } from '@tencentcloud/chat';
-import { ConversationItem } from 'open-im-sdk';
+import { ConversationItem } from '../lib/openim/index';
 
 export async function openProfile(user: string | User) {
   if (typeof user === 'object') {

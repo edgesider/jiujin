@@ -41,6 +41,7 @@
       wx:key="conversationID"
       conversationId="{{item.conversationID}}"
       conversationIndex="{{idx}}"
+      updateIndex="{{updateIndex}}"
     />
   </block>
   <image wx:else src="/images/empty.png" class="empty" mode="aspectFit" />

@@ -4,11 +4,10 @@ import { User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 import {
-  getConversationList,
-  isOthersNewCreateConversation,
-  isTransactionGroup, listenConversation, listenConversations, listenNewConvList,
+  getConversationList, isOimLogged,
+  isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
 } from '../../../utils/oim';
-import { ConversationItem } from 'open-im-sdk';
+import { ConversationItem } from '../../../lib/openim/index';
 
 const app = getApp();
 
@@ -19,6 +18,8 @@ Page({
     refreshing: false,
     self: null as User | null,
     showNotifyTip: false,
+
+    updateIndex: 0,
   },
   subscription: null as Subscription | null,
   async onLoad() {
@@ -26,6 +27,19 @@ Page({
       this.onRefresh();
     });
     this.setData({ self: app.globalData.self });
+
+    if (!isOimLogged()) {
+      await wx.showLoading({ title: '加载中' });
+      try {
+        await waitForOimLogged();
+      } catch (e) {
+        await wx.showToast({
+          title: '私信登录失败',
+          icon: 'error',
+        });
+      }
+      await wx.hideLoading();
+    }
 
     this.subscription = new Subscription();
     this.subscription.add(listenNewConvList().subscribe(list => {
@@ -63,10 +77,12 @@ Page({
   },
   sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   async onConversationListUpdate(convList: ConversationItem[]) {
+    const list = convList
+      .filter(conv => conv.groupID && isTransactionGroup(conv.groupID))
+      .sort(this.sorter);
     this.setData({
-      conversations: convList
-        .filter(conv => conv.groupID && isTransactionGroup(conv.groupID))
-        .sort(this.sorter)
+      conversations: list,
+      updateIndex: this.data.updateIndex + 1, // 触发已有子组件的更新
     });
 
     const { self } = this.data;
@@ -76,7 +92,6 @@ Page({
           if (conv.isPinned) {
             continue;
           }
-          console.log(`pinning system conversation ${conv.conversationID}`);
           await oim.pinConversation({
             conversationID: conv.conversationID,
             isPinned: true

@@ -1,7 +1,7 @@
 import getConstants from '../../../../constants';
 import { Subscription } from 'rxjs';
 import { kbHeightChanged, tryJsonParse } from '../../../../utils/other';
-import { MessageItem, MessageType } from 'open-im-sdk';
+import { MessageItem, MessageType } from '../../../../lib/openim/index';
 import {
   checkOimResult,
   getConversationById,

@@ -12,17 +12,23 @@ import {
   getGroup, getHelpGroupAttributes, isOthersNewCreateConversation,
   listenConversation
 } from '../../../../../utils/oim';
-import { ConversationItem, MessageItem, MessageType } from 'open-im-sdk';
+import { ConversationItem, MessageItem, MessageType } from '../../../../../lib/openim/index';
 
 Component({
   properties: {
     conversationId: {
       type: String,
       // 不支持更新
-      // observer(newVal, oldVal) {}
+      // observer(newVal, oldVal)
     },
     conversationIndex: {
       type: Number
+    },
+    updateIndex: {
+      type: Number,
+      observer() {
+        this.update();
+      }
     },
     // 是否一开始隐藏，在有信息之后再展示
     hideAtFirst: {
@@ -45,16 +51,11 @@ Component({
           hide: true,
         });
       }
-      const conversation = await getConversationById(this.properties.conversationId);
-      if (!conversation) {
-        console.error(`invalid conversationId ${this.properties.conversationId}`);
-        return;
-      }
-      this.onConversationUpdate(conversation, true);
+      await this.update();
       // @ts-ignore
       this.subscription =
         listenConversation(this.properties.conversationId).subscribe(conv => {
-          this.onConversationUpdate(conv, false);
+          this.onConversationUpdate(conv, true);
         });
     },
     detached() {
@@ -64,6 +65,14 @@ Component({
     }
   },
   methods: {
+    async update() {
+      const conversation = await getConversationById(this.properties.conversationId);
+      if (!conversation) {
+        console.error(`invalid conversationId ${this.properties.conversationId}`);
+        return;
+      }
+      await this.onConversationUpdate(conversation, true);
+    },
     async onConversationUpdate(conversation: ConversationItem, updateOtherInfo: boolean) {
       if (isOthersNewCreateConversation(conversation)) {
         return;

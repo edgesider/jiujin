@@ -28,7 +28,9 @@ App({
       const self = await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
       await Promise.all([this.fetchRegions(), this.fetchCategories()]);
 
-      await initOpenIM(self);
+      if (self) {
+        await initOpenIM(self);
+      }
 
       console.warn('initialized. globalData=', this.globalData);
       this._ready = true;

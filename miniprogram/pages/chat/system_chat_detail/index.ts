@@ -12,7 +12,7 @@ import {
   listenMessage,
   markConvMessageAsRead
 } from '../../../utils/oim';
-import { ConversationItem, MessageItem, MessageType } from 'open-im-sdk';
+import { ConversationItem, MessageItem, MessageType } from '../../../lib/openim/index';
 import { getContentDesc } from '../../../utils/strings';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;

@@ -10,7 +10,7 @@ import {
   Platform,
   SessionType,
   WsResponse
-} from 'open-im-sdk';
+} from '../lib/openim/index';
 import { generateUUID, tryJsonParse } from './other';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import api, { getOpenId } from '../api/api';
@@ -83,10 +83,15 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
   }
   hasLogin = true;
   loginWaiters.forEach(([res, _]) => res());
+  loginWaiters.length = 0;
   listenEvents();
 }
 
-export async function waitForOimReady() {
+export function isOimLogged() {
+  return hasLogin;
+}
+
+export async function waitForOimLogged() {
   if (hasLogin) {
     return;
   }
@@ -97,7 +102,9 @@ export async function waitForOimReady() {
 
 export async function getConversationList(): Promise<ConversationItem[]> {
   // TODO 支持分页
-  return checkOimResult(await oim.getAllConversationList());
+  const res = await oim.getAllConversationList();
+  console.log('conversationListRes', res);
+  return checkOimResult(res);
 }
 
 export async function getGroup(id: string): Promise<GroupItem | undefined> {

@@ -4,7 +4,7 @@ import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../const
 import { convertCommodity, convertHelp } from '../types';
 import { RespError, RespSuccess } from './resp';
 import { cloudProtocolToHttp } from "../utils/other";
-import { Platform } from "open-im-sdk";
+import { Platform } from '../lib/openim/index';
 
 axios.defaults.adapter = mpAdapter;
 

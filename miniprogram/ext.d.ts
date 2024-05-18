@@ -1,4 +1,4 @@
-import { OpenIMSDK } from 'open-im-sdk';
+import { OpenIMSDK } from './lib/openim';
 
 declare global {
   let oim: OpenIMSDK;

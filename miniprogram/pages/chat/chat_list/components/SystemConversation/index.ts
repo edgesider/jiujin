@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { openSystemConversationDetail } from '../../../../../utils/router';
-import { ConversationItem } from 'open-im-sdk';
+import { ConversationItem } from '../../../../../lib/openim/index';
 import { getConversationByGroup, listenConversationByGroup } from '../../../../../utils/oim';
 
 Component({
