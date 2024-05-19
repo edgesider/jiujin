@@ -1,4 +1,4 @@
-<view class="conversation" bindtap="gotoDetail">
+<view class="conversation" bindtap="gotoDetail" wx:if="{{conversation}}">
   <image class="avatar" src="{{peerUser.avatar_url}}" mode="aspectFill" />
   <view class="dot" wx:if="{{conversation.unreadCount > 0}}" />
   <view class="info">
