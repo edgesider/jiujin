@@ -36,6 +36,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  padding-top: 20rpx;
 }
 
 .divider {
@@ -48,7 +49,7 @@
 .body .content .images {
   width: 100%;
   overflow: hidden;
-  margin-bottom: var(--content-padding);
+  margin-bottom: 10rpx;
 }
 
 .body .content .images-single {
@@ -81,7 +82,6 @@
 }
 
 .body .content .info {
-  margin-top: 20rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -89,36 +89,41 @@
   padding: 0 var(--content-padding);
 }
 
-.body .content .info .price {
-  color: var(--brand-green);
+.body .content .info .bounty {
+  align-self: flex-start;
+  height: 80rpx;
+  min-width: 80rpx;
+  background: linear-gradient(180deg, var(--brand-yellow) 0%, #FF4D4D 100%);
+  flex-grow: 0;
+  flex-shrink: 0;
+  border-radius: 8rpx;
   display: flex;
-  align-self: flex-end;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 6rpx 8rpx;
+}
+
+.body .content .info .bounty .text {
+  font-size: 20rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.body .content .info .bounty .price {
+  color: #fff;
+  display: flex;
   font-style: italic;
+  font-weight: bold;
+  transform: translateX(-4rpx);
 }
 
-.body .content .info .price .unit {
-  font-size: 28rpx;
-}
-
-.body .content .info .price .amount {
-  font-size: 48rpx;
-}
-
-.body .content .info .views {
-  margin-left: 8rpx;
+.body .content .info .bounty .unit {
   font-size: 24rpx;
-  font-weight: 300;
-  color: #979797;
 }
 
-.body .content .info .spacer {
-  flex-grow: 1;
-}
-
-.body .content .info .quality {
-  width: 150rpx;
-  height: 60rpx;
-  align-self: flex-end;
+.body .content .info .bounty .amount {
+  font-size: 32rpx;
 }
 
 .body .content .paragraphs {

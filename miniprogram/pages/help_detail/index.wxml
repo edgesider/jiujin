@@ -10,7 +10,6 @@
       <view class="content">
         <view>
           <view wx:if="{{hasImg===false}}" >
-<!--          <view>-->
             <view class="divider" />
           </view>
           <view
@@ -18,7 +17,6 @@
             class="images {{help.img_urls.length === 1 ? 'images-single' : 'images-multi'}}"
             style="{{help.img_urls.length === 1 ? 'height: calc('+ (firstImageSize[1] / firstImageSize[0]) +' * 100vw);' : ''}} --column: {{help.img_urls.length === 2 || help.img_urls.length === 4 ? 2 : 3}}"
           >
-
             <image
               wx:for="{{help.img_urls}}"
               wx:for-item="img"
@@ -31,14 +29,14 @@
             <view class="divider" />
           </view>
         </view>
-        <view class="info" wx:if="{{help.bounty>0}}">
-          <text class="price">
-            <text class="unit">￥</text>
-            <text class="amount">{{help.bounty / 100}}</text>
-          </text>
-<!--          <text class="views">{{commodity.view_count}}浏览</text>-->
-          <view class="spacer" />
-<!--          <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />-->
+        <view class="info">
+          <view class="bounty" wx:if="{{help.bounty>0}}">
+            <text class="text">悬赏</text>
+            <text class="price">
+              <text class="unit">￥</text>
+              <text class="amount">{{help.bounty / 100}}</text>
+            </text>
+          </view>
         </view>
         <view class="paragraphs">
           <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>

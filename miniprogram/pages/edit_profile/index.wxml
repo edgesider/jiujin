@@ -24,7 +24,7 @@
         value="{{name}}"
         placeholder="请输入昵称"
         type="nickname"
-        maxlength="20"
+        maxlength="8"
         bindinput="onChangeName"
       />
     </view>
