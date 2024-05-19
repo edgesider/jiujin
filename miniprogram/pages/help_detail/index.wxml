@@ -43,8 +43,8 @@
         </view>
       </view>
       <view class="divider" />
-      <HelpComments id="comments" class="comments" help="{{help}}" bind:loadFinished="onCommentLoadFinished" />
-<!--      <HelpCard  id="comments" class="comments" help="{{help}}" ></HelpCard>-->
+
+      <Comments id="comments" class="comments" help="{{help}}" bind:loadFinished="onCommentLoadFinished" />
     </scroll-view>
     <view class="footer">
       <view class="left">

@@ -14,6 +14,9 @@ Component({
     commodity: {
       type: Object,
     },
+    help: {
+      type: Object,
+    },
   },
   data: {
     ...getConstants(),
@@ -45,8 +48,24 @@ Component({
   },
   methods: {
     nop() {},
+    getEntityId() {
+      const id = this.properties.commodity?._id ?? this.properties.help._id;
+      if (!id) {
+        throw Error('neither commodity nor help provided');
+      }
+      return id;
+    },
+    getEntityType() {
+      if (this.properties.commodity) {
+        return CommentEntityType.Commodity;
+      } else if (this.properties.help) {
+        return CommentEntityType.Help;
+      } else {
+        throw Error('neither commodity nor help provided');
+      }
+    },
     async fetchComments() {
-      const resp = await CommentAPIv2.get(this.properties.commodity._id);
+      const resp = await CommentAPIv2.get(this.getEntityId());
       if (resp.isError) {
         console.error(resp);
         this.setData({ error: true });
@@ -79,7 +98,7 @@ Component({
       })
     },
     async sendComment(content, replyTo) {
-      const resp = await CommentAPIv2.add(this.properties.commodity._id, CommentEntityType.Commodity, content, replyTo ?? -1);
+      const resp = await CommentAPIv2.add(this.getEntityId(), this.getEntityType(), content, replyTo ?? -1);
       if (resp.isError) {
         console.error(resp);
         await wx.showToast({
