@@ -39,7 +39,7 @@
       wx:for="{{conversations}}"
       wx:for-index="idx"
       wx:key="conversationID"
-      conversationId="{{item.conversationID}}"
+      conversation="{{item}}"
       conversationIndex="{{idx}}"
       updateIndex="{{updateIndex}}"
     />

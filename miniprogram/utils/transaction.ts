@@ -10,6 +10,12 @@ import {
   tryDeleteConversationAndGroup
 } from './oim';
 
+const DESC_LENGTH = 50;
+
+function getDesc(obj: Commodity | Help): string {
+  return obj.content.substring(0, DESC_LENGTH).replace('\n', ' ');
+}
+
 /**
  * 根据商品和卖家创建群聊
  */
@@ -51,6 +57,7 @@ export async function startTransaction(commodity: Commodity, seller: User) {
     sellerId: seller._id,
     transactionId: tact.id,
     buyerId: getOpenId(),
+    desc: getDesc(commodity),
   });
   return tact;
 }
@@ -93,6 +100,7 @@ export async function startHelpTransaction(help: Help, seller: User) {
     sellerId: seller._id,
     transactionId: tact.id,
     buyerId: getOpenId(),
+    desc: getDesc(help),
   });
   return tact;
 }

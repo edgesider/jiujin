@@ -12,7 +12,7 @@ function convertListResp(resp: Resp<any>): Resp<Help[]> {
 export const HelpAPI = {
   async getOne(id: string): Promise<Resp<Help>> {
     const resp = wrapResp(await request({
-      path: `/help/${id}`,
+      path: `/help/detail/${id}`,
       method: 'GET',
     }));
     if (!resp.isError) {

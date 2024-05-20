@@ -106,4 +106,13 @@ export const TransactionAPI = {
       path: `/transaction/confirmSold/${id}`,
     }))
   },
+
+  /**
+   * 用户点开会话
+   */
+  async userOpenConv(tactId: number) {
+    return wrapResp(await request({
+      path: `/transaction/userOpenConversation/${tactId}`
+    }));
+  }
 }

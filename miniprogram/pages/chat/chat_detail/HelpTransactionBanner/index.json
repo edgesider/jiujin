@@ -1,5 +1,6 @@
 {
   "component": true,
   "usingComponents": {
+    "TextPreview": "/components/TextPreview/index"
   }
 }

@@ -27,6 +27,7 @@ export interface CommodityGroupAttributes {
   buyerId: string;
   commodityId: string;
   transactionId: number;
+  desc: string;
 }
 
 export interface HelpGroupAttributes {
@@ -34,6 +35,7 @@ export interface HelpGroupAttributes {
   buyerId: string;
   helpId: string;
   transactionId: number;
+  desc: string;
 }
 
 export function checkOimResult<T>(res: WsResponse<T>, raise: false): T | undefined
@@ -205,14 +207,17 @@ export async function setCommodityGroupAttributes(groupID: string, attrs: Commod
 }
 
 export async function getCommodityGroupAttributes(group: string | GroupItem): Promise<CommodityGroupAttributes | undefined> {
-  if (typeof group === 'object') {
-    group = group.groupID;
+  if (typeof group === 'string') {
+    const g = await getGroup(group);
+    if (!g) {
+      return undefined;
+    }
+    group = g;
   }
-  if (!isCommodityTransactionGroup(group)) {
+  if (!isCommodityTransactionGroup(group.groupID)) {
     return undefined;
   }
-  const grp = await getGroup(group);
-  return tryJsonParse<CommodityGroupAttributes>(grp?.ex) ?? undefined;
+  return tryJsonParse<CommodityGroupAttributes>(group?.ex) ?? undefined;
 }
 
 export async function setHelpGroupAttributes(groupID: string, attrs: HelpGroupAttributes) {
@@ -226,14 +231,17 @@ export async function setHelpGroupAttributes(groupID: string, attrs: HelpGroupAt
 }
 
 export async function getHelpGroupAttributes(group: string | GroupItem): Promise<HelpGroupAttributes | undefined> {
-  if (typeof group === 'object') {
-    group = group.groupID;
+  if (typeof group === 'string') {
+    const g = await getGroup(group);
+    if (!g) {
+      return undefined;
+    }
+    group = g;
   }
-  if (!isHelpTransactionGroup(group)) {
+  if (!isHelpTransactionGroup(group.groupID)) {
     return undefined;
   }
-  const grp = await getGroup(group);
-  return tryJsonParse<HelpGroupAttributes>(grp?.ex) ?? undefined;
+  return tryJsonParse<HelpGroupAttributes>(group?.ex) ?? undefined;
 }
 
 export function getConvIdFromGroup(group: GroupItem | string) {

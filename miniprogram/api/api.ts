@@ -296,7 +296,7 @@ const api = {
    * @param cloudPath 云存储的路径
    * @returns {Promise<Resp>} 上传结果，其中包含云存储中的fileID
    */
-  async uploadImage(path, cloudPath) {
+  async uploadImage(path: string, cloudPath: string): Promise<Resp<string>> {
     const res = await wx.cloud.uploadFile({
       filePath: path,
       cloudPath: cloudPath,

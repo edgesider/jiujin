@@ -1,5 +1,10 @@
 <view class="status-area" wx:if="{{help}}">
-  <image class="image" mode="aspectFill" src="{{help.img_urls[0]}}" bindtap="gotoHelpDetail" />
+  <image
+    wx:if="{{help.img_urls.length > 0}}"
+    class="image" mode="aspectFill" src="{{help.img_urls[0]}}"
+    bindtap="gotoHelpDetail"
+  />
+  <TextPreview wx:else class="image" content="{{helpDesc}}" bindtap="gotoHelpDetail" />
   <view class="info" bindtap="gotoHelpDetail">
     <text class="title">{{helpDesc}}</text>
     <text>
@@ -55,7 +60,7 @@
   </view>
 </view>
 <view class="tip" wx:if="{{tips.length > 0}}">
-<!--  <text wx:for="{{tips}}" wx:for-item="tip">{{tip}}</text>-->
+  <!--  <text wx:for="{{tips}}" wx:for-item="tip">{{tip}}</text>-->
   <rich-text wx:for="{{tips}}" wx:for-item="tip" nodes="{{tip}}" />
 </view>
 <view class="divider" wx:else />

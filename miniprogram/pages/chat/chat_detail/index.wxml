@@ -2,16 +2,16 @@
   <UserTitleBar user="{{isSeller ? buyer : seller}}" />
   <TransactionBanner
     class="banner"
-    wx:if="{{commodity && transaction}}"
+    wx:if="{{commodity && commodityTact}}"
     commodity="{{commodity}}"
-    transaction="{{transaction}}"
+    transaction="{{commodityTact}}"
     bind:onTransactionActionDone="onTransactionActionDone"
   />
   <HelpTransactionBanner
     class="banner"
-    wx:elif="{{help && transaction}}"
+    wx:elif="{{help && helpTact}}"
     help="{{help}}"
-    transaction="{{transaction}}"
+    transaction="{{helpTact}}"
     bind:onTransactionActionDone="onTransactionActionDone"
   />
   <MessageList conversationId="{{conversationId}}" class="message-list" />

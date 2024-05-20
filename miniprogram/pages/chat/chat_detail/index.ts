@@ -34,7 +34,8 @@ Page({
     group: null as GroupItem | null,
     commodity: null as Commodity | null,
     help: null as Help | null,
-    transaction: null as Transaction | HelpTransaction | null,
+    commodityTact: null as Transaction | null,
+    helpTact: null as HelpTransaction | null,
 
     keyboardHeight: 0,
     input: '',
@@ -81,7 +82,8 @@ Page({
     markConvMessageAsRead(conversation).then();
     let commodity: Commodity | null = null;
     let help: Help | null = null;
-    let transaction: Transaction | HelpTransaction;
+    let commodityTact: Transaction | null = null;
+    let helpTact: HelpTransaction | null = null;
     let seller: User;
     let buyer: User;
 
@@ -106,7 +108,7 @@ Page({
         return;
       }
       commodity = commodityResp.data!!;
-      transaction = transactionResp.data!!;
+      commodityTact = transactionResp.data!!;
       seller = sellerResp.data!!;
       buyer = buyerResp.data!!;
     } else if (helpAttr) {
@@ -128,7 +130,7 @@ Page({
         return;
       }
       help = helpResp.data!!;
-      transaction = transactionResp.data!!;
+      helpTact = transactionResp.data!!;
       seller = sellerResp.data!!;
       buyer = buyerResp.data!!;
     } else {
@@ -142,12 +144,11 @@ Page({
       commodity: commodity,
       help: help,
       isSeller: seller._id === app.globalData.self._id,
-      seller,
-      buyer,
-      conversation,
-      group,
-      transaction,
+      seller, buyer,
+      conversation, group,
+      commodityTact, helpTact,
     });
+    this.updateOpenTime().then();
 
     this.subscription!!.add(listenMessage(conversation.conversationID).subscribe(msg => {
       const custom = tryJsonParse(msg.ex);
@@ -161,6 +162,19 @@ Page({
       markConvMessageAsRead(this.data.conversationId).then();
     }
     this.subscription?.unsubscribe();
+  },
+  /**
+   * 更新用户上次查看会话的时间
+   */
+  async updateOpenTime() {
+    if (this.data.commodityTact) {
+      await TransactionAPI.userOpenConv(this.data.commodityTact.id);
+    } else if (this.data.helpTact) {
+      await HelpTransactionAPI.userOpenConv(this.data.helpTact.id);
+    }
+  },
+  async onShow() {
+    await this.updateOpenTime();
   },
   getConversationName(conversation: ConversationItem) {
     if (conversation.conversationType === SessionType.Group) {
@@ -191,7 +205,7 @@ Page({
     const info = await wx.getImageInfo({ src: img });
     const uuid = generateUUID();
     const res = await api.uploadImage(img, `chat/${getOpenId()}/${uuid}`);
-    if (res.isError) {
+    if (res.isError || !res.data) {
       await wx.showToast({ title: '图片上传失败', icon: 'error' });
       throw Error('upload file failed');
     }
@@ -229,14 +243,19 @@ Page({
     this.sendTextMessage(messageToPeer, true).then();
   },
   async updateTransaction() {
-    if (!this.data.transaction) {
-      return;
+    if (this.data.commodityTact) {
+      const tact = (await TransactionAPI.getById(this.data.commodityTact.id)).data;
+      if (!tact) {
+        return;
+      }
+      this.setData({ commodityTact: tact });
+    } else if (this.data.helpTact) {
+      const tact = (await HelpTransactionAPI.getById(this.data.helpTact.id)).data;
+      if (!tact) {
+        return;
+      }
+      this.setData({ helpTact: tact });
     }
-    const transaction = (await TransactionAPI.getById(this.data.transaction.id)).data;
-    if (!transaction) {
-      return;
-    }
-    this.setData({ transaction, });
   },
   onInputTap() {
     this.setData({
