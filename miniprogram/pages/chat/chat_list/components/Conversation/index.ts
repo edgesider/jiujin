@@ -56,7 +56,6 @@ Component({
         thresholds: [0.5]
       }).relativeToViewport().observe('#root', res => {
         const canView = res.intersectionRatio > 0.5;
-        console.log(res.intersectionRatio);
         if (canView !== this.data.canView) {
           this.setData({ canView });
           if (canView) {
@@ -80,7 +79,6 @@ Component({
       await this.onConversationUpdate(conversation, this.data.canView);
     },
     async onConversationUpdate(conversation: ConversationItem, updateOtherInfo: boolean) {
-      console.log(`conversation ${conversation.conversationID} update, otherInfo=${updateOtherInfo}`);
       if (isOthersNewCreateConversation(conversation)) {
         return;
       }

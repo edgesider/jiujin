@@ -4,7 +4,7 @@ import { User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 import {
-  getConversationList, isOimLogged,
+  getConversationList, isOimLogged, isOthersNewCreateConversation,
   isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
 } from '../../../utils/oim';
 import { ConversationItem } from '../../../lib/openim/index';
@@ -78,7 +78,10 @@ Page({
   sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   async onConversationListUpdate(convList: ConversationItem[]) {
     const list = convList
-      .filter(conv => conv.groupID && isTransactionGroup(conv.groupID))
+      .filter(conv =>
+        conv.groupID && isTransactionGroup(conv.groupID)
+        && !isOthersNewCreateConversation(conv)
+      )
       .sort(this.sorter);
     this.setData({
       conversations: list,
