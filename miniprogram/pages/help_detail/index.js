@@ -1,6 +1,6 @@
 import getConstants from "../../constants";
 import { onShareHelp, parseShareInfo, reportShareInfo } from "../../utils/share";
-import api, { HelpCollectApi, HelpLikedApi } from "../../api/api";
+import api from "../../api/api";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
 import { ensureRegistered, getRegionPathName, sleep } from "../../utils/other";
@@ -141,7 +141,7 @@ Page({
     const { help } = this.data;
     try {
       if (help.is_collected) {
-        const resp = await HelpCollectApi.cancel(help._id);
+        const resp = await HelpAPI.uncollect(help._id);
         if (resp.isError) {
           await wx.showToast({
             title: '取消收藏失败', icon: 'error',
@@ -149,7 +149,7 @@ Page({
           return;
         }
       } else {
-        const resp = await HelpCollectApi.collectHelp(help._id);
+        const resp = await HelpAPI.collect(help._id);
         if (resp.isError) {
           await wx.showToast({
             title: '收藏失败', icon: 'error',
@@ -176,7 +176,7 @@ Page({
     const { help } = this.data;
     try {
       if (help.is_liked) {
-        const resp = await HelpLikedApi.cancelLiked(help._id);
+        const resp = await HelpAPI.unlike(help._id);
         if (resp.isError) {
           await wx.showToast({
             title: '取消点赞失败', icon: 'error',
@@ -184,7 +184,7 @@ Page({
           return;
         }
       } else {
-        const resp = await HelpLikedApi.likedHelp(help._id);
+        const resp = await HelpAPI.like(help._id);
         if (resp.isError) {
           await wx.showToast({
             title: '点赞失败', icon: 'error',

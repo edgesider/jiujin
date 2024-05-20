@@ -86,24 +86,8 @@ Page({
     this.setData(data);
   },
 
-  // 读取商品分类信息
-  async getCategories() {
-    const resp = await api.getCategory();
-    if (resp.isError) {
-      await wx.showToast({
-        title: '获取分类失败',
-      });
-      return;
-    }
-    this.setData({
-      categories: resp.data,
-    })
-  },
-
   onNavigateBack() {
-    wx.navigateBack({
-      delta: 1,
-    })
+    wx.navigateBack();
   },
 
   // 表单

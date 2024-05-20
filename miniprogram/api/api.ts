@@ -1,18 +1,21 @@
 import axios from 'axios';
 import mpAdapter from 'axios-miniprogram-adapter';
 import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../constants';
-import { convertCommodity, convertHelp } from '../types';
-import { RespError, RespSuccess } from './resp';
-import { cloudProtocolToHttp } from "../utils/other";
+import { Resp, RespError, RespSuccess } from './resp';
+import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 
-axios.defaults.adapter = mpAdapter;
+export function initNetwork() {
+  // @ts-ignore
+  axios.defaults.adapter = mpAdapter;
+}
 
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  baseURL: 'https://lllw.cc',
+  // baseURL: 'https://lllw.cc',
   // baseURL: 'http://192.168.2.218:8080/',
+  baseURL: 'http://192.168.2.218:8080/',
   // baseURL: (version === 'release' || version === 'trial')
   //   ? 'https://lllw.ykai.cc'
   //   : 'http://localhost:8080/',
@@ -31,8 +34,10 @@ Axios.interceptors.request.use(cfg => {
 })
 
 Axios.interceptors.response.use(async resp => {
-  if (!resp.config.url.endsWith('/user/authorize') && resp.status === 401) {
+  if (resp.config.url && !resp.config.url.endsWith('/user/authorize') && resp.status === 401) {
+    // @ts-ignore
     resp.config.__authorize_tries__ = (resp.config.__authorize_tries__ ?? 0) + 1
+    // @ts-ignore
     if (resp.config.__authorize_tries__ > 10) {
       console.error('登录失败');
       return resp;
@@ -59,7 +64,7 @@ export function getOpenId() {
   return openId;
 }
 
-export function wrapResp(resp) {
+export function wrapResp<T = any>(resp): Resp<T> {
   if (resp.status !== 200 || !resp.data?.succeed) {
     const errMsg = resp.data.errMsg || `${resp.status} ${resp.statusText}`;
     return new RespError(errMsg, resp.data?.errCode ?? -1);
@@ -85,8 +90,8 @@ const api = {
   },
   async authorize(code) {
     return wrapResp(await request({
-      path: "/user/authorize",
-      method: "POST",
+      path: '/user/authorize',
+      method: 'POST',
       data: {
         js_code: code
       }
@@ -94,17 +99,11 @@ const api = {
   },
   async getUserInfo(uid) {
     return wrapResp(await request({
-      path: "/user/getInfo",
-      method: "GET",
+      path: '/user/getInfo',
+      method: 'GET',
       params: {
         id: uid
       }
-    }));
-  },
-
-  async genUserSig() {
-    return wrapResp(await request({
-      path: '/im/getUserSig',
     }));
   },
 
@@ -120,25 +119,16 @@ const api = {
 
   async getRegions() {
     return wrapResp(await request({
-      path: "/region/get",
-      method: "GET",
+      path: '/region/get',
+      method: 'GET',
       params: {}
     }));
   },
 
-  async getAccessToken() {
-    const res = await request({
-      path: "/getAccessToken",
-      method: "GET",
-      params: {}
-    });
-    return wrapResp(res);
-  },
-
   async registerUser(params) {
     const res = await request({
-      path: "/user/register",
-      method: "POST",
+      path: '/user/register',
+      method: 'POST',
       data: {
         ...params,
         openid: getOpenId()
@@ -149,8 +139,8 @@ const api = {
 
   async updateUser(params) {
     return wrapResp(await request({
-      path: "/user/update",
-      method: "POST",
+      path: '/user/update',
+      method: 'POST',
       data: {
         ...params,
         openid: getOpenId()
@@ -158,19 +148,11 @@ const api = {
     }));
   },
 
-  async getCategory() {
-    return wrapResp(await request({
-      path: "/category/get",
-      method: "GET",
-      params: {}
-    }));
-  },
-
   async createCommodity(commodityInfo) {
     commodityInfo.img_urls = commodityInfo.img_urls.join(',');
     return wrapResp(await request({
-      path: "/commodity/create",
-      method: "POST",
+      path: '/commodity/create',
+      method: 'POST',
       data: {
         ...commodityInfo,
         openid: getOpenId()
@@ -180,8 +162,8 @@ const api = {
   async createHelp(helpInfo) {
     helpInfo.img_urls = helpInfo.img_urls.join(',');
     return wrapResp(await request({
-      path: "/help/create",
-      method: "POST",
+      path: '/help/create',
+      method: 'POST',
       data: {
         ...helpInfo,
         openid: getOpenId()
@@ -192,8 +174,8 @@ const api = {
   // 擦亮商品
   async polishCommodity({ id }) {
     return wrapResp(await request({
-      path: "/commodity/polish",
-      method: "POST",
+      path: '/commodity/polish',
+      method: 'POST',
       data: {
         _id: id,
         openid: getOpenId()
@@ -204,8 +186,8 @@ const api = {
   // 擦亮商品
   async polishHelp({ id }) {
     return wrapResp(await request({
-      path: "/help/polishHelp",
-      method: "POST",
+      path: '/help/polishHelp',
+      method: 'POST',
       data: {
         _id: id,
         openid: getOpenId()
@@ -217,8 +199,8 @@ const api = {
     Object.assign(info, { _id: id });
     info.img_urls = info.img_urls.join(',');
     return wrapResp(await request({
-      path: "/commodity/modify",
-      method: "POST",
+      path: '/commodity/modify',
+      method: 'POST',
       data: {
         ...info,
         openid: getOpenId()
@@ -230,8 +212,8 @@ const api = {
     Object.assign(info, { _id: id });
     info.img_urls = info.img_urls.join(',');
     return wrapResp(await request({
-      path: "/help/modify",
-      method: "POST",
+      path: '/help/modify',
+      method: 'POST',
       data: {
         ...info,
         openid: getOpenId()
@@ -241,8 +223,8 @@ const api = {
 
   async activateCommodity({ id }) {
     return wrapResp(await request({
-      path: "/commodity/activateCommodity",
-      method: "POST",
+      path: '/commodity/activateCommodity',
+      method: 'POST',
       data: {
         _id: id,
         status: COMMODITY_STATUS_SELLING,
@@ -253,8 +235,8 @@ const api = {
 
   async deactivateCommodity({ id }) {
     return wrapResp(await request({
-      path: "/commodity/deactivateCommodity",
-      method: "POST",
+      path: '/commodity/deactivateCommodity',
+      method: 'POST',
       data: {
         _id: id,
         status: COMMODITY_STATUS_DEACTIVATED,
@@ -265,8 +247,8 @@ const api = {
 
   async deactivateHelp({ id }) {
     return wrapResp(await request({
-      path: "/help/deactivateHelp",
-      method: "POST",
+      path: '/help/deactivateHelp',
+      method: 'POST',
       data: {
         _id: id,
         openid: getOpenId()
@@ -276,8 +258,8 @@ const api = {
 
   async deleteCommodity({ id }) {
     return wrapResp(await request({
-      path: "/commodity/delete",
-      method: "POST",
+      path: '/commodity/delete',
+      method: 'POST',
       data: {
         _id: id,
         openid: getOpenId()
@@ -287,8 +269,8 @@ const api = {
 
   async deleteHelp({ id }) {
     return wrapResp(await request({
-      path: "/help/delete",
-      method: "POST",
+      path: '/help/delete',
+      method: 'POST',
       data: {
         _id: id,
         openid: getOpenId()
@@ -297,8 +279,8 @@ const api = {
   },
   async reportHelp({ id, report }) {
     return wrapResp(await request({
-      path: "/help/updateHelpReport",
-      method: "POST",
+      path: '/help/updateHelpReport',
+      method: 'POST',
       data: {
         _id: id,
         report: report,
@@ -308,7 +290,6 @@ const api = {
   },
   /**
    * 上传本地图片到云存储
-   * TODO 压缩上传
    * TODO 合规检验
    *
    * @param path 本地路径（如wx.chooseImage得到的临时路径）
@@ -326,10 +307,6 @@ const api = {
     return new RespSuccess(cloudProtocolToHttp(res.fileID));
   },
 
-  async setViewed(cid) {
-  },
-  async getMyViewed(start, count) {
-  },
   async getBannerList(rid) {
     return wrapResp(await request({
       path: 'getBannerList',
@@ -367,212 +344,3 @@ const api = {
 }
 
 export default api;
-
-export const HelpCommentAPI = {
-  async createHelpQuestion(hid, content) {
-    return wrapResp(await request({
-      path: "/helpQA/createHelpQuestion",
-      method: "POST",
-      data: {
-        hid: hid,
-        content,
-        openid: getOpenId()
-      }
-    }));
-  },
-
-  async createHelpAnswer(hid, qid, content) {
-    return wrapResp(await request({
-      path: "/helpQA/createHelpAnswer",
-      method: "POST",
-      data: {
-        hid,
-        question_id: qid,
-        content,
-        openid: getOpenId()
-      }
-    }));
-  },
-
-  async getHelpQuestionsAndAnswers(hid, start, count) {
-    return wrapResp(await request({
-      path: "/helpQA/getHelpQuestionsAndAnswers",
-      method: "POST",
-      data: {
-        help_id: hid,
-        start, count,
-        openid: getOpenId()
-      }
-    }));
-  },
-
-  async delHelpQuestion(qid) {
-    return wrapResp(await request({
-      path: "/helpQA/deleteHelpQuestion",
-      method: "POST",
-      data: {
-        question_id: qid,
-        openid: getOpenId()
-      }
-    }));
-  },
-  async deleteHelpAnswer(answer_id) {
-    return wrapResp(await request({
-      path: "/helpQA/deleteHelpAnswer",
-      method: "POST",
-      data: {
-        answer_id,
-        openid: getOpenId()
-      }
-    }));
-  },
-  // async modifyQuestion(question_id, content) {
-  //   return wrapResp(await request({
-  //     path: "/modifyQuestion",
-  //     method: "POST",
-  //     data: {
-  //       question_id,
-  //       content,
-  //       openid: getOpenId()
-  //     }
-  //   }));
-  // },
-  // async modifyAnswer(answer_id, content) {
-  //   return wrapResp(await request({
-  //     path: "/modifyAnswer",
-  //     method: "POST",
-  //     data: {
-  //       answer_id,
-  //       content,
-  //       openid: getOpenId()
-  //     }
-  //   }));
-  // },
-
-}
-
-/**
- * 收藏相关的API
- */
-export const CollectApi = {
-  async collect(cid) {
-    return wrapResp(await request({
-      path: "/collect/commodity",
-      method: "POST",
-      data: {
-        cid,
-        openid: getOpenId()
-      }
-    }));
-  },
-  async cancel(cid) {
-    return wrapResp(await request({
-      path: "/collect/cancel",
-      method: "POST",
-      data: {
-        cid,
-        openid: getOpenId()
-      }
-    }));
-  },
-  async getAll(start, count) {
-    const resp = wrapResp(await request({
-      path: "/collect/getInfo",
-      method: "POST",
-      data: {
-        start,
-        count,
-        openid: getOpenId()
-      }
-    }));
-    resp.data = resp.data?.map(convertCommodity);
-    return resp;
-  },
-}
-/**
- * 求助收藏相关的API
- */
-export const HelpCollectApi = {
-  // 收藏求助
-  async collectHelp(hid) {
-    return wrapResp(await request({
-      path: "/helpCollect/collectHelp",
-      method: "POST",
-      data: {
-        hid,
-        openid: getOpenId()
-      }
-    }));
-  },
-  // 取消收藏help
-  async cancel(hid) {
-    return wrapResp(await request({
-      path: "/helpCollect/cancelCollectHelp",
-      method: "POST",
-      data: {
-        hid,
-        openid: getOpenId()
-      }
-    }));
-  },
-  // 获取某人所有收藏的求助
-  async getAllCollectedHelp(start, count) {
-    const resp = wrapResp(await request({
-      path: "/helpCollect/getInfo",
-      method: "POST",
-      data: {
-        start,
-        count,
-        openid: getOpenId()
-      }
-    }));
-
-    resp.data = resp.data?.map(convertCommodity);
-    console.log(resp)
-    return resp;
-  },
-}
-
-/**
- * 点赞收藏相关的API
- */
-export const HelpLikedApi = {
-  // 收藏求助
-  async likedHelp(hid) {
-    return wrapResp(await request({
-      path: "/helpLiked/likeHelp",
-      method: "POST",
-      data: {
-        hid,
-        openid: getOpenId()
-      }
-    }));
-  },
-  // 取消收藏help
-  async cancelLiked(hid) {
-    return wrapResp(await request({
-      path: "/helpLiked/cancelLikeHelp",
-      method: "POST",
-      data: {
-        hid,
-        openid: getOpenId()
-      }
-    }));
-  },
-  // 获取某人所有收藏的求助
-  async getAllCollectedHelp(start, count) {
-    const resp = wrapResp(await request({
-      path: "/helpLiked/getInfo",
-      method: "POST",
-      data: {
-        start,
-        count,
-        openid: getOpenId()
-      }
-    }));
-
-    resp.data = resp.data?.map(convertCommodity);
-    console.log(resp)
-    return resp;
-  },
-}

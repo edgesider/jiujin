@@ -1,4 +1,4 @@
-import api, { CollectApi, getOpenId } from "../../api/api";
+import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
 import { ensureRegistered, getRegionPathName, sleep } from "../../utils/other";
@@ -174,7 +174,7 @@ Page({
     this.togglingCollect = true;
     try {
       if (this.data.commodity.is_collected) {
-        const resp = await CollectApi.cancel(this.data.commodity._id);
+        const resp = await CommodityAPI.uncollect(this.data.commodity._id);
         if (resp.isError) {
           await wx.showToast({
             title: '取消收藏失败',
@@ -183,7 +183,7 @@ Page({
           return;
         }
       } else {
-        const resp = await CollectApi.collect(this.data.commodity._id);
+        const resp = await CommodityAPI.collect(this.data.commodity._id);
         if (resp.isError) {
           await wx.showToast({
             title: '收藏失败',

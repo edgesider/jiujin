@@ -1,13 +1,9 @@
-import api from './api/api';
+import api, { initNetwork } from './api/api';
 import { BehaviorSubject } from "rxjs";
-
-import { HELP_STATUS_RUNNING, initConstants } from "./constants";
-
+import { initConstants } from "./constants";
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
 import { initOpenIM } from "./utils/oim";
-import { HelpAPI } from "./api/HelpAPI";
-import { getGlobals } from "./utils/globals";
 
 App({
   _ready: false,
@@ -22,13 +18,14 @@ App({
 
   async onLaunch() {
     try {
-      wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
-
       initConstants();
       initMoment();
+      initNetwork();
+
+      wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
 
       const self = await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
-      await Promise.all([this.fetchRegions(), this.fetchCategories()]);
+      await this.fetchRegions();
 
       if (self) {
         await initOpenIM(self);
@@ -74,11 +71,6 @@ App({
     }
     this.globalData.regions = regions;
     this.globalData.ridToRegion = ridToRegion;
-  },
-
-  async fetchCategories() {
-    const resp = await api.getCategory();
-    this.globalData.categories = resp.data ?? [];
   },
 
   async waitForReady() {

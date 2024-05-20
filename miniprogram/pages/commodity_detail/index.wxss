@@ -47,7 +47,7 @@
 .body .content .images {
   width: 100%;
   overflow: hidden;
-  margin-bottom: var(--content-padding);
+  margin: var(--content-padding) 0;
 }
 
 .body .content .images-single {

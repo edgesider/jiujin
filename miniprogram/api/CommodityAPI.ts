@@ -87,4 +87,22 @@ export const CommodityAPI = {
       data: params,
     })));
   },
+  async listCollected(params: { start: number, count: number }) {
+    return convertListResp(wrapResp(await request({
+      path: '/commodity/getMyCollects',
+      data: { start: params.start, count: params.count }
+    })));
+  },
+  async collect(id: string): Promise<Resp<void>> {
+    return wrapResp(await request({
+      path: '/commodity/collect',
+      data: { cid: id }
+    }));
+  },
+  async uncollect(id: string): Promise<Resp<void>> {
+    return wrapResp(await request({
+      path: '/commodity/cancelCollect',
+      data: { cid: id }
+    }));
+  },
 }

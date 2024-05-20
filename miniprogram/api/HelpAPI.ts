@@ -46,6 +46,42 @@ export const HelpAPI = {
       data: params,
     })));
   },
+  async listLiked(params: { start: number, count: number }) {
+    return convertListResp(wrapResp(await request({
+      path: '/help/getMyLikes',
+      data: { start: params.start, count: params.count }
+    })));
+  },
+  async like(id: string): Promise<Resp<void>> {
+    return wrapResp(await request({
+      path: '/help/like',
+      data: { hid: id }
+    }));
+  },
+  async unlike(id: string): Promise<Resp<void>> {
+    return wrapResp(await request({
+      path: '/help/cancelLike',
+      data: { hid: id }
+    }));
+  },
+  async listCollected(params: { start: number, count: number }) {
+    return convertListResp(wrapResp(await request({
+      path: '/help/getMyCollects',
+      data: { start: params.start, count: params.count }
+    })));
+  },
+  async collect(id: string): Promise<Resp<void>> {
+    return wrapResp(await request({
+      path: '/help/collect',
+      data: { hid: id }
+    }));
+  },
+  async uncollect(id: string): Promise<Resp<void>> {
+    return wrapResp(await request({
+      path: '/help/cancelCollect',
+      data: { hid: id }
+    }));
+  },
   async search() {
     throw Error('not implemented');
   },

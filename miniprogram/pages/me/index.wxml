@@ -51,7 +51,7 @@
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
-    <view class="list" bindtap="gotoList" data-type="stared">
+    <view class="list" bindtap="gotoList" data-type="collected">
       <view class="list_title">我收藏的闲置</view>
       <image class="right" src="/images/right.png"></image>
     </view>

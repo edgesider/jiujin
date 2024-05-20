@@ -1,10 +1,10 @@
-import { ensureRegistered, getRegionPath, getRegionPathName, setTabBar } from "../../utils/other";
+import { ensureRegistered, getRegionPathName, setTabBar } from "../../utils/other";
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED, HELP_STATUS_RUNNING
 } from "../../constants";
-import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
+import api from "../../api/api";
 import { openCommodityEdit, openProfile } from "../../utils/router";
 import { waitForAppReady } from "../../utils/globals";
 import { CommodityAPI } from "../../api/CommodityAPI";
@@ -21,7 +21,7 @@ Page({
     totalUnread: 0,
   },
 
-  async onLoad(options) {
+  async onLoad() {
     setTabBar(this);
     await waitForAppReady();
     const { self } = app.globalData;
@@ -69,12 +69,12 @@ Page({
             bought: '我买到的',
             sold: '我卖出的',
             deactivated: '我下架的',
-            stared: '我收藏的闲置',
+            collected: '我收藏的闲置',
           })[type],
           fetcher: async ({ start, count }) => {
             let resp;
-            if (type === 'stared') {
-              resp = await CollectApi.getAll(start, count);
+            if (type === 'collected') {
+              resp = await CommodityAPI.listCollected({ start, count });
             } else {
               const status = ({
                 selling: COMMODITY_STATUS_SELLING,
@@ -156,7 +156,7 @@ Page({
                 return { action: 'fetchSingle' };
               },
               delete: async () => {
-                return new Promise(async (res) => {
+                return new Promise(async () => {
                   wx.showModal({
                     title: '提示',
                     content: `确认删除`,
@@ -210,9 +210,9 @@ Page({
           fetcher: async ({ start, count }) => {
             let resp;
             if (type === 'collected') {
-              resp = await HelpCollectApi.getAllCollectedHelp(start, count);
+              resp = await HelpAPI.listCollected({ start, count });
             } else if (type === 'liked') {
-              resp = await HelpLikedApi.getAllCollectedHelp(start, count);
+              resp = await HelpAPI.listLiked({ start, count });
             } else {
               const status = ({
                 selling: HELP_STATUS_RUNNING
