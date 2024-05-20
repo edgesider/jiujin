@@ -1,5 +1,5 @@
-import { TransactionFinishReason, TransactionStatus } from "./api/transaction";
-import { HelpTransactionFinishReason, HelpTransactionStatus } from "./api/helpTransaction";
+import { TransactionFinishReason, TransactionStatus } from "./api/TransactionAPI";
+import { HelpTransactionFinishReason, HelpTransactionStatus } from "./api/HelpTransactionAPI";
 import { MessageStatus, MessageType, SessionType } from './lib/openim/index';
 
 export const COMMODITY_STATUS_SELLING = 0; // 出售中

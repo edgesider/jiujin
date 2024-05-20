@@ -5,7 +5,7 @@ import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/sh
 import { Commodity, Region, User } from '../../types';
 import { waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
-import { CommodityAPI } from '../../api/commodity';
+import { CommodityAPI } from '../../api/CommodityAPI';
 import { openVerify } from '../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
@@ -160,7 +160,7 @@ Page({
           order, orderBy,
           start: cursor,
         });
-      if (resp.isError) {
+      if (resp.isError || !resp.data) {
         await wx.showToast({ title: '网络错误' })
         return;
       }

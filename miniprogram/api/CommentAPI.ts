@@ -2,8 +2,7 @@ import { Comment, CommentEntityType, convertComment } from '../types';
 import { request, wrapResp } from './api';
 import { Resp } from './resp';
 
-
-export const CommentAPIv2 = {
+export const CommentAPI = {
   async get(entityId: string): Promise<Resp<Comment[]>> {
     const resp = wrapResp(await request({
       path: '/comment/get',

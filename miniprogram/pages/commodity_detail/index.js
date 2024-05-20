@@ -8,7 +8,7 @@ import { DATETIME_FORMAT } from "../../utils/time";
 import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
 import { waitForAppReady } from "../../utils/globals";
 import { startTransaction } from "../../utils/transaction";
-import { CommodityAPI } from "../../api/commodity";
+import { CommodityAPI } from "../../api/CommodityAPI";
 
 const app = getApp();
 

@@ -10,13 +10,13 @@
     <view class="price">￥{{help.bounty / 100}}</view>
     <image class="status" src="{{statusImage}}" />
   </view>
-  <view class="right" wx:if="{{help.uid === self._id}}">
+  <view class="right" wx:if="{{help.seller_id === self._id}}">
     <block wx:if="{{help.status === 0}}">
       <view class="button green" catch:tap="polish">擦亮</view>
       <view class="button greenyellow" catch:tap="gotoEdit">编辑</view>
       <view class="button yellow" catch:tap="deactivate">结束</view>
     </block>
-    <block wx:elif="{{help.status === 1}}">
+    <block wx:elif='{{help.status === HELP_STATUS_RUNNING}}'>
       <view class="button green" catch:tap="delete">删除</view>
     </block>
   </view>

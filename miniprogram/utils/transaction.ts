@@ -1,4 +1,5 @@
-import { TransactionApi } from '../api/transaction';
+import { TransactionAPI } from '../api/TransactionAPI';
+import { HelpTransactionAPI } from '../api/HelpTransactionAPI';
 import { getOpenId } from '../api/api';
 import { Commodity, Help, User } from '../types';
 import {
@@ -8,13 +9,12 @@ import {
   getOrCreateGroup, setCommodityGroupAttributes, setHelpGroupAttributes,
   tryDeleteConversationAndGroup
 } from './oim';
-import { HelpTransactionApi } from '../api/helpTransaction';
 
 /**
  * 根据商品和卖家创建群聊
  */
 export async function startTransaction(commodity: Commodity, seller: User) {
-  const transactions = await TransactionApi.listByCommodity(commodity._id);
+  const transactions = await TransactionAPI.listByCommodity(commodity._id);
   if (transactions.isError) {
     console.error('failed to query existed transactions');
     return;
@@ -39,7 +39,7 @@ export async function startTransaction(commodity: Commodity, seller: User) {
     return;
   }
   console.log(`starting transaction: commodity=${commodity._id} conversation=${conv.conversationID}`)
-  const resp = await TransactionApi.start(commodity._id, conv.conversationID);
+  const resp = await TransactionAPI.start(commodity._id, conv.conversationID);
   if (resp.isError) {
     console.error('failed to start a new transaction');
     await tryDeleteConversationAndGroup(conv);
@@ -56,7 +56,7 @@ export async function startTransaction(commodity: Commodity, seller: User) {
 }
 
 export async function startHelpTransaction(help: Help, seller: User) {
-  const transactions = await HelpTransactionApi.listByHelp(help._id);
+  const transactions = await HelpTransactionAPI.listByHelp(help._id);
   if (transactions.isError) {
     console.error('failed to query existed transactions');
     return;
@@ -81,7 +81,7 @@ export async function startHelpTransaction(help: Help, seller: User) {
     return;
   }
   console.log(`starting transaction: help=${help._id} conversation=${conv.conversationID}`)
-  const resp = await HelpTransactionApi.start(help._id, conv.conversationID);
+  const resp = await HelpTransactionAPI.start(help._id, conv.conversationID);
   if (resp.isError) {
     console.error('failed to start a new transaction');
     await tryDeleteConversationAndGroup(conv);

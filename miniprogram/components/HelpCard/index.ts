@@ -64,11 +64,11 @@ Component({
         createTime: moment(help.create_time).format(DATETIME_FORMAT),
         contentParagraphs: help.content.split('\n').map(s => s.trim()),
         regionName: getRegionPathName(help.rid),
-        isMine: self && self._id === help.uid,
+        isMine: self && self._id === help.seller_id,
         hasImg: help.img_urls.length > 0
       });
 
-      const userResp = await api.getUserInfo(help.uid);
+      const userResp = await api.getUserInfo(help.seller_id);
       const user = userResp.isError ? null : userResp.data;
       this.setData({ user });
     },

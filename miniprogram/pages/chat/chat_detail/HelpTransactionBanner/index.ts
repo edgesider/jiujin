@@ -1,6 +1,6 @@
 import getConstants from '../../../../constants';
 import { getContentDesc } from '../../../../utils/strings';
-import { Transaction, TransactionApi, TransactionStatus } from '../../../../api/transaction';
+import { Transaction, TransactionAPI, TransactionStatus } from '../../../../api/TransactionAPI';
 import { NotifyType, requestNotifySubscribe } from '../../../../utils/notify';
 import { sleep } from '../../../../utils/other';
 import { Help } from '../../../../types';
@@ -39,7 +39,7 @@ Component({
       const help = this.properties.help as Help;
       const transaction = this.properties.transaction as Transaction;
       this.setData({
-        isSeller: help.uid === app.globalData.self._id,
+        isSeller: help.seller_id === app.globalData.self._id,
         helpDesc: getContentDesc(help.content, 40),
         tips: this.getTransactionStatusTip(transaction),
         statusImage: this.getTransactionStatusImage(transaction),
@@ -67,7 +67,7 @@ Component({
       if (!transaction) {
         return;
       }
-      const resp = await TransactionApi.agreeBooking(transaction.id);
+      const resp = await TransactionAPI.agreeBooking(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -90,7 +90,7 @@ Component({
       ];
       const { tapIndex } = await wx.showActionSheet({ itemList: reasons });
       const reason = reasons[tapIndex];
-      const resp = await TransactionApi.denyBooking(transaction.id, reason);
+      const resp = await TransactionAPI.denyBooking(transaction.id, reason);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -106,7 +106,7 @@ Component({
       if (!transaction) {
         return;
       }
-      const resp = await TransactionApi.requestBooking(transaction.id);
+      const resp = await TransactionAPI.requestBooking(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -124,7 +124,7 @@ Component({
       if (!transaction) {
         return;
       }
-      const resp = await TransactionApi.cancelBooking(transaction.id);
+      const resp = await TransactionAPI.cancelBooking(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -149,7 +149,7 @@ Component({
       if (!transaction) {
         return;
       }
-      const resp = await TransactionApi.confirmSold(transaction.id);
+      const resp = await TransactionAPI.confirmSold(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -175,7 +175,7 @@ Component({
         itemList: reasons
       });
       const reason = reasons[tapIndex];
-      const resp = await TransactionApi.confirmTerminated(transaction.id, reason);
+      const resp = await TransactionAPI.confirmTerminated(transaction.id, reason);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',

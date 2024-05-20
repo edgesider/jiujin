@@ -1,6 +1,7 @@
 // pages/help_list/index.ts
 import getConstants from "../../constants";
 import api from "../../api/api";
+import { HelpAPI } from "../../api/HelpAPI";
 
 const app = getApp();
 const COUNT_PER_PAGE = 12
@@ -8,7 +9,7 @@ Page({
   data: {
     ...getConstants(),
     pullDownRefreshing: false,
-    isLoading: false,
+    isLoading: true,
     cursor: 0,
     helpList: [],
 
@@ -19,6 +20,7 @@ Page({
 
   fetcher: async () => ({}),
   onClick: () => {},
+  fetchToken: 0,
   async onLoad() {
     this.getOpenerEventChannel().on(
       'onParams',
@@ -38,9 +40,7 @@ Page({
   },
 
   async fetch(clear = false) {
-    if (this.data.isLoading) {
-      return;
-    }
+    const token = ++this.fetchToken;
     this.setData({ isLoading: true, })
     if (clear) {
       this.setData({ commodityList: [], cursor: 0 });
@@ -50,6 +50,9 @@ Page({
       count: COUNT_PER_PAGE,
       currTab: this.data.currTab,
     })
+    if (token !== this.fetchToken) {
+      return;
+    }
     if (!res || res instanceof Error || !Array.isArray(res)) {
       await wx.showToast({
         title: '网络错误',
@@ -68,7 +71,7 @@ Page({
 
   async fetchSingle(idx) {
     const help = this.data.helpList[idx];
-    const resp = await api.getHelpInfo({ id: help._id });
+    const resp = await HelpAPI.getOne(help._id);
     if (resp.isError) {
       return;
     }

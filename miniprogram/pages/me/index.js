@@ -7,7 +7,8 @@ import getConstants, {
 import api, { CollectApi, getOpenId, HelpCollectApi, HelpLikedApi } from "../../api/api";
 import { openCommodityEdit, openProfile } from "../../utils/router";
 import { waitForAppReady } from "../../utils/globals";
-import { CommodityAPI } from "../../api/commodity";
+import { CommodityAPI } from "../../api/CommodityAPI";
+import { HelpAPI } from "../../api/HelpAPI";
 
 const app = getApp()
 
@@ -216,10 +217,7 @@ Page({
               const status = ({
                 selling: HELP_STATUS_RUNNING
               })[type];
-              const self = app.globalData.self._id;
-              const filter = { status, start, count, isMine: 1 };
-
-              resp = await api.getHelpList(filter);
+              resp = await HelpAPI.listMine({ status, role: 'seller', start, count })
             }
             if (resp.isError) {
               console.error(resp);

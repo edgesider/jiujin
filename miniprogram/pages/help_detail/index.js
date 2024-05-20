@@ -7,6 +7,7 @@ import { ensureRegistered, getRegionPathName, sleep } from "../../utils/other";
 import { openConversationDetail, openHelpEdit, openProfile } from "../../utils/router";
 import { setNeedRefresh } from "../home/index";
 import { startHelpTransaction } from "../../utils/transaction";
+import { HelpAPI } from "../../api/HelpAPI";
 
 const app = getApp();
 
@@ -46,7 +47,7 @@ Page({
   },
 
   async loadData(id) {
-    const helpResp = await api.getHelpInfo({ id });
+    const helpResp = await HelpAPI.getOne(id);
     if (helpResp.isError) {
       await wx.showToast({
         icon: 'error', title: '网络错误'
@@ -54,7 +55,7 @@ Page({
       return;
     }
     const help = helpResp.data;
-    const sellerResp = await api.getUserInfo(help.uid);
+    const sellerResp = await api.getUserInfo(help.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
     let firstImageSize = [0, 1];
     if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === "")) {
@@ -88,7 +89,7 @@ Page({
       seller,
       contentParagraphs: help.content.split('\n').map(s => s.trim()),
       regionName: getRegionPathName(help.rid),
-      isMine: self && self._id === help.uid,
+      isMine: self && self._id === help.seller_id,
       firstImageSize,
     });
   },
@@ -165,7 +166,8 @@ Page({
     }
   },
 
-  togglingLike: false, async onToggleLike() {
+  togglingLike: false,
+  async onToggleLike() {
     ensureRegistered();
     if (this.togglingLike) {
       return;

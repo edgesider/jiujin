@@ -1,6 +1,5 @@
-import api from "../../api/api";
 import getConstants from "../../constants";
-import { CommodityAPI } from "../../api/commodity";
+import { CommodityAPI } from "../../api/CommodityAPI";
 
 const app = getApp();
 const COUNT_PER_PAGE = 12

@@ -1,11 +1,13 @@
 import api from './api/api';
 import { BehaviorSubject } from "rxjs";
 
-import { initConstants } from "./constants";
+import { HELP_STATUS_RUNNING, initConstants } from "./constants";
 
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
 import { initOpenIM } from "./utils/oim";
+import { HelpAPI } from "./api/HelpAPI";
+import { getGlobals } from "./utils/globals";
 
 App({
   _ready: false,

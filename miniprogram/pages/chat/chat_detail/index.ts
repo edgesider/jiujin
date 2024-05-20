@@ -1,6 +1,6 @@
 import getConstants from '../../../constants';
 import api, { getOpenId } from '../../../api/api';
-import { Transaction, TransactionApi } from '../../../api/transaction';
+import { Transaction, TransactionAPI } from '../../../api/TransactionAPI';
 import { Commodity, Help, User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { generateUUID, kbHeightChanged, tryJsonParse } from '../../../utils/other';
@@ -13,8 +13,9 @@ import {
   listenMessage, markConvMessageAsRead,
   sendMessage, waitForOimLogged
 } from '../../../utils/oim';
-import { CommodityAPI } from '../../../api/commodity';
-import { HelpTransaction, HelpTransactionApi } from '../../../api/helpTransaction';
+import { CommodityAPI } from '../../../api/CommodityAPI';
+import { HelpTransaction, HelpTransactionAPI } from '../../../api/HelpTransactionAPI';
+import { HelpAPI } from '../../../api/HelpAPI';
 
 type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
@@ -96,7 +97,7 @@ Page({
       ] =
         await Promise.all([
           CommodityAPI.getOne(commodityId),
-          TransactionApi.getById(transactionId),
+          TransactionAPI.getById(transactionId),
           api.getUserInfo(sellerId),
           api.getUserInfo(buyerId),
         ])
@@ -111,22 +112,22 @@ Page({
     } else if (helpAttr) {
       const { helpId, sellerId, buyerId, transactionId } = helpAttr;
       const [
-        commodityResp,
+        helpResp,
         transactionResp,
         sellerResp,
         buyerResp
       ] =
         await Promise.all([
-          api.getHelpInfo({ id: helpId }),
-          HelpTransactionApi.getById(transactionId),
+          HelpAPI.getOne(helpId),
+          HelpTransactionAPI.getById(transactionId),
           api.getUserInfo(sellerId),
           api.getUserInfo(buyerId),
         ])
-      if (commodityResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
+      if (helpResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
         await wx.showToast({ title: '网络错误', icon: 'error' });
         return;
       }
-      help = commodityResp.data!!;
+      help = helpResp.data!!;
       transaction = transactionResp.data!!;
       seller = sellerResp.data!!;
       buyer = buyerResp.data!!;
@@ -231,7 +232,7 @@ Page({
     if (!this.data.transaction) {
       return;
     }
-    const transaction = (await TransactionApi.getById(this.data.transaction.id)).data;
+    const transaction = (await TransactionAPI.getById(this.data.transaction.id)).data;
     if (!transaction) {
       return;
     }

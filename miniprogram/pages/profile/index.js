@@ -2,7 +2,7 @@ import getConstants, { COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from ".
 import api from "../../api/api";
 import moment from "moment";
 import { getRegionPathName } from "../../utils/other";
-import { CommodityAPI } from "../../api/commodity";
+import { CommodityAPI } from "../../api/CommodityAPI";
 
 const app = getApp()
 const COUNT_PER_PAGE = 12

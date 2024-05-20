@@ -2,7 +2,7 @@ import { openProfile } from "../../utils/router";
 import { ensureRegistered, kbHeightChanged } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
-import { CommentAPIv2 } from "../../api/comment";
+import { CommentAPI } from "../../api/CommentAPI";
 import { CommentEntityType } from "../../types";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
@@ -65,7 +65,7 @@ Component({
       }
     },
     async fetchComments() {
-      const resp = await CommentAPIv2.get(this.getEntityId());
+      const resp = await CommentAPI.get(this.getEntityId());
       if (resp.isError) {
         console.error(resp);
         this.setData({ error: true });
@@ -98,7 +98,7 @@ Component({
       })
     },
     async sendComment(content, replyTo) {
-      const resp = await CommentAPIv2.add(this.getEntityId(), this.getEntityType(), content, replyTo ?? -1);
+      const resp = await CommentAPI.add(this.getEntityId(), this.getEntityType(), content, replyTo ?? -1);
       if (resp.isError) {
         console.error(resp);
         await wx.showToast({
@@ -150,7 +150,7 @@ Component({
         if (!confirm) {
           return;
         }
-        await CommentAPIv2.del(comment.id);
+        await CommentAPI.del(comment.id);
         await this.fetchComments();
       }
     },

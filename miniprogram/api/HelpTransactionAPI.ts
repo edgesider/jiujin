@@ -41,7 +41,7 @@ export interface ListHelpTransactionFilter {
   status?: HelpTransactionStatus
 }
 
-export const HelpTransactionApi = {
+export const HelpTransactionAPI = {
   async listBuying(filter?: ListHelpTransactionFilter): Promise<Resp<HelpTransaction[]>> {
     return wrapResp(await request({
       path: `/helpTransaction/list/buying`,

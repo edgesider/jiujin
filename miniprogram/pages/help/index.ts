@@ -1,8 +1,11 @@
-import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID, HELP_STATUS_RUNNING } from "../../constants";
-import { getRegionPath, setTabBar } from "../../utils/other";
-import { buildShareParam, onShareHelp, parseShareInfo, reportShareInfo } from "../../utils/share";
-import api, { getOpenId } from "../../api/api";
-import { waitForAppReady } from "../../utils/globals";
+import getConstants, { DEFAULT_REGION_ID } from '../../constants';
+import { getRegionPath, setTabBar } from '../../utils/other';
+import { onShareHelp, parseShareInfo, reportShareInfo } from '../../utils/share';
+import { waitForAppReady } from '../../utils/globals';
+import { HelpAPI } from '../../api/HelpAPI';
+import { Help, Region, User } from '../../types';
+
+type TouchEvent = WechatMiniprogram.TouchEvent;
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -18,32 +21,16 @@ Page({
   data: {
     ...getConstants(),
     scrollTop: 0,
-    pageIndex: 0,
-    searchInput: "",
 
-    self: null,
-    ridToRegion: null,
+    self: null as User | null,
     // 可选的区域，按照层级排列L4、L3、L2、L1
-    regions: [],
+    regions: [] as Region[],
     selectedRegionIndex: 0, // 选中的区域
 
-    helpList: [],
-    cursor: 0,
+    helpList: [] as Help[],
+    cursor: Date.now(),
     isLoading: false,
     pullDownRefreshing: false,
-
-    banners: [],
-
-    showRankingPopup: false,
-    rankingPopupTop: 0,
-    rankingOptions: [
-      { key: 'bounty-asc', text: '悬赏由低到高' },
-      { key: 'bounty-desc', text: '悬赏由高到低' },
-      { key: 'polish_time-desc', text: '时间由近到远' },
-      { key: 'polish_time-asc', text: '时间由远到近' },
-    ],
-    chosenRankingKey: 'polish_time-desc',
-
     onlyBounty: false,
   },
   initialized: false,
@@ -92,7 +79,7 @@ Page({
     }
   },
   updateRegions() {
-    const { self, ridToRegion } = app.globalData;
+    const { self } = app.globalData;
     const rid = self?.rid ?? DEFAULT_REGION_ID;
 
     const regionPath = getRegionPath(rid).reverse();
@@ -100,7 +87,6 @@ Page({
       // 已登录
       this.setData({
         self,
-        ridToRegion,
         regions: regionPath,
         selectedRegionIndex: 0,
       });
@@ -108,17 +94,17 @@ Page({
       // 未登录，展示默认的区域
       this.setData({
         self,
-        ridToRegion,
         regions: regionPath,
         selectedRegionIndex: 0,
       });
     }
   },
-  async fetchList({ append } = {}) {
+  async fetchList({ append }: { append?: boolean } = {}) {
     console.log(`fetch: append=${append}, rid=${this.data.regions[this.data.selectedRegionIndex]._id}`);
     const rid = this.data.regions[this.data.selectedRegionIndex]._id;
+    const useStreamTime = true;
 
-    const start = append ? this.data.cursor : 0;
+    const cursor = append ? this.data.cursor : (useStreamTime ? Date.now() : 0);
     const token = ++this.fetchToken;
     if (!append) {
       await wx.pageScrollTo({ scrollTop: 0, smooth: true });
@@ -126,21 +112,17 @@ Page({
     }
     const oldList = this.data.helpList;
     this.setData({
-      cursor: start,
+      cursor,
       isLoading: true,
       helpList: append ? oldList : [],
     });
     try {
-      const [orderBy, order] =
-        this.data.onlyBounty
-          ? ['bounty', 'desc']
-          : ['polish_time', 'desc'];
-      const resp = await api.getHelpList({
-        rid, status: HELP_STATUS_RUNNING,
-        start, count: COUNT_PER_PAGE,
-        order_by: orderBy, order,
-      });
-      if (resp.isError) {
+      const { onlyBounty } = this.data;
+      const resp = await HelpAPI.getHelps({
+        rid, onlyBounty,
+        streamTime: cursor, count: COUNT_PER_PAGE,
+      })
+      if (resp.isError || !resp.data) {
         await wx.showToast({ title: '网络错误' })
         return;
       }
@@ -156,12 +138,14 @@ Page({
         console.log('list changed, ignore result');
         return;
       }
-      const data = append ? oldList.concat(resp.data) : resp.data;
-      const cursor = data.length;
+      const newList = append ? oldList.concat(...resp.data) : resp.data;
+      const newCursor = useStreamTime
+        ? newList[newList.length - 1]?.polish_time ?? Date.now()
+        : newList.length;
       this.setData({
         isLoading: false,
-        cursor,
-        helpList: data,
+        cursor: newCursor,
+        helpList: newList,
       });
     } catch (e) {
       console.error(e);
@@ -191,7 +175,7 @@ Page({
     await this.loadMore();
   },
 
-  async onRegionClick(ev) {
+  async onRegionClick(ev: TouchEvent) {
     this.setData({
       selectedRegionIndex: ev.detail.index,
     }, async () => {
@@ -203,7 +187,7 @@ Page({
     this.setData({
       selectedRegionIndex: ev.currentTarget.dataset.idx,
     }, async () => {
-      await this.fetchList({ scrollToTop: true });
+      await this.fetchList();
     });
   },
 

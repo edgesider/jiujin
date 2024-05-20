@@ -1,9 +1,9 @@
 import { request, wrapResp } from './api';
 import { Resp } from './resp';
-import { convertCommodity } from '../types';
+import { Commodity, convertCommodity } from '../types';
 import { getGlobals } from '../utils/globals';
 
-function convertListResp(resp: Resp<any>) {
+function convertListResp(resp: Resp<any>): Resp<Commodity[]> {
   if (!resp.isError) {
     resp.data = (resp.data as any[]).map(convertCommodity);
   }
@@ -85,6 +85,6 @@ export const CommodityAPI = {
     return convertListResp(wrapResp(await request({
       path: '/commodity/getMyCommodities',
       data: params,
-    })))
+    })));
   },
 }

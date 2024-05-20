@@ -63,7 +63,7 @@ export interface Help {
   bounty: number;
   content: string;
   status: 0;
-  uid: string;
+  seller_id: string;
   rid: number;
   img_urls: string[];
   is_collected: boolean;

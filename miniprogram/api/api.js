@@ -166,28 +166,6 @@ const api = {
     }));
   },
 
-  async getHelpList(filter) {
-    const resp = await request({
-      path: "/help/getList",
-      method: "POST",
-      data: {
-        ...filter,
-        openid: getOpenId()
-      }
-    });
-    resp.data.data = (resp.data?.data ?? []).map(convertHelp);
-    return wrapResp(resp);
-  },
-
-  // 获取单个求助
-  async getHelpInfo({ id }) {
-    const listResp = await this.getHelpList({ _id: id });
-    if (!listResp.isError) {
-      listResp.data = listResp.data?.[0] ?? null;
-    }
-    return listResp;
-  },
-
   async createCommodity(commodityInfo) {
     commodityInfo.img_urls = commodityInfo.img_urls.join(',');
     return wrapResp(await request({
@@ -427,32 +405,6 @@ export const HelpCommentAPI = {
       }
     }));
   },
-  // async getQuestions(coid, start, count) {
-  //   var res = await request({
-  //     path: "/getCommodityQuestionsAndAnswers",
-  //     method: "POST",
-  //     data: {
-  //       commodity_id: coid,
-  //       start, count,
-  //       openid: getOpenId()
-  //     }
-  //   });
-  //   res.data = res.data.commodityQuestions;
-  //   return wrapResp(res);
-  // },
-  // async getAnswers(qid, start, count) {
-  //   var res = await request({
-  //     path: "/getCommodityQuestionsAndAnswers",
-  //     method: "POST",
-  //     data: {
-  //       commodity_id: coid,
-  //       start, count,
-  //       openid: getOpenId()
-  //     }
-  //   });
-  //   res.data = res.data.commodityAnswers;
-  //   return wrapResp(res);
-  // },
 
   async delHelpQuestion(qid) {
     return wrapResp(await request({
