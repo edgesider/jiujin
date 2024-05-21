@@ -103,7 +103,6 @@ export async function waitForOimLogged() {
 }
 
 export async function getConversationList(): Promise<ConversationItem[]> {
-  console.log((new Error()).stack);
   // TODO 支持分页
   const res = await oim.getAllConversationList();
   return checkOimResult(res);

@@ -59,8 +59,8 @@ page {
 }
 
 .info .region .icon {
-  width: 22rpx;
-  height: 33rpx;
+  width: 24rpx;
+  height: 24rpx;
 }
 
 .info .region .name {

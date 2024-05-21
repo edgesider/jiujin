@@ -1,4 +1,4 @@
-import { getRegionPath, setTabBar } from '../../utils/other';
+import { cloudProtocolToHttp, getRegionPath, setTabBar } from '../../utils/other';
 import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/share';
@@ -123,7 +123,12 @@ Page({
       return;
     }
     this.setData({
-      banners: resp.data,
+      banners: resp.data.map(b => {
+        return {
+          ...b,
+          url: cloudProtocolToHttp(b.url)
+        };
+      }),
     });
   },
 

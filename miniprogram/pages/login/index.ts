@@ -115,7 +115,7 @@ Page({
             `${wx.env.USER_DATA_PATH}/generated_avatar_tmp.png`,
             `avatar/${getOpenId()}_${Date.now()}_${Math.random() * 10000000}`
           );
-          if (resp.isError) {
+          if (resp.isError || !resp.data) {
             rej(`failed to upload image: ${resp.message}`);
             return;
           }

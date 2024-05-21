@@ -59,7 +59,7 @@ async function doAuthorize() {
 }
 
 export function getOpenId() {
-  return openId;
+  return openId!;
 }
 
 export function wrapResp<T = any>(resp): Resp<T> {

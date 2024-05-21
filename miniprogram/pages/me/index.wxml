@@ -13,7 +13,7 @@
       />
     </view>
     <view class="region" wx:if="{{selfInfo.rid > 0}}">
-      <image class="icon" src="/images/location.png" />
+      <image class="icon" src="/images/region.png" />
       <view class="name">{{regionName}}</view>
       <!--      <text bindtap="gotoVerify">   {{selfInfo.authentication_status ? '已认证' : '未认证'}}</text>-->
     </view>
