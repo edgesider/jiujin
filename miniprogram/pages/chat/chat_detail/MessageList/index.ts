@@ -57,11 +57,6 @@ Component({
     },
     async init(conversationId: string) {
       this.setData({ selfImId: getImUidFromUid(app.globalData.self._id) });
-      const conv = await getConversationById(conversationId);
-      if (!conv) {
-        await wx.showToast({ title: '网络错误', icon: 'error' });
-        throw Error('getConversationById failed');
-      }
 
       await this.fetchOlderMessages();
       setTimeout(() => {
@@ -135,6 +130,7 @@ Component({
     },
     async onPullDown() {
       this.setData({ pullDownTriggered: true });
+      this.triggerEvent('onPullDown');
       await this.fetchOlderMessages();
       this.setData({ pullDownTriggered: false });
     },

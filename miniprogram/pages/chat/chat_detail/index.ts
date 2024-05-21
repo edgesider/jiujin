@@ -63,13 +63,36 @@ Page({
       })
     }));
 
-    const conversation = await getConversationById(conversationId);
+    await this.loadData();
+
+    this.subscription!!.add(listenMessage(conversationId).subscribe(msg => {
+      const custom = tryJsonParse(msg.ex);
+      if (custom?.needUpdateTransaction) {
+        this.updateTransaction().then();
+      }
+    }));
+  },
+  onUnload() {
+    const conv = this.data.conversation;
+    if (conv && conv.unreadCount > 0) {
+      markConvMessageAsRead(conv).then();
+    }
+    this.subscription?.unsubscribe();
+  },
+  async loadData() {
+    if (!this.data.conversationId) {
+      return;
+    }
+    const conversation = await getConversationById(this.data.conversationId);
     if (!conversation) {
       await wx.showToast({
         title: '网络错误',
         icon: 'error',
       })
       return;
+    }
+    if (conversation.unreadCount > 0) {
+      markConvMessageAsRead(conversation).then();
     }
     const group = await getGroup(conversation.groupID);
     if (!group) {
@@ -79,7 +102,7 @@ Page({
       })
       return;
     }
-    markConvMessageAsRead(conversation).then();
+
     let commodity: Commodity | null = null;
     let help: Help | null = null;
     let commodityTact: Transaction | null = null;
@@ -149,19 +172,9 @@ Page({
       commodityTact, helpTact,
     });
     this.updateOpenTime().then();
-
-    this.subscription!!.add(listenMessage(conversation.conversationID).subscribe(msg => {
-      const custom = tryJsonParse(msg.ex);
-      if (custom?.needUpdateTransaction) {
-        this.updateTransaction().then();
-      }
-    }));
   },
-  onUnload() {
-    if (this.data.conversationId) {
-      markConvMessageAsRead(this.data.conversationId).then();
-    }
-    this.subscription?.unsubscribe();
+  async onMessagePullDown() {
+    await this.loadData();
   },
   /**
    * 更新用户上次查看会话的时间

@@ -16,6 +16,7 @@ import {
   listenConversation,
 } from '../../../../../utils/oim';
 import { ConversationItem, MessageItem, MessageType } from '../../../../../lib/openim/index';
+import getConstants from '../../../../../constants';
 
 Component({
   properties: {
@@ -72,11 +73,14 @@ Component({
   },
   methods: {
     async update() {
+      if (!this.data.canView) {
+        return;
+      }
       const conversation = await getConversationById(this.properties.conversation.conversationID);
       if (!conversation) {
         return;
       }
-      await this.onConversationUpdate(conversation, this.data.canView);
+      await this.onConversationUpdate(conversation, true);
     },
     async onConversationUpdate(conversation: ConversationItem, updateOtherInfo: boolean) {
       if (isOthersNewCreateConversation(conversation)) {
@@ -124,7 +128,9 @@ Component({
       }
     },
     async gotoDetail() {
-      requestNotifySubscribe([NotifyType.Chat, NotifyType.BookingRequest, NotifyType.BookingAgreed]).then()
+      if (getConstants().Platform !== 'devtools') {
+        requestNotifySubscribe([NotifyType.Chat, NotifyType.BookingRequest, NotifyType.BookingAgreed]).then()
+      }
       await openConversationDetail(this.data.conversation.conversationID as string);
     },
   }

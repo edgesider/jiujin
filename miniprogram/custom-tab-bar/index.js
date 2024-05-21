@@ -76,7 +76,11 @@ Component({
 
       await waitForAppReady();
       await waitForOimLogged();
-      const unreadChanged = async () => {
+
+      listenUnreadCount().subscribe(async (sumCount) => {
+        if (sumCount <= 0) {
+          return;
+        }
         const convList = await getConversationList();
         const count = convList
           .filter(c => !isOthersNewCreateConversation(c))
@@ -87,8 +91,7 @@ Component({
           list: [...this.data.list],
         });
         convList.filter(isOthersNewCreateConversation).forEach(markConvMessageAsRead);
-      }
-      listenUnreadCount().subscribe(unreadChanged);
+      });
     },
   },
   methods: {

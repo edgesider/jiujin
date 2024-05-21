@@ -14,7 +14,7 @@
     transaction="{{helpTact}}"
     bind:onTransactionActionDone="onTransactionActionDone"
   />
-  <MessageList conversationId="{{conversationId}}" class="message-list" />
+  <MessageList conversationId="{{conversationId}}" class="message-list" bind:onPullDown="onMessagePullDown" />
 
 
   <view class="input">

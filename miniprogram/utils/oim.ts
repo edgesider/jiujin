@@ -103,6 +103,7 @@ export async function waitForOimLogged() {
 }
 
 export async function getConversationList(): Promise<ConversationItem[]> {
+  console.log((new Error()).stack);
   // TODO 支持分页
   const res = await oim.getAllConversationList();
   return checkOimResult(res);
@@ -295,7 +296,10 @@ function listenEvents() {
   });
   oim.on(CbEvents.OnTotalUnreadMessageCountChanged, event => {
     console.log('unread changed', event);
-    totalUnreadCountSubject.next(event.data as number);
+    const count = event.data as number;
+    if (count !== totalUnreadCountSubject.value) {
+      totalUnreadCountSubject.next(event.data as number);
+    }
   });
   oim.on(CbEvents.OnUserStatusChanged, event => {
     console.log('user status changed', event);
@@ -391,7 +395,6 @@ export async function markConvMessageAsRead(conv: string | ConversationItem) {
 }
 
 export function listenUnreadCount(): Subject<number> {
-  oim.getTotalUnreadMsgCount().then(res => res.errCode === 0 && totalUnreadCountSubject.next(res.data));
   return totalUnreadCountSubject;
 }
 

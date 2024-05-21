@@ -58,6 +58,8 @@ Page({
       });
     }));
 
+    await this.refresh();
+
     // const switches = await getNotifySwitches();
     // if (switches.mainSwitch) {
     //   if (![
@@ -73,7 +75,6 @@ Page({
     this.subscription?.unsubscribe();
   },
   async onShow() {
-    await this.refresh();
   },
   sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   async onConversationListUpdate(convList: ConversationItem[]) {

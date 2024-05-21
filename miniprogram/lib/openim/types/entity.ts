@@ -33,11 +33,6 @@ export interface WsResponse<T = unknown> {
   operationID: string;
 }
 
-export interface PromiseMap {
-  resolve: (response: WsResponse) => void;
-  reject: (error: any) => void;
-}
-
 export type MessageEntity = {
   type: string;
   offset: number;

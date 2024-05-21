@@ -1,4 +1,4 @@
-import type { MessageItem, PromiseMap, WsRequest, WsResponse, } from '../types/entity';
+import type { MessageItem, WsRequest, WsResponse, } from '../types/entity';
 import type {
   FileMsgParams,
   ImageMsgParams,
@@ -27,8 +27,14 @@ const forceCloseEvents = [
   CbEvents.OnUserTokenExpired,
 ];
 
+interface Handler {
+  request: WsRequest;
+  resolve: (response: WsResponse) => void;
+  reject: (error: any) => void;
+}
+
 function isEventInCallbackEvents(event: string): event is CbEvents {
-  return Object.values(CbEvents).includes(event as CbEvents);
+  return CbEvents[event] !== undefined;
 }
 
 class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, MessageApi, ConversationApi {
@@ -36,7 +42,7 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
   private token?: string;
   private apiAddr?: string;
   private wsManager?: WebSocketManager;
-  private requestMap = new Map<string, PromiseMap>();
+  private handlerMap = new Map<string, Handler>();
 
   constructor() {
     super();
@@ -50,21 +56,14 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
   private sendRequest = <T>(requestObj: WsRequest): Promise<WsResponse<T>> => {
     return new Promise((resolve, reject) => {
       if (!this.wsManager) {
-        reject({
-          data: '',
-          operationID: requestObj.operationID,
-          errMsg: 'please login first',
-          errCode: ErrorCode.ResourceLoadNotCompleteError,
-          event: requestObj.reqFuncName,
-        });
-        return;
+        throw Error('please login first');
       }
-
-      this.requestMap.set(requestObj.operationID, {
-        resolve: resolve as unknown as (value: WsResponse<unknown>) => void,
+      this.handlerMap.set(requestObj.operationID, {
+        request: requestObj,
+        resolve: resolve as unknown as (value: WsResponse) => void,
         reject,
       });
-      this.wsManager?.sendMessage(requestObj);
+      this.wsManager.sendMessage(requestObj);
     });
   };
 
@@ -73,6 +72,68 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       params = JSON.stringify(params) as unknown as T;
     }
     return JSON.stringify([params]);
+  };
+
+  private handleMessage = (data: WsResponse) => {
+    if (data.event === RequestApi.InitSDK) {
+      if (data.errCode !== 0) console.error(data);
+      return;
+    }
+
+    try {
+      data.data = JSON.parse((data.data as string || '{}'));
+    } catch (error) {
+    }
+
+    if (forceCloseEvents.includes(data.event)) {
+      this.wsManager?.close();
+      this.wsManager = undefined;
+    }
+
+    if (isEventInCallbackEvents(data.event)) {
+      this.emit(data.event, data);
+      if (forceCloseEvents.includes(data.event)) {
+        this.handlerMap.clear();
+      }
+      return;
+    }
+    const handler = this.handlerMap.get(data.operationID);
+    if (handler) {
+      this.handlerMap.delete(data.operationID);
+      (data.errCode === 0 ? handler.resolve : handler.reject)(data);
+    } else {
+      console.error('unknown operationID');
+    }
+    if (forceCloseEvents.includes(data.event)) {
+      this.handlerMap.clear();
+    }
+  };
+
+  private handleDisconnect = async (willRetry: boolean) => {
+    if (!willRetry) {
+      this.handlerMap.forEach(v => v.reject(Error(`Disconnected unexpectedly (max retries reached)`)));
+      this.handlerMap.clear();
+    }
+  }
+
+  private handleReconnectSuccess = async () => {
+    if (!this.userID) return;
+
+    console.log('re-logging');
+    await this.sendRequest({
+      data: JSON.stringify([this.userID, this.token]),
+      operationID: uuid(),
+      userID: this.userID,
+      reqFuncName: RequestApi.Login,
+    });
+    console.log('re-logged');
+    for (const [_, handler] of this.handlerMap.entries()) {
+      if (handler.request.reqFuncName === RequestApi.Login) {
+        continue;
+      }
+      console.log(`retrying ${handler.request.reqFuncName}`);
+      this.wsManager!!.sendMessage(handler.request);
+    }
   };
 
   createRequestFunction = <T, R = unknown>(
@@ -102,56 +163,6 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       });
   };
 
-  private handleMessage = (data: WsResponse) => {
-    if (data.event === RequestApi.InitSDK) {
-      if (data.errCode !== 0) console.error(data);
-      return;
-    }
-
-    try {
-      data.data = JSON.parse((data.data as string || '{}'));
-    } catch (error) {
-    }
-
-    if (forceCloseEvents.includes(data.event)) {
-      this.wsManager?.close();
-      this.wsManager = undefined;
-    }
-
-    if (isEventInCallbackEvents(data.event)) {
-      this.emit(data.event, data);
-      if (forceCloseEvents.includes(data.event)) {
-        this.requestMap.clear();
-      }
-      return;
-    }
-    const promiseHandlers = this.requestMap.get(data.operationID);
-    if (promiseHandlers) {
-      const promiseHandler =
-        data.errCode === 0 ? promiseHandlers.resolve : promiseHandlers.reject;
-      promiseHandler(data);
-      this.requestMap.delete(data.operationID);
-    } else {
-      console.error('unknown operationID');
-    }
-    if (forceCloseEvents.includes(data.event)) {
-      this.requestMap.clear();
-    }
-  };
-
-  private handleReconnectSuccess = async () => {
-    if (!this.userID) return;
-
-    this.requestMap.forEach(v => v.reject(Error('Disconnected unexpectedly')));
-    this.requestMap.clear();
-    await this.sendRequest({
-      data: JSON.stringify([this.userID, this.token]),
-      operationID: uuid(),
-      userID: this.userID,
-      reqFuncName: RequestApi.Login,
-    });
-  };
-
   login = async (
     params: LoginParams,
     operationID = uuid()
@@ -172,7 +183,8 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
     this.wsManager = new WebSocketManager(
       internalWsUrl,
       this.handleMessage,
-      this.handleReconnectSuccess
+      this.handleReconnectSuccess,
+      this.handleDisconnect,
     );
     try {
       await this.wsManager.connect();

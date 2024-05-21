@@ -1,6 +1,5 @@
 import api, { initNetwork } from './api/api';
 import { BehaviorSubject } from "rxjs";
-import { initConstants } from "./constants";
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
 import { initOpenIM } from "./utils/oim";
@@ -18,7 +17,6 @@ App({
 
   async onLaunch() {
     try {
-      initConstants();
       initMoment();
       initNetwork();
 

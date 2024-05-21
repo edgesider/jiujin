@@ -1,5 +1,5 @@
-import { TransactionFinishReason, TransactionStatus } from "./api/TransactionAPI";
-import { HelpTransactionFinishReason, HelpTransactionStatus } from "./api/HelpTransactionAPI";
+import { TransactionFinishReason, TransactionStatus } from './api/TransactionAPI';
+import { HelpTransactionFinishReason, HelpTransactionStatus } from './api/HelpTransactionAPI';
 import { MessageStatus, MessageType, SessionType } from './lib/openim/index';
 
 export const COMMODITY_STATUS_SELLING = 0; // 出售中
@@ -29,62 +29,57 @@ export const GENDER_NAME_MAP = {
   [GENDER.UNKNOWN]: '未知',
 }
 
+function initConstants() {
+  const menuBtn = wx.getMenuButtonBoundingClientRect();
+  const systemInfo = wx.getSystemInfoSync();
+  const platform = systemInfo.platform;
+  // 系统状态栏高度
+  const StatusBar = systemInfo.statusBarHeight;
+  // 自定义顶栏高度
+  const CustomBar = (menuBtn.top - systemInfo.statusBarHeight) * 2 + menuBtn.height;
+  // 底部导航栏高度
+
+  const TabBarHeight = 60;
+  // 底部指示器高度（小白条）
+  const BottomIndicatorHeight =
+    platform === 'ios' || platform === 'devtools'
+      ? 14 // ios 获取到的的小白条高度有点高（34），这里直接写死14
+      : systemInfo.safeArea ? (systemInfo.screenHeight - systemInfo.safeArea?.bottom ?? 0) : 0;
+  return {
+    StatusBar,
+    CustomBar,
+    TabBarHeight,
+    MenuButton: menuBtn,
+    ScreenSize: [systemInfo.screenWidth, systemInfo.screenHeight],
+    SafeArea: systemInfo.safeArea,
+    TopBarHeight: StatusBar + CustomBar,
+    BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
+    BottomIndicatorHeight,
+    Platform: platform as 'ios' | 'android' | 'devtools',
+
+    // im
+    MessageType,
+    SessionType,
+    MessageStatus,
+  };
+}
+
 const constants = {
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED,
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_BOOKED,
-  CustomBar: 0,
-  StatusBar: 0,
   GENDER, GENDER_NAME_MAP,
   DEFAULT_AVATAR,
   TransactionStatus,
   TransactionFinishReason,
   HelpTransactionStatus,
   HelpTransactionFinishReason,
+  ...initConstants(),
 };
 
-export function initConstants() {
-  wx.getSystemInfo({
-    success: e => {
-      const menuBtn = wx.getMenuButtonBoundingClientRect();
-      const { platform } = wx.getSystemInfoSync();
-      // 系统状态栏高度
-      const StatusBar = e.statusBarHeight;
-      // 自定义顶栏高度
-      const CustomBar = (menuBtn.top - e.statusBarHeight) * 2 + menuBtn.height;
-      // 底部导航栏高度
-
-      const TabBarHeight = 60;
-      // 底部指示器高度（小白条）
-      const BottomIndicatorHeight =
-        platform === 'ios' || platform === 'devtools'
-          ? 14 // ios 获取到的的小白条高度有点高（34），这里直接写死14
-          : e.safeArea ? (e.screenHeight - e.safeArea?.bottom ?? 0) : 0;
-      const constants = Object.freeze({
-        StatusBar,
-        CustomBar,
-        TabBarHeight,
-        MenuButton: menuBtn,
-        ScreenSize: [e.screenWidth, e.screenHeight],
-        SafeArea: e.safeArea,
-        TopBarHeight: StatusBar + CustomBar,
-        BottomBarHeight: BottomIndicatorHeight + TabBarHeight,
-        BottomIndicatorHeight,
-        Platform: platform, // ios | android | devtools
-
-        // im
-        MessageType,
-        SessionType,
-        MessageStatus,
-      });
-      setConstants(constants)
-    }
-  })
-}
-
-export default function getConstants(): Record<string, any> {
-  return { ...constants };
+export default function getConstants() {
+  return constants;
 };
 
 /**

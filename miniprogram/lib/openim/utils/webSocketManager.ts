@@ -16,8 +16,6 @@ enum WsOpenState {
 class WebSocketManager {
   private ws?: SocketTask;
   private url: string;
-  private reconnectInterval: number; // ms
-  private maxReconnectAttempts: number;
   private reconnectAttempts: number;
   private shouldReconnect: boolean;
   private isProcessingMessage: boolean = false;
@@ -26,12 +24,11 @@ class WebSocketManager {
     url: string,
     private onMessage: (data: WsResponse) => void,
     private onReconnectSuccess: () => void,
-    reconnectInterval = 1000,
-    maxReconnectAttempts = 10
+    private onDisconnect: (willRetry: boolean) => void,
+    private reconnectInterval = 1000,
+    private maxReconnectAttempts = 10
   ) {
     this.url = url;
-    this.reconnectInterval = reconnectInterval;
-    this.maxReconnectAttempts = maxReconnectAttempts;
     this.reconnectAttempts = 0;
     this.shouldReconnect = false;
   }
@@ -41,6 +38,7 @@ class WebSocketManager {
       if (!this.ws || this.ws.readyState === WsOpenState.CLOSED) {
         const onWsOpen = () => {
           if (this.reconnectAttempts) {
+            console.log('onReconnectSuccess');
             this.onReconnectSuccess();
           }
           this.reconnectAttempts = 0;
@@ -73,17 +71,19 @@ class WebSocketManager {
     const onWsMessage = (event: any) =>
       this.onBinaryMessage(event.data);
     const onWsClose = () => {
-      if (
+      const willRetry =
         this.shouldReconnect &&
         this.reconnectAttempts < this.maxReconnectAttempts
-      ) {
+      if (willRetry) {
         if (this.isProcessingMessage) {
           setTimeout(() => onWsClose(), 100);
           return;
         }
+        console.log('onReconnect');
         setTimeout(() => this.connect(), this.reconnectInterval);
         this.reconnectAttempts++;
       }
+      this.onDisconnect(willRetry);
     };
 
     // @ts-ignore
@@ -109,7 +109,7 @@ class WebSocketManager {
         data: JSON.stringify(message),
       });
     } else {
-      console.error('WebSocket is not open. Message not sent.', this.ws);
+      throw Error('Connection lost');
     }
   };
 
