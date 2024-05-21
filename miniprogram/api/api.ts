@@ -5,25 +5,26 @@ import { Resp, RespError, RespSuccess } from './resp';
 import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 
+const DEV_BASE_URL = '';
+const version = wx.getAccountInfoSync().miniProgram.envVersion;
+let openId: string | undefined;
+
 export function initNetwork() {
   // @ts-ignore
   axios.defaults.adapter = mpAdapter;
+  openId = wx.getStorageSync('open_id');
 }
 
-const version = wx.getAccountInfoSync().miniProgram.envVersion;
-
 export const Axios = axios.create({
-  baseURL: (version === 'release' || version === 'trial')
-    ? 'https://lllw.ykai.cc'
-    : 'http://192.168.2.218:8080/',
+  baseURL: (version === 'release' || version === 'trial' || !DEV_BASE_URL)
+    ? 'https://lllw.cc'
+    : DEV_BASE_URL,
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',
   },
   validateStatus: () => true,
 });
-
-let openId = wx.getStorageSync('open_id');
 
 Axios.interceptors.request.use(cfg => {
   cfg.headers['session-key'] = wx.getStorageSync('session_key');

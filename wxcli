@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+project_dir=`pwd`
+cd /Applications/wechatwebdevtools.app/Contents/MacOS
+./cli --project $project_dir $@
