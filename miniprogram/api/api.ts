@@ -13,12 +13,9 @@ export function initNetwork() {
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 
 export const Axios = axios.create({
-  // baseURL: 'https://lllw.cc',
-  // baseURL: 'http://192.168.2.218:8080/',
-  baseURL: 'http://192.168.2.218:8080/',
-  // baseURL: (version === 'release' || version === 'trial')
-  //   ? 'https://lllw.ykai.cc'
-  //   : 'http://localhost:8080/',
+  baseURL: (version === 'release' || version === 'trial')
+    ? 'https://lllw.ykai.cc'
+    : 'http://192.168.2.218:8080/',
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',
