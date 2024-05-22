@@ -5,10 +5,11 @@ import getConstants, {
   COMMODITY_STATUS_DEACTIVATED, HELP_STATUS_RUNNING
 } from "../../constants";
 import api from "../../api/api";
-import { openCommodityEdit, openProfile } from "../../utils/router";
+import { openCommodityEdit, openProfile, openVerify } from "../../utils/router";
 import { waitForAppReady } from "../../utils/globals";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { HelpAPI } from "../../api/HelpAPI";
+import { VerifyStatus } from "../../api/verify";
 
 const app = getApp()
 
@@ -329,11 +330,11 @@ Page({
     }
     console.log(resp.data);
   },
-  gotoVerify() {
+  async gotoVerify() {
     const self = this.data.selfInfo;
-    if (!self || self.authentication_status) {
+    if (!self || self.verify_status !== VerifyStatus.NotVerified) {
       return;
     }
-    openVerify();
+    await openVerify();
   },
 })

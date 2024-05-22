@@ -87,7 +87,7 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
 
     if (forceCloseEvents.includes(data.event)) {
       this.wsManager?.close();
-      this.wsManager = undefined;
+      // this.wsManager = undefined;
     }
 
     if (isEventInCallbackEvents(data.event)) {

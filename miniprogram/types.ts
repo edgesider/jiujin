@@ -1,4 +1,5 @@
 import { cloudProtocolToHttp } from './utils/other';
+import { VerifyStatus } from './api/verify';
 
 export interface User {
   _id: string;
@@ -13,7 +14,7 @@ export interface User {
   last_seen_time: number;
   create_time: number;
   update_time: number;
-  verify_status: boolean;
+  verify_status: VerifyStatus;
   verify_email?: string;
   verify_time?: number;
 }

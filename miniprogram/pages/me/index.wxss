@@ -41,14 +41,25 @@ page {
   height: 40rpx;
 }
 
-.info .men {
-  color: blue;
-  font-size: 30rpx;
+.info .verify-tag {
+  align-self: center;
+  font-size: 20rpx;
+  height: 40rpx;
+  border-radius: 20rpx;
+  box-sizing: content-box;
+  padding: 0 16rpx;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.info .women {
-  color: #ff2442;
-  font-size: 30rpx;
+.info .verify-tag.verified {
+  background: #4ea84e;
+}
+
+.info .verify-tag.not-verified {
+  background: #c05c5c;
 }
 
 .info .region {

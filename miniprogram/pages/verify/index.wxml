@@ -6,14 +6,19 @@
     <view class="title">邮箱</view>
     <input bindinput="onEmailInput" />
   </view>
+  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmEmailVerify">
+    邮箱认证
+  </button>
 
-  <view class="cu-form-group" bindtap="onGPSVerify">
-    <view class="title">GPS</view>
+  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmGPSVerify">
+    GPS 认证
+  </button>
+
+  <view class="card-image" bindtap="onUploadCardImage">
+    <image class="image" src="{{imageToUpload}}" mode="aspectFit" />
+    <text wx:if="{{!imageToUpload}}" class="upload-icon">上传</text>
   </view>
-
-  <view class="cu-form-group" bindtap="onCardPhotoVerify">
-    <view class="title">图片</view>
-  </view>
-
-  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmVerify">认证</button>
+  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmImageVerify">
+    校园卡认证
+  </button>
 </view>

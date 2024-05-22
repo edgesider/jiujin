@@ -5,7 +5,7 @@ import { Resp, RespError, RespSuccess } from './resp';
 import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 
-const DEV_BASE_URL = '';
+const DEV_BASE_URL = 'http://localhost:8080';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 let openId: string | undefined;
 
@@ -331,13 +331,6 @@ const api = {
         _id: commodity_id,
       }
     }));
-  },
-
-  async verifyByEmail(email) {
-    return wrapResp(await request({
-      path: '/user/verify',
-      data: { email, }
-    }))
   },
 }
 
