@@ -1,6 +1,6 @@
 import getConstants from '../../../../constants';
 import { Subscription } from 'rxjs';
-import { kbHeightChanged, tryJsonParse } from '../../../../utils/other';
+import { kbHeightChanged, sleep, tryJsonParse } from '../../../../utils/other';
 import { MessageItem, MessageType } from '../../../../lib/openim/index';
 import {
   checkOimResult,
@@ -132,6 +132,7 @@ Component({
       this.setData({ pullDownTriggered: true });
       this.triggerEvent('onPullDown');
       await this.fetchOlderMessages();
+      await sleep(500);
       this.setData({ pullDownTriggered: false });
     },
     onImageMessageClick(ev: TouchEvent) {

@@ -17,7 +17,7 @@ class WebSocketManager {
   private ws?: SocketTask;
   private url: string;
   private reconnectAttempts: number;
-  private shouldReconnect: boolean;
+  private connected: boolean;
   private isProcessingMessage: boolean = false;
 
   constructor(
@@ -26,11 +26,11 @@ class WebSocketManager {
     private onReconnectSuccess: () => void,
     private onDisconnect: (willRetry: boolean) => void,
     private reconnectInterval = 1000,
-    private maxReconnectAttempts = 10
+    private maxReconnectAttempts = Infinity
   ) {
     this.url = url;
     this.reconnectAttempts = 0;
-    this.shouldReconnect = false;
+    this.connected = false;
   }
 
   public connect = (): Promise<void> => {
@@ -42,21 +42,35 @@ class WebSocketManager {
             this.onReconnectSuccess();
           }
           this.reconnectAttempts = 0;
+          this.connected = true;
           resolve();
         };
-        const onWsError = (event: Event) => reject(event);
-        // @ts-ignore
-        this.ws = wx.connectSocket({
-          url: this.url,
-          complete: res => {
-          },
-        });
-        // @ts-ignore
-        this.ws.onOpen(onWsOpen);
-        // @ts-ignore
-        this.ws.onError(onWsError);
+        const onWsMessage = (event: any) => this.onBinaryMessage(event.data);
+        const onWsClose = () => {
+          this.connected = false;
+          const willRetry =
+            this.reconnectAttempts < this.maxReconnectAttempts
+          if (willRetry) {
+            if (this.isProcessingMessage) {
+              setTimeout(() => onWsClose(), 100);
+              return;
+            }
+            console.log('onReconnect');
+            setTimeout(() => this.connect(), this.reconnectInterval);
+            this.reconnectAttempts++;
+          }
+          this.onDisconnect(willRetry);
+        };
+        const onWsError = (event: Event) => {
+          console.error('onWsError', event);
+          onWsClose();
+        }
 
-        this.setupEventListeners();
+        this.ws = wx.connectSocket({ url: this.url });
+        this.ws.onOpen(onWsOpen);
+        this.ws.onMessage(onWsMessage);
+        this.ws.onClose(onWsClose);
+        this.ws.onError(onWsError);
       } else if (this.ws.readyState === WsOpenState.OPEN) {
         resolve();
       } else {
@@ -65,39 +79,12 @@ class WebSocketManager {
     });
   };
 
-  private setupEventListeners = () => {
-    if (!this.ws) return;
-
-    const onWsMessage = (event: any) =>
-      this.onBinaryMessage(event.data);
-    const onWsClose = () => {
-      const willRetry =
-        this.shouldReconnect &&
-        this.reconnectAttempts < this.maxReconnectAttempts
-      if (willRetry) {
-        if (this.isProcessingMessage) {
-          setTimeout(() => onWsClose(), 100);
-          return;
-        }
-        console.log('onReconnect');
-        setTimeout(() => this.connect(), this.reconnectInterval);
-        this.reconnectAttempts++;
-      }
-      this.onDisconnect(willRetry);
-    };
-
-    // @ts-ignore
-    this.ws.onMessage(onWsMessage);
-    // @ts-ignore
-    this.ws.onClose(onWsClose);
-  };
-
   private onBinaryMessage = async (message: string) => {
     this.isProcessingMessage = true;
     const json: WsResponse = JSON.parse(message);
     this.onMessage(json);
     if (json.event === RequestApi.Login && json.errCode === 0) {
-      this.shouldReconnect = true;
+      this.connected = true;
     }
     this.isProcessingMessage = false;
   };
@@ -114,7 +101,6 @@ class WebSocketManager {
   };
 
   public close = () => {
-    this.shouldReconnect = false;
     if (this.ws?.readyState === WsOpenState.OPEN) {
       this.ws.close({});
     }

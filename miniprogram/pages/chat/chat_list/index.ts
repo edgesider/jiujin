@@ -18,13 +18,14 @@ Page({
     refreshing: false,
     self: null as User | null,
     showNotifyTip: false,
+    scrollToTop: false,
 
     updateIndex: 0,
   },
   subscription: null as Subscription | null,
   async onLoad() {
     setTabBar(this, () => {
-      this.onRefresh();
+      this.scrollToTop();
     });
     this.setData({ self: app.globalData.self });
 
@@ -58,7 +59,7 @@ Page({
       });
     }));
 
-    await this.refresh();
+    await this.doRefresh();
 
     // const switches = await getNotifySwitches();
     // if (switches.mainSwitch) {
@@ -104,7 +105,12 @@ Page({
       }
     }
   },
-  async refresh() {
+  scrollToTop() {
+    this.setData({ scrollToTop: false, }, () => {
+      this.setData({ scrollToTop: true, });
+    });
+  },
+  async doRefresh() {
     await this.onConversationListUpdate(await getConversationList());
   },
   async onRefresh() {
@@ -113,7 +119,7 @@ Page({
     }
     this.setData({ refreshing: true });
     try {
-      await this.refresh();
+      await this.doRefresh();
     } catch (e) {
       await wx.showToast({
         title: '网络错误',

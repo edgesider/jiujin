@@ -32,8 +32,11 @@
   refresher-enabled="{{true}}"
   refresher-triggered="{{refreshing}}"
   bindrefresherrefresh="onRefresh"
+  scroll-into-view="{{scrollToTop ? 'top' : null}}"
+  scroll-with-animation
 >
-  <block wx:if="{{conversations.length > 0}}">
+  <view id="top" style="width: 100%; height: 0;"/>
+  <view wx:if="{{conversations.length > 0}}">
     <Conversation
       class="conversation"
       wx:for="{{conversations}}"
@@ -43,7 +46,7 @@
       conversationIndex="{{idx}}"
       updateIndex="{{updateIndex}}"
     />
-  </block>
+  </view>
   <image wx:else src="/images/empty.png" class="empty" mode="aspectFit" />
 </scroll-view>
 <view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />
