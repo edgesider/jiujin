@@ -79,6 +79,7 @@ Component({
 
       listenUnreadCount().subscribe(async (sumCount) => {
         if (sumCount <= 0) {
+          this.setImUnreadCount(0);
           return;
         }
         const convList = await getConversationList();
@@ -86,15 +87,18 @@ Component({
           .filter(c => !isOthersNewCreateConversation(c))
           .map(c => c.unreadCount)
           .reduce((count, curr) => count + curr, 0);
-        this.data.list.find(item => item.text === '私信').hasDot = count > 0;
-        this.setData({
-          list: [...this.data.list],
-        });
+        this.setImUnreadCount(count);
         convList.filter(isOthersNewCreateConversation).forEach(markConvMessageAsRead);
       });
     },
   },
   methods: {
+    setImUnreadCount(count) {
+      this.data.list.find(item => item.text === '私信').hasDot = count > 0;
+      this.setData({
+        list: [...this.data.list],
+      });
+    },
     async switchTab(e) {
       const { pagePath, useNavigateTo, toastText, requireRegistered } = e.currentTarget.dataset.data;
       const index = e.currentTarget.dataset.index;

@@ -96,7 +96,7 @@ class WebSocketManager {
         data: JSON.stringify(message),
       });
     } else {
-      throw Error('Connection lost');
+      console.error('Connection lost');
     }
   };
 
