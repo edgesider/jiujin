@@ -68,12 +68,12 @@ Page({
     const resp = await VerifyAPI.verifyByGPS(longitude, latitude);
     // const resp = await VerifyAPI.verifyByGPS(116.347253, 39.992043);
     if (resp.isError) {
+      toastError('位置验证失败');
+    } else {
       toastSucceed('位置验证成功', true);
       await sleep(3000);
       await wx.navigateBack();
       return;
-    } else {
-      toastError('位置验证失败');
     }
   },
 
