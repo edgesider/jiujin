@@ -1,24 +1,32 @@
 <TitleBar title="身份认证" />
 
 <view class="root">
-  <view>{{verified ? '已认证' : '未认证'}}</view>
-  <view class="cu-form-group">
-    <view class="title">邮箱</view>
-    <input bindinput="onEmailInput" />
+  <view class="card card-gps">
+    <view class="title">GPS认证</view>
+    <view class="subtitle">只要身在校园内即可快速认证</view>
+    <view class="button button-gps" bindtap="onConfirmGPSVerify">获取GPS权限认证</view>
+    <image class="icon icon-gps" src="/images/icon-gps.png" />
   </view>
-  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmEmailVerify">
-    邮箱认证
-  </button>
-
-  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmGPSVerify">
-    GPS 认证
-  </button>
-
-  <view class="card-image" bindtap="onUploadCardImage">
-    <image class="image" src="{{imageToUpload}}" mode="aspectFit" />
-    <text wx:if="{{!imageToUpload}}" class="upload-icon">上传</text>
+  <view class="card card-image">
+    <view class="title">证件认证</view>
+    <view class="subtitle">在校生可上传校园卡、学生证，校友可上传毕业证</view>
+    <view class="upload" bindtap="onUploadCardImage">
+      <image wx:if="{{!imageToUpload}}" class="icon-add" src="/images/add.png" />
+      <image wx:else class="selected-image" src="{{imageToUpload}}" mode="aspectFill" />
+    </view>
+    <view class="button button-image" bindtap="onConfirmImageVerify">上传证件认证</view>
+    <image class="icon icon-image" src="/images/icon-card.png" />
   </view>
-  <button class="cu-btn block bg-gradual-green shadow margin-tb-sm lg margin-lr" bindtap="onConfirmImageVerify">
-    校园卡认证
-  </button>
+  <view class="card card-email">
+    <view class="title">校园邮箱认证</view>
+    <view class="subtitle">用校园专属邮箱验证学生身份</view>
+    <input
+      class="email-input"
+      placeholder="输入校园邮箱后去邮箱点击验证链接"
+      placeholder-class="placeholder"
+      bindinput="onEmailInput"
+    />
+    <view class="button button-email" bindtap="onConfirmEmailVerify">发送验证链接认证</view>
+    <image class="icon icon-email" src="/images/icon-email.png" />
+  </view>
 </view>

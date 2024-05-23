@@ -176,3 +176,19 @@ export const kbHeightChanged: Observable<OnKeyboardHeightChangeCallbackResult>
 export function cloudProtocolToHttp(url: string) {
   return url.replace(/cloud:\/\/[^.]*?\.([^\/]*)(.*)/, 'https://$1.tcb.qcloud.la$2');
 }
+
+export function toastSucceed(msg: string, mask = false) {
+  wx.showToast({
+    title: msg,
+    icon: 'success',
+    mask
+  })
+}
+
+export function toastError(msg: string, mask = false) {
+  wx.showToast({
+    title: msg,
+    icon: 'error',
+    mask
+  })
+}

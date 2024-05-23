@@ -1,8 +1,15 @@
 page {
-  background: #f6f6f6;
+  background: #f8f8f8;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 .root {
+  flex-grow: 1;
+  height: 100rpx;
   width: 100%;
   padding: 30rpx;
   display: flex;
@@ -10,23 +17,96 @@ page {
   justify-content: flex-start;
   align-items: stretch;
   gap: 30rpx;
+  overflow: scroll;
 }
 
-.card-image {
+.card {
   width: 100%;
-  height: 300rpx;
+  border-radius: 32rpx;
+  padding: 24rpx 32rpx;
   position: relative;
-  background-color: #f1f1f1;
 
-  .image {
-    width: 100%;
-    height: 100%;
+  &-gps {
+    background-color: #21ac39;
   }
 
-  .upload-icon {
+  &-image {
+    background-color: #a7d000;
+  }
+
+  &-email {
+    background-color: #fac000;
+  }
+
+  .title {
+    color: #000000e5;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .subtitle {
+    margin-top: 3rpx;
+    font-size: 12px;
+    font-weight: 400;
+    color: #00000099;
+  }
+
+  .button {
+    margin-top: 20rpx;
+    font-size: 20px;
+    font-weight: 600;
+    color: #21ac39;
+    background-color: #daffe1;
+    border-radius: 16rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 16rpx;
+  }
+
+  > .icon {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    right: 32rpx;
+    top: 32rpx;
+    width: 72rpx;
+    height: 72rpx;
+  }
+
+  .upload {
+    height: 280rpx;
+    margin-top: 20rpx;
+    border-radius: 16rpx;
+    background-color: #f8f8f8;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .selected-image {
+    }
+
+    .icon-add {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 80rpx;
+      height: 80rpx;
+    }
+  }
+
+  .email-input {
+    margin-top: 20rpx;
+    background-color: #f8f8f8;
+    font-size: 24rpx;
+    padding: 20rpx;
+    box-sizing: content-box;
+    border-radius: 16rpx;
+    height: fit-content;
+
+    .placeholder {
+      color: #898a8d;
+    }
   }
 }

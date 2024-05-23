@@ -4,6 +4,7 @@ import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../const
 import { Resp, RespError, RespSuccess } from './resp';
 import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
+import { User } from '../types';
 
 const DEV_BASE_URL = 'http://localhost:8080';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
@@ -80,7 +81,7 @@ export async function request(param) {
 }
 
 const api = {
-  async getSelfInfo() {
+  async getSelfInfo(): Promise<Resp<User>> {
     if (!openId) {
       await doAuthorize();
     }
