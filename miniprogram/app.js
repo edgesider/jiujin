@@ -82,5 +82,9 @@ App({
         this._readyWaiters.push([resolve, reject]);
       }
     });
+  },
+
+  isReady() {
+    return this._ready;
   }
 })

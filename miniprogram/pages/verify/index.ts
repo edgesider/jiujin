@@ -64,16 +64,21 @@ Page({
     if (this.data.verified) {
       return;
     }
-    const { longitude, latitude } = await wx.getLocation({ type: 'wgs84' });
+    await wx.showLoading({ mask: true, title: '定位中' });
+    const { longitude, latitude } = await wx.getLocation({
+      type: 'gcj02',
+      isHighAccuracy: true,
+    });
+    console.log(`lng=${longitude}, lat=${latitude}`);
+    await wx.showLoading({ mask: true, title: '验证中' });
     const resp = await VerifyAPI.verifyByGPS(longitude, latitude);
-    // const resp = await VerifyAPI.verifyByGPS(116.347253, 39.992043);
+    await wx.hideLoading();
     if (resp.isError) {
-      toastError('位置验证失败');
+      toastError('位置验证未通过');
     } else {
       toastSucceed('位置验证成功', true);
       await sleep(3000);
       await wx.navigateBack();
-      return;
     }
   },
 

@@ -12,3 +12,7 @@ export function getGlobals() {
 export async function waitForAppReady() {
   await getApp().waitForReady();
 }
+
+export function isAppReady() {
+  return getApp().isReady();
+}

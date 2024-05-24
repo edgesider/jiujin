@@ -13,8 +13,6 @@ Page({
   data: {
     ...getConstants(),
     self: null,
-    // 可选分类
-    categories: [{ _id: 0, name: '其他' }],
     // 可选成色，1-10
     qualities: Object.values(getQualitiesMap()).sort((a, b) => b.value - a.value),
     // 编辑模式下正在编辑的商品，如果是新建则为null
@@ -42,10 +40,8 @@ Page({
 
   async onLoad(options) {
     await waitForAppReady();
-    const { self, categories } = app.globalData;
-    this.setData({
-      self, categories
-    })
+    const { self } = app.globalData;
+    this.setData({ self });
 
     const {
       isEdit = false, // 是否是编辑
@@ -72,7 +68,6 @@ Page({
         commodityImg: commodity.img_urls,
         commodityContent: commodity.content,
         commodityCurrentPriceText: (commodity.price / 100).toString(),
-        categoryIndex: this.data.categories.findIndex(c => c._id === commodity.cid),
         qualityIndex: this.data.qualities.findIndex(q => q.value === commodity.quality),
         filters: [
           { text: '全部可见', key: 'all', selected: !only_same_campus && !only_same_sex && !only_same_building },
@@ -233,9 +228,6 @@ Page({
 
     const {
       editingCommodity: editing,
-      self,
-      categories,
-      categoryIndex,
       commodityContent,
       priceFen,
       qualityIndex,
@@ -251,7 +243,6 @@ Page({
       };
     Object.assign(info, {
       // 从表单中更新
-      cid: categories[categoryIndex]?._id,
       content: commodityContent,
       price: priceFen,
       quality: qualities[qualityIndex].value,

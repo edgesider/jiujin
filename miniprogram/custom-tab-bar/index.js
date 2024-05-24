@@ -7,7 +7,7 @@ import {
   markConvMessageAsRead,
   waitForOimLogged
 } from "../utils/oim";
-import { waitForAppReady } from "../utils/globals";
+import { isAppReady, waitForAppReady } from "../utils/globals";
 
 Component({
   data: {
@@ -100,6 +100,9 @@ Component({
       });
     },
     async switchTab(e) {
+      if (!isAppReady()) {
+        return
+      }
       const { pagePath, useNavigateTo, toastText, requireRegistered } = e.currentTarget.dataset.data;
       const index = e.currentTarget.dataset.index;
       if (this.data.selected === index) {
