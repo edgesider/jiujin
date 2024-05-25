@@ -1,5 +1,6 @@
 {
   "usingComponents": {
     "TitleBar": "/components/TitleBar/index"
-  }
+  },
+  "disableScroll": true
 }

@@ -88,7 +88,7 @@ export function convertHelp(raw: any): Help {
 export interface Comment {
   id: number;
   content: string;
-  reply_to : number;
+  reply_to: number;
   sender: User;
   entity_id: string;
   create_time: number;
@@ -110,4 +110,11 @@ export function convertComment(raw: any): Comment {
     ...raw,
     entity_type: entityType
   };
+}
+
+export interface Banner {
+  _id: string;
+  url: string;
+  rid: number;
+  page_path?: string;
 }

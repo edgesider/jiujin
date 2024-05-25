@@ -5,6 +5,7 @@ import { ActivityAPI, InvitationRankItem } from '../../api/ActivityAPI';
 import { UserAPI } from '../../api/UserAPI';
 import { getOpenId } from '../../api/api';
 import { User } from '../../types';
+import { onShareInviteActivity } from '../../utils/share';
 
 const app = getApp()
 
@@ -72,5 +73,8 @@ Page({
   },
   getSubscription() {
     return this._subscription!!;
+  },
+  onShareAppMessage(options) {
+    return onShareInviteActivity(options);
   }
 })

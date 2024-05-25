@@ -236,7 +236,8 @@ Page({
 
   onShareAppMessage(options) {
     return onShareHelp(options)
-  }, onCommentLoadFinished() {
+  },
+  onCommentLoadFinished() {
     if (this.data.scrollToComment) {
       this.setData({
         scrollToView: 'comments'

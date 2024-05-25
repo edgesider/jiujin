@@ -227,11 +227,7 @@ Component({
     },
 
     async onClickShare() {
-      ensureRegistered();
-      const {} = await wx.showShareMenu({
-        withShareTicket: true,
-        menus: ['shareAppMessage', 'shareTimeline'],
-      })
+      // ignore
     },
 
     async onPrivateMessage() {

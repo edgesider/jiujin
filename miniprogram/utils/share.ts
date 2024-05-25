@@ -29,10 +29,15 @@ export interface HelpShareInfo extends BaseShareInfo {
   helpId: string;
 }
 
+export interface InviteActivityShareInfo extends BaseShareInfo {
+  type: 'invite_activity';
+}
+
 export type ShareInfo =
   | AppShareInfo
   | CommodityShareInfo
   | HelpShareInfo
+  | InviteActivityShareInfo
   ;
 
 export function buildShareParam(shareInfo: ShareInfo): string {
@@ -81,10 +86,26 @@ export async function reportShareInfo(shareInfo: ShareInfo) {
   }
 }
 
+export function onShareApp(options: IShareAppMessageOption) {
+  const shareInfo = buildShareParam({
+    type: 'app',
+    from: options.from,
+    fromUid: getOpenId(),
+    timestamp: Date.now(),
+    method: 'card',
+  });
+  const page = getCurrentPages()[0];
+  const path = `${page.route.split('?')[0]}?shareInfo=${encodeURIComponent(shareInfo)}`;
+  return {
+    title: '我发现一个有趣的小程序，快来看看吧！',
+    path,
+  };
+}
+
 export function onShareHelp(options: IShareAppMessageOption) {
   const help = options.target.dataset.help;
   if (!help) {
-    throw Error('invalid help share')
+    return onShareApp(options);
   }
   const shareInfo = buildShareParam({
     type: 'help',
@@ -100,5 +121,19 @@ export function onShareHelp(options: IShareAppMessageOption) {
       `?id=${help._id}` +
       `&shareInfo=${encodeURIComponent(shareInfo)}`,
     imageUrl: help.img_urls[0] ?? '' // TODO 无图的
-  }
+  };
+}
+
+export function onShareInviteActivity(options: IShareAppMessageOption) {
+  const shareInfo = buildShareParam({
+    type: 'invite_activity',
+    from: options.from,
+    fromUid: getOpenId(),
+    timestamp: Date.now(),
+    method: 'card',
+  });
+  return {
+    title: '邀同学分万元红包',
+    path: `/pages/invite_activity/index?shareInfo=${encodeURIComponent(shareInfo)}`,
+  };
 }

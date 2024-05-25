@@ -6,7 +6,7 @@ import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 import { User } from '../types';
 
-const DEV_BASE_URL = 'http://192.168.2.218:8080';
+const DEV_BASE_URL = 'http://192.168.1.9:8080';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 let openId: string | undefined;
 

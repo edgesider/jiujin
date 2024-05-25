@@ -2,11 +2,12 @@ import { cloudProtocolToHttp, getRegionPath, setTabBar } from '../../utils/other
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/share';
-import { Commodity, Region, User } from '../../types';
+import { Banner, Commodity, Region, User } from '../../types';
 import { waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { openInviteActivity } from '../../utils/router';
+import { Resp } from '../../api/resp';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -32,7 +33,7 @@ Page({
     isLoading: false,
     pullDownRefreshing: false,
 
-    banners: [],
+    banners: [] as Banner[],
 
     showRankingPopup: false,
     rankingPopupTop: 0,
@@ -117,8 +118,8 @@ Page({
 
   async loadBanners() {
     const rid = app.globalData.self?.rid ?? DEFAULT_REGION_ID;
-    const resp = await api.getBannerList(rid);
-    if (resp.isError) {
+    const resp: Resp<Banner[]> = await api.getBannerList(rid);
+    if (resp.isError || !resp.data) {
       console.error(resp);
       return;
     }
@@ -236,12 +237,18 @@ Page({
     });
   },
 
-  onClickBanner(ev: TouchEvent) {
-    const { url } = ev.currentTarget.dataset;
-    wx.previewImage({
-      current: url,
-      urls: this.data.banners.map((b: any) => b.url),
-    })
+  async onClickBanner(ev: TouchEvent) {
+    const banner = ev.currentTarget.dataset.banner as Banner;
+    if (banner.page_path) {
+      await wx.navigateTo({
+        url: banner.page_path,
+      });
+    } else {
+      await wx.previewImage({
+        current: banner.url,
+        urls: this.data.banners.map((b: any) => b.url),
+      })
+    }
   },
 
   onToggleRankingSwitch() {

@@ -1,6 +1,6 @@
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
 import { getRegionPath, setTabBar } from '../../utils/other';
-import { onShareHelp, parseShareInfo, reportShareInfo } from '../../utils/share';
+import { onShareApp, onShareHelp, parseShareInfo, reportShareInfo } from '../../utils/share';
 import { waitForAppReady } from '../../utils/globals';
 import { HelpAPI } from '../../api/HelpAPI';
 import { Help, Region, User } from '../../types';
@@ -192,6 +192,11 @@ Page({
   },
 
   onShareAppMessage(options) {
-    return onShareHelp(options)
+    const help = options.target?.dataset?.help;
+    if (!help) {
+      return onShareApp(options);
+    } else {
+      return onShareHelp(options)
+    }
   },
 })

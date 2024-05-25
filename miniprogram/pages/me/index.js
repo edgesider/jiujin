@@ -4,7 +4,7 @@ import getConstants, {
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED,
   HELP_STATUS_RUNNING,
-  HELP_STATUS_FINISHED
+  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED
 } from "../../constants";
 import api from "../../api/api";
 import { openCommodityEdit, openProfile, openVerify } from "../../utils/router";
@@ -67,7 +67,7 @@ Page({
       my_commodities: '我的闲置',
       my_helps: '我的互助',
       collected: '我收藏的',
-      liked: '我点咱的互助'
+      liked: '我赞过的'
     }[type];
     const tabs = {
       my_commodities: [
@@ -77,10 +77,10 @@ Page({
         { text: '买到的', key: 'bought' },
       ],
       my_helps: [
-        { text: '无悬赏', key: 'no-bounty', type: 'help' },
+        { text: '全部', key: 'all', type: 'help' },
         { text: '悬赏中', key: 'has-bounty', type: 'help' },
         { text: '已结束', key: 'finished', type: 'help' },
-        { text: '已领赏', key: 'got-bounty', type: 'help' }, // TODO
+        { text: '已领赏', key: 'got-bounty', type: 'help' },
       ],
       collected: [
         { text: '闲置', key: 'commodity' },
@@ -124,19 +124,20 @@ Page({
             } else if (type === 'my_helps') {
               listType = 'help';
               if (currTab === 'got-bounty') {
-                /// xxx
+                resp = await HelpAPI.listMine({ start, count, role: 'buyer', status: HELP_STATUS_RESOLVED });
               } else {
                 const status = {
-                  'finished': HELP_STATUS_FINISHED,
-                  'no-bounty': HELP_STATUS_RUNNING,
+                  'all': HELP_STATUS_RUNNING,
                   'has-bounty': HELP_STATUS_RUNNING,
+                  'finished': HELP_STATUS_FINISHED,
                 }[currTab];
                 if (status === undefined) {
                   throw Error('无效的状态')
                 }
                 resp = await HelpAPI.listMine({
                   start, count,
-                  status, role: 'seller'
+                  status, role: 'seller',
+                  onlyBounty: currTab === 'has-bounty'
                 });
               }
             } else if (type === 'collected') {
@@ -148,7 +149,7 @@ Page({
                 resp = await HelpAPI.listCollected({ start, count });
               }
             } else if (type === 'liked') {
-              listType = 'help'
+              listType = 'help';
               resp = await HelpAPI.listLiked({ start, count });
             }
             if (!resp || resp.isError) {

@@ -14,7 +14,7 @@
 
 <block wx:if="{{showNotVerifiedDialog}}">
   <view class="not-verified-mask" bindtap="onClickMask" />
-  <view class="not-verified">
+  <view class="not-verified" style="bottom: calc({{BottomBarHeight}}px + 20rpx)">
     <image class="icon" src="/images/error-icon.png" />
     <view class="title">您当前未认证</view>
     <view class="title">暂时不可发布内容</view>

@@ -31,7 +31,12 @@
   <view>
     <swiper autoplay circular class="top-swiper">
       <swiper-item wx:for="{{banners}}" wx:key="url">
-        <view class="banner-image" style="background-image: url('{{item.url}}')"></view>
+        <view
+          class="banner-image"
+          style="background-image: url('{{item.url}}')"
+          data-banner="{{item}}"
+          bindtap="onClickBanner"
+        />
       </swiper-item>
     </swiper>
 

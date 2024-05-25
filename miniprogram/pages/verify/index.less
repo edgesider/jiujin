@@ -11,12 +11,12 @@ page {
   flex-grow: 1;
   height: 100rpx;
   width: 100%;
-  padding: 30rpx;
+  padding: 20rpx;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  gap: 30rpx;
+  gap: 20rpx;
   overflow: scroll;
 
   .bottom {
@@ -80,16 +80,34 @@ page {
   }
 
   .upload {
-    height: 280rpx;
+    height: 50vw;
     margin-top: 20rpx;
     border-radius: 16rpx;
-    background-color: #f8f8f8;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    border: 6rpx dashed #607c00;
+
+    .placeholder-image {
+      background: white;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+
+      > image {
+        width: 100%;
+        height: 100%;
+        opacity: 0.3;
+      }
+    }
 
     .selected-image {
+      width: 100%;
+      height: 100%;
     }
 
     .icon-add {
