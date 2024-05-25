@@ -63,7 +63,7 @@ Component({
         ridToRegion: app.globalData.ridToRegion,
         statusImage: ({
           [HELP_STATUS_FINISHED]: '/images/已完成.png',
-        })[status]
+        })[status] ?? '',
       })
     },
   },

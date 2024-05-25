@@ -80,7 +80,7 @@ Component({
           [COMMODITY_STATUS_SOLD]: '/images/已成交.png',
           [COMMODITY_STATUS_SELLING]: '/images/未成交.png',
           [COMMODITY_STATUS_DEACTIVATED]: '/images/已结束.png',
-        })[status]
+        })[status] ?? '',
       })
     },
   },

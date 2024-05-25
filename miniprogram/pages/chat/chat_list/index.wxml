@@ -9,7 +9,7 @@
   <SystemConversation
     class="item"
     icon="/images/chat-comment.png"
-    name="留言"
+    name="评论"
     groupId="{{self && (self._id + '_comment')}}"
   />
   <SystemConversation

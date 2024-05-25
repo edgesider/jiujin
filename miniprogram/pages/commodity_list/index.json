@@ -2,6 +2,7 @@
   "usingComponents": {
     "TitleBar": "/components/TitleBar/index",
     "CommodityListCard": "/components/CommodityListCard/index",
+    "HelpListCard": "/components/HelpListCard/index",
     "FullPageLoading": "/components/FullPageLoading/index"
   },
   "enablePullDownRefresh": false,

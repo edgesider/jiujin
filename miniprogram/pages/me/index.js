@@ -1,8 +1,10 @@
-import { ensureRegistered, getRegionPathName, setTabBar } from "../../utils/other";
+import { ensureRegistered, getRegionPathName, setTabBar, toastError } from "../../utils/other";
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
-  COMMODITY_STATUS_DEACTIVATED, HELP_STATUS_RUNNING
+  COMMODITY_STATUS_DEACTIVATED,
+  HELP_STATUS_RUNNING,
+  HELP_STATUS_FINISHED
 } from "../../constants";
 import api from "../../api/api";
 import { openCommodityEdit, openProfile, openVerify } from "../../utils/router";
@@ -61,38 +63,102 @@ Page({
   gotoList(ev) {
     ensureRegistered();
     const { type } = ev.currentTarget.dataset;
+    const title = {
+      my_commodities: '我的闲置',
+      my_helps: '我的互助',
+      collected: '我收藏的',
+      liked: '我点咱的互助'
+    }[type];
+    const tabs = {
+      my_commodities: [
+        { text: '在售', key: 'selling' },
+        { text: '已下架', key: 'deactivated' },
+        { text: '已售出', key: 'sold' },
+        { text: '买到的', key: 'bought' },
+      ],
+      my_helps: [
+        { text: '无悬赏', key: 'no-bounty', type: 'help' },
+        { text: '悬赏中', key: 'has-bounty', type: 'help' },
+        { text: '已结束', key: 'finished', type: 'help' },
+        { text: '已领赏', key: 'got-bounty', type: 'help' }, // TODO
+      ],
+      collected: [
+        { text: '闲置', key: 'commodity' },
+        { text: '互助', key: 'help', type: 'help' },
+      ],
+      liked: []
+    }[type];
     wx.navigateTo({
       url: `../commodity_list/index?type=${type}`,
       success: res => {
         res.eventChannel.emit('onParams', {
-          title: ({
-            selling: '我发布的闲置',
-            bought: '我买到的',
-            sold: '我卖出的',
-            deactivated: '我下架的',
-            collected: '我收藏的闲置',
-          })[type],
-          fetcher: async ({ start, count }) => {
+          title,
+          tabs,
+          fetcher: async ({ start, count, currTab }) => {
             let resp;
-            if (type === 'collected') {
-              resp = await CommodityAPI.listCollected({ start, count });
-            } else {
-              const status = ({
-                selling: COMMODITY_STATUS_SELLING,
-                sold: COMMODITY_STATUS_SOLD,
-                deactivated: COMMODITY_STATUS_DEACTIVATED,
-              })[type];
-              resp = await CommodityAPI.listMine({
-                status,
-                role: type === 'bought' ? 'buyer' : 'seller',
-                start, count,
-              });
+            let listType;
+            console.log('fetch_list', type, currTab);
+            if (type === 'my_commodities') {
+              listType = 'commodity';
+              if (currTab === 'bought') {
+                resp = await CommodityAPI.listMine({
+                  start, count,
+                  status: COMMODITY_STATUS_SOLD,
+                  role: 'buyer'
+                });
+              } else {
+                const status = {
+                  selling: COMMODITY_STATUS_SELLING,
+                  deactivated: COMMODITY_STATUS_DEACTIVATED,
+                  sold: COMMODITY_STATUS_SOLD,
+                }[currTab];
+                if (status === undefined) {
+                  throw Error('无效的状态')
+                }
+                resp = await CommodityAPI.listMine({
+                  start, count,
+                  status,
+                  role: 'seller'
+                });
+              }
+            } else if (type === 'my_helps') {
+              listType = 'help';
+              if (currTab === 'got-bounty') {
+                /// xxx
+              } else {
+                const status = {
+                  'finished': HELP_STATUS_FINISHED,
+                  'no-bounty': HELP_STATUS_RUNNING,
+                  'has-bounty': HELP_STATUS_RUNNING,
+                }[currTab];
+                if (status === undefined) {
+                  throw Error('无效的状态')
+                }
+                resp = await HelpAPI.listMine({
+                  start, count,
+                  status, role: 'seller'
+                });
+              }
+            } else if (type === 'collected') {
+              if (currTab === 'commodity') {
+                listType = 'commodity';
+                resp = await CommodityAPI.listCollected({ start, count });
+              } else if (currTab === 'help') {
+                listType = 'help';
+                resp = await HelpAPI.listCollected({ start, count });
+              }
+            } else if (type === 'liked') {
+              listType = 'help'
+              resp = await HelpAPI.listLiked({ start, count });
             }
-            if (resp.isError) {
-              console.error(resp);
+            if (!resp || resp.isError) {
+              console.error('response', resp);
               return null;
             }
-            return resp.data;
+            return {
+              list: resp.data,
+              listType,
+            };
           },
 
           onClick: async ({ type, commodity }) => {

@@ -26,7 +26,7 @@ Component({
     idToComment: {},
     keyboardHeight: 0,
     commenting: false,
-    // 正在回复的消息，一级留言时为空
+    // 正在回复的消息，一级评论时为空
     commentingTo: null,
     commentingText: '',
   },
@@ -145,7 +145,7 @@ Component({
         await wx.setClipboardData({ data: comment.content })
       } else if (action === 'delete') {
         const { confirm } = await wx.showModal({
-          content: '确认删除此条留言',
+          content: '确认删除此条评论',
         });
         if (!confirm) {
           return;

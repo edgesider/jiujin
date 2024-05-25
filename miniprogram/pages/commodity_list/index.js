@@ -1,5 +1,6 @@
 import getConstants from "../../constants";
 import { CommodityAPI } from "../../api/CommodityAPI";
+import { sleep } from "../../utils/other";
 
 const app = getApp();
 const COUNT_PER_PAGE = 12
@@ -10,14 +11,15 @@ Page({
     pullDownRefreshing: false,
     isLoading: true,
     cursor: 0,
-    commodityList: [],
+    itemList: [],
+    listType: 'commodity',
 
     title: '',
     currTab: '',
     tabs: [],
   },
-  fetcher: async () => ({}),
-  onClick: () => {},
+  fetcher: async () => {},
+  onClick: async () => {},
   fetchToken: 0,
   async onLoad() {
     this.getOpenerEventChannel().on(
@@ -41,48 +43,54 @@ Page({
     const token = ++this.fetchToken;
     this.setData({ isLoading: true, });
     if (clear) {
-      this.setData({ commodityList: [], cursor: 0 });
+      this.setData({ itemList: [], cursor: 0 });
     }
     const res = await this.fetcher({
       start: this.data.cursor,
       count: COUNT_PER_PAGE,
       currTab: this.data.currTab,
-    })
+    });
     if (token !== this.fetchToken) {
       return;
     }
-    if (!res || res instanceof Error || !Array.isArray(res)) {
+    const { list, listType } = res ?? {};
+    if (!res || res instanceof Error || !Array.isArray(list) || ['commodity', 'help'].indexOf(listType) === -1) {
+      console.error(res);
       await wx.showToast({
         title: '网络错误',
         icon: 'error',
         mask: true,
         isLoading: false,
       })
+      this.setData({
+        isLoading: false,
+      })
       return;
     }
     this.setData({
-      commodityList: this.data.commodityList.concat(res),
-      cursor: this.data.cursor + res.length,
+      itemList: this.data.itemList.concat(list),
+      listType,
+      cursor: this.data.cursor + list.length,
       isLoading: false,
     })
   },
 
   async fetchSingle(idx) {
-    const commodity = this.data.commodityList[idx];
+    const commodity = this.data.itemList[idx];
     const resp = await CommodityAPI.getOne(commodity._id);
     if (resp.isError) {
       return;
     }
-    this.data.commodityList[idx] = resp.data;
+    this.data.itemList[idx] = resp.data;
     this.setData({
-      commodityList: this.data.commodityList
+      itemList: this.data.itemList
     });
   },
 
   async reload() {
     this.setData({
       cursor: 0,
-      commodityList: [],
+      itemList: [],
     });
     await this.fetch();
   },
@@ -90,6 +98,7 @@ Page({
   async onRefresherRefresh() {
     this.setData({ pullDownRefreshing: true, })
     await this.fetch(true);
+    await sleep(500);
     this.setData({ pullDownRefreshing: false, })
   },
 
@@ -122,7 +131,7 @@ Page({
   },
   async processClick(type, ev) {
     const { currentTarget: { dataset: { idx } } } = ev;
-    const commodity = this.data.commodityList[idx];
+    const commodity = this.data.itemList[idx];
     const {
       action,
       currTab
@@ -140,7 +149,7 @@ Page({
     } else if (action === 'fetchAll') {
       await this.reload();
     } else if (action === 'close') {
-      wx.navigateBack();
+      await wx.navigateBack();
     }
   },
 

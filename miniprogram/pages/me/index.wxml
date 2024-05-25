@@ -28,54 +28,25 @@
 </view>
 <scroll-view>
   <view class="List">
-    <view class="list" bindtap="gotoList" data-type="selling">
-      <view class="list_title">我发布的闲置</view>
+    <view class="list" bindtap="gotoList" data-type="my_commodities">
+      <view class="list_title">我的闲置</view>
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
-    <view class="list" bindtap="gotoHelpList" data-type="selling">
-      <view class="list_title">我发布的互助</view>
-      <image class="right" src="/images/right.png"></image>
-    </view>
-  </view>
-
-  <view class="List">
-    <!-- 商品相关-->
-    <view class="list" bindtap="gotoList" data-type="bought">
-      <view class="list_title">我买到的</view>
-      <image class="right" src="/images/right.png"></image>
-    </view>
-    <view class="divider" />
-    <view class="list" bindtap="gotoList" data-type="sold">
-      <view class="list_title">我卖出的</view>
-      <image class="right" src="/images/right.png"></image>
-    </view>
-    <view class="divider" />
-    <view class="list" bindtap="gotoList" data-type="deactivated">
-      <view class="list_title">我下架的</view>
+    <view class="list" bindtap="gotoList" data-type="my_helps">
+      <view class="list_title">我的互助</view>
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
     <view class="list" bindtap="gotoList" data-type="collected">
-      <view class="list_title">我收藏的闲置</view>
-      <image class="right" src="/images/right.png"></image>
-    </view>
-
-
-    <!--求助相关-->
-    <view class="divider" />
-    <view class="list" bindtap="gotoHelpList" data-type="collected">
-      <view class="list_title">我收藏的互助</view>
+      <view class="list_title">我收藏的</view>
       <image class="right" src="/images/right.png"></image>
     </view>
     <view class="divider" />
-    <view class="list" bindtap="gotoHelpList" data-type="liked">
-      <view class="list_title">我点赞的互助
-      </view>
+    <view class="list" bindtap="gotoList" data-type="liked">
+      <view class="list_title">我点赞的互助</view>
       <image class="right" src="/images/right.png"></image>
     </view>
-
-
   </view>
 
   <view class="List">

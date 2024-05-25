@@ -25,30 +25,48 @@
     bindscrolltolower="onReachBottom"
   >
     <view class="list">
-      <CommodityListCard
-        wx:for="{{commodityList}}"
-        wx:for-item="commodity"
-        wx:for-index="idx"
-        wx:key="_id"
-        class="card"
-        commodity="{{commodity}}"
-        bind:onClickCard="onClickCard"
-        bind:onPolish="onPolish"
-        bind:onDeactivate="onDeactivate"
-        bind:onActivate="onActivate"
-        bind:onEdit="onEdit"
-        bind:onDelete="onDelete"
-        bind:onRepublish="onRepublish"
-        data-idx="{{idx}}"
-      />
+      <block wx:if="{{listType === 'commodity'}}">
+        <CommodityListCard
+          wx:for="{{itemList}}"
+          wx:for-item="item"
+          wx:for-index="idx"
+          wx:key="_id"
+          class="card"
+          commodity="{{item}}"
+          data-idx="{{idx}}"
+          bind:onClickCard="onClickCard"
+          bind:onPolish="onPolish"
+          bind:onDeactivate="onDeactivate"
+          bind:onActivate="onActivate"
+          bind:onEdit="onEdit"
+          bind:onDelete="onDelete"
+          bind:onRepublish="onRepublish"
+        />
+      </block>
+      <block wx:else="{{listType === 'help'}}">
+        <HelpListCard
+          wx:for="{{itemList}}"
+          wx:for-item="item"
+          wx:for-index="idx"
+          wx:key="_id"
+          class="card"
+          help="{{item}}"
+          data-idx="{{idx}}"
+          bind:onClickCard="onClickCard"
+          bind:onPolish="onPolish"
+          bind:onDeactivate="onDeactivate"
+          bind:onEdit="onEdit"
+          bind:onDelete="onDelete"
+        />
+      </block>
     </view>
 
     <block wx:if="{{isLoading}}">
-      <FullPageLoading wx:if="{{commodityList.length === 0}}" class="full-loading" />
+      <FullPageLoading wx:if="{{itemList.length === 0}}" class="full-loading" />
       <view wx:else class="cu-load loading"></view>
     </block>
     <image
-      wx:elif="{{commodityList.length === 0}}"
+      wx:elif="{{itemList.length === 0}}"
       class="empty"
       src="/images/empty.png"
       mode="aspectFit"
