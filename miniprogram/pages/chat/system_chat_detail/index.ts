@@ -24,6 +24,10 @@ interface BaseNotifyPayload {
   operator?: User;
 }
 
+interface SimpleNotifyPayload extends BaseNotifyPayload {
+  type: undefined;
+}
+
 interface CommodityNotifyPayload extends BaseNotifyPayload {
   commodity: Commodity;
   commodityDesc: string;
@@ -60,6 +64,7 @@ type NotifyPayload =
   | HelpCommentNotifyPayload
   | HelpStarNotifyPayload
   | HelpLikeNotifyPayload
+  | SimpleNotifyPayload
   ;
 type NotifyMsg = NotifyPayload & {
   rawId: string;
@@ -140,7 +145,8 @@ Page({
         return;
       }
       const payload: NotifyPayload | null = tryJsonParse(rawMsg.textElem.content);
-      if (!payload || !payload.type) {
+      if (!payload) {
+        console.log('invalid notify message', rawMsg);
         return;
       }
       if (payload.type === 'comment' || payload.type === 'collect') {
@@ -149,6 +155,8 @@ Page({
       } else if (payload.type === 'help_like' || payload.type === 'help_collect' || payload.type === 'help_comment') {
         payload.help = convertHelp(payload.help);
         payload.helpDesc = getContentDesc(payload.help.content);
+      } else if (!payload.type) {
+        // simple msg
       }
       const time = rawMsg.sendTime;
       return {

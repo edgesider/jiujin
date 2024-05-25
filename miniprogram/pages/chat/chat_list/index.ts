@@ -8,6 +8,7 @@ import {
   isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
 } from '../../../utils/oim';
 import { ConversationItem } from '../../../lib/openim/index';
+import { getOpenId } from '../../../api/api';
 
 const app = getApp();
 
@@ -15,6 +16,7 @@ Page({
   data: {
     ...getConstants(),
     conversations: [] as ConversationItem[],
+    systemConv: null as ConversationItem | null,
     refreshing: false,
     self: null as User | null,
     showNotifyTip: false,
@@ -85,8 +87,10 @@ Page({
         && !isOthersNewCreateConversation(conv)
       )
       .sort(this.sorter);
+    const systemConv = convList.find(conv => conv.groupID && conv.groupID === `${getOpenId()}_system`);
     this.setData({
       conversations: list,
+      systemConv,
       updateIndex: this.data.updateIndex + 1, // 触发已有子组件的更新
     });
 

@@ -1,5 +1,17 @@
-<view class="conversation" bindtap="gotoDetail">
+<view wx:if="{{style === 'icon'}}" class="conversation icon-style" bindtap="gotoDetail">
   <image class="icon" src="{{icon}}" />
   <text class="text">{{name}}</text>
   <view class="dot" wx:if="{{conversation.unreadCount > 0}}" />
+</view>
+<view wx:elif="{{style === 'list'}}" class="conversation list-style" bindtap="gotoDetail">
+  <image class="avatar" src="{{icon}}" mode="aspectFill" />
+  <view class="dot" wx:if="{{conversation.unreadCount > 0}}" />
+  <view class="info">
+    <view class="line1">
+      <view class="name">{{conversation.showName}}</view>
+      <view class="time">{{lastTime}}</view>
+    </view>
+    <view class="line2" wx:if="{{lastMessageText}}">{{lastMessageText}}</view>
+  </view>
+<!--  <image wx:if="{{conversation.faceURL}}" class="image" src="{{conversation.faceURL}}" mode="aspectFill" />-->
 </view>

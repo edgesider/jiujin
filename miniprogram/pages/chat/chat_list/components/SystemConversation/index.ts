@@ -19,6 +19,10 @@ Component({
     name: {
       type: String,
     },
+    style: {
+      type: String,
+      value: 'icon' // icon | list
+    }
   },
   data: {
     usingGroupId: null as string | null,

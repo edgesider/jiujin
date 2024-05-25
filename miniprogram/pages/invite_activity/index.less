@@ -8,6 +8,8 @@ page {
 }
 
 .root {
+  --red: #ef2d23;
+
   height: 100rpx;
   flex-grow: 1;
   display: flex;
@@ -66,6 +68,7 @@ page {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    gap: 10rpx;
 
     > .text {
       width: 100%;
@@ -80,7 +83,7 @@ page {
 
     &.left-align {
       > .text {
-        text-align: left;
+        text-align: justify;
       }
     }
   }
@@ -106,9 +109,13 @@ page {
   gap: 20rpx;
 
   > .title {
-    font-size: 40rpx;
+    font-size: 56rpx;
     font-weight: 600;
-    color: var(--brand-green);
+    color: white;
+    align-self: stretch;
+    background-color: var(--red);
+    border-radius: 16rpx;
+    padding: 10rpx 0;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -123,39 +130,43 @@ page {
 
       .number {
         margin-left: 6rpx;
-        font-size: 48rpx;
-        color: var(--brand-yellow);
+        font-size: 54rpx;
+        color: white;
         width: 1em;
         border-radius: 8rpx;
         padding: 4rpx 0;
-        box-shadow: 0 0 2px 0 #00000040 inset;
+        box-shadow: 1px 1px 1px 0 #886800 inset;
         display: flex;
         justify-content: center;
         align-items: center;
         position: relative;
-        background: linear-gradient(180deg, #ffffff 50%, #999999 50.74%, #ffffff 51.47%);
+        background: linear-gradient(180deg, #FAC000 50%, #403100 50.74%, #FAC000 51.47%);
       }
     }
   }
 
   > .task {
     align-self: stretch;
-    background-color: #e1f0e4;
+    background-color: var(--red);
     border-radius: 16rpx;
     padding: 20rpx;
 
     > .title {
-      color: #3c3c3c;
+      color: white;
       font-size: 28rpx;
       font-weight: 500;
 
       .percent {
-        color: var(--brand-green);
+        background: #fac000;
+        padding: 8rpx 16rpx;
+        border-radius: 16rpx;
+        font-weight: 600;
+        box-shadow: 1px 1px 1px 0px #8C6C01 inset;
       }
     }
 
     .progress-bar {
-      margin-top: 10rpx;
+      margin-top: 18rpx;
       height: 14rpx;
       border-radius: 7rpx;
       background-color: white;
@@ -189,6 +200,7 @@ page {
     align-self: center;
     font-size: 40rpx;
     font-weight: 600;
+    color: #fac000;
   }
 }
 
@@ -201,8 +213,9 @@ page {
 
   > .title {
     align-self: center;
-    font-size: 40rpx;
-    font-weight: 600;
+    font-size: 28rpx;
+    font-weight: 500;
+    color: #fac000;
   }
 
   .bottom {

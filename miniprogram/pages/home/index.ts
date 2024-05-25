@@ -82,7 +82,7 @@ Page({
     }
   },
   async onClickLogo() {
-    await openInviteActivity();
+    // await openInviteActivity();
   },
 
   async onShow() {

@@ -25,9 +25,6 @@ Component({
       // 不支持更新
       // observer(newVal, oldVal)
     },
-    conversationIndex: {
-      type: Number
-    },
     updateIndex: {
       type: Number,
       observer(newVal, oldVal) {

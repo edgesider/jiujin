@@ -7,6 +7,26 @@
     mode="aspectFit"
   />
 
+  <view class="card progress">
+    <view class="title">
+      北航用户数
+      <view class="numbers">
+        <view class="number" wx:for="{{userCountNumbers}}" wx:key="*this">{{item}}</view>
+      </view>
+    </view>
+    <view class="task">
+      <view class="title">第{{kiloRound}}轮1000元现金抽奖进度 <text class="percent">{{kiloPercentStr}}%</text>
+      </view>
+      <view class="progress-bar" style="--progress: {{kiloPercent}};" />
+    </view>
+    <view class="task">
+      <view class="title">邀请排行榜结算进度 <text class="percent">{{sumPercentStr}}%</text>
+      </view>
+      <view class="progress-bar" style="--progress: {{sumPercent}};" />
+    </view>
+    <view class="bottom">*数据实时更新</view>
+  </view>
+
   <view class="card rule-card">
     <view class="title">-- 10000元现金红包 --</view>
     <view class="texts">
@@ -14,7 +34,7 @@
         用户数每满一千人时
       </view>
       <view class="text">
-        抽取10位新用户及其邀请人(共20人)
+        抽取10位新用户<text class="highlight">及其邀请人</text>
       </view>
       <view class="text">
         平分1000元现金红包
@@ -53,42 +73,28 @@
     <view class="title title-grey">-- 活动规则 --</view>
     <view class="texts left-align">
       <view class="text">
-        1.邀请者和被邀请者需为北航在校师生或校友；
+        1.邀请者和被邀请者需为北航<text class="highlight">在校师生或校友</text>；
       </view>
       <view class="text">
-        2.分享小程序任意页面（首页、闲置物品详情页、互助页、互助详情页）给好友、微信群或朋友圈，好友通过你的分享首次进入小程序，待其注册并发布任意内容后即视为你邀请成功；
+        2.分享小程序任意页面（首页、闲置物品详情页、互助页、互助详情页、本页面）给好友、微信群或朋友圈，好友通过你的分享首次进入小程序，待其注册并<text class="highlight">发布任意内容后</text>即视为你邀请成功；
       </view>
       <view class="text">
-        3.抽奖规则：以第1000位完成注册后最近一次福彩3D开奖数字为抽奖依据，注册编号后两位数字与开奖结果一致的十位新用户即为中奖用户；
+        3.抽奖规则：以第1000位用户完成注册后最近一次福彩3D开奖数字为抽奖依据，注册编号后两位数字与开奖后两位一致的10位新用户<text class="highlight">及其邀请人</text>皆为中奖用户；
       </view>
       <view class="text">
-        4.开奖前未发布任何内容的视为无效中奖，奖金由其他中奖用户平分；
+        4.若多位中奖新用户邀请人为同一人，则该邀请人可相应获得多份奖金；
+      </view>
+      <view class="text">
+        5.开奖前<text class="highlight">未发布任何内容的</text>视为无效中奖，其奖金由其他中奖用户平分；
+      </view>
+      <view class="text">
+        6.以任何非正当手段虚假邀请注册视为无效，取消中奖资格。
       </view>
     </view>
-  </view>
-
-  <view class="card progress">
-    <view class="title">
-      北航用户数
-      <view class="numbers">
-        <view class="number" wx:for="{{userCountNumbers}}" wx:key="*this">{{item}}</view>
-      </view>
-    </view>
-    <view class="task">
-      <view class="title">第{{kiloRound}}轮1000元现金抽奖进度：<text class="percent">{{kiloPercentStr}}%</text>
-      </view>
-      <view class="progress-bar" style="--progress: {{kiloPercent}};" />
-    </view>
-    <view class="task">
-      <view class="title">邀请排行榜结算进度：<text class="percent">{{sumPercentStr}}%</text>
-      </view>
-      <view class="progress-bar" style="--progress: {{sumPercent}};" />
-    </view>
-    <view class="bottom">*数据实时更新</view>
   </view>
 
   <view class="card rank">
-    <view class="title text-green">一万用户阶段邀请排行榜</view>
+    <view class="title">一万用户阶段邀请排行榜</view>
     <view class="users">
       <view
         wx:for="{{ranks}}"
@@ -111,7 +117,7 @@
   </view>
 
   <view class="my-invitation card bg-white">
-    <view class="title text-green">我的邀请记录</view>
+    <view class="title">我的邀请记录</view>
     <view class="users">
       <view
         wx:for="{{myInvitation}}"

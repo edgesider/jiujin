@@ -396,23 +396,3 @@ export async function markConvMessageAsRead(conv: string | ConversationItem) {
 export function listenUnreadCount(): Subject<number> {
   return totalUnreadCountSubject;
 }
-
-export interface CustomImageMsgData {
-  type: 'image';
-  url: string;
-  width: number;
-  height: number;
-}
-
-export type CustomMsgData =
-  | CustomImageMsgData
-// ...
-  ;
-
-export async function createCustomMsg(data: CustomImageMsgData) {
-  return checkOimResult(await oim.createCustomMessage({
-    data: JSON.stringify(data),
-    description: data.type,
-    extension: '',
-  }));
-}
