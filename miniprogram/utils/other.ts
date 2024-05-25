@@ -1,6 +1,7 @@
 import { Region, User } from '../types';
 import { openLogin, openVerify } from './router';
 import { Observable, Subject } from 'rxjs';
+import { VerifyStatus } from '../api/verify';
 
 type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
 
@@ -88,9 +89,8 @@ export function ensureRegistered(): User {
 
 export function ensureVerified() {
   const self = ensureRegistered();
-  if (!self.verify_status) {
-    openVerify().then();
-    throw Error('not registered');
+  if (self.verify_status === VerifyStatus.NotVerified) {
+    throw Error('not verified');
   }
   return self;
 }

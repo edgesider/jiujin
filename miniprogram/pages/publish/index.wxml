@@ -11,3 +11,17 @@
     <image src="/images/publish_help.png" class="icon" />
   </view>
 </view>
+
+<block wx:if="{{showNotVerifiedDialog}}">
+  <view class="not-verified-mask" bindtap="onClickMask" />
+  <view class="not-verified">
+    <image class="icon" src="/images/error-icon.png" />
+    <view class="title">您当前未认证</view>
+    <view class="title">暂时不可发布内容</view>
+    <view class="subtitle">为保证校园信息环境真实纯净，请认证后再发布内容吧</view>
+    <view class="button" bindtap="onClickVerify">
+      <image class="icon" src="/images/verify-icon.png" />
+      <view class="text">去认证</view>
+    </view>
+  </view>
+</block>
