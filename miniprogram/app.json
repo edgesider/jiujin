@@ -59,7 +59,7 @@
   ],
   "permission": {
     "scope.userLocation": {
-      "desc": "您的位置信息将用来XXXX"
+      "desc": "您的位置信息将用来进行账号认证"
     }
   }
 }
