@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import mpAdapter from 'axios-miniprogram-adapter';
 import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../constants';
 import { Resp, RespError, RespSuccess } from './resp';
@@ -6,7 +6,7 @@ import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 import { User } from '../types';
 
-const DEV_BASE_URL = 'http://localhost:8080';
+const DEV_BASE_URL = 'http://192.168.2.218:8080';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 let openId: string | undefined;
 
@@ -63,9 +63,9 @@ export function getOpenId() {
   return openId!;
 }
 
-export function wrapResp<T = any>(resp): Resp<T> {
+export function wrapResp<T = any>(resp: AxiosResponse): Resp<T> {
   if (resp.status !== 200 || !resp.data?.succeed) {
-    const errMsg = resp.data.errMsg || `${resp.status} ${resp.statusText}`;
+    const errMsg = resp.data?.errMsg || `${resp.status} ${resp.statusText}`;
     return new RespError(errMsg, resp.data?.errCode ?? -1);
   }
   return new RespSuccess(resp.data?.data);

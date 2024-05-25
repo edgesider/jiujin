@@ -1,12 +1,12 @@
 import { cloudProtocolToHttp, getRegionPath, setTabBar } from '../../utils/other';
-import getConstants, { COMMODITY_STATUS_SELLING, DEFAULT_REGION_ID } from '../../constants';
+import getConstants, { DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/share';
 import { Commodity, Region, User } from '../../types';
 import { waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
-import { openVerify } from '../../utils/router';
+import { openInviteActivity } from '../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -81,7 +81,7 @@ Page({
     }
   },
   async onClickLogo() {
-    await openVerify();
+    await openInviteActivity();
   },
 
   async onShow() {

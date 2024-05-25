@@ -63,13 +63,13 @@ export async function openVerify() {
 export async function openCommodityEdit(commodity: Commodity, waitFinished = false) {
   if (!waitFinished) {
     await wx.navigateTo({
-      url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
+      url: `/pages/commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
     });
     return;
   } else {
     return new Promise<void>(res => {
       wx.navigateTo({
-        url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
+        url: `/pages/commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
         events: {
           afterEdited: res
         },
@@ -95,17 +95,24 @@ export async function openHelpDetail(options: HelpDetailOptions) {
 export async function openHelpEdit(help: Help, waitFinished = false) {
   if (!waitFinished) {
     await wx.navigateTo({
-      url: `../help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
+      url: `/pages/help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
     });
     return;
   } else {
     return new Promise<void>(res => {
       wx.navigateTo({
-        url: `../help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
+        url: `/pages/help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
         events: {
           afterEdited: res
         },
       });
     });
   }
+}
+
+
+export async function openInviteActivity() {
+  await wx.navigateTo({
+    url: '/pages/invite_activity/index'
+  });
 }

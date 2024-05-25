@@ -70,10 +70,39 @@ page {
   --brand-green: #21ac39;
   --brand-yellow: #fac000;
   --brand-yellowgreen: #a7d000;
+  --brand-grey: #979797;
 	background-color: var(--ghostWhite);
 	font-size: 28rpx;
 	color: var(--black);
 	font-family: Helvetica Neue, Helvetica, sans-serif;
+}
+
+.text-green {
+  color: var(--brand-green);
+}
+
+.text-yellow {
+  color: var(--brand-yellow);
+}
+
+.text-grey {
+  color: var(--brand-grey);
+}
+
+.bg-green {
+  background-color: var(--brand-green);
+}
+
+.bg-yellow {
+  background-color: var(--brand-yellow);
+}
+
+.bg-grey {
+  background-color: var(--brand-grey);
+}
+
+.bg-white {
+  background-color: white;
 }
 
 view,

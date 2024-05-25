@@ -18,7 +18,8 @@
     "pages/help_publish/index",
     "pages/help_detail/index",
     "pages/help_list/index",
-    "pages/verify/index"
+    "pages/verify/index",
+    "pages/invite_activity/index"
   ],
   "window": {
     "backgroundColor": "#f1f1f1",

@@ -1,0 +1,250 @@
+page {
+  background: linear-gradient(180deg, #ff4d4d 0%, #fac000 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100%;
+}
+
+.root {
+  height: 100rpx;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 20rpx 20rpx 200rpx;
+  gap: 20rpx;
+  overflow: scroll;
+
+  > .title {
+    width: 100%;
+    height: 180rpx;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+
+  > .card {
+    flex-shrink: 0;
+    flex-grow: 0;
+    width: 100%;
+    background-color: white;
+    border-radius: 16rpx;
+    padding: 20rpx;
+  }
+}
+
+.rules {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 20rpx;
+
+  .rule-card {
+    border-radius: 16rpx;
+    padding: 20rpx;
+    background-color: #fff4c8;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    > .title {
+      text-align: center;
+      font-size: 20px;
+      color: #ff4d4d;
+      padding: 10rpx 20rpx;
+      background-color: white;
+      border-radius: 16rpx;
+    }
+
+    > .texts {
+      margin-top: 10rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+
+      > .text {
+        width: 100%;
+        word-wrap: anywhere;
+        text-align: center;
+        font-size: 24rpx;
+        font-weight: 300;
+
+        .highlight {
+          color: #ff0000;
+        }
+      }
+    }
+  }
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20rpx;
+
+  > .title {
+    font-size: 40rpx;
+    font-weight: 600;
+    color: var(--brand-green);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .numbers {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 6rpx;
+
+      .number {
+        margin-left: 6rpx;
+        font-size: 48rpx;
+        color: var(--brand-yellow);
+        width: 1em;
+        border-radius: 8rpx;
+        padding: 4rpx 0;
+        box-shadow: 0 0 2px 0 #00000040 inset;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        background: linear-gradient(180deg, #ffffff 50%, #999999 50.74%, #ffffff 51.47%);
+      }
+    }
+  }
+
+  > .task {
+    align-self: stretch;
+    background-color: #e1f0e4;
+    border-radius: 16rpx;
+    padding: 20rpx;
+
+    > .title {
+      color: #3c3c3c;
+      font-size: 28rpx;
+      font-weight: 500;
+
+      .percent {
+        color: var(--brand-green);
+      }
+    }
+
+    .progress-bar {
+      margin-top: 10rpx;
+      height: 14rpx;
+      border-radius: 7rpx;
+      background-color: white;
+      position: relative;
+
+      &::after {
+        content: ' ';
+        display: block;
+        width: calc(var(--progress) * 100%);
+        height: 100%;
+        background-color: var(--brand-yellow);
+        border-radius: inherit;
+      }
+    }
+  }
+
+  .bottom {
+    color: var(--brand-grey);
+    font-size: 20rpx;
+  }
+}
+
+.rank {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 20rpx;
+
+  > .title {
+    align-self: center;
+    font-size: 40rpx;
+    font-weight: 600;
+  }
+}
+
+.my-invitation {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 20rpx;
+
+  > .title {
+    align-self: center;
+    font-size: 40rpx;
+    font-weight: 600;
+  }
+
+  .bottom {
+    font-size: 24rpx;
+    font-weight: 500;
+    text-align: center;
+  }
+}
+
+.users {
+  background-color: #fff4c8;
+  border: 1px solid #0000001a;
+  border-radius: 16rpx;
+  overflow: scroll;
+  max-height: 800rpx;
+
+  .user {
+    width: 100%;
+    height: 64rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10rpx;
+    gap: 10rpx;
+
+    .index {
+      width: 72rpx;
+      height: 44rpx;
+      border-radius: 40rpx;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32rpx;
+      font-weight: 600;
+    }
+
+    .avatar {
+      height: 40rpx;
+      width: 40rpx;
+      border-radius: 20rpx;
+    }
+
+    .username {
+      color: #454545;
+      font-size: 24rpx;
+      font-weight: 500;
+    }
+
+    .spacer {
+      flex-grow: 100;
+    }
+
+    .info {
+      font-size: 24rpx;
+      line-height: 40rpx;
+      font-weight: 600;
+    }
+  }
+}

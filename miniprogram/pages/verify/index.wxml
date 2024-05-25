@@ -29,4 +29,5 @@
     <view class="button button-email" bindtap="onConfirmEmailVerify">发送验证链接认证</view>
     <image class="icon icon-email" src="/images/icon-email.png" />
   </view>
+  <view class="bottom">*任选其一认证即可</view>
 </view>

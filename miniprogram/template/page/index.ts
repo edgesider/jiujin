@@ -1,5 +1,6 @@
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
+import { waitForAppReady } from '../../utils/globals';
 
 const app = getApp()
 
@@ -8,8 +9,8 @@ Page({
     ...getConstants(),
   },
   _subscription: null as Subscription | null,
-  onLoad() {
-    waitForAppReady();
+  async onLoad() {
+    await waitForAppReady();
     this._subscription = new Subscription();
   },
   onUnload() {

@@ -1,0 +1,116 @@
+<TitleBar title="邀请好友" />
+
+<view class="root">
+  <image class="title" src="./res/title.png" mode="aspectFit" />
+
+  <view class="card rules">
+    <view class="rule-card">
+      <view class="title">-- 10000元现金红包 --</view>
+      <view class="texts">
+        <view class="text">
+          用户数每满一千
+        </view>
+        <view class="text">
+          抽取5位新用户及其邀请人(共10人)
+        </view>
+        <view class="text">
+          平分1000元现金红包
+        </view>
+        <view class="text">
+          若有多位中奖新用户为同一邀请人所邀请
+        </view>
+        <view class="text">
+          则该邀请人可兼得多份红包
+        </view>
+        <view class="text">
+          发奖10次共计10000元
+        </view>
+      </view>
+    </view>
+    <view class="rule-card">
+      <view class="title">-- 邀请排行榜 --</view>
+      <view class="texts">
+        <view class="text">
+          用户数满一万
+        </view>
+        <view class="text">
+          邀请排行榜前100名用户获得不同倍数现金奖励
+        </view>
+        <view class="text">
+          前10位奖励各自邀请人数<text class="highlight">10倍</text>的现金红包
+        </view>
+        <view class="text">
+          第11-50位获得各自邀请人数<text class="highlight">5倍</text>的现金红包
+        </view>
+        <view class="text">
+          第51-100位获得各自邀请人数<text class="highlight">2倍</text>的现金红包
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card progress">
+    <view class="title">
+      北航用户数
+      <view class="numbers">
+        <view class="number" wx:for="{{userCountNumbers}}" wx:key="*this">{{item}}</view>
+      </view>
+    </view>
+    <view class="task">
+      <view class="title">第{{kiloRound}}轮1000元现金抽奖进度：<text class="percent">{{kiloPercentStr}}%</text>
+      </view>
+      <view class="progress-bar" style="--progress: {{kiloPercent}};" />
+    </view>
+    <view class="task">
+      <view class="title">邀请排行榜结算进度：<text class="percent">{{sumPercentStr}}%</text>
+      </view>
+      <view class="progress-bar" style="--progress: {{sumPercent}};" />
+    </view>
+    <view class="bottom">*数据实时更新</view>
+  </view>
+
+  <view class="card rank">
+    <view class="title text-green">一万用户阶段邀请排行榜</view>
+    <view class="users">
+      <view
+        wx:for="{{ranks}}"
+        wx:key="_id"
+        class="user"
+      >
+        <view class="index {{index + 1 > 50 ? 'text-grey' : (index + 1 > 10 ? 'text-green' : 'text-yellow')}}">
+          {{index + 1}}
+        </view>
+        <image class="avatar" src="{{item.avatar_url || DEFAULT_AVATAR}}" />
+        <view class="username">{{item.name}}</view>
+        <view class="spacer" />
+        <view class="info">
+          <text class="text-green">{{item.invite_count}}人</text>
+          <text class="text-grey"> / </text>
+          <text class="text-yellow">{{item.invite_count * (index + 1 <= 10 ? 10 : (index + 1 <= 50 ? 5 : 2))}}元</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="my-invitation card bg-white">
+    <view class="title text-green">我的邀请记录</view>
+    <view class="users">
+      <view
+        wx:for="{{myInvitation}}"
+        wx:key="_id"
+        class="user bg-white"
+      >
+        <image class="avatar" src="{{item.avatar_url || DEFAULT_AVATAR}}" />
+        <view class="username">{{item.name}}</view>
+        <view class="spacer" />
+        <view class="info">
+          <text class="text-green">已注册</text>
+          <text class="text-grey"> / </text>
+          <text wx:if="{{item.total_release > 0}}" class="text-green">已发布</text>
+          <text wx:else class="text-yellow">未发布</text>
+        </view>
+      </view>
+    </view>
+    <view class="bottom text-green">*已成功邀请{{myInvitation.length}}人</view>
+  </view>
+</view>
