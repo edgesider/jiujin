@@ -61,10 +61,10 @@
         <view class="button" bindtap="onClickShare">
           <image class="icon" src="/images/share.png" />
           <text class="text">分享</text>
-          <button
-            open-type="share" plain="true"
-            style="border: none; background-color: transparent; position: absolute"
-          />
+<!--          <button-->
+<!--            open-type="share" plain="true"-->
+<!--            style="border: none; background-color: transparent; position: absolute"-->
+<!--          />-->
         </view>
         <view wx:if="{{!isMine}}" class="button" bindtap="onClickReport">
           <image class="icon" src="/images/report.png" />

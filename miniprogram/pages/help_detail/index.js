@@ -8,6 +8,7 @@ import { openConversationDetail, openHelpEdit, openProfile } from "../../utils/r
 import { setNeedRefresh } from "../home/index";
 import { startHelpTransaction } from "../../utils/transaction";
 import { HelpAPI } from "../../api/HelpAPI";
+import { reportHelp } from "../../utils/report";
 
 const app = getApp();
 
@@ -201,10 +202,8 @@ Page({
     }
   },
 
-
-  onClickReport() {
-    ensureRegistered();
-    // TODO
+  async onClickReport() {
+    await reportHelp(this.data.help._id);
   },
 
   async onClickShare() {

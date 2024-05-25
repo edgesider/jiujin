@@ -7,6 +7,7 @@ import { openConversationDetail, openProfile } from '../../utils/router';
 import { Help, Region, User } from '../../types';
 import { startHelpTransaction } from '../../utils/transaction';
 import { HelpAPI } from '../../api/HelpAPI';
+import { reportHelp } from '../../utils/report';
 
 type BaseEvent = WechatMiniprogram.BaseEvent;
 const app = getApp();
@@ -200,30 +201,7 @@ Component({
     },
 
     async onClickReport() {
-      ensureRegistered();
-      // TODO
-      const that = this;
-      wx.showActionSheet({
-        itemList: that.data.reportReasons,
-        async success(res) {
-          const selectedReason = that.data.reportReasons[res.tapIndex];
-          const helpResp = await api.reportHelp({ id: that.data.help._id, report: selectedReason });
-          if (helpResp.isError) {
-            await wx.showToast({
-              icon: 'error',
-              title: '网络错误'
-            });
-            return;
-          } else {
-            wx.showToast({
-              title: '举报成功',
-              icon: 'success',
-              duration: 2000,
-            });
-            // TODO 移除
-          }
-        },
-      });
+      await reportHelp(this.data.help._id);
     },
 
     async onClickShare() {

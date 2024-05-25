@@ -9,6 +9,7 @@ import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/sh
 import { waitForAppReady } from "../../utils/globals";
 import { startTransaction } from "../../utils/transaction";
 import { CommodityAPI } from "../../api/CommodityAPI";
+import { reportCommodity } from "../../utils/report";
 
 const app = getApp();
 
@@ -204,9 +205,8 @@ Page({
     }
   },
 
-  onClickReport() {
-    ensureRegistered();
-    // TODO
+  async onClickReport() {
+    await reportCommodity(this.data.commodity._id);
   },
 
   async onClickShare() {
