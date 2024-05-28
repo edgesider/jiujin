@@ -166,7 +166,7 @@ export async function drawHelpShareImage(help: Help): Promise<string> {
   // ctx.fillRect(0, textCenter - 92 / 2, bountyWidth, 92);
 
   if (help.bounty > 0) {
-    let pos = 4;
+    let pos = 16;
     ctx.fillStyle = '#fac000';
     ctx.font = 'bold 76px sans-serif';
     ctx.fillText('悬赏', pos, textCenter + 76 / 2);
