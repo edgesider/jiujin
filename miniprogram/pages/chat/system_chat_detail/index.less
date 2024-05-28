@@ -112,26 +112,33 @@ page {
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  background: rgba(1, 1, 1, .1);
   border-radius: 8rpx;
   margin: 20rpx;
-  padding: 20rpx;
-
-  .title {
-    font-size: 32rpx;
-    color: rgba(0, 0, 0, 1);
-  }
-
-  .content {
-    margin-top: 10rpx;
-    color: rgba(0, 0, 0, 0.7);
-  }
 
   .time {
     margin-top: 10rpx;
     color: #979797;
     font-size: 20rpx;
-    width: fit-content;
+    text-align: center;
     flex-shrink: 0;
+  }
+
+  > .card {
+    margin-top: 20rpx;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+
+    > .title {
+      background: #fac000;
+      padding: 16rpx 20rpx;
+      font-size: 32rpx;
+      color: white;
+    }
+
+    .content {
+      background: white;
+      padding: 20rpx;
+      color: #5d5d5d;
+    }
   }
 }

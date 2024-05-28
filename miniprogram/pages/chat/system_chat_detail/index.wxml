@@ -18,9 +18,11 @@
     </view>
     <block wx:elif="{{msg.type === 'simple'}}">
       <view class="simple-msg">
-        <view class="title">{{msg.title}}</view>
-        <view class="content">{{msg.text}}</view>
         <view class="time">{{msg.timeStr}}</view>
+        <view class="card">
+          <view class="title">{{msg.title}}</view>
+          <view class="content">{{msg.text}}</view>
+        </view>
       </view>
     </block>
     <block wx:else>

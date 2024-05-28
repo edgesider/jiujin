@@ -19,47 +19,47 @@ type CustomEvent = WechatMiniprogram.CustomEvent;
 
 const COUNT_PER_PAGE = 20;
 
-interface BaseNotifyPayload {
+export interface BaseNotifyPayload {
   text: string;
   operator?: User;
 }
 
-interface SimpleNotifyPayload extends BaseNotifyPayload {
+export interface SimpleNotifyPayload extends BaseNotifyPayload {
   type: 'simple';
   title: string;
 }
 
-interface CommodityNotifyPayload extends BaseNotifyPayload {
+export interface CommodityNotifyPayload extends BaseNotifyPayload {
   commodity: Commodity;
   commodityDesc: string;
 }
 
-interface CommodityCommentNotifyPayload extends CommodityNotifyPayload {
+export interface CommodityCommentNotifyPayload extends CommodityNotifyPayload {
   type: 'comment';
 }
 
-interface CommodityStarNotifyPayload extends CommodityNotifyPayload {
+export interface CommodityStarNotifyPayload extends CommodityNotifyPayload {
   type: 'collect';
 }
 
-interface HelpNotifyPayload extends BaseNotifyPayload {
+export interface HelpNotifyPayload extends BaseNotifyPayload {
   help: Help;
   helpDesc: string;
 }
 
-interface HelpCommentNotifyPayload extends HelpNotifyPayload {
+export interface HelpCommentNotifyPayload extends HelpNotifyPayload {
   type: 'help_comment';
 }
 
-interface HelpStarNotifyPayload extends HelpNotifyPayload {
+export interface HelpStarNotifyPayload extends HelpNotifyPayload {
   type: 'help_collect';
 }
 
-interface HelpLikeNotifyPayload extends HelpNotifyPayload {
+export interface HelpLikeNotifyPayload extends HelpNotifyPayload {
   type: 'help_like';
 }
 
-type NotifyPayload =
+export type NotifyPayload =
   | CommodityCommentNotifyPayload
   | CommodityStarNotifyPayload
   | HelpCommentNotifyPayload
@@ -67,7 +67,8 @@ type NotifyPayload =
   | HelpLikeNotifyPayload
   | SimpleNotifyPayload
   ;
-type NotifyMsg = NotifyPayload & {
+
+export type NotifyMsg = NotifyPayload & {
   rawId: string;
   time: number;
   timeStr: string;
