@@ -10,7 +10,7 @@
     wx:for="{{messages}}"
     wx:for-item="msg"
     wx:for-index="idx"
-    wx:key="rawId"
+    wx:key="rawClientId"
     bindtap="gotoDetail"
     data-msg="{{msg}}"
   >

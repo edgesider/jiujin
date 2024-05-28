@@ -7,9 +7,7 @@ import { Subscription } from 'rxjs';
 import { DATETIME_FORMAT } from '../../../../../utils/time';
 import { NotifyType, requestNotifySubscribe } from '../../../../../utils/notify';
 import {
-  CommodityGroupAttributes,
   getCommodityGroupAttributes,
-  getConversationById,
   getGroup,
   getHelpGroupAttributes,
   isOthersNewCreateConversation,
@@ -28,7 +26,9 @@ Component({
     updateIndex: {
       type: Number,
       observer(newVal, oldVal) {
-        this.update();
+        if (this.data.canView) {
+          this.updateOtherInfo();
+        }
       }
     },
   },
@@ -44,23 +44,24 @@ Component({
   },
   lifetimes: {
     async attached() {
+      const { conversation } = this.properties;
       // @ts-ignore
       this.subscription =
-        listenConversation(this.properties.conversation.conversationID).subscribe(conv => {
-          this.onConversationUpdate(conv, false);
+        listenConversation(conversation.conversationID).subscribe(conv => {
+          this.onConversationUpdate(conv);
         });
-      this.onConversationUpdate(this.properties.conversation, false).then();
-      this.createIntersectionObserver({
-        thresholds: [0.5]
-      }).relativeToViewport().observe('#root', res => {
-        const canView = res.intersectionRatio > 0.5;
-        if (canView !== this.data.canView) {
-          this.setData({ canView });
-          if (canView) {
-            this.update().then()
+      this.onConversationUpdate(conversation).then();
+      this.createIntersectionObserver({ thresholds: [0.5] })
+        .relativeToViewport()
+        .observe('#root', res => {
+          const canView = res.intersectionRatio > 0.5;
+          if (canView !== this.data.canView) {
+            this.setData({ canView });
+            if (canView && !this.data.peerUser) {
+              this.updateOtherInfo().then()
+            }
           }
-        }
-      })
+        })
     },
     detached() {
       // @ts-ignore
@@ -69,17 +70,7 @@ Component({
     }
   },
   methods: {
-    async update() {
-      if (!this.data.canView) {
-        return;
-      }
-      const conversation = await getConversationById(this.properties.conversation.conversationID);
-      if (!conversation) {
-        return;
-      }
-      await this.onConversationUpdate(conversation, true);
-    },
-    async onConversationUpdate(conversation: ConversationItem, updateOtherInfo: boolean) {
+    async onConversationUpdate(conversation: ConversationItem) {
       if (isOthersNewCreateConversation(conversation)) {
         return;
       }
@@ -98,30 +89,30 @@ Component({
         lastMessageText,
         lastTime: moment(lastMessage.sendTime).format(DATETIME_FORMAT),
       });
+    },
+    async updateOtherInfo() {
+      const { conversation } = this.data;
+      const group = await getGroup(conversation.groupID);
+      if (!group) {
+        throw Error(`failed to get group: groupId=${conversation.groupID}`)
+      }
+      const attrs = (await getCommodityGroupAttributes(group)) || (await getHelpGroupAttributes(group));
+      if (!attrs) {
+        console.error(`not commodity/help conversation ${group.groupID} ${group.ownerUserID}`);
+        return;
+      }
+      if (attrs.desc) {
+        this.setData({ desc: attrs.desc });
+      }
 
-      if (updateOtherInfo) {
-        const group = await getGroup(conversation.groupID);
-        if (!group) {
-          throw Error(`failed to get group: groupId=${conversation.groupID}`)
-        }
-        const attrs = (await getCommodityGroupAttributes(group)) || (await getHelpGroupAttributes(group));
-        if (!attrs) {
-          console.error(`not commodity/help conversation ${group.groupID} ${group.ownerUserID}`);
-          return;
-        }
-        if (attrs.desc) {
-          this.setData({ desc: attrs.desc });
-        }
-
-        const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;
-        const peerUser: Resp<User> = await api.getUserInfo(peerUid);
-        if (peerUser.isError) {
-          console.error(`failed to get user info for ${peerUid}`);
-        } else {
-          this.setData({
-            peerUser: peerUser.data
-          })
-        }
+      const peerUid = attrs.sellerId === getOpenId() ? attrs.buyerId : attrs.sellerId;
+      const peerUser: Resp<User> = await api.getUserInfo(peerUid);
+      if (peerUser.isError) {
+        console.error(`failed to get user info for ${peerUid}`);
+      } else {
+        this.setData({
+          peerUser: peerUser.data
+        })
       }
     },
     async gotoDetail() {

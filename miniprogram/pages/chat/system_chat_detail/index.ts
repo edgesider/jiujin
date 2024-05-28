@@ -6,8 +6,8 @@ import { openCommodityDetail, openHelpDetail } from '../../../utils/router';
 import { Subscription } from 'rxjs';
 import { DATETIME_FORMAT } from '../../../utils/time';
 import {
+  checkOimResult,
   getConversationById,
-  getMessageList,
   listenConversation,
   listenMessage,
   markConvMessageAsRead
@@ -69,7 +69,7 @@ export type NotifyPayload =
   ;
 
 export type NotifyMsg = NotifyPayload & {
-  rawId: string;
+  rawClientId: string;
   time: number;
   timeStr: string;
   seq: number;
@@ -82,7 +82,7 @@ Page({
     state: 'loading' as 'loading' | 'empty' | 'error',
     conversation: null as ConversationItem | null,
     messages: [] as NotifyMsg[], // 消息列表，新消息在前
-    nextMsgId: 0,
+    lastMinSeq: 0,
     isCompleted: false,
   },
   subscription: null as Subscription | null,
@@ -138,7 +138,6 @@ Page({
       } else if (mode === 'older') {
         messages.push(...msgList);
       }
-      console.log(messages);
       this.setData({ messages });
     }
   },
@@ -163,7 +162,7 @@ Page({
       }
       const time = rawMsg.sendTime;
       return {
-        rawId: rawMsg.serverMsgID,
+        rawClientId: rawMsg.clientMsgID,
         time,
         timeStr: moment(time).format(DATETIME_FORMAT),
         seq: rawMsg.seq,
@@ -175,14 +174,20 @@ Page({
     }
   },
   async fetchMoreMessages() {
-    const { conversation, nextMsgId, isCompleted } = this.data;
+    const { messages, conversation, lastMinSeq, isCompleted } = this.data;
     if (!conversation || isCompleted) {
       return;
     }
-    const newList = await getMessageList(conversation);
+    const lastMsgId = messages.length === 0 ? '' : messages[messages.length - 1].rawClientId;
+    const newList = checkOimResult(await oim.getAdvancedHistoryMessageList({
+      conversationID: conversation.conversationID,
+      count: COUNT_PER_PAGE,
+      startClientMsgID: lastMsgId,
+      lastMinSeq,
+    }));
     this.setData({
       isCompleted: newList.isEnd,
-      nextMsgId: newList.lastMinSeq,
+      lastMinSeq: newList.lastMinSeq,
     })
     this.onMessageUpdate(newList.messageList.reverse(), 'older');
   },

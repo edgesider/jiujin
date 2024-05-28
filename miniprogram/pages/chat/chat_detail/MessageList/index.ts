@@ -32,7 +32,6 @@ Component({
     ...getConstants(),
     selfImId: null as string | null,
     messageList: [] as MessageItem[], // 消息列表，旧消息在前
-    nextMsgId: null as string | null,
     lastMinSeq: 0,
     isCompleted: false,
     scrollIntoView: null as string | null,
