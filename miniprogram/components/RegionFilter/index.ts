@@ -20,7 +20,11 @@ Component({
     selected: {
       type: Number,
       value: 0
-    }
+    },
+    regions: {
+      type: Array,
+      value: [],
+    },
   },
   data: {
     ...getConstants(),
@@ -31,13 +35,11 @@ Component({
     async attached() {
       // @ts-ignore
       this._subscription = new Subscription();
-      await waitForAppReady();
-      const { self } = getGlobals();
-      const path = getRegionPath(self?.rid ?? DEFAULT_REGION_ID);
-      path.reverse();
-      this.setData({
-        regions: path
-      });
+      // await waitForAppReady();
+      // const { self } = getGlobals();
+      // const path = getRegionPath(self?.rid ?? DEFAULT_REGION_ID);
+      // path.reverse();
+      // this.setData({ regions: path });
     },
     detached() {
       this.getSubscription().unsubscribe();

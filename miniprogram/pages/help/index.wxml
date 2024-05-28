@@ -12,7 +12,12 @@
 >
   <view>
     <view class="filters">
-      <RegionFilter class="region-filter" selected="{{selectedRegionIndex}}" bind:regionClick="onRegionClick" />
+      <RegionFilter
+        class="region-filter"
+        selected="{{selectedRegionIndex}}"
+        regions="{{regions}}"
+        bind:regionClick="onRegionClick"
+      />
       <view class="switch {{onlyBounty ? 'on' : 'off'}}" bind:tap="toggleOnlyBounty">仅看悬赏</view>
     </view>
 
