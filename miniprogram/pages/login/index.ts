@@ -5,6 +5,7 @@ import { sleep } from '../../utils/other';
 import Identicon from '../../utils/randomAvatar';
 import { getLastEnterByShareInfo } from '../../utils/share';
 import { decode } from 'base64-arraybuffer';
+import { openWebView } from '../../utils/router';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -31,11 +32,12 @@ Page({
     console.log('login')
   },
 
-  onClickProtocol() {
-    console.log('click protocol');
-    wx.showToast({
-      title: 'click protocol'
-    });
+  onClickServiceProtocol() {
+    openWebView('https://static.lllw.cc/service_protocol.html');
+  },
+
+  onClickPrivacyPolicy() {
+    openWebView('https://static.lllw.cc/privacy_policy.html');
   },
 
   async onGetPhone(ev: CustomEvent) {

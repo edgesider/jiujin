@@ -6,9 +6,7 @@ import { Banner, Commodity, Region, User } from '../../types';
 import { getGlobals, waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
-import { openAboutPage, openInviteActivity } from '../../utils/router';
 import { Resp } from '../../api/resp';
-import { drawCommodityShareImage, saveBase64ToFile } from '../../utils/canvas';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -83,7 +81,6 @@ Page({
     }
   },
   async onClickLogo() {
-    await openAboutPage('about_us');
   },
 
   async onShow() {

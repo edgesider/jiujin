@@ -35,10 +35,10 @@ Page({
     toastSucceed('微信号已复制');
   },
   onClickPrivacyPolicy() {
-    openWebView('https://baidu.com?q=123');
+    openWebView('https://static.lllw.cc/privacy_policy.html');
   },
   onClickServiceProtocol() {
-    openWebView('https://baidu.com?q=456');
+    openWebView('https://static.lllw.cc/service_protocol.html');
   },
   onUnload() {
     this._subscription?.unsubscribe();
