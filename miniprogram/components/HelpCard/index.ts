@@ -2,7 +2,7 @@ import getConstants from '../../constants';
 import api from '../../api/api';
 import moment from 'moment';
 import { DATETIME_FORMAT } from '../../utils/time';
-import { ensureRegistered, getRegionPathName, sleep } from '../../utils/other';
+import { ensureRegistered, getRegionPathName, sleep, toastError, toastSucceed } from '../../utils/other';
 import { openConversationDetail, openProfile } from '../../utils/router';
 import { Help, Region, User } from '../../types';
 import { startHelpTransaction } from '../../utils/transaction';
@@ -132,21 +132,20 @@ Component({
       try {
         if (help.is_collected) {
           const resp = await HelpAPI.uncollect(help._id);
+          resp.isError ? toastError('取消收藏失败') : toastSucceed('已收藏');
           if (resp.isError) {
-            await wx.showToast({
-              title: '取消收藏失败',
-              icon: 'error',
-            });
+            toastError('取消收藏失败');
             return;
+          } else {
+            toastSucceed('已取消收藏');
           }
         } else {
           const resp = await HelpAPI.collect(help._id);
           if (resp.isError) {
-            await wx.showToast({
-              title: '收藏失败',
-              icon: 'error',
-            });
+            toastError('收藏失败');
             return;
+          } else {
+            toastSucceed('已收藏')
           }
         }
         const newHelp = { ...help };
@@ -173,20 +172,18 @@ Component({
         if (help.is_liked) {
           const resp = await HelpAPI.unlike(help._id);
           if (resp.isError) {
-            await wx.showToast({
-              title: '取消点赞失败',
-              icon: 'error',
-            });
+            toastError('取消点赞失败');
             return;
+          } else {
+            toastSucceed('已取消点赞');
           }
         } else {
           const resp = await HelpAPI.like(help._id);
           if (resp.isError) {
-            await wx.showToast({
-              title: '点赞失败',
-              icon: 'error',
-            });
+            toastError('点赞失败');
             return;
+          } else {
+            toastSucceed('已点赞');
           }
         }
         const newHelp = { ...help };

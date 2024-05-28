@@ -1,7 +1,7 @@
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
-import { ensureRegistered, getRegionPathName, sleep } from "../../utils/other";
+import { ensureRegistered, getRegionPathName, sleep, toastError, toastSucceed } from "../../utils/other";
 import moment from "moment";
 import { openCommodityEdit, openConversationDetail, openProfile } from "../../utils/router";
 import { DATETIME_FORMAT } from "../../utils/time";
@@ -179,20 +179,18 @@ Page({
       if (this.data.commodity.is_collected) {
         const resp = await CommodityAPI.uncollect(this.data.commodity._id);
         if (resp.isError) {
-          await wx.showToast({
-            title: '取消收藏失败',
-            icon: 'error',
-          });
+          toastError('取消收藏失败');
           return;
+        } else {
+          toastSucceed('已取消收藏');
         }
       } else {
         const resp = await CommodityAPI.collect(this.data.commodity._id);
         if (resp.isError) {
-          await wx.showToast({
-            title: '收藏失败',
-            icon: 'error',
-          });
+          toastError('收藏失败');
           return;
+        } else {
+          toastSucceed('已收藏');
         }
       }
       this.setData({
