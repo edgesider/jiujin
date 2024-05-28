@@ -1,0 +1,47 @@
+page {
+  background: #f8f8f8;
+}
+
+.root {
+  margin: 20rpx;
+  padding: 0 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  border-radius: 16rpx;
+  background: #fff;
+  overflow: hidden;
+
+  .item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28rpx 0;
+    border-top: 2rpx solid #f1f1f1;
+
+    &:nth-of-type(1) {
+      border-top: none;
+    }
+
+    .name {
+      font-size: 32rpx;
+      font-weight: 500;
+      color: #454545;
+    }
+
+    .value {
+      color: #979797;
+      font-weight: 500;
+      font-size: 24rpx;
+    }
+
+    .arrow {
+      width: 24rpx;
+      height: 24rpx;
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<TitleBar title="{{type === 'contract_us' ? '联系我们' : '关于我们'}}" />
+
+<view class="root">
+  <block wx:if="{{type === 'contract_us'}}">
+    <view class="item" bindlongpress="onCopyEmail">
+      <view class="name">邮箱</view>
+      <view class="value">{{email}}</view>
+    </view>
+    <view class="item" bindlongpress="onCopyWeChat">
+      <view class="name">微信</view>
+      <view class="value">{{wechat}}</view>
+    </view>
+  </block>
+  <block wx:elif="{{type === 'about_us'}}">
+    <view class="item" bindtap="onClickServiceProtocol">
+      <view class="name">服务协议</view>
+      <image class="arrow" src="/images/right.png" />
+    </view>
+    <view class="item" bindtap="onClickPrivacyPolicy">
+      <view class="name">隐私政策</view>
+      <image class="arrow" src="/images/right.png" />
+    </view>
+  </block>
+</view>

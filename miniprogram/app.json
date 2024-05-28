@@ -19,7 +19,9 @@
     "pages/help_detail/index",
     "pages/help_list/index",
     "pages/verify/index",
-    "pages/invite_activity/index"
+    "pages/invite_activity/index",
+    "pages/about/index",
+    "pages/webview/index"
   ],
   "window": {
     "backgroundColor": "#f1f1f1",
@@ -27,7 +29,8 @@
     "navigationStyle": "custom",
     "enablePullDownRefresh": false,
     "onReachBottomDistance": 200,
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#ffffff"
   },
   "usingComponents": {
     "TitleBar": "/components/TitleBar/index",
@@ -59,7 +62,7 @@
   ],
   "permission": {
     "scope.userLocation": {
-      "desc": "您的位置信息将用来进行账号认证"
+      "desc": "您的位置信息将用来进行校园身份认证"
     }
   }
 }

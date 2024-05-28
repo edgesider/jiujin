@@ -1,5 +1,6 @@
 import { Commodity, Help, User } from '../types';
 import { ConversationItem } from '../lib/openim/index';
+import { AboutType } from '../pages/about';
 
 export async function openProfile(user: string | User) {
   if (typeof user === 'object') {
@@ -110,9 +111,20 @@ export async function openHelpEdit(help: Help, waitFinished = false) {
   }
 }
 
-
 export async function openInviteActivity() {
   await wx.navigateTo({
     url: '/pages/invite_activity/index'
+  });
+}
+
+export async function openAboutPage(type: AboutType) {
+  await wx.navigateTo({
+    url: `/pages/about/index?type=${type}`,
+  });
+}
+
+export async function openWebView(src: string) {
+  await wx.navigateTo({
+    url: `/pages/webview/index?src=${src}`,
   });
 }

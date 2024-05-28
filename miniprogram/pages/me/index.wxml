@@ -50,7 +50,7 @@
   </view>
 
   <view class="List">
-    <view class="list">
+    <view class="list" bindtap="onClickContractUs">
       <view class="list_title">联系我们</view>
       <image class="right" src="/images/right.png"></image>
     </view>
@@ -61,7 +61,7 @@
       <button open-type="feedback" class="feedback-btn" />
     </view>
     <view class="divider" />
-    <view class="list">
+    <view class="list" bindtap="onClickAboutUs">
       <view class="list_title">关于我们</view>
       <image class="right" src="/images/right.png"></image>
     </view>
