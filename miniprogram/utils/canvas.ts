@@ -4,6 +4,10 @@ import { generateUUID, getRegionPath, getRegionPathName } from './other';
 type OffscreenCanvas = WechatMiniprogram.OffscreenCanvas;
 type CanvasContext = WechatMiniprogram.CanvasContext;
 
+const REGION_ICON = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/region.png?sign=cf7bf85968fa8ea87c072475eee3be64';
+const HELP_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_bounty.png?sign=cf7bf85968fa8ea87c072475eee3be64';
+const HELP_NO_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_no_bounty.png?sign=cf7bf85968fa8ea87c072475eee3be64';
+
 const fs = wx.getFileSystemManager();
 const shareImageDir = `${wx.env.USER_DATA_PATH}/share_images/`;
 
@@ -124,12 +128,16 @@ export async function drawHelpShareImage(help: Help): Promise<string> {
   const textCenter = imgHeight + textHeight / 2 - 10;
 
   console.log('draw image')
-  if (help.img_urls.length > 0) {
-    await drawImage(cvs, ctx, randomizeUrl(help.img_urls[0]), 0, 0, 1000, imgHeight);
-  }
+  const img = help.img_urls.length > 0
+    ? help.img_urls[0]
+    : (help.bounty > 0
+        ? HELP_BOUNTY_IMAGE
+        : HELP_NO_BOUNTY_IMAGE
+    );
+  await drawImage(cvs, ctx, randomizeUrl(img), 0, 0, 1000, imgHeight);
 
   // ctx.fillStyle = 'white';
-  let pos = 4;
+  // let pos = 4;
   // ctx.font = 'bold 86px sans-serif';
   // ctx.fillText('悬赏', pos, textCenter + 86 / 2);
   // pos += ctx.measureText('悬赏').width;
@@ -157,20 +165,21 @@ export async function drawHelpShareImage(help: Help): Promise<string> {
   // // ctx.arcTo()
   // ctx.fillRect(0, textCenter - 92 / 2, bountyWidth, 92);
 
-  ctx.fillStyle = '#fac000';
-  pos = 4;
-  ctx.font = 'bold 76px sans-serif';
-  ctx.fillText('悬赏', pos, textCenter + 76 / 2);
-  pos += ctx.measureText('悬赏').width;
+  if (help.bounty > 0) {
+    let pos = 4;
+    ctx.fillStyle = '#fac000';
+    ctx.font = 'bold 76px sans-serif';
+    ctx.fillText('悬赏', pos, textCenter + 76 / 2);
+    pos += ctx.measureText('悬赏').width;
 
-  ctx.font = 'bold 44px sans-serif';
-  ctx.fillText('￥', pos, textCenter + 76 / 2);
-  pos += ctx.measureText('￥').width;
+    ctx.font = 'bold 44px sans-serif';
+    ctx.fillText('￥', pos, textCenter + 76 / 2);
+    pos += ctx.measureText('￥').width;
 
-  ctx.font = 'bold 76px sans-serif';
-  const bountyText = `${help.bounty / 100}`
-  ctx.fillText(bountyText, pos, textCenter + 76 / 2);
-  pos += ctx.measureText(bountyText).width;
+    ctx.font = 'bold 76px sans-serif';
+    const bountyText = `${help.bounty / 100}`
+    ctx.fillText(bountyText, pos, textCenter + 76 / 2);
+  }
 
   const regionPath = getRegionPathName(help.rid, 2);
   ctx.font = 'bold 50px sans-serif';
@@ -181,7 +190,7 @@ export async function drawHelpShareImage(help: Help): Promise<string> {
   console.log('draw icon')
   await drawImage(
     cvs, ctx,
-    randomizeUrl('https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/region.png?sign=8605eea8e23bb96276b89910f3e11927'),
+    randomizeUrl(REGION_ICON),
     1000 - width - 12 - 60, textCenter - 44 / 2,
     60, 60
   );

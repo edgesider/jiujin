@@ -71,8 +71,10 @@
 
 .body .content .images-single .image {
   height: 100%;
-  background-position: left;
-  background-size: contain;
+  max-width: 50vw;
+
+  background-position: center;
+  background-size: cover;
   background-repeat: no-repeat;
 }
 

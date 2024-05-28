@@ -105,7 +105,7 @@ Page({
     this.uploading = true;
     try {
       await wx.showLoading({ title: '请稍后', mask: true });
-      const imageResp = await api.uploadImage(imageToUpload, `${self._id}_verify_${Date.now()}`);
+      const imageResp = await api.uploadImage(imageToUpload, `verify/${self._id}_${Date.now()}`);
       if (imageResp.isError || !imageResp.data) {
         toastError('照片上传失败');
         return;
@@ -116,11 +116,12 @@ Page({
         toastError('服务器打瞌睡了，请稍后重试');
         return;
       }
-      toastError('正在审核中，请耐心等待');
-      await sleep(3000);
     } finally {
       this.uploading = false;
       await wx.hideLoading();
     }
+    toastSucceed('正在审核中，请耐心等待');
+    await sleep(3000);
+    await wx.navigateBack();
   },
 })
