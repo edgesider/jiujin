@@ -3,11 +3,12 @@ import getConstants, { DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/share';
 import { Banner, Commodity, Region, User } from '../../types';
-import { waitForAppReady } from '../../utils/globals';
+import { getGlobals, waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { openInviteActivity } from '../../utils/router';
 import { Resp } from '../../api/resp';
+import { drawCommodityShareImage, saveBase64ToFile } from '../../utils/canvas';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -90,7 +91,7 @@ Page({
       needRefresh = false;
       await this.fetchList();
     }
-    if (this.initialized && this.data.self?.rid !== app.globalData.self?.rid) {
+    if (this.initialized && this.data.self?.rid !== getGlobals().self?.rid) {
       this.updateRegions();
       await Promise.all([this.fetchList(), this.loadBanners()]);
     }
@@ -101,19 +102,10 @@ Page({
     const rid = self?.rid ?? DEFAULT_REGION_ID;
 
     const regionPath = getRegionPath(rid).reverse();
-    if (self) {
-      // 已登录
-      this.setData({
-        regions: regionPath,
-        selectedRegionIndex: 0,
-      });
-    } else {
-      // 未登录，展示默认的区域
-      this.setData({
-        regions: regionPath,
-        selectedRegionIndex: 0,
-      });
-    }
+    this.setData({
+      regions: regionPath,
+      selectedRegionIndex: 0,
+    });
   },
 
   async loadBanners() {
@@ -123,14 +115,9 @@ Page({
       console.error(resp);
       return;
     }
-    this.setData({
-      banners: resp.data.map(b => {
-        return {
-          ...b,
-          url: cloudProtocolToHttp(b.url)
-        };
-      }),
-    });
+    const banners = resp.data.map(b =>
+      ({ ...b, url: cloudProtocolToHttp(b.url) }));
+    this.setData({ banners });
   },
 
   async fetchList({ append, scrollToTop }: { append?: boolean, scrollToTop?: boolean } = {}) {
@@ -289,7 +276,8 @@ Page({
     });
     return {
       title: '闲置买卖，又近又快',
-      path: `/pages/home/index?shareInfo=${encodeURIComponent(shareInfo)}`
+      path: `/pages/home/index?shareInfo=${encodeURIComponent(shareInfo)}`,
+      // imageUrl: drawCommodityShareImage(),
     }
   },
 })

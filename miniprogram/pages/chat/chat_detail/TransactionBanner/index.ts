@@ -55,7 +55,7 @@ Component({
     },
     async agreeBooking() {
       const { confirm } = await wx.showModal({
-        content: '该用户向你申请预订商品，预定期间商品暂时下架',
+        content: '该用户向你申请预订商品，预订期间商品暂时下架',
         confirmText: '同意',
         cancelText: '取消',
         showCancel: true,
@@ -75,7 +75,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已同意你的预定');
+      this.afterTransactionActionDone('我已同意你的预订');
       wx.showToast({ title: '已同意', }).then();
     },
     async denyBooking() {
@@ -98,12 +98,21 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的预定`);
+      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的预订`);
       wx.showToast({ title: '已拒绝' }).then();
     },
     async requestBooking() {
       const { transaction } = this.data;
       if (!transaction) {
+        return;
+      }
+      const { confirm } = await wx.showModal({
+        content: '确定向卖家申请预订商品？',
+        confirmText: '确定',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
         return;
       }
       const resp = await TransactionAPI.requestBooking(transaction.id);
@@ -114,14 +123,23 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已发出预约申请');
-      wx.showToast({ title: '已申请预约' }).then();
+      this.afterTransactionActionDone('我已发出预订申请');
+      wx.showToast({ title: '已申请预订' }).then();
       await sleep(200);
-      requestNotifySubscribe([NotifyType.BookingAgreed]).then()
+      requestNotifySubscribe([NotifyType.HelpChat]).then()
     },
     async cancelBooking() {
       const { transaction } = this.data;
       if (!transaction) {
+        return;
+      }
+      const { confirm } = await wx.showModal({
+        content: '确定取消预订？',
+        confirmText: '确定',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
         return;
       }
       const resp = await TransactionAPI.cancelBooking(transaction.id);
@@ -132,8 +150,8 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已取消预约申请');
-      wx.showToast({ title: '已取消预约', }).then();
+      this.afterTransactionActionDone('我已取消预订申请');
+      wx.showToast({ title: '已取消预订', }).then();
     },
     async confirmSold() {
       const { confirm } = await wx.showModal({
@@ -190,7 +208,7 @@ Component({
       return ({
         [TransactionStatus.RequestingBooking]: '/images/待确认.png',
         [TransactionStatus.Denied]: '/images/已拒绝.png',
-        [TransactionStatus.Booked]: '/images/已预定.png',
+        [TransactionStatus.Booked]: '/images/已预订.png',
         [TransactionStatus.Finished]: '/images/已成交.png',
       })[transaction.status] ?? null;
     },

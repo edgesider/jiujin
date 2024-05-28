@@ -225,7 +225,7 @@
 
   padding: 14rpx 32rpx;
   font-size: 28rpx;
-  font-weight: normal;
+  font-weight: bold;
   flex-shrink: 0;
   border-radius: 16rpx;
 
@@ -233,25 +233,22 @@
   justify-content: center;
   align-items: center;
 
+  background: var(--brand-green);
   color: #fff;
+}
+
+.footer .right .button.button-yellow {
+  background: var(--brand-yellow);
+}
+
+.footer .right .button.button-yellowgreen {
+  background: var(--brand-yellowgreen);
+}
+
+.footer .right .button.button-green {
+  background: var(--brand-green);
 }
 
 .button-disabled {
   opacity: 0.3;
-}
-
-.right .button {
-  background: var(--brand-green);
-}
-
-.right .button.button-yellow {
-  background: var(--brand-yellow);
-}
-
-.right .button.button-yellowgreen {
-  background: var(--brand-yellowgreen);
-}
-
-.right .button.button-green {
-  background: var(--brand-green);
 }

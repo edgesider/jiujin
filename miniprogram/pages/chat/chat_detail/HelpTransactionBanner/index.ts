@@ -1,6 +1,6 @@
 import getConstants from '../../../../constants';
 import { getContentDesc } from '../../../../utils/strings';
-import { Transaction, TransactionAPI, TransactionStatus } from '../../../../api/TransactionAPI';
+import { HelpTransaction, HelpTransactionAPI, HelpTransactionStatus } from '../../../../api/HelpTransactionAPI';
 import { NotifyType, requestNotifySubscribe } from '../../../../utils/notify';
 import { sleep } from '../../../../utils/other';
 import { Help } from '../../../../types';
@@ -37,7 +37,7 @@ Component({
   methods: {
     async update() {
       const help = this.properties.help as Help;
-      const transaction = this.properties.transaction as Transaction;
+      const transaction = this.properties.transaction as HelpTransaction;
       this.setData({
         isSeller: help.seller_id === app.globalData.self._id,
         helpDesc: getContentDesc(help.content, 40),
@@ -55,7 +55,7 @@ Component({
     },
     async agreeBooking() {
       const { confirm } = await wx.showModal({
-        content: '该用户向你申请预订商品，预定期间商品暂时下架',
+        content: '该用户向你申请互助，同意后互助信息依然可见，但其他人暂不可申请互助，是否同意？',
         confirmText: '同意',
         cancelText: '取消',
         showCancel: true,
@@ -67,7 +67,7 @@ Component({
       if (!transaction) {
         return;
       }
-      const resp = await TransactionAPI.agreeBooking(transaction.id);
+      const resp = await HelpTransactionAPI.agreeBooking(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -75,7 +75,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已同意你的预定');
+      this.afterTransactionActionDone('我已同意你的互助申请');
       wx.showToast({ title: '已同意', }).then();
     },
     async denyBooking() {
@@ -84,13 +84,12 @@ Component({
         return;
       }
       const reasons = [
-        '已通过其他方式出售',
-        '交易距离远',
-        '不想卖了',
+        '问题已解决',
+        '其他',
       ];
       const { tapIndex } = await wx.showActionSheet({ itemList: reasons });
       const reason = reasons[tapIndex];
-      const resp = await TransactionAPI.denyBooking(transaction.id, reason);
+      const resp = await HelpTransactionAPI.denyBooking(transaction.id, reason);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -98,7 +97,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的预定`);
+      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的互助申请`);
       wx.showToast({ title: '已拒绝' }).then();
     },
     async requestBooking() {
@@ -106,7 +105,16 @@ Component({
       if (!transaction) {
         return;
       }
-      const resp = await TransactionAPI.requestBooking(transaction.id);
+      const { confirm } = await wx.showModal({
+        content: '确定向对方申请互助？',
+        confirmText: '确定',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
+        return;
+      }
+      const resp = await HelpTransactionAPI.requestBooking(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -114,17 +122,26 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已发出预约申请');
-      wx.showToast({ title: '已申请预约' }).then();
+      this.afterTransactionActionDone('我已发出互助申请');
+      wx.showToast({ title: '已申请' }).then();
       await sleep(200);
-      requestNotifySubscribe([NotifyType.BookingAgreed]).then()
+      requestNotifySubscribe([NotifyType.HelpChat]).then()
     },
     async cancelBooking() {
       const { transaction } = this.data;
       if (!transaction) {
         return;
       }
-      const resp = await TransactionAPI.cancelBooking(transaction.id);
+      const { confirm } = await wx.showModal({
+        content: '确定取消申请？',
+        confirmText: '确定',
+        cancelText: '取消',
+        showCancel: true,
+      });
+      if (!confirm) {
+        return;
+      }
+      const resp = await HelpTransactionAPI.cancelBooking(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -132,12 +149,12 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已取消预约申请');
-      wx.showToast({ title: '已取消预约', }).then();
+      this.afterTransactionActionDone('我已取消互助申请');
+      wx.showToast({ title: '已取消', }).then();
     },
     async confirmSold() {
       const { confirm } = await wx.showModal({
-        content: '点击确认，该商品将被标注为“已售出”状态，其他人不可购买。',
+        content: '点击确认，该互助将被标注为“已解决”状态，其他人不可申请互助。',
         confirmText: '确认',
         cancelText: '取消',
         showCancel: true,
@@ -149,7 +166,7 @@ Component({
       if (!transaction) {
         return;
       }
-      const resp = await TransactionAPI.confirmSold(transaction.id);
+      const resp = await HelpTransactionAPI.confirmSold(transaction.id);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -166,16 +183,14 @@ Component({
         return;
       }
       const reasons = [
-        '已通过其他方式出售',
-        '交易距离远',
-        '买家不想买了',
-        '不想卖了',
+        '已解决',
+        '其他'
       ];
       const { tapIndex } = await wx.showActionSheet({
         itemList: reasons
       });
       const reason = reasons[tapIndex];
-      const resp = await TransactionAPI.confirmTerminated(transaction.id, reason);
+      const resp = await HelpTransactionAPI.confirmTerminated(transaction.id, reason);
       if (resp.isError) {
         await wx.showToast({
           title: '操作失败，请稍后再试',
@@ -183,18 +198,18 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone(`因“${reason}”，我已确认终止交易`);
+      this.afterTransactionActionDone(`因“${reason}”，我已确认终止互助`);
       wx.showToast({ title: '已终止', }).then();
     },
-    getTransactionStatusImage(transaction: Transaction) {
+    getTransactionStatusImage(transaction: HelpTransaction) {
       return ({
-        [TransactionStatus.RequestingBooking]: '/images/待确认.png',
-        [TransactionStatus.Denied]: '/images/已拒绝.png',
-        [TransactionStatus.Booked]: '/images/已预定.png',
-        [TransactionStatus.Finished]: '/images/已成交.png',
+        [HelpTransactionStatus.RequestingBooking]: '/images/待确认.png',
+        [HelpTransactionStatus.Denied]: '/images/已拒绝.png',
+        [HelpTransactionStatus.Booked]: '/images/解决中.png',
+        [HelpTransactionStatus.Finished]: '/images/已解决.png',
       })[transaction.status] ?? null;
     },
-    getTransactionStatusTip(transaction: Transaction): string[] {
+    getTransactionStatusTip(transaction: HelpTransaction): string[] {
       let tips;
       let remain = '';
       if (transaction.book_time) {
@@ -205,17 +220,17 @@ Component({
       }
       if (this.data.isSeller) {
         tips = ({
-          [TransactionStatus.Booked]: [
-            '点击“已售出”商品正式下架，点击“未售出”后商品擦亮置顶',
+          [HelpTransactionStatus.Booked]: [
+            '点击“已解决”，互助将完结；点击“未解决”，互助继续悬赏',
             `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
           ],
         })[transaction.status];
       } else {
         tips = ({
-          [TransactionStatus.Idle]: [
-            '和卖方确定购买意向后，点击“预订”，对方将暂时为你预留商品',
+          [HelpTransactionStatus.Idle]: [
+            '和悬赏人沟通好需求细节后，点击“我要互助”锁定赏金'
           ],
-          [TransactionStatus.Booked]: [
+          [HelpTransactionStatus.Booked]: [
             `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
           ]
         })[transaction.status];

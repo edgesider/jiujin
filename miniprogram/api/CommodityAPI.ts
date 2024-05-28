@@ -105,14 +105,4 @@ export const CommodityAPI = {
       data: { cid: id }
     }));
   },
-
-  async report(id: string, reason: string): Promise<Resp<void>> {
-    return wrapResp(await request({
-      path: '/commodity/report',
-      data: {
-        report_reason: reason,
-        entity_id: id
-      }
-    }))
-  },
 }

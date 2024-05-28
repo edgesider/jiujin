@@ -7,12 +7,14 @@ export const COMMODITY_STATUS_SELLING = 0; // 出售中
 export const COMMODITY_STATUS_DEACTIVATED = 1; // 已下架
 export const COMMODITY_STATUS_SOLD = 2; // 已售出
 export const COMMODITY_STATUS_BOOKED = 3; // 已锁定
+export const COMMODITY_STATUS_REPORTED = 4; // 被举报
 
 
 export const HELP_STATUS_RUNNING = 0; // 运行中
 export const HELP_STATUS_FINISHED = 1; // 已结束
 export const HELP_STATUS_RESOLVED = 2; // 已解决
-export const HELP_STATUS_REPORTED = 1; // 被举报
+export const HELP_STATUS_RESOLVING= 3; // 解决中
+export const HELP_STATUS_REPORTED = 4; // 被举报
 
 
 export const DEFAULT_AVATAR = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132';
@@ -70,6 +72,12 @@ const constants = {
   COMMODITY_STATUS_DEACTIVATED,
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_BOOKED,
+  COMMODITY_STATUS_REPORTED,
+  HELP_STATUS_RUNNING,
+  HELP_STATUS_RESOLVED,
+  HELP_STATUS_FINISHED,
+  HELP_STATUS_RESOLVING,
+  HELP_STATUS_REPORTED,
   GENDER, GENDER_NAME_MAP,
   DEFAULT_AVATAR,
   TransactionStatus,

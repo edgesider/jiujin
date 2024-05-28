@@ -1,11 +1,13 @@
 <view class="root" catchtap="gotoDetail">
   <view wx:if="{{loading}}" class="loading cu-load" />
   <view wx:elif="{{!help}}" class="loading">
-    <text>求助走丢了</text>
+    <text>互助走丢了</text>
   </view>
   <block wx:else>
-    <view class="body">
+    <view class="body" data-status="{{help.status}}">
       <HelpCardTitleBar user="{{user}}" hasBack="{{false}}" time="{{createTime}}" bounty="{{help.bounty}}" />
+      <image class="status-icon" wx:if="{{help.status === HELP_STATUS_RESOLVED}}" src="/images/已解决.png" />
+      <image class="status-icon" wx:elif="{{help.status === HELP_STATUS_RESOLVING}}" src="/images/解决中.png" />
       <view class="content">
         <view class="paragraphs">
           <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
@@ -22,7 +24,7 @@
             wx:key="*this"
             class="image"
             mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
-            style="background-image: url('{{img}}/detail'); {{firstImageStyle}}};"
+            style="background-image: url('{{img}}/card'); {{firstImageStyle}}};"
             data-curr="{{img}}"
             catchtap="previewImages"
           />

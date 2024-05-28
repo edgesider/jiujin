@@ -94,14 +94,4 @@ export const HelpAPI = {
   async countByUser() {
     throw Error('not implemented');
   },
-
-  async report(id: string, reason: string): Promise<Resp<void>> {
-    return wrapResp(await request({
-      path: '/help/report',
-      data: {
-        report_reason: reason,
-        entity_id: id
-      }
-    }))
-  },
 }

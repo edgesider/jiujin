@@ -4,6 +4,7 @@ import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import { sleep } from "../../utils/other";
 import { waitForAppReady } from "../../utils/globals";
+import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
 
 const app = getApp()
 Page({
@@ -172,6 +173,11 @@ Page({
       return;
     }
     this.submitting = true;
+    try {
+      await requestNotifySubscribe([NotifyType.HelpChat]);
+    } catch (e) {
+      console.warn('用户拒绝订阅消息');
+    }
     this.onBountyInputBlur();
     const {
       editingHelp: editing,

@@ -191,12 +191,13 @@ Page({
     });
   },
 
-  onShareAppMessage(options) {
+// @ts-ignore
+  async onShareAppMessage(options) {
     const help = options.target?.dataset?.help;
     if (!help) {
-      return onShareApp(options);
+      return await onShareApp(options);
     } else {
-      return onShareHelp(options)
+      return await onShareHelp(options)
     }
   },
 })

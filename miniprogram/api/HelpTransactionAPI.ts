@@ -18,9 +18,9 @@ export interface HelpTransaction {
 export enum HelpTransactionStatus {
   /** 空闲中（刚创建，正在聊天） */
   Idle = 0,
-  /** 请求预定 */
+  /** 请求预订 */
   RequestingBooking = 1,
-  /** 已同意预定 */
+  /** 已同意预订 */
   Booked = 2,
   /** 已拒绝 */
   Denied = 3,

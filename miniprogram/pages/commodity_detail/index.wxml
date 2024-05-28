@@ -21,7 +21,6 @@
             bindtap="previewImages"
           />
         </view>
-        <view class="divider" />
         <view class="info">
           <text class="price">
             <text class="unit">￥</text>
@@ -45,13 +44,13 @@
                  src="{{commodity.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
           <text class="text">收藏</text>
         </view>
-        <view class="button" bindtap="onClickShare">
+        <view class="button">
           <image class="icon" src="/images/share.png" />
           <text class="text">分享</text>
-<!--          <button-->
-<!--            open-type="share" plain="true"-->
-<!--            style="border: none; background-color: transparent; position: absolute"-->
-<!--          />-->
+          <button
+            open-type="share" plain="true"
+            style="border: none; background-color: transparent; position: absolute"
+          />
         </view>
         <view wx:if="{{!isMine}}" class="button" bindtap="onClickReport">
           <image class="icon" src="/images/report.png" />
@@ -80,6 +79,9 @@
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_SOLD}}">
           <view class="button button-disabled">交易已完成</view>
+        </block>
+        <block wx:elif="{{commodity.status === COMMODITY_STATUS_BOOKED}}">
+          <view class="button button-disabled">他人已预订</view>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">
           <view class="button button-disabled">已下架</view>

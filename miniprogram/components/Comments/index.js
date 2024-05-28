@@ -3,7 +3,7 @@ import { ensureRegistered, kbHeightChanged } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
 import { CommentAPI } from "../../api/CommentAPI";
-import { CommentEntityType } from "../../types";
+import { EntityType } from "../../types";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
 
@@ -57,9 +57,9 @@ Component({
     },
     getEntityType() {
       if (this.properties.commodity) {
-        return CommentEntityType.Commodity;
+        return EntityType.Commodity;
       } else if (this.properties.help) {
-        return CommentEntityType.Help;
+        return EntityType.Help;
       } else {
         throw Error('neither commodity nor help provided');
       }

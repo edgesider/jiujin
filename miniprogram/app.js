@@ -3,6 +3,7 @@ import { BehaviorSubject } from "rxjs";
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
 import { initOpenIM } from "./utils/oim";
+import { clearSavedImages } from "./utils/canvas";
 
 App({
   _ready: false,
@@ -38,6 +39,15 @@ App({
       this.launchFailed = true;
       this._readyWaiters.forEach(waiter => waiter[1](e));
       this._readyWaiters.length = 0;
+    }
+
+    // 执行一些不重要的任务
+    try {
+      setTimeout(() => {
+        clearSavedImages();
+      }, 0);
+    } catch (e) {
+      console.warn(e);
     }
   },
 

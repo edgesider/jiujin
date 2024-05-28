@@ -1,4 +1,4 @@
-import { Comment, CommentEntityType, convertComment } from '../types';
+import { Comment, EntityType, convertComment } from '../types';
 import { request, wrapResp } from './api';
 import { Resp } from './resp';
 
@@ -13,7 +13,7 @@ export const CommentAPI = {
     }
     return resp;
   },
-  async add(entityId: string, entityType: CommentEntityType, content: string, replyTo: number) {
+  async add(entityId: string, entityType: EntityType, content: string, replyTo: number) {
     return wrapResp(await request({
       path: '/comment/add',
       data: {

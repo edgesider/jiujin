@@ -73,7 +73,7 @@ Page({
           { text: '全部可见', key: 'all', selected: !only_same_campus && !only_same_sex && !only_same_building },
           { text: '同校区可见', key: 'campus', selected: Boolean(only_same_campus) },
           { text: '同性别可见', key: 'sex', selected: Boolean(only_same_sex) },
-          { text: '同楼可见', key: 'building', selected: Boolean(only_same_building) },
+          { text: '同楼可见', key: 'building', selected: Boolean(only_same_building && !only_same_campus) },
         ],
       });
     }
@@ -165,13 +165,33 @@ Page({
     const { currentTarget: { dataset: { idx } } } = ev;
     const filters = this.data.filters;
     const filter = filters[idx];
+    const all = filters.find(f => f.key === 'all');
+    const campus = filters.find(f => f.key === 'campus');
+    const building = filters.find(f => f.key === 'building');
+    const sex = filters.find(f => f.key === 'sex');
     if (filter.key === 'all') {
-      for (const filter of filters) {
-        filter.selected = filter.key === 'all';
+      if (all.selected) {
+        return;
+      } else {
+        all.selected = true;
+        for (const filter of filters) {
+          if (filter !== all) {
+            filter.selected = false;
+          }
+        }
       }
     } else {
-      filters.find(f => f.key === 'all').selected = false;
+      all.selected = false;
+      if (filter.selected && [campus, building, sex].filter(f => f !== filter).every(f => !f.selected)) {
+        // 如果其他俩开关都关掉的话，这个就不能关了
+        return;
+      }
       filter.selected = !filter.selected;
+    }
+    if (filter.key === 'campus' && filter.selected) {
+      filters.find(f => f.key === 'building').selected = false;
+    } else if (filter.key === 'building' && filter.selected) {
+      filters.find(f => f.key === 'campus').selected = false;
     }
     this.setData({ filters });
   },
@@ -222,7 +242,11 @@ Page({
       return;
     }
     this.submitting = true;
-    await requestNotifySubscribe([NotifyType.BookingRequest, NotifyType.BookingAgreed]);
+    try {
+      await requestNotifySubscribe([NotifyType.CommodityChat]);
+    } catch (e) {
+      console.warn('用户拒绝订阅消息');
+    }
     // 更新一下输入的价格值
     this.onPriceInputBlur();
 

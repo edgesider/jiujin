@@ -22,7 +22,7 @@
               wx:for-item="img"
               wx:key="*this"
               mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
-              src="{{img}}/detail"
+              src="{{img}}"
               data-curr="{{img}}"
               bindtap="previewImages"
             />
@@ -58,13 +58,13 @@
                  src="{{help.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
           <text class="text">{{help.collected_count > 0 ? help.collected_count : '收藏'}}</text>
         </view>
-        <view class="button" bindtap="onClickShare">
+        <view class="button">
           <image class="icon" src="/images/share.png" />
           <text class="text">分享</text>
-<!--          <button-->
-<!--            open-type="share" plain="true"-->
-<!--            style="border: none; background-color: transparent; position: absolute"-->
-<!--          />-->
+          <button
+            open-type="share" plain="true"
+            style="border: none; background-color: transparent; position: absolute"
+          />
         </view>
         <view wx:if="{{!isMine}}" class="button" bindtap="onClickReport">
           <image class="icon" src="/images/report.png" />
@@ -72,15 +72,21 @@
         </view>
       </view>
       <view class="right">
-        <block wx:if="{{help.status === 0}}">
+        <block wx:if="{{help.status === HELP_STATUS_RUNNING}}">
           <block wx:if="{{isMine}}">
             <text class="polish-time">{{helpPolishTime}}\n<text class="polish-time-hint">上次擦亮</text></text>
             <view class="button button-green" bindtap="polish">擦亮</view>
             <view class="button button-yellowgreen" bindtap="edit">编辑</view>
           </block>
-          <block wx:elif='{{help.bounty > 0 && help.status === HELP_STATUS_RUNNING}}'>
+          <block wx:elif='{{help.bounty > 0}}'>
             <view class="button button-green" bind:tap="onPrivateMessage">去私聊</view>
           </block>
+        </block>
+        <block wx:elif="{{help.status === HELP_STATUS_RESOLVING}}">
+          <view class="button button-disabled">解决中</view>
+        </block>
+        <block wx:elif="{{help.status === HELP_STATUS_RESOLVED}}">
+          <view class="button button-disabled">已解决</view>
         </block>
       </view>
     </view>

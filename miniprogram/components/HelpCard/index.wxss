@@ -19,7 +19,7 @@
 }
 
 .body {
-  height:auto;
+  height: auto;
   width: 100%;
   flex-grow: 0;
   flex-shrink: 1;
@@ -27,6 +27,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  position: relative;
 }
 
 .body .content {
@@ -45,6 +46,14 @@
   flex-grow: 0;
   flex-shrink: 0;
   background-color: #f1f1f1;
+}
+
+.body .status-icon {
+  width: 136rpx;
+  height: 96rpx;
+  position: absolute;
+  right: 24rpx;
+  top: 40rpx;
 }
 
 .body .content .images {

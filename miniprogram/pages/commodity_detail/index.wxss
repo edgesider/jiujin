@@ -47,7 +47,7 @@
 .body .content .images {
   width: 100%;
   overflow: hidden;
-  margin: var(--content-padding) 0;
+  margin: var(--content-padding) 0 0;
 }
 
 .body .content .images-single {
@@ -221,9 +221,10 @@
 
   padding: 14rpx 32rpx;
   font-size: 28rpx;
-  font-weight: normal;
+  font-weight: bold;
   flex-shrink: 0;
   border-radius: 16rpx;
+  background: var(--brand-green);
 
   display: flex;
   justify-content: center;
@@ -232,25 +233,18 @@
   color: #fff;
 }
 
-.right .button {
-  background: var(--brand-green);
-}
-
-.right .button.button-yellow {
+.footer .right .button.button-yellow {
   background: var(--brand-yellow);
 }
 
-.right .button.button-yellowgreen {
+.footer .right .button.button-yellowgreen {
   background: var(--brand-yellowgreen);
 }
 
-.right .button.button-green {
+.footer .right .button.button-green {
   background: var(--brand-green);
 }
 
 .button-disabled {
   opacity: 0.3;
-}
-
-.right .button.button-small {
 }

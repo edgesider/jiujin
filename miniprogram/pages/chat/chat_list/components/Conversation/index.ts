@@ -126,7 +126,7 @@ Component({
     },
     async gotoDetail() {
       if (getConstants().Platform !== 'devtools') {
-        requestNotifySubscribe([NotifyType.Chat, NotifyType.BookingRequest, NotifyType.BookingAgreed]).then()
+        requestNotifySubscribe([NotifyType.CommodityChat, NotifyType.HelpChat]).then()
       }
       await openConversationDetail(this.data.conversation.conversationID as string);
     },

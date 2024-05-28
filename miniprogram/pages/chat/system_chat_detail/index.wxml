@@ -11,32 +11,39 @@
     wx:for-item="msg"
     wx:for-index="idx"
     wx:key="rawId"
-    class="msg-item"
     bindtap="gotoDetail"
     data-msg="{{msg}}"
   >
     <view wx:if="{{!msg.type}}">
-      {{msg.text}}
     </view>
-    <block wx:else>
-      <image class="avatar" src="{{msg.operator.avatar_url}}" mode="aspectFill" />
-      <view class="dot" wx:if="{{conversation.unreadCount > idx}}" />
-      <view class="info">
-        <view class="line1">
-          <view class="name">{{msg.operator.name}}</view>
-          <view class="time">{{msg.timeStr}}</view>
-        </view>
-        <view class="line2">{{msg.text}}</view>
+    <block wx:elif="{{msg.type === 'simple'}}">
+      <view class="simple-msg">
+        <view class="title">{{msg.title}}</view>
+        <view class="content">{{msg.text}}</view>
+        <view class="time">{{msg.timeStr}}</view>
       </view>
-      <image
-        wx:if="{{msg.commodity && msg.commodity.img_urls.length > 0}}"
-        class="image" mode="aspectFill" src="{{msg.commodity.img_urls[0]}}/card"
-      />
-      <image
-        wx:elif="{{msg.help && msg.help.img_urls.length > 0}}"
-        class="image" mode="aspectFill" src="{{msg.help.img_urls[0]}}/card"
-      />
-      <TextPreview wx:else content="{{msg.commodityDesc || msg.helpDesc}}" class="text-preview" />
+    </block>
+    <block wx:else>
+      <view class="user-msg">
+        <image class="avatar" src="{{msg.operator.avatar_url}}" mode="aspectFill" />
+        <view class="dot" wx:if="{{conversation.unreadCount > idx}}" />
+        <view class="info">
+          <view class="line1">
+            <view class="name">{{msg.operator.name}}</view>
+            <view class="time">{{msg.timeStr}}</view>
+          </view>
+          <view class="line2">{{msg.text}}</view>
+        </view>
+        <image
+          wx:if="{{msg.commodity && msg.commodity.img_urls.length > 0}}"
+          class="image" mode="aspectFill" src="{{msg.commodity.img_urls[0]}}/card"
+        />
+        <image
+          wx:elif="{{msg.help && msg.help.img_urls.length > 0}}"
+          class="image" mode="aspectFill" src="{{msg.help.img_urls[0]}}/card"
+        />
+        <TextPreview wx:else content="{{msg.commodityDesc || msg.helpDesc}}" class="text-preview" />
+      </view>
     </block>
   </view>
   <image wx:if="{{messages.length === 0}}" src="/images/empty.png" mode="aspectFit" class="empty" />

@@ -10,6 +10,7 @@ import { waitForAppReady } from "../../utils/globals";
 import { startTransaction } from "../../utils/transaction";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { reportCommodity } from "../../utils/report";
+import { drawCommodityShareImage } from "../../utils/canvas";
 
 const app = getApp();
 
@@ -60,6 +61,7 @@ Page({
       return;
     }
     const commodity = commResp.data;
+    // commodity.img_urls = [await drawCommodityShareImage(commodity)];
 
     const sellerResp = await api.getUserInfo(commodity.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
@@ -209,13 +211,13 @@ Page({
     await reportCommodity(this.data.commodity._id);
   },
 
-  async onClickShare() {
-    ensureRegistered();
-    const {} = await wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline'],
-    })
-  },
+  // async onClickShare() {
+    // ensureRegistered();
+    // const {} = await wx.showShareMenu({
+    //   withShareTicket: true,
+    //   menus: ['shareAppMessage', 'shareTimeline'],
+    // })
+  // },
 
   async onPrivateMessage() {
     ensureRegistered();
@@ -239,7 +241,7 @@ Page({
     await openProfile(this.data.seller);
   },
 
-  onShareAppMessage(options) {
+  async onShareAppMessage(options) {
     const { commodity } = this.data;
     if (!commodity) {
       return;
@@ -252,12 +254,13 @@ Page({
       timestamp: Date.now(),
       method: 'card'
     });
+    const path = await drawCommodityShareImage(commodity);
     return {
-      title: '我找到一个好东西，快来看看吧！',
+      title: '闲置 | ' + commodity.content,
       path: '/pages/commodity_detail/index' +
         `?id=${commodity._id}` +
         `&shareInfo=${encodeURIComponent(shareInfo)}`,
-      imageUrl: commodity.img_urls[0]
+      imageUrl: path,
     }
   },
   onCommentLoadFinished() {

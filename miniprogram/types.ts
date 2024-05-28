@@ -93,16 +93,16 @@ export interface Comment {
   entity_id: string;
   create_time: number;
   root_comment: number;
-  entity_type: CommentEntityType;
+  entity_type: EntityType;
 }
 
-export enum CommentEntityType {
+export enum EntityType {
   Commodity = 0,
   Help = 1,
 }
 
 export function convertComment(raw: any): Comment {
-  const entityType = CommentEntityType[raw.entity_type];
+  const entityType = EntityType[raw.entity_type];
   if (!entityType) {
     throw Error('invalid comment');
   }

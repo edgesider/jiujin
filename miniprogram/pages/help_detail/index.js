@@ -9,6 +9,7 @@ import { setNeedRefresh } from "../home/index";
 import { startHelpTransaction } from "../../utils/transaction";
 import { HelpAPI } from "../../api/HelpAPI";
 import { reportHelp } from "../../utils/report";
+import { drawHelpShareImage } from "../../utils/canvas";
 
 const app = getApp();
 
@@ -41,7 +42,7 @@ Page({
       reportShareInfo(shareInfo).then();
     }
 
-    this.loadData(id);
+    await this.loadData(id);
     this.setData({
       scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
     })
@@ -56,6 +57,8 @@ Page({
       return;
     }
     const help = helpResp.data;
+    // help.img_urls = [await drawHelpShareImage(help)];
+
     const sellerResp = await api.getUserInfo(help.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
     let firstImageSize = [0, 1];
@@ -233,8 +236,8 @@ Page({
     await openProfile(this.data.seller);
   },
 
-  onShareAppMessage(options) {
-    return onShareHelp(options)
+  async onShareAppMessage(options) {
+    return await onShareHelp(options, this.data.help);
   },
   onCommentLoadFinished() {
     if (this.data.scrollToComment) {

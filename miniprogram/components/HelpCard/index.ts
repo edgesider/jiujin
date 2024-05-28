@@ -39,7 +39,6 @@ Component({
     firstImageStyle: '',
     imgCount: 0,
     hasImg: true,
-    reportReasons: ['广告营销', '色情营销', '侵犯个人隐私 ', '辱骂诽谤他人', '虚假冒充'], // 可选择的举报原因列表
   },
   lifetimes: {
     attached: async function () {

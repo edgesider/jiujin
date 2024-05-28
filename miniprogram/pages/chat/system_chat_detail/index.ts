@@ -25,7 +25,8 @@ interface BaseNotifyPayload {
 }
 
 interface SimpleNotifyPayload extends BaseNotifyPayload {
-  type: undefined;
+  type: 'simple';
+  title: string;
 }
 
 interface CommodityNotifyPayload extends BaseNotifyPayload {
@@ -136,6 +137,7 @@ Page({
       } else if (mode === 'older') {
         messages.push(...msgList);
       }
+      console.log(messages);
       this.setData({ messages });
     }
   },
