@@ -61,6 +61,20 @@ export async function openVerify() {
   });
 }
 
+export async function openCommodityPublish(from?: Commodity, waitFinished = false) {
+  return new Promise<void>(async (res) => {
+    await wx.navigateTo({
+      url: from ? `../commodity_publish/index?commodity=${JSON.stringify(from)}` : `../commodity_publish/index`,
+      events: {
+        afterPublished: waitFinished ? res() : undefined
+      },
+    });
+    if (!waitFinished) {
+      res();
+    }
+  });
+}
+
 export async function openCommodityEdit(commodity: Commodity, waitFinished = false) {
   if (!waitFinished) {
     await wx.navigateTo({
@@ -91,6 +105,20 @@ export async function openHelpDetail(options: HelpDetailOptions) {
   await wx.navigateTo({
     url: `/pages/help_detail/index?id=${options.id}&scrollToComment=${Boolean(options.scrollToComment)}`,
   })
+}
+
+export async function openHelpPublish(from?: Help, waitFinished = false) {
+  return new Promise<void>(async (res) => {
+    await wx.navigateTo({
+      url: from ? `../help_publish/index?help=${JSON.stringify(from)}` : `../help_publish/index`,
+      events: {
+        afterPublished: waitFinished ? res() : undefined
+      },
+    });
+    if (!waitFinished) {
+      res();
+    }
+  });
 }
 
 export async function openHelpEdit(help: Help, waitFinished = false) {

@@ -1,6 +1,7 @@
 import getConstants from "../../constants";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { sleep } from "../../utils/other";
+import { HelpAPI } from "../../api/HelpAPI";
 
 const app = getApp();
 const COUNT_PER_PAGE = 12
@@ -12,7 +13,7 @@ Page({
     isLoading: true,
     cursor: 0,
     itemList: [],
-    listType: 'commodity',
+    listType: 'commodity', // commodity | help
 
     title: '',
     currTab: '',
@@ -76,8 +77,11 @@ Page({
   },
 
   async fetchSingle(idx) {
-    const commodity = this.data.itemList[idx];
-    const resp = await CommodityAPI.getOne(commodity._id);
+    const { listType } = this.data;
+    const item = this.data.itemList[idx];
+    const resp = listType === 'commodity'
+      ? await CommodityAPI.getOne(item._id)
+      : await HelpAPI.getOne(item._id);
     if (resp.isError) {
       return;
     }
@@ -131,13 +135,12 @@ Page({
   },
   async processClick(type, ev) {
     const { currentTarget: { dataset: { idx } } } = ev;
-    const commodity = this.data.itemList[idx];
-    const {
-      action,
-      currTab
-    } = (await this.onClick({
+    const { itemList, listType } = this.data;
+    const item = itemList[idx];
+    const { action, currTab } = (await this.onClick({
       type,
-      commodity,
+      item,
+      listType,
       index: idx,
       currTab: this.data.currTab,
     })) ?? {};

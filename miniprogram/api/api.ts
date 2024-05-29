@@ -142,7 +142,6 @@ const api = {
       method: 'POST',
       data: {
         ...params,
-        openid: getOpenId()
       }
     }));
   },
@@ -154,7 +153,6 @@ const api = {
       method: 'POST',
       data: {
         ...commodityInfo,
-        openid: getOpenId()
       }
     }));
   },
@@ -165,7 +163,6 @@ const api = {
       method: 'POST',
       data: {
         ...helpInfo,
-        openid: getOpenId()
       }
     }));
 
@@ -177,7 +174,6 @@ const api = {
       method: 'POST',
       data: {
         _id: id,
-        openid: getOpenId()
       }
     }));
   },
@@ -189,7 +185,6 @@ const api = {
       method: 'POST',
       data: {
         _id: id,
-        openid: getOpenId()
       }
     }));
   },
@@ -202,7 +197,6 @@ const api = {
       method: 'POST',
       data: {
         ...info,
-        openid: getOpenId()
       }
     }));
   },
@@ -215,7 +209,6 @@ const api = {
       method: 'POST',
       data: {
         ...info,
-        openid: getOpenId()
       }
     }));
   },
@@ -227,7 +220,6 @@ const api = {
       data: {
         _id: id,
         status: COMMODITY_STATUS_SELLING,
-        openid: getOpenId()
       }
     }));
   },
@@ -239,7 +231,6 @@ const api = {
       data: {
         _id: id,
         status: COMMODITY_STATUS_DEACTIVATED,
-        openid: getOpenId()
       }
     }));
   },
@@ -250,7 +241,16 @@ const api = {
       method: 'POST',
       data: {
         _id: id,
-        openid: getOpenId()
+      }
+    }));
+  },
+
+  async activateHelp({ id }) {
+    return wrapResp(await request({
+      path: '/help/activateHelp',
+      method: 'POST',
+      data: {
+        _id: id,
       }
     }));
   },
@@ -261,7 +261,6 @@ const api = {
       method: 'POST',
       data: {
         _id: id,
-        openid: getOpenId()
       }
     }));
   },
@@ -272,18 +271,6 @@ const api = {
       method: 'POST',
       data: {
         _id: id,
-        openid: getOpenId()
-      }
-    }));
-  },
-  async reportHelp({ id, report }) {
-    return wrapResp(await request({
-      path: '/help/updateHelpReport',
-      method: 'POST',
-      data: {
-        _id: id,
-        report: report,
-        openid: getOpenId()
       }
     }));
   },

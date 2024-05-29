@@ -81,7 +81,12 @@
           <view class="button button-disabled">交易已完成</view>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_BOOKED}}">
-          <view class="button button-disabled">他人已预订</view>
+          <block wx:if="{{isMine}}">
+            <view class="button" bindtap="onPrivateMessage">查看对话</view>
+          </block>
+          <block wx:else>
+            <view class="button button-disabled">他人已预订</view>
+          </block>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">
           <view class="button button-disabled">已下架</view>

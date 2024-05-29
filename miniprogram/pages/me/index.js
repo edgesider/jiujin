@@ -1,4 +1,4 @@
-import { ensureRegistered, getRegionPathName, setTabBar, toastError } from "../../utils/other";
+import { ensureRegistered, getRegionPathName, setTabBar, toastError, toastSucceed } from "../../utils/other";
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
@@ -7,7 +7,14 @@ import getConstants, {
   HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED
 } from "../../constants";
 import api from "../../api/api";
-import { openAboutPage, openCommodityEdit, openProfile, openVerify } from "../../utils/router";
+import {
+  openAboutPage,
+  openCommodityDetail,
+  openCommodityEdit, openCommodityPublish,
+  openHelpDetail, openHelpEdit, openHelpPublish,
+  openProfile,
+  openVerify
+} from "../../utils/router";
 import { waitForAppReady } from "../../utils/globals";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { HelpAPI } from "../../api/HelpAPI";
@@ -161,214 +168,90 @@ Page({
               listType,
             };
           },
-
-          onClick: async ({ type, commodity }) => {
+          onClick: async ({ type, listType, item }) => {
             return await ({
               'click-card': () => {
-                wx.navigateTo({
-                  url: `../commodity_detail/index?id=${commodity._id}`
-                })
+                if (listType === 'commodity') {
+                  openCommodityDetail({ id: item._id });
+                } else if (listType === 'help') {
+                  openHelpDetail({ id: item._id });
+                }
               },
               polish: async () => {
                 await wx.showLoading({ mask: true, title: '擦亮中...' });
-                const resp = await api.polishCommodity({ id: commodity._id });
+                const resp = listType === 'commodity'
+                  ? await api.polishCommodity({ id: item._id })
+                  : await api.polishHelp({ id: item._id });
                 await wx.hideLoading();
                 if (resp.isError) {
-                  await wx.showToast({
-                    title: '三小时可擦亮一次',
-                    icon: 'error',
-                    mask: true,
-                  });
+                  console.error(resp);
+                  toastError('三小时可擦亮一次');
                   return;
                 }
-                await wx.showToast({
-                  title: '擦亮成功',
-                  icon: 'success',
-                  mask: true,
-                  duration: 500,
-                });
-                return {
-                  action: 'fetchSingle'
-                };
+                toastSucceed('擦亮成功')
+                return { action: 'fetchAll' };
               },
               deactivate: async () => {
                 await wx.showLoading({ mask: true, title: '正在下架...' });
-                const resp = await api.deactivateCommodity({ id: commodity._id, });
+                const resp = listType === 'commodity'
+                  ? await api.deactivateCommodity({ id: item._id, })
+                  : await api.deactivateHelp({ id: item._id, })
                 await wx.hideLoading();
                 if (resp.isError) {
                   console.error(resp)
-                  await wx.showToast({ title: '下架失败', icon: 'error', mask: true });
+                  toastError('下架失败');
                   return;
                 }
-                await wx.showToast({ title: '下架成功', icon: 'success', mask: true });
-                return {
-                  action: 'fetchSingle'
-                };
+                toastSucceed('下架成功');
+                return { action: 'fetchSingle' };
               },
               activate: async () => {
                 await wx.showLoading({ mask: true, title: '正在重新上架...' });
-                const resp = await api.activateCommodity({ id: commodity._id, });
+                const resp = listType === 'commodity'
+                  ? await api.activateCommodity({ id: item._id, })
+                  : await api.activateHelp({ id: item._id, })
                 await wx.hideLoading();
                 if (resp.isError) {
                   console.error(resp)
-                  await wx.showToast({ title: '上架失败', icon: 'error', mask: true });
+                  toastError('上架失败');
                   return;
                 }
-                await wx.showToast({ title: '上架成功', icon: 'success', mask: true });
-                return {
-                  action: 'fetchSingle'
-                };
+                toastSucceed('上架成功');
+                return { action: 'fetchSingle' };
               },
               edit: async () => {
-                await openCommodityEdit(commodity, true);
+                if (listType === 'commodity') {
+                  await openCommodityEdit(item, true);
+                } else {
+                  await openHelpEdit(item, true);
+                }
                 return { action: 'fetchSingle' };
               },
               delete: async () => {
-                return new Promise(async () => {
-                  wx.showModal({
-                    title: '提示',
-                    content: `确认删除`,
-                    success: async (res) => {
-                      if (res.confirm) {
-                        await wx.showLoading({ title: '删除中...', mask: true })
-                        const resp = await api.deleteCommodity({ id: commodity._id })
-                        if (resp.isError) {
-                          await wx.showToast({ title: '删除失败', icon: 'error', mask: true });
-                        } else {
-                          await wx.hideLoading();
-                          res({ action: 'fetchAll', });
-                        }
-                      } else if (res.cancel) {
-                        // pass
-                      }
-                    }
-                  })
+                const { confirm } = await wx.showModal({
+                  title: '提示',
+                  content: `确认删除`,
+                  showCancel: true,
                 });
+                if (confirm) {
+                  await wx.showLoading({ title: '删除中...', mask: true })
+                  const resp = listType === 'commodity'
+                    ? await api.deleteCommodity({ id: item._id })
+                    : await api.deleteHelp({ id: item._id })
+                  if (resp.isError) {
+                    toastError('删除失败');
+                  } else {
+                    await wx.hideLoading();
+                    return { action: 'fetchAll' };
+                  }
+                }
               },
               republish: async () => {
-                return new Promise(async (res) => {
-                  await wx.navigateTo({
-                    url: `../commodity_publish/index?commodity=${JSON.stringify(commodity)}`,
-                    events: {
-                      afterPublished: res({ action: 'fetchAll', currTab: 'selling' })
-                    },
-                  })
-                });
-              },
-            })[type]?.();
-          },
-        })
-      }
-    });
-  },
-  gotoHelpList(ev) {
-    ensureRegistered();
-    const { type } = ev.currentTarget.dataset;
-    wx.navigateTo({
-      url: `../help_list/index?type=${type}`,
-      success: res => {
-        res.eventChannel.emit('onParams', {
-          title: ({
-            selling: '我发布的求助',
-            collected: '我收藏的求助',
-            liked: '我点赞的求助'
-          })[type],
-
-          fetcher: async ({ start, count }) => {
-            let resp;
-            if (type === 'collected') {
-              resp = await HelpAPI.listCollected({ start, count });
-            } else if (type === 'liked') {
-              resp = await HelpAPI.listLiked({ start, count });
-            } else {
-              const status = ({
-                selling: HELP_STATUS_RUNNING
-              })[type];
-              resp = await HelpAPI.listMine({ status, role: 'seller', start, count })
-            }
-            if (resp.isError) {
-              console.error(resp);
-              return null;
-            }
-            return resp.data;
-          },
-
-          onClick: async ({ type, help }) => {
-            return await ({
-              'click-card': () => {
-                wx.navigateTo({
-                  url: `../help_detail/index?id=${help._id}`
-                })
-              },
-              polish: async () => {
-                await wx.showLoading({ mask: true, title: '擦亮中...' });
-                const resp = await api.polishHelp({ id: help._id });
-                await wx.hideLoading();
-                if (resp.isError) {
-                  await wx.showToast({
-                    title: '三小时可擦亮一次',
-                    icon: 'error',
-                    mask: true,
-                  });
-                  return;
+                if (listType === 'commodity') {
+                  await openCommodityPublish(item, true);
+                } else {
+                  await openHelpPublish(item, true);
                 }
-                await wx.showToast({
-                  title: '擦亮成功',
-                  icon: 'success',
-                  mask: true,
-                  duration: 500,
-                });
-                return {
-                  action: 'fetchSingle'
-                };
-              },
-              deactivate: async () => {
-                await wx.showLoading({ mask: true, title: '求助已解决' });
-                const resp = await api.deactivateHelp({ id: help._id, });
-                await wx.hideLoading();
-                if (resp.isError) {
-                  console.error(resp)
-                  await wx.showToast({ title: '求助解决失败', icon: 'error', mask: true });
-                  return;
-                }
-                await wx.showToast({ title: '求助解决成功', icon: 'success', mask: true });
-                return {
-                  action: 'fetchSingle'
-                };
-              },
-              edit: async () => {
-                return new Promise(async (res) => {
-                  await wx.navigateTo({
-                    url: `../help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
-                    events: {
-                      afterEdited: async () => {
-                        res({ action: 'fetchSingle', });
-                      }
-                    },
-                  })
-                });
-              },
-              delete: async () => {
-                return new Promise(async (resolve) => {
-                  wx.showModal({
-                    title: '提示',
-                    content: `确认删除`,
-                    success: async (response) => {
-                      if (response.confirm) {
-                        await wx.showLoading({ title: '删除中...', mask: true })
-                        const resp = await api.deleteHelp({ id: help._id })
-                        if (resp.isError) {
-                          await wx.showToast({ title: '删除失败', icon: 'error', mask: true });
-                        } else {
-                          await wx.hideLoading();
-                          resolve({ action: 'fetchAll', });
-                        }
-                      } else if (response.cancel) {
-                        // pass
-                      }
-                    }
-                  })
-                });
               },
             })[type]?.();
           },

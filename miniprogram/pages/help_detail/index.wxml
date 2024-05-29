@@ -83,7 +83,12 @@
           </block>
         </block>
         <block wx:elif="{{help.status === HELP_STATUS_RESOLVING}}">
-          <view class="button button-disabled">解决中</view>
+          <block wx:if="{{isMine}}">
+            <view class="button" bindtap="onPrivateMessage">查看对话</view>
+          </block>
+          <block wx:else>
+            <view class="button button-disabled">他人解决中</view>
+          </block>
         </block>
         <block wx:elif="{{help.status === HELP_STATUS_RESOLVED}}">
           <view class="button button-disabled">已解决</view>
