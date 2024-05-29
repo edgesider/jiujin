@@ -1,5 +1,5 @@
 import { openProfile } from "../../utils/router";
-import { ensureRegistered, kbHeightChanged } from "../../utils/other";
+import { ensureRegistered, kbHeightChanged, toastError } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
 import { CommentAPI } from "../../api/CommentAPI";
@@ -150,8 +150,13 @@ Component({
         if (!confirm) {
           return;
         }
-        await CommentAPI.del(comment.id);
-        await this.fetchComments();
+        const resp = await CommentAPI.del(comment.id);
+        if (resp.isError) {
+          console.log(resp);
+          toastError('删除失败');
+        } else {
+          await this.fetchComments();
+        }
       }
     },
     onPopupInput(ev) {
