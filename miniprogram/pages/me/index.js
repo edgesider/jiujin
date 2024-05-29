@@ -84,7 +84,7 @@ Page({
         { text: '买到的', key: 'bought' },
       ],
       my_helps: [
-        { text: '全部', key: 'all', type: 'help' },
+        { text: '进行中', key: 'all', type: 'help' },
         { text: '悬赏中', key: 'has-bounty', type: 'help' },
         { text: '已结束', key: 'finished', type: 'help' },
         { text: '已领赏', key: 'got-bounty', type: 'help' },
