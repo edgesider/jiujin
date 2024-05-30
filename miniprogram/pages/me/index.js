@@ -11,7 +11,7 @@ import getConstants, {
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED,
   HELP_STATUS_RUNNING,
-  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED
+  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED, COMMODITY_STATUS_BOOKED, HELP_STATUS_RESOLVING
 } from "../../constants";
 import api from "../../api/api";
 import {
@@ -92,8 +92,8 @@ Page({
       ],
       my_helps: [
         { text: '进行中', key: 'all', type: 'help' },
-        { text: '悬赏中', key: 'has-bounty', type: 'help' },
         { text: '已结束', key: 'finished', type: 'help' },
+        { text: '已解决', key: 'resolved', type: 'help' },
         { text: '已领赏', key: 'got-bounty', type: 'help' },
       ],
       collected: [
@@ -122,9 +122,10 @@ Page({
                   status: COMMODITY_STATUS_SOLD,
                   role: 'buyer'
                 });
+                showStatusImage = false;
               } else {
                 const status = {
-                  selling: COMMODITY_STATUS_SELLING,
+                  selling: [COMMODITY_STATUS_SELLING, COMMODITY_STATUS_BOOKED],
                   deactivated: COMMODITY_STATUS_DEACTIVATED,
                   sold: COMMODITY_STATUS_SOLD,
                 }[currTab];
@@ -136,25 +137,26 @@ Page({
                   status,
                   role: 'seller'
                 });
+                showStatusImage = currTab === 'selling';
               }
-              showStatusImage = false;
             } else if (type === 'my_helps') {
               listType = 'help';
               if (currTab === 'got-bounty') {
                 resp = await HelpAPI.listMine({ start, count, role: 'buyer', status: HELP_STATUS_RESOLVED });
               } else {
                 const status = {
-                  'all': HELP_STATUS_RUNNING,
-                  'has-bounty': HELP_STATUS_RUNNING,
+                  'all': [HELP_STATUS_RUNNING, HELP_STATUS_RESOLVING],
                   'finished': HELP_STATUS_FINISHED,
+                  'resolved': HELP_STATUS_RESOLVED,
                 }[currTab];
                 if (status === undefined) {
                   throw Error('无效的状态')
                 }
+
                 resp = await HelpAPI.listMine({
                   start, count,
-                  status, role: 'seller',
-                  onlyBounty: currTab === 'has-bounty'
+                  status,
+                  role: 'seller',
                 });
               }
               showStatusImage = false;
@@ -226,7 +228,7 @@ Page({
                   return;
                 }
                 toastSucceed('成功');
-                return { action: 'fetchSingle' };
+                return { action: 'fetchAll' };
               },
               activate: async () => {
                 await ensureVerified();
@@ -242,7 +244,7 @@ Page({
                   return;
                 }
                 toastSucceed('上架成功');
-                return { action: 'fetchSingle' };
+                return { action: 'fetchAll' };
               },
               edit: async () => {
                 await ensureVerified();
@@ -251,7 +253,7 @@ Page({
                 } else {
                   await openHelpEdit(item, true);
                 }
-                return { action: 'fetchSingle' };
+                return { action: 'fetchAll' };
               },
               delete: async () => {
                 await ensureVerified();

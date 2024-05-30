@@ -83,7 +83,7 @@ Component({
         ridToRegion: app.globalData.ridToRegion,
         statusImage: !showStatusImage ? null : ({
           [COMMODITY_STATUS_SOLD]: '/images/已成交.png',
-          [COMMODITY_STATUS_BOOKED]: '/images/已预定.png',
+          [COMMODITY_STATUS_BOOKED]: '/images/已预订.png',
           [COMMODITY_STATUS_DEACTIVATED]: '/images/已结束.png',
         })[status] ?? '',
       })

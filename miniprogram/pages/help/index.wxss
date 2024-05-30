@@ -180,7 +180,7 @@ page {
   height: 100%;
   flex-shrink: 0;
 
-  --gap: 8rpx;
+  --gap: 2rpx;
   margin: var(--gap) 0;
   gap: var(--gap);
   display: flex;

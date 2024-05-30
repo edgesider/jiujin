@@ -54,6 +54,7 @@
   position: absolute;
   right: 110rpx;
   top: 10rpx;
+  z-index: 100;
 }
 
 .body .content .images {
@@ -173,7 +174,7 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 0 20rpx 10rpx;
+  padding: 0 20rpx 20rpx;
 }
 
 .footer .left {

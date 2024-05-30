@@ -79,12 +79,16 @@ export const CommodityAPI = {
     }));
   },
   async listMine(params: {
-    status: number, role: 'buyer' | 'seller',
+    status: number | number[], role: 'buyer' | 'seller',
     start: number, count: number
   }) {
     return convertListResp(wrapResp(await request({
       path: '/commodity/getMyCommodities',
-      data: params,
+      data: {
+        start: params.start, count: params.count,
+        role: params.role,
+        status_list: Array.isArray(params.status) ? params.status : [params.status]
+      },
     })));
   },
   async listCollected(params: { start: number, count: number }) {

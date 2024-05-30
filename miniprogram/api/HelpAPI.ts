@@ -38,14 +38,15 @@ export const HelpAPI = {
     })));
   },
   async listMine(params: {
-    status: number, role: 'buyer' | 'seller',
+    status: number | number[], role: 'buyer' | 'seller',
     start: number, count: number, onlyBounty?: boolean,
   }) {
     return convertListResp(wrapResp(await request({
       path: '/help/getMyHelps',
       data: {
-        status: params.status, start: params.start, count: params.count,
-        role: params.role, only_bounty: Boolean(params.onlyBounty)
+        start: params.start, count: params.count,
+        role: params.role, only_bounty: Boolean(params.onlyBounty),
+        status_list: Array.isArray(params.status) ? params.status : [params.status]
       },
     })));
   },

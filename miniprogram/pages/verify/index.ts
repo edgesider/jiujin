@@ -35,6 +35,7 @@ Page({
   },
   onUnload() {
     this._subscription?.unsubscribe();
+    app.fetchSelfInfo();
   },
   getSubscription() {
     return this._subscription!!;
