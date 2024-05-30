@@ -53,6 +53,8 @@ Page({
       for (const updatedConv of updated) {
         const idx = conversations.findIndex(c => c.conversationID === updatedConv.conversationID);
         if (idx >= 0) {
+          // @ts-ignore
+          updatedConv.__others_new_create = isOthersNewCreateConversation(updatedConv);
           conversations[idx] = updatedConv;
         }
       }
@@ -62,17 +64,6 @@ Page({
     }));
 
     await this.doRefresh();
-
-    // const switches = await getNotifySwitches();
-    // if (switches.mainSwitch) {
-    //   if (![
-    //     NotifyType.BookingRequest, NotifyType.BookingAgreed, NotifyType.Chat
-    //   ].every(t => switches[t])) {
-    //     this.setData({
-    //       showNotifyTip: true
-    //     })
-    //   }
-    // }
   },
   onUnload() {
     this.subscription?.unsubscribe();
@@ -81,13 +72,21 @@ Page({
   },
   sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   async onConversationListUpdate(convList: ConversationItem[]) {
-    const list = convList
-      .filter(conv =>
-        conv.groupID && isTransactionGroup(conv.groupID)
-        && !isOthersNewCreateConversation(conv)
-      )
-      .sort(this.sorter);
-    const systemConv = convList.find(conv => conv.groupID && conv.groupID === `${getOpenId()}_system`);
+    const list: ConversationItem[] = [];
+    let systemConv: ConversationItem | null = null;
+    for (const conv of convList) {
+      if (!conv.groupID) {
+        continue;
+      }
+      if (isTransactionGroup(conv.groupID)) {
+        // @ts-ignore
+        conv.__others_new_create = isOthersNewCreateConversation(conv);
+        list.push(conv);
+      } else if (conv.groupID === `${getOpenId()}_system`) {
+        systemConv = conv;
+      }
+    }
+    list.sort(this.sorter);
     this.setData({
       conversations: list,
       systemConv,

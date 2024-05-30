@@ -167,10 +167,11 @@ export function isTransactionGroup(groupId: string): boolean {
 
 export function isOthersNewCreateConversation(conv: ConversationItem) {
   const lastMsg = tryJsonParse<MessageItem>(conv.latestMsg);
-  if (!lastMsg || lastMsg.contentType !== MessageType.GroupCreated) {
+  // noinspection RedundantIfStatementJS
+  if (!lastMsg || lastMsg.contentType !== MessageType.GroupCreated || lastMsg.sendID === getOpenId()) {
     return false;
   }
-  return lastMsg.sendID !== getOpenId();
+  return true;
 }
 
 export async function getConversationByGroup(group: string | GroupItem): Promise<ConversationItem | undefined> {
@@ -255,6 +256,7 @@ const newConvListSubject = new Subject<ConversationItem[]>();
 const convSubjects = new Map<string, Subject<ConversationItem>>();
 const convChangeSubjects = new Subject<ConversationItem[]>();
 const convByGroupIdSubjects = new Map<string, Subject<ConversationItem>>();
+const allMsgSubject = new Subject<MessageItem>();
 const convMsgSubjects = new Map<string, Subject<MessageItem>>();
 const totalUnreadCountSubject = new BehaviorSubject(0);
 
@@ -262,11 +264,11 @@ function listenEvents() {
   oim.on(CbEvents.OnRecvNewMessages, event => {
     const msgList = event.data as MessageItem[];
     msgList.forEach(msg => {
+      allMsgSubject.next(msg);
       if (msg.groupID) {
         convMsgSubjects.get(getConvIdFromGroup(msg.groupID))?.next(msg);
       }
-    })
-    console.log('OnRecvNewMessages', msgList);
+    });
   });
   oim.on(CbEvents.OnNewConversation, event => {
     const convList = event.data as ConversationItem[];
@@ -340,6 +342,10 @@ export function listenConversationByGroup(group: string | GroupItem): Observable
     convByGroupIdSubjects.set(group, subj);
   }
   return subj;
+}
+
+export function listenAllMessage(): Observable<MessageItem> {
+  return allMsgSubject;
 }
 
 export function listenMessage(conv: string | ConversationItem): Observable<MessageItem> {

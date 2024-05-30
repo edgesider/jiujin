@@ -35,7 +35,7 @@
   scroll-into-view="{{scrollToTop ? 'top' : null}}"
   scroll-with-animation
 >
-  <view id="top" style="width: 100%; height: 0;"/>
+  <view id="top" style="width: 100%; height: 0;" />
   <SystemConversation
     wx:if="{{systemConv}}"
     class="conversation"
@@ -45,14 +45,19 @@
     groupId="{{self && (self._id + '_system')}}"
   />
   <view wx:if="{{conversations.length > 0}}">
-    <Conversation
-      class="conversation"
+    <block
       wx:for="{{conversations}}"
       wx:for-index="idx"
       wx:key="conversationID"
-      conversation="{{item}}"
-      updateIndex="{{updateIndex}}"
-    />
+    >
+      <Conversation
+        wx:if="{{!item.__others_new_create}}"
+        data-others_new_create="{{item.__others_new_create}}"
+        class="conversation"
+        conversation="{{item}}"
+        updateIndex="{{updateIndex}}"
+      />
+    </block>
   </view>
   <image wx:else src="/images/empty.png" class="empty" mode="aspectFit" />
 </scroll-view>
