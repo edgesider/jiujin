@@ -6,6 +6,7 @@ import Identicon from '../../utils/randomAvatar';
 import { getLastEnterByShareInfo } from '../../utils/share';
 import { decode } from 'base64-arraybuffer';
 import { openWebView } from '../../utils/router';
+import { initOpenIM } from '../../utils/oim';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -93,7 +94,10 @@ Page({
       title: '注册成功',
       icon: 'success',
     });
-    await sleep(1500);
+    const self = await app.fetchSelfInfo();
+    await app.fetchRegions();
+    await initOpenIM(self);
+    await sleep(1000);
     await wx.reLaunch({
       url: '/pages/me/index',
     });
