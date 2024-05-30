@@ -4,7 +4,7 @@ import { getContentDesc } from '../../../../utils/strings';
 import { Transaction, TransactionAPI, TransactionStatus } from '../../../../api/TransactionAPI';
 import { openCommodityDetail } from '../../../../utils/router';
 import { NotifyType, requestNotifySubscribe } from '../../../../utils/notify';
-import { sleep } from '../../../../utils/other';
+import { sleep, toastError } from '../../../../utils/other';
 
 const app = getApp();
 
@@ -69,10 +69,7 @@ Component({
       }
       const resp = await TransactionAPI.agreeBooking(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已同意你的预订');
@@ -92,10 +89,7 @@ Component({
       const reason = reasons[tapIndex];
       const resp = await TransactionAPI.denyBooking(transaction.id, reason);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的预订`);
@@ -117,10 +111,7 @@ Component({
       }
       const resp = await TransactionAPI.requestBooking(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已发出预订申请');
@@ -144,10 +135,7 @@ Component({
       }
       const resp = await TransactionAPI.cancelBooking(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已取消预订申请');
@@ -169,10 +157,7 @@ Component({
       }
       const resp = await TransactionAPI.confirmSold(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已确认售出');
@@ -195,10 +180,7 @@ Component({
       const reason = reasons[tapIndex];
       const resp = await TransactionAPI.confirmTerminated(transaction.id, reason);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone(`因“${reason}”，我已确认终止交易`);

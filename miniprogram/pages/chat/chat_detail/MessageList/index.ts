@@ -143,8 +143,8 @@ Component({
           .filter(msg => msg.contentType === MessageType.PictureMessage)
           .map(msg => msg.pictureElem.bigPicture.url);
         wx.previewImage({
-          current: url,
-          urls
+          current: `${url}/detail`,
+          urls: urls.map(u => `${u}/detail`),
         })
       }
     },

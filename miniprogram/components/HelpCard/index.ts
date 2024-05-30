@@ -115,7 +115,7 @@ Component({
       const { curr } = param.currentTarget.dataset;
       await wx.previewImage({
         current: curr,
-        urls: this.data.help.img_urls
+        urls: this.data.help.img_urls.map(u => `${u}/detail`)
       });
     },
 

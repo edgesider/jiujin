@@ -58,7 +58,8 @@ Page({
     }
     this.setData({
       selfInfo: self,
-      regionName: getRegionPathName(self.rid)
+      regionName: getRegionPathName(self.rid),
+      verifyIndex: self.verify_index.toString().padStart(8, '0'),
     });
   },
 

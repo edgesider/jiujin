@@ -2,9 +2,9 @@ import getConstants from '../../../../constants';
 import { getContentDesc } from '../../../../utils/strings';
 import { HelpTransaction, HelpTransactionAPI, HelpTransactionStatus } from '../../../../api/HelpTransactionAPI';
 import { NotifyType, requestNotifySubscribe } from '../../../../utils/notify';
-import { sleep } from '../../../../utils/other';
+import { sleep, toastError } from '../../../../utils/other';
 import { Help } from '../../../../types';
-import { openHelpDetail, openHelpEdit } from '../../../../utils/router';
+import { openHelpDetail } from '../../../../utils/router';
 
 const app = getApp();
 
@@ -69,10 +69,7 @@ Component({
       }
       const resp = await HelpTransactionAPI.agreeBooking(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已同意你的帮助申请');
@@ -91,10 +88,7 @@ Component({
       const reason = reasons[tapIndex];
       const resp = await HelpTransactionAPI.denyBooking(transaction.id, reason);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的帮助申请`);
@@ -116,10 +110,7 @@ Component({
       }
       const resp = await HelpTransactionAPI.requestBooking(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已申请提供帮助');
@@ -143,10 +134,7 @@ Component({
       }
       const resp = await HelpTransactionAPI.cancelBooking(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已取消提供帮助的申请');
@@ -168,10 +156,7 @@ Component({
       }
       const resp = await HelpTransactionAPI.confirmSold(transaction.id);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone('我已确认求助得到解决');
@@ -192,10 +177,7 @@ Component({
       const reason = reasons[tapIndex];
       const resp = await HelpTransactionAPI.confirmTerminated(transaction.id, reason);
       if (resp.isError) {
-        await wx.showToast({
-          title: '操作失败，请稍后再试',
-          icon: 'error'
-        })
+        toastError(resp.message ?? '操作失败，请稍后再试');
         return;
       }
       this.afterTransactionActionDone(`因“${reason}”，我已终止求助`);

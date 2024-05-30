@@ -17,6 +17,7 @@ export interface User {
   verify_status: VerifyStatus;
   verify_email?: string;
   verify_time?: number;
+  verify_index: number;
 }
 
 export interface Commodity {

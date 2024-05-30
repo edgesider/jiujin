@@ -6,7 +6,7 @@ import * as rxjs from "rxjs";
  */
 export const InAppMonitor = {
   _TAG: 'InAppMonitor',
-  _INTERVAL: 1000 * 15,
+  _INTERVAL: 1000 * 10,
   _subj: rxjs.Subscription.EMPTY,
   _action() {
     if (!getApp()?.globalData.self) {

@@ -141,7 +141,8 @@ Page({
   async previewImages(param) {
     const { curr } = param.currentTarget.dataset;
     await wx.previewImage({
-      current: curr, urls: this.data.help.img_urls
+      current: curr,
+      urls: this.data.help.img_urls.map(u => `${u}/detail`)
     });
   },
 

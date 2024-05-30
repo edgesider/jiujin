@@ -11,17 +11,21 @@
         class="gender"
         src="{{selfInfo.sex === GENDER.MALE ? '/images/male.png' : '/images/female.png'}}"
       />
-      <view
-        wx:if="{{selfInfo}}"
-        class="verify-tag {{selfInfo.verify_status === VerifyStatus.NotVerified ? 'not-verified' : 'verified'}}"
-        bindtap="gotoVerify"
-      >
-        {{selfInfo.verify_status === VerifyStatus.NotVerified ? '未认证' : '已认证'}}
-      </view>
     </view>
     <view class="region" wx:if="{{selfInfo.rid > 0}}">
       <image class="icon" src="/images/region.png" />
       <view class="name">{{regionName}}</view>
+    </view>
+    <view
+      class="verify-line"
+      wx:if="{{selfInfo}}"
+    >
+      <view
+        class="verify-tag {{selfInfo.verify_status === VerifyStatus.NotVerified ? 'not-verified' : 'verified'}}"
+        bindtap="gotoVerify"
+      >
+        {{selfInfo.verify_status === VerifyStatus.NotVerified ? '未认证' : ('已认证 No.' + verifyIndex)}}
+      </view>
     </view>
   </view>
   <view class="spacer" />

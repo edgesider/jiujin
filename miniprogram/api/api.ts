@@ -65,8 +65,8 @@ export function getOpenId() {
 
 export function wrapResp<T = any>(resp: AxiosResponse): Resp<T> {
   if (resp.status !== 200 || !resp.data?.succeed) {
-    const errMsg = resp.data?.errMsg || `${resp.status} ${resp.statusText}`;
-    return new RespError(errMsg, resp.data?.errCode ?? -1);
+    const errMsg = resp.data?.err_msg || `${resp.status} ${resp.statusText}`;
+    return new RespError(errMsg, resp.data?.err_code ?? -1);
   }
   return new RespSuccess(resp.data?.data);
 }
