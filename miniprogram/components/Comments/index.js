@@ -1,5 +1,5 @@
 import { openProfile } from "../../utils/router";
-import { ensureRegistered, kbHeightChanged, toastError } from "../../utils/other";
+import { ensureRegistered, ensureVerified, kbHeightChanged, toastError } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
 import { CommentAPI } from "../../api/CommentAPI";
@@ -119,7 +119,7 @@ Component({
       await openProfile(sender);
     },
     onStartComment({ currentTarget: { dataset: { comment } } }) {
-      ensureRegistered();
+      ensureVerified();
       this.setData({
         commenting: true,
         commentingTo: comment ?? null, // 如果是回复则有这个字段

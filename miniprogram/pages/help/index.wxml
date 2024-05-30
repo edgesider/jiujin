@@ -52,4 +52,6 @@
   </view>
 </scroll-view>
 
+<NotVerifiedCard />
+
 <view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />

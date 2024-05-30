@@ -16,6 +16,10 @@ export function tryJsonParse<T = any>(str: string | undefined | null, defaultVal
   }
 }
 
+export function getCurrentPage() {
+  return getCurrentPages().reverse()[0];
+}
+
 export function setTabBar(page: any, onClick?: () => void) {
   page.getTabBar().updateTo(page.route, onClick);
 }
@@ -87,9 +91,12 @@ export function ensureRegistered(): User {
   return user;
 }
 
-export function ensureVerified() {
+export function ensureVerified(openDialog = true) {
   const self = ensureRegistered();
   if (self.verify_status === VerifyStatus.NotVerified) {
+    if (openDialog) {
+      getCurrentPage().__not_verified_dialog.show();
+    }
     throw Error('not verified');
   }
   return self;

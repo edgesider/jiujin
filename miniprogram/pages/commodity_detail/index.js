@@ -1,9 +1,16 @@
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import getConstants from "../../constants";
-import { ensureRegistered, getRegionPathName, sleep, toastError, toastSucceed } from "../../utils/other";
+import {
+  ensureRegistered,
+  ensureVerified,
+  getRegionPathName,
+  sleep,
+  toastError,
+  toastSucceed
+} from "../../utils/other";
 import moment from "moment";
-import { openCommodityEdit, openConversationDetail, openProfile } from "../../utils/router";
+import { openCommodityEdit, openConversationDetail, openProfile, openVerify } from "../../utils/router";
 import { DATETIME_FORMAT } from "../../utils/time";
 import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
 import { waitForAppReady } from "../../utils/globals";
@@ -30,6 +37,7 @@ Page({
     seller: null,
     contentParagraphs: [],
     firstImageSize: [],
+    showNotVerifiedDialog: false,
   },
   onLoad: async function (options) {
     await waitForAppReady();
@@ -94,6 +102,7 @@ Page({
 
   polishing: false,
   async onPolish() {
+    ensureVerified();
     if (this.polishing)
       return;
     this.polishing = true;
@@ -120,6 +129,7 @@ Page({
     this.back();
   },
   async onDeactivate() {
+    ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;
@@ -140,6 +150,7 @@ Page({
     await this.loadData(commodity._id);
   },
   async onActivate() {
+    ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;
@@ -156,6 +167,7 @@ Page({
     await this.loadData(commodity._id);
   },
   async onEdit() {
+    ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;
@@ -174,6 +186,7 @@ Page({
 
   togglingCollect: false,
   async onToggleCollect() {
+    ensureVerified();
     ensureRegistered();
     if (this.togglingCollect) {
       return;
@@ -210,19 +223,21 @@ Page({
   },
 
   async onClickReport() {
+    ensureVerified();
     await reportCommodity(this.data.commodity._id);
   },
 
   // async onClickShare() {
-    // ensureRegistered();
-    // const {} = await wx.showShareMenu({
-    //   withShareTicket: true,
-    //   menus: ['shareAppMessage', 'shareTimeline'],
-    // })
+  // ensureRegistered();
+  // const {} = await wx.showShareMenu({
+  //   withShareTicket: true,
+  //   menus: ['shareAppMessage', 'shareTimeline'],
+  // })
   // },
 
   async onPrivateMessage() {
     ensureRegistered();
+    ensureVerified();
     await wx.showLoading({
       title: '请稍后',
       mask: true
@@ -244,6 +259,7 @@ Page({
   },
 
   async onShareAppMessage(options) {
+    ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;

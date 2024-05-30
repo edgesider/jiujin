@@ -95,3 +95,5 @@
     </view>
   </block>
 </view>
+
+<NotVerifiedCard />

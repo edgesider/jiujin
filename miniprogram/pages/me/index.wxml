@@ -69,3 +69,4 @@
   </view>
 </scroll-view>
 
+<NotVerifiedCard />

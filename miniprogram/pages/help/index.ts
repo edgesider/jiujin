@@ -1,5 +1,5 @@
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
-import { getRegionPath, setTabBar } from '../../utils/other';
+import { ensureVerified, getRegionPath, setTabBar } from '../../utils/other';
 import { onShareApp, onShareHelp, parseShareInfo, reportShareInfo } from '../../utils/share';
 import { waitForAppReady } from '../../utils/globals';
 import { HelpAPI } from '../../api/HelpAPI';
@@ -193,6 +193,7 @@ Page({
 
 // @ts-ignore
   async onShareAppMessage(options) {
+    ensureVerified();
     const help = options.target?.dataset?.help;
     if (!help) {
       return await onShareApp(options);

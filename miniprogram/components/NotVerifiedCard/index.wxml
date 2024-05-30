@@ -1,0 +1,17 @@
+<view
+  wx:if="{{show}}"
+  class="root"
+  style="justify-content: {{pos === 'center'  ? 'center' : 'flex-end'}}; padding-bottom: calc({{hasTabBar ? BottomBarHeight : 0}}px + 20rpx)"
+>
+  <view class="mask" bindtap="onClickMask" />
+  <view class="dialog">
+    <image class="icon" src="/images/error-icon.png" />
+    <view class="title">您当前未认证</view>
+    <view class="title">暂时不可发布内容</view>
+    <view class="subtitle">为保证校园信息环境真实纯净，请认证后再发布内容吧</view>
+    <view class="button" bindtap="onClickVerify">
+      <image class="icon" src="/images/verify-icon.png" />
+      <view class="text">去认证</view>
+    </view>
+  </view>
+</view>
