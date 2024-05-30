@@ -119,7 +119,6 @@ Component({
       await openProfile(sender);
     },
     onStartComment({ currentTarget: { dataset: { comment } } }) {
-      ensureVerified();
       this.setData({
         commenting: true,
         commentingTo: comment ?? null, // 如果是回复则有这个字段
@@ -163,6 +162,7 @@ Component({
       this.setData({ commentingText: ev.detail.value });
     },
     async onConfirmComment() {
+      await ensureVerified();
       const { commentingText, commentingTo } = this.data;
       const text = commentingText.trim();
       if (text) {

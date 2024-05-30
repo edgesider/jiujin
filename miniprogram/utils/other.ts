@@ -91,7 +91,8 @@ export function ensureRegistered(): User {
   return user;
 }
 
-export function ensureVerified(openDialog = true) {
+export async function ensureVerified(openDialog = true) {
+  await getApp().fetchSelfInfo();
   const self = ensureRegistered();
   if (self.verify_status === VerifyStatus.NotVerified) {
     if (openDialog) {

@@ -108,7 +108,6 @@ page {
   margin: 6rpx;
   background: var(--brand-yellow);
   color: #ffffff;
-  font-style: italic;
   font-size: 25rpx;
 }
 
@@ -121,7 +120,6 @@ page {
   margin: 6rpx;
   background: #cccccc;
   color: #ffffff;
-  font-style: italic;
   font-size: 25rpx;
 }
 
@@ -132,7 +130,6 @@ page {
   height: 100rpx;
   color: #ffffff;
   text-align: center;
-  font-style: italic;
   font-weight: 800;
   font-size: 38rpx;
   border-radius: 50rpx;

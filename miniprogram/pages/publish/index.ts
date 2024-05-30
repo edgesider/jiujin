@@ -15,13 +15,13 @@ Page({
     await app.fetchSelfInfo();
   },
   async createCommodity() {
-    ensureVerified();
+    await ensureVerified();
     await wx.navigateTo({
       url: '/pages/commodity_publish/index'
     });
   },
   async createHelp() {
-    ensureVerified();
+    await ensureVerified();
     await wx.navigateTo({
       url: '/pages/help_publish/index'
     });

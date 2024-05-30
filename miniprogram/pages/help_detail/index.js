@@ -110,7 +110,7 @@ Page({
 
   polishing: false,
   async polish() {
-    ensureVerified();
+    await ensureVerified();
     if (this.polishing)
       return;
     this.polishing = true;
@@ -133,7 +133,7 @@ Page({
   },
 
   async edit() {
-    ensureVerified();
+    await ensureVerified();
     await openHelpEdit(this.data.help, true);
     await this.loadData(this.data.help._id);
   },
@@ -146,7 +146,7 @@ Page({
   },
 
   async onDeactivate() {
-    ensureVerified();
+    await ensureVerified();
     const { confirm } = await wx.showModal({
       title: '确认结束？',
       content: ''
@@ -167,7 +167,7 @@ Page({
 
   togglingCollect: false,
   async onToggleCollect() {
-    ensureVerified();
+    await ensureVerified();
     if (this.togglingCollect) {
       return;
     }
@@ -202,7 +202,7 @@ Page({
 
   togglingLike: false,
   async onToggleLike() {
-    ensureVerified();
+    await ensureVerified();
     if (this.togglingLike) {
       return;
     }
@@ -236,19 +236,19 @@ Page({
   },
 
   async onClickReport() {
-    ensureVerified();
+    await ensureVerified();
     await reportHelp(this.data.help._id);
   },
 
   async onClickShare() {
-    ensureVerified();
+    await ensureVerified();
     const {} = await wx.showShareMenu({
       withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'],
     })
   },
 
   async onPrivateMessage() {
-    ensureVerified();
+    await ensureVerified();
     await wx.showLoading({
       title: '请稍后', mask: true
     })
@@ -268,7 +268,7 @@ Page({
   },
 
   async onShareAppMessage(options) {
-    ensureVerified();
+    await ensureVerified();
     return await onShareHelp(options, this.data.help);
   },
   onCommentLoadFinished() {

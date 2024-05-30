@@ -192,7 +192,7 @@ Page({
                 }
               },
               polish: async () => {
-                ensureVerified();
+                await ensureVerified();
                 await wx.showLoading({ mask: true, title: '擦亮中...' });
                 const resp = listType === 'commodity'
                   ? await api.polishCommodity({ id: item._id })
@@ -207,7 +207,7 @@ Page({
                 return { action: 'fetchAll' };
               },
               deactivate: async () => {
-                ensureVerified();
+                await ensureVerified();
                 const { confirm } = await wx.showModal({
                   title: listType === 'commodity' ? '确认下架？' : '确认结束？',
                   content: ''
@@ -229,7 +229,7 @@ Page({
                 return { action: 'fetchSingle' };
               },
               activate: async () => {
-                ensureVerified();
+                await ensureVerified();
                 if (listType !== 'commodity') {
                   throw Error('只有商品可以 activate');
                 }
@@ -245,7 +245,7 @@ Page({
                 return { action: 'fetchSingle' };
               },
               edit: async () => {
-                ensureVerified();
+                await ensureVerified();
                 if (listType === 'commodity') {
                   await openCommodityEdit(item, true);
                 } else {
@@ -254,7 +254,7 @@ Page({
                 return { action: 'fetchSingle' };
               },
               delete: async () => {
-                ensureVerified();
+                await ensureVerified();
                 const { confirm } = await wx.showModal({
                   title: '提示',
                   content: `确认删除`,
@@ -274,7 +274,7 @@ Page({
                 }
               },
               republish: async () => {
-                ensureVerified();
+                await ensureVerified();
                 if (listType === 'commodity') {
                   await openCommodityPublish(item, true);
                 } else {

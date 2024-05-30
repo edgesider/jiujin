@@ -193,7 +193,7 @@ Page({
 
 // @ts-ignore
   async onShareAppMessage(options) {
-    ensureVerified();
+    await ensureVerified();
     const help = options.target?.dataset?.help;
     if (!help) {
       return await onShareApp(options);

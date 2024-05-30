@@ -113,7 +113,6 @@
 .body .content .info .bounty .price {
   color: #fff;
   display: flex;
-  font-style: italic;
   font-weight: bold;
   transform: translateX(-4rpx);
 }

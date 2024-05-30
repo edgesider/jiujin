@@ -102,7 +102,7 @@ Page({
 
   polishing: false,
   async onPolish() {
-    ensureVerified();
+    await ensureVerified();
     if (this.polishing)
       return;
     this.polishing = true;
@@ -129,7 +129,7 @@ Page({
     this.back();
   },
   async onDeactivate() {
-    ensureVerified();
+    await ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;
@@ -150,7 +150,7 @@ Page({
     await this.loadData(commodity._id);
   },
   async onActivate() {
-    ensureVerified();
+    await ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;
@@ -167,7 +167,7 @@ Page({
     await this.loadData(commodity._id);
   },
   async onEdit() {
-    ensureVerified();
+    await ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;
@@ -186,7 +186,7 @@ Page({
 
   togglingCollect: false,
   async onToggleCollect() {
-    ensureVerified();
+    await ensureVerified();
     ensureRegistered();
     if (this.togglingCollect) {
       return;
@@ -223,7 +223,7 @@ Page({
   },
 
   async onClickReport() {
-    ensureVerified();
+    await ensureVerified();
     await reportCommodity(this.data.commodity._id);
   },
 
@@ -237,7 +237,7 @@ Page({
 
   async onPrivateMessage() {
     ensureRegistered();
-    ensureVerified();
+    await ensureVerified();
     await wx.showLoading({
       title: '请稍后',
       mask: true
@@ -259,7 +259,7 @@ Page({
   },
 
   async onShareAppMessage(options) {
-    ensureVerified();
+    await ensureVerified();
     const { commodity } = this.data;
     if (!commodity) {
       return;

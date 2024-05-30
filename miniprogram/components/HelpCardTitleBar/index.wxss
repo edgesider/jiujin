@@ -94,7 +94,6 @@
   color: #fff;
   display: flex;
   /*align-self: flex-end;*/
-  font-style: italic;
   font-weight: bold;
   transform: translateX(-4rpx);
 }
