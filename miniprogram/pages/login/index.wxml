@@ -10,7 +10,7 @@
     <view wx:else class="checkbox unchecked" />
     <text>
       <text class="text">我已阅读并同意</text>
-      <text class="text highlight" catchtap="onClickServiceProtocol">《楼里楼外服务协议》</text>
+      <!--      <text class="text highlight" catchtap="onClickServiceProtocol">《楼里楼外服务协议》</text>-->
       <text class="text highlight" catchtap="onClickPrivacyPolicy">《楼里楼外隐私保护指引》</text>
     </text>
   </view>

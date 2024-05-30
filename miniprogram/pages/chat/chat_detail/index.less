@@ -26,7 +26,7 @@ page {
   flex-shrink: 1;
 }
 
-.input {
+.fake-input {
   height: 80rpx;
   flex-grow: 0;
   flex-shrink: 0;
@@ -37,10 +37,10 @@ page {
   margin: 16rpx 20rpx;
   gap: 12rpx;
 
-  input {
+  .fake {
     flex-grow: 1;
-    height: 100%;
     padding: 20rpx 40rpx;
+    color: #979797;
     background-color: #f1f1f1;
     border-radius: 50rpx;
   }
@@ -50,5 +50,75 @@ page {
     height: 72rpx;
     flex-shrink: 0;
     flex-grow: 0;
+  }
+}
+
+.popup-input {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1000000;
+
+  opacity: 0;
+  animation: popup-opacity ease-in-out 0.1s forwards;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+
+  .mask {
+    background: rgba(0, 0, 0, .5);
+    width: 100%;
+    flex-grow: 1;
+  }
+
+  .input-line {
+    width: 100%;
+    padding: 20rpx;
+    background: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 20rpx;
+
+    .textarea-wrapper {
+      width: 1px;
+      flex: 1 0 40rpx;
+      border-radius: 16rpx;
+      background: #f1f1f1;
+
+
+      textarea {
+        width: 100%;
+        font-size: 28rpx;
+      }
+    }
+
+    .button {
+      flex-shrink: 0;
+      padding: 12rpx 40rpx;
+      border-radius: 37rpx;
+      background: var(--brand-green);
+      font-size: 28rpx;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      margin-bottom: 10rpx;
+    }
+  }
+}
+
+@keyframes popup-opacity {
+  from {
+    opacity: 0
+  }
+  to {
+    opacity: 1
   }
 }

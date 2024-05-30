@@ -125,6 +125,7 @@ Page({
     try {
       await this.doRefresh();
     } catch (e) {
+      console.error(e);
       await wx.showToast({
         title: '网络错误',
         icon: 'error'

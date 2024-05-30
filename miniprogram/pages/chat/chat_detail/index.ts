@@ -17,9 +17,7 @@ import { CommodityAPI } from '../../../api/CommodityAPI';
 import { HelpTransaction, HelpTransactionAPI } from '../../../api/HelpTransactionAPI';
 import { HelpAPI } from '../../../api/HelpAPI';
 
-type ChooseImageSuccessCallbackResult = WechatMiniprogram.ChooseImageSuccessCallbackResult;
 type Input = WechatMiniprogram.Input;
-type InputConfirm = WechatMiniprogram.InputConfirm;
 
 const app = getApp();
 
@@ -38,6 +36,7 @@ Page({
     helpTact: null as HelpTransaction | null,
 
     keyboardHeight: 0,
+    inputting: false,
     input: '',
     inputFocused: false,
   },
@@ -270,7 +269,7 @@ Page({
       this.setData({ helpTact: tact });
     }
   },
-  onInputTap() {
+  onInputFocus() {
     this.setData({
       inputFocused: true,
     });
@@ -280,15 +279,26 @@ Page({
       inputFocused: false,
     });
   },
+  onClickFakeInput() {
+    this.setData({
+      inputting: true,
+    });
+  },
   onInput(ev: Input) {
     this.setData({ input: ev.detail.value });
   },
-  async onInputConfirm(ev: InputConfirm) {
-    const input = ev.detail.value.trim();
-    this.setData({ input: '', });
+  onEndInput() {
+    this.setData({ inputting: false });
+  },
+  async onInputConfirm() {
+    const input = this.data.input?.trim();
     if (!input) {
       return;
     }
+    this.setData({
+      inputting: false,
+      input: '',
+    });
     await this.sendTextMessage(input);
   },
   async onSendImageIconClick() {

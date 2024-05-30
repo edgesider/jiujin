@@ -82,7 +82,7 @@ Page({
       return;
     }
     let bounty = parseFloat(this.data.helpCurrentBountyText) || 0;
-    bounty = Math.max(Math.min(bounty, 9999999), 0)
+    bounty = Math.max(Math.min(bounty, 99999), 0)
     this.setData({
       helpCurrentBounty: bounty * 100,
       helpCurrentBountyText: bounty.toString(10),

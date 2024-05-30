@@ -14,6 +14,7 @@ Page({
     cursor: 0,
     itemList: [],
     listType: 'commodity', // commodity | help
+    showStatusImage: true,
 
     title: '',
     currTab: '',
@@ -54,7 +55,7 @@ Page({
     if (token !== this.fetchToken) {
       return;
     }
-    const { list, listType } = res ?? {};
+    const { list, listType, showStatusImage } = res ?? {};
     if (!res || res instanceof Error || !Array.isArray(list) || ['commodity', 'help'].indexOf(listType) === -1) {
       console.error(res);
       await wx.showToast({
@@ -73,6 +74,7 @@ Page({
       listType,
       cursor: this.data.cursor + list.length,
       isLoading: false,
+      showStatusImage
     })
   },
 

@@ -55,7 +55,7 @@ Component({
     },
     async agreeBooking() {
       const { confirm } = await wx.showModal({
-        content: '该用户向你申请互助，同意后互助信息依然可见，但其他人暂不可申请互助，是否同意？',
+        content: '该用户向你申请提供帮助，同意后求助信息依然可见，但其他人暂不可申请提供帮助，是否同意？',
         confirmText: '同意',
         cancelText: '取消',
         showCancel: true,
@@ -75,7 +75,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已同意你的互助申请');
+      this.afterTransactionActionDone('我已同意你的帮助申请');
       wx.showToast({ title: '已同意', }).then();
     },
     async denyBooking() {
@@ -97,7 +97,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的互助申请`);
+      this.afterTransactionActionDone(`抱歉，因“${reason}”，我拒绝了你的帮助申请`);
       wx.showToast({ title: '已拒绝' }).then();
     },
     async requestBooking() {
@@ -106,7 +106,7 @@ Component({
         return;
       }
       const { confirm } = await wx.showModal({
-        content: '确定向对方申请互助？',
+        content: '确定向对方申请提供帮助？',
         confirmText: '确定',
         cancelText: '取消',
         showCancel: true,
@@ -122,7 +122,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已发出互助申请');
+      this.afterTransactionActionDone('我已申请提供帮助');
       wx.showToast({ title: '已申请' }).then();
       await sleep(200);
       requestNotifySubscribe([NotifyType.HelpChat]).then()
@@ -149,12 +149,12 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已取消互助申请');
+      this.afterTransactionActionDone('我已取消提供帮助的申请');
       wx.showToast({ title: '已取消', }).then();
     },
     async confirmSold() {
       const { confirm } = await wx.showModal({
-        content: '点击确认，该互助将被标注为“已解决”状态，其他人不可申请互助。',
+        content: '点击确认，该求助将被标注为“已解决”状态，其他人不可申请提供帮助',
         confirmText: '确认',
         cancelText: '取消',
         showCancel: true,
@@ -174,8 +174,8 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone('我已确认售出');
-      wx.showToast({ title: '已确认售出', }).then();
+      this.afterTransactionActionDone('我已确认求助得到解决');
+      wx.showToast({ title: '已确认解决', }).then();
     },
     async confirmTerminated() {
       const { transaction } = this.data;
@@ -198,7 +198,7 @@ Component({
         })
         return;
       }
-      this.afterTransactionActionDone(`因“${reason}”，我已确认终止互助`);
+      this.afterTransactionActionDone(`因“${reason}”，我已终止求助`);
       wx.showToast({ title: '已终止', }).then();
     },
     getTransactionStatusImage(transaction: HelpTransaction) {
@@ -221,14 +221,14 @@ Component({
       if (this.data.isSeller) {
         tips = ({
           [HelpTransactionStatus.Booked]: [
-            '点击“已解决”，互助将完结；点击“未解决”，互助继续悬赏',
+            '点击“已解决”，求助将终止；点击“未解决”，求助将继续悬赏',
             `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
           ],
         })[transaction.status];
       } else {
         tips = ({
           [HelpTransactionStatus.Idle]: [
-            '和悬赏人沟通好需求细节后，点击“我要互助”锁定赏金'
+            '和悬赏人沟通好需求细节后，点击“我要帮忙”锁定赏金'
           ],
           [HelpTransactionStatus.Booked]: [
             `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,

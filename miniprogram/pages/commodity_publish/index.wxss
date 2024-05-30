@@ -8,6 +8,7 @@ page {
   top: 0;
   left: 0;
   width: 100%;
+  z-index: 1000;
 }
 
 /* 基本信息与视频、图片 */

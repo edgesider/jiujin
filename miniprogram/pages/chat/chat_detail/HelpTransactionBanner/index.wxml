@@ -18,43 +18,32 @@
       <block wx:if="{{transaction.status === HelpTransactionStatus.Idle}}">
       </block>
       <block wx:elif='{{transaction.status === HelpTransactionStatus.RequestingBooking}}'>
-        <view class="button" bindtap="agreeBooking">同意互助</view>
-        <view class="button yellow" bindtap="denyBooking">拒绝互助</view>
+        <view class="button" bindtap="agreeBooking">同意TA帮助</view>
+        <view class="button yellow" bindtap="denyBooking">拒绝TA帮助</view>
       </block>
       <block wx:elif='{{transaction.status === HelpTransactionStatus.Booked}}'>
         <view class="button" bindtap="confirmSold">已解决</view>
         <view class="button yellow" bindtap="confirmTerminated">未解决</view>
       </block>
-      <block wx:elif='{{transaction.status === HelpTransactionStatus.Finished}}'>
-        <view class="button disabled">已解决</view>
-      </block>
-      <block wx:elif='{{transaction.status === HelpTransactionStatus.Terminated}}'>
-      </block>
       <block wx:elif='{{transaction.status === HelpTransactionStatus.Closed}}'>
-        <view class="button disabled">已下架</view>
+        <view class="button disabled">已终止</view>
       </block>
     </block>
     <block wx:else>
       <block wx:if='{{transaction.status === HelpTransactionStatus.Idle}}'>
-        <view class="button" bindtap="requestBooking">我要互助</view>
-      </block>
-      <block wx:elif='{{transaction.status === HelpTransactionStatus.RequestingBooking}}'>
-        <view class="button" bindtap="cancelBooking">取消互助</view>
-      </block>
-      <block wx:elif='{{transaction.status === HelpTransactionStatus.Denied}}'>
-        <view class="button" bindtap="requestBooking">我要互助</view>
-      </block>
-      <block wx:elif='{{transaction.status === HelpTransactionStatus.Booked}}'>
-        <view class="button disabled">解决中</view>
-      </block>
-      <block wx:elif='{{transaction.status === HelpTransactionStatus.Finished}}'>
-        <view class="button disabled">已解决</view>
+        <view class="button" bindtap="requestBooking">我要帮忙</view>
       </block>
       <block wx:elif='{{transaction.status === HelpTransactionStatus.Terminated}}'>
-        <view class="button" bindtap="requestBooking">我要互助</view>
+        <view class="button" bindtap="requestBooking">我要帮忙</view>
+      </block>
+      <block wx:elif='{{transaction.status === HelpTransactionStatus.Denied}}'>
+        <view class="button" bindtap="requestBooking">我要帮忙</view>
+      </block>
+      <block wx:elif='{{transaction.status === HelpTransactionStatus.RequestingBooking}}'>
+        <view class="button" bindtap="cancelBooking">取消申请</view>
       </block>
       <block wx:elif='{{transaction.status === HelpTransactionStatus.Closed}}'>
-        <view class="button disabled">已下架</view>
+        <view class="button disabled">已终止</view>
       </block>
     </block>
   </view>

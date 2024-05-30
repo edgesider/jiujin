@@ -104,6 +104,8 @@ Page({
           fetcher: async ({ start, count, currTab }) => {
             let resp;
             let listType;
+            // 是否展示状态图片
+            let showStatusImage;
             console.log('fetch_list', type, currTab);
             if (type === 'my_commodities') {
               listType = 'commodity';
@@ -128,6 +130,7 @@ Page({
                   role: 'seller'
                 });
               }
+              showStatusImage = false;
             } else if (type === 'my_helps') {
               listType = 'help';
               if (currTab === 'got-bounty') {
@@ -147,6 +150,7 @@ Page({
                   onlyBounty: currTab === 'has-bounty'
                 });
               }
+              showStatusImage = false;
             } else if (type === 'collected') {
               if (currTab === 'commodity') {
                 listType = 'commodity';
@@ -155,9 +159,11 @@ Page({
                 listType = 'help';
                 resp = await HelpAPI.listCollected({ start, count });
               }
+              showStatusImage = true;
             } else if (type === 'liked') {
               listType = 'help';
               resp = await HelpAPI.listLiked({ start, count });
+              showStatusImage = true;
             }
             if (!resp || resp.isError) {
               console.error('response', resp);
@@ -166,6 +172,7 @@ Page({
             return {
               list: resp.data,
               listType,
+              showStatusImage,
             };
           },
           onClick: async ({ type, listType, item }) => {
@@ -192,28 +199,36 @@ Page({
                 return { action: 'fetchAll' };
               },
               deactivate: async () => {
-                await wx.showLoading({ mask: true, title: '正在下架...' });
+                const { confirm } = await wx.showModal({
+                  title: listType === 'commodity' ? '确认下架？' : '确认结束？',
+                  content: ''
+                });
+                if (!confirm) {
+                  return;
+                }
+                await wx.showLoading({ mask: true, title: '请稍后' });
                 const resp = listType === 'commodity'
                   ? await api.deactivateCommodity({ id: item._id, })
                   : await api.deactivateHelp({ id: item._id, })
                 await wx.hideLoading();
                 if (resp.isError) {
                   console.error(resp)
-                  toastError('下架失败');
+                  toastError('网络错误');
                   return;
                 }
-                toastSucceed('下架成功');
+                toastSucceed('成功');
                 return { action: 'fetchSingle' };
               },
               activate: async () => {
+                if (listType !== 'commodity') {
+                  throw Error('只有商品可以 activate');
+                }
                 await wx.showLoading({ mask: true, title: '正在重新上架...' });
-                const resp = listType === 'commodity'
-                  ? await api.activateCommodity({ id: item._id, })
-                  : await api.activateHelp({ id: item._id, })
+                const resp = await api.activateCommodity({ id: item._id, });
                 await wx.hideLoading();
                 if (resp.isError) {
                   console.error(resp)
-                  toastError('上架失败');
+                  toastError('网络错误');
                   return;
                 }
                 toastSucceed('上架成功');

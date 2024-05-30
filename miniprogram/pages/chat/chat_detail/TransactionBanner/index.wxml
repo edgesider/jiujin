@@ -20,11 +20,6 @@
         <view class="button" bindtap="confirmSold">已售出</view>
         <view class="button yellow" bindtap="confirmTerminated">未售出</view>
       </block>
-      <block wx:elif='{{transaction.status === TransactionStatus.Finished}}'>
-        <view class="button disabled">已完成</view>
-      </block>
-      <block wx:elif='{{transaction.status === TransactionStatus.Terminated}}'>
-      </block>
       <block wx:elif='{{transaction.status === TransactionStatus.Closed}}'>
         <view class="button disabled">已下架</view>
       </block>
@@ -39,12 +34,6 @@
       <block wx:elif='{{transaction.status === TransactionStatus.Denied}}'>
         <view class="button" bindtap="requestBooking">预订</view>
       </block>
-      <block wx:elif='{{transaction.status === TransactionStatus.Booked}}'>
-        <view class="button disabled">已预订</view>
-      </block>
-      <block wx:elif='{{transaction.status === TransactionStatus.Finished}}'>
-        <view class="button disabled">已完成</view>
-      </block>
       <block wx:elif='{{transaction.status === TransactionStatus.Terminated}}'>
         <view class="button" bindtap="requestBooking">预订</view>
       </block>
@@ -55,7 +44,6 @@
   </view>
 </view>
 <view class="tip" wx:if="{{tips.length > 0}}">
-  <!--  <text wx:for="{{tips}}" wx:for-item="tip">{{tip}}</text>-->
   <rich-text wx:for="{{tips}}" wx:for-item="tip" nodes="{{tip}}" />
 </view>
 <view class="divider" wx:else />

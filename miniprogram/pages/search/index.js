@@ -192,6 +192,7 @@ Page({
   async onRegionFilterClick() {
     const { self } = this.data;
     const path = getRegionPath(self.rid);
+    path.splice(3); // 去掉最高一级
     const { tapIndex } = await wx.showActionSheet({
       itemList: [...path.map(p => p.name), '不限']
     })

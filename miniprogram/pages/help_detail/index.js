@@ -135,6 +135,25 @@ Page({
     });
   },
 
+  async onDeactivate() {
+    const { confirm } = await wx.showModal({
+      title: '确认结束？',
+      content: ''
+    });
+    if (!confirm) {
+      return;
+    }
+    await wx.showLoading({ mask: true, title: '请稍后' });
+    const resp = await api.deactivateHelp({ id: this.data.help._id, })
+    await wx.hideLoading();
+    if (resp.isError) {
+      console.error(resp)
+      toastError('网络错误');
+      return;
+    }
+    toastSucceed('已结束');
+  },
+
   togglingCollect: false,
   async onToggleCollect() {
     ensureRegistered();

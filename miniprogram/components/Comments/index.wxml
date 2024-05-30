@@ -43,7 +43,8 @@
             class="content"
             bindtap="onStartComment"
             data-comment="{{comment}}"
-          >{{comment.content}}</view>
+          >{{comment.content}}
+          </view>
           <view class="time">{{comment.timeStr}}</view>
         </view>
       </view>
@@ -58,17 +59,21 @@
       class="input-line"
       style="padding-bottom: calc({{keyboardHeight}}px + 20rpx)"
     >
-      <textarea
-        class="input"
-        placeholder="{{commentingTo ? '回复@' + commentingTo.sender.name : '评论'}}"
-        value="{{commentingText}}"
-        focus="{{true}}"
-        adjust-position="{{false}}"
-        confirm-type="send"
-        maxlength="10240"
-        bindinput="onPopupInput"
-        bindconfirm="onConfirmComment"
-      />
+      <view class="textarea-wrapper" style="{{Platform === 'ios' ? 'padding: 10rpx;' : 'padding: 20rpx;'}}">
+        <textarea
+          class="input"
+          placeholder="{{commentingTo ? '回复@' + commentingTo.sender.name : '评论'}}"
+          value="{{commentingText}}"
+          focus="{{true}}"
+          auto-height="true"
+          confirm-type="{{Platform === 'ios' ? 'send' : 'return'}}"
+          adjust-position="{{false}}"
+          maxlength="10240"
+          bindinput="onPopupInput"
+          bindconfirm="onConfirmComment"
+        />
+      </view>
+
       <view class="button" bind:tap="onConfirmComment">发送</view>
     </view>
   </view>

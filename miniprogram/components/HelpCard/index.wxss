@@ -52,8 +52,8 @@
   width: 136rpx;
   height: 96rpx;
   position: absolute;
-  right: 24rpx;
-  top: 40rpx;
+  right: 110rpx;
+  top: 10rpx;
 }
 
 .body .content .images {

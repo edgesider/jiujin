@@ -100,7 +100,7 @@ Page({
       return;
     }
     let priceYuan = parseFloat(this.data.commodityCurrentPriceText) || 0;
-    priceYuan = Math.max(Math.min(priceYuan, 9999999), 0)
+    priceYuan = Math.max(Math.min(priceYuan, 99999), 0)
     this.setData({
       priceFen: priceYuan * 100,
       commodityCurrentPriceText: priceYuan.toString(10),

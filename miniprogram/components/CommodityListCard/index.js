@@ -3,7 +3,7 @@ import moment from 'moment';
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
-  COMMODITY_STATUS_DEACTIVATED
+  COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_BOOKED
 } from "../../constants";
 import { DATETIME_FORMAT } from "../../utils/time";
 
@@ -17,6 +17,10 @@ Component({
     type: {
       type: String,
       value: 'mine', // mine | bought | viewed
+    },
+    showStatusImage: {
+      type: Boolean,
+      value: true,
     }
   },
   data: {
@@ -68,6 +72,7 @@ Component({
     },
 
     onUpdate() {
+      const { showStatusImage } = this.properties;
       const { content, create_time, update_time, selled_time, status } = this.properties.commodity
       this.setData({
         self: app.globalData.self,
@@ -76,9 +81,9 @@ Component({
         soldTime: selled_time && moment(selled_time).format(DATETIME_FORMAT) || '',
         polishAt: moment(update_time).fromNow(),
         ridToRegion: app.globalData.ridToRegion,
-        statusImage: ({
+        statusImage: !showStatusImage ? null : ({
           [COMMODITY_STATUS_SOLD]: '/images/已成交.png',
-          [COMMODITY_STATUS_SELLING]: '/images/未成交.png',
+          [COMMODITY_STATUS_BOOKED]: '/images/已预定.png',
           [COMMODITY_STATUS_DEACTIVATED]: '/images/已结束.png',
         })[status] ?? '',
       })

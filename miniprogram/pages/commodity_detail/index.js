@@ -124,6 +124,10 @@ Page({
     if (!commodity) {
       return;
     }
+    const { confirm } = await wx.showModal({ title: '确认下架该商品？' });
+    if (!confirm) {
+      return;
+    }
     await wx.showLoading({ mask: true, title: '正在下架...' });
     const resp = await api.deactivateCommodity({ id: commodity._id, });
     await wx.hideLoading();

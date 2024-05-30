@@ -12,10 +12,10 @@
     </view>
   </block>
   <block wx:elif="{{type === 'about_us'}}">
-    <view class="item" bindtap="onClickServiceProtocol">
-      <view class="name">服务协议</view>
-      <image class="arrow" src="/images/right.png" />
-    </view>
+    <!--    <view class="item" bindtap="onClickServiceProtocol">-->
+    <!--      <view class="name">服务协议</view>-->
+    <!--      <image class="arrow" src="/images/right.png" />-->
+    <!--    </view>-->
     <view class="item" bindtap="onClickPrivacyPolicy">
       <view class="name">隐私政策</view>
       <image class="arrow" src="/images/right.png" />

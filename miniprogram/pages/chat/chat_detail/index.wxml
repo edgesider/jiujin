@@ -1,4 +1,4 @@
-<view class="container" style="margin-bottom: {{BottomIndicatorHeight + keyboardHeight}}px">
+<view class="container" style="margin-bottom: {{BottomIndicatorHeight}}px">
   <UserTitleBar user="{{isSeller ? buyer : seller}}" />
   <TransactionBanner
     class="banner"
@@ -16,25 +16,39 @@
   />
   <MessageList conversationId="{{conversationId}}" class="message-list" bind:onPullDown="onMessagePullDown" />
 
-
-  <view class="input">
-    <input
-      placeholder="说点啥~" bind:confirm=""
-      confirm-type="send"
-      focus="{{inputFocused}}"
-      adjust-position="{{false}}"
-      maxlength="10240"
-      value="{{input}}"
-      bindtap="onInputTap"
-      bindblur="onInputBlur"
-      bindinput="onInput"
-      bindconfirm="onInputConfirm"
-    />
+  <view class="fake-input">
+    <view class="fake" bindtap="onClickFakeInput">说点啥</view>
     <image
       class="send-img" src="/images/send-img.png" mode="aspectFill"
       bindtap="onSendImageIconClick"
     />
   </view>
+</view>
 
-  <view class="keyboard-space" />
+<view
+  wx:if="{{inputting}}"
+  class="popup-input"
+>
+  <view class="mask" bindtap="onEndInput" />
+  <view
+    class="input-line"
+    style="padding-bottom: calc({{keyboardHeight}}px + 20rpx)"
+  >
+    <view class="textarea-wrapper" style="{{Platform === 'ios' ? 'padding: 10rpx;' : 'padding: 20rpx;'}}">
+      <textarea
+        placeholder=""
+        value="{{input}}"
+        auto-height="true"
+        confirm-type="{{Platform === 'ios' ? 'send' : 'return'}}"
+        focus="{{true}}"
+        adjust-position="{{false}}"
+        maxlength="10240"
+        bindfocus="onInputFocus"
+        bindblur="onInputBlur"
+        bindinput="onInput"
+        bindconfirm="onInputConfirm"
+      />
+    </view>
+    <view class="button" bind:tap="onInputConfirm">发送</view>
+  </view>
 </view>

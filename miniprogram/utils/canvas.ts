@@ -93,7 +93,7 @@ export async function drawCommodityShareImage(commodity: Commodity): Promise<str
   let { width, } = ctx.measureText('￥');
   ctx.fillText(`￥`, 4, textCenter + 86 / 2);
   ctx.font = 'bold 86px sans-serif';
-  ctx.fillText(`${commodity.price}`, 4 + width, textCenter + 86 / 2);
+  ctx.fillText(`${commodity.price / 100}`, 4 + width, textCenter + 86 / 2);
 
   const regionPath = getRegionPathName(commodity.rid, 2);
   ctx.font = 'bold 50px sans-serif';
@@ -104,7 +104,7 @@ export async function drawCommodityShareImage(commodity: Commodity): Promise<str
   console.log('draw icon')
   await drawImage(
     cvs, ctx,
-    randomizeUrl('https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/region.png?sign=8605eea8e23bb96276b89910f3e11927'),
+    randomizeUrl(REGION_ICON),
     1000 - width - 12 - 60, textCenter - 44 / 2,
     60, 60
   );

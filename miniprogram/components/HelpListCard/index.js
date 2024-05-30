@@ -1,7 +1,7 @@
 // pages/help_list/index.ts
 import getConstants, {
   HELP_STATUS_RUNNING,
-  HELP_STATUS_FINISHED
+  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED, HELP_STATUS_RESOLVING
 } from "../../constants";
 import { getContentDesc, getQualitiesMap } from "../../utils/strings";
 import { DATETIME_FORMAT } from "../../utils/time";
@@ -9,14 +9,18 @@ import moment from 'moment';
 
 const app = getApp();
 Component({
-  properties:{
-    help:{
+  properties: {
+    help: {
       type: Object,
     },
     type: {
       type: String,
       value: 'mine', // mine | bought | viewed
-    }
+    },
+    showStatusImage: {
+      type: Boolean,
+      value: false,
+    },
   },
   data: {
     ...getConstants(),
@@ -27,7 +31,7 @@ Component({
     ridToRegion: app.globalData.ridToRegion,
     statusImage: '',
   },
-  methods:{
+  methods: {
     async gotoHelpDetail() {
       this.triggerEvent('onClickCard', {
         help: this.properties.help,
@@ -54,6 +58,7 @@ Component({
       })
     },
     onUpdate() {
+      const { showStatusImage } = this.properties;
       const { content, create_time, update_time, status } = this.properties.help
       this.setData({
         self: app.globalData.self,
@@ -61,7 +66,9 @@ Component({
         createTime: moment(create_time).format(DATETIME_FORMAT),
         polishAt: moment(update_time).fromNow(),
         ridToRegion: app.globalData.ridToRegion,
-        statusImage: ({
+        statusImage: !showStatusImage ? null : ({
+          [HELP_STATUS_RESOLVED]: '/images/已解决.png',
+          [HELP_STATUS_RESOLVING]: '/images/解决中.png',
           [HELP_STATUS_FINISHED]: '/images/已完成.png',
         })[status] ?? '',
       })

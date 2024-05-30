@@ -12,6 +12,7 @@
         src="{{selfInfo.sex === GENDER.MALE ? '/images/male.png' : '/images/female.png'}}"
       />
       <view
+        wx:if="{{selfInfo}}"
         class="verify-tag {{selfInfo.verify_status === VerifyStatus.NotVerified ? 'not-verified' : 'verified'}}"
         bindtap="gotoVerify"
       >
