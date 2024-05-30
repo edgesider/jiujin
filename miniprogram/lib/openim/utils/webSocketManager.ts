@@ -6,7 +6,7 @@ type SocketTask = WechatMiniprogram.SocketTask;
 
 type AppPlatform = 'unknow' | 'web' | 'uni' | 'wx';
 
-enum WsOpenState {
+export enum WsOpenState {
   CONNECTING = 0,
   OPEN = 1,
   CLOSING = 2,
@@ -14,7 +14,7 @@ enum WsOpenState {
 }
 
 class WebSocketManager {
-  private ws?: SocketTask;
+  ws?: SocketTask;
   private url: string;
   private reconnectAttempts: number;
   private connected: boolean;

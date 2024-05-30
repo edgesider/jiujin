@@ -7,7 +7,7 @@ import type {
   UploadFileParams,
   VideoMsgParams,
 } from '../types/params';
-import WebSocketManager from '../utils/webSocketManager';
+import WebSocketManager, { WsOpenState } from '../utils/webSocketManager';
 import { ErrorCode, RequestApi } from '../constant/api';
 import { setupUser, UserApi } from './user';
 import { FriendApi, setupFriend } from './friend';
@@ -66,6 +66,10 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       this.wsManager.sendMessage(requestObj);
     });
   };
+
+  isLoggedIn() {
+    return this.wsManager?.ws?.readyState === WsOpenState.OPEN;
+  }
 
   private defaultDataFormatter = <T>(params: T) => {
     if (typeof params === 'object') {

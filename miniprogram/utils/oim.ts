@@ -55,13 +55,9 @@ export function checkOimResult<T>(res: WsResponse<T>, raise: boolean = true): T 
 }
 
 let oim: OpenIMSDK;
-let hasLogin = false;
 let loginWaiters: [(() => void), ((err: any) => void)][] = [];
 
 export async function initOpenIM(self: User, forceUpdateToken = false) {
-  if (hasLogin) {
-    return;
-  }
   oim = new OpenIMSDK();
   // @ts-ignore
   globalThis.oim = oim;
@@ -83,18 +79,17 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
     console.error('init openim failed', e);
     throw e;
   }
-  hasLogin = true;
   loginWaiters.forEach(([res, _]) => res());
   loginWaiters.length = 0;
   listenEvents();
 }
 
 export function isOimLogged() {
-  return hasLogin;
+  return oim.isLoggedIn();
 }
 
 export async function waitForOimLogged() {
-  if (hasLogin) {
+  if (isOimLogged()) {
     return;
   }
   return new Promise<void>((res, rej) => {
@@ -288,7 +283,6 @@ function listenEvents() {
     })
   });
   oim.on(CbEvents.OnUserTokenExpired, async (event) => {
-    hasLogin = false;
     const self = getGlobals().self; // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
     if (!self) {
       return;
@@ -304,11 +298,9 @@ function listenEvents() {
   });
   oim.on(CbEvents.OnUserStatusChanged, event => {
     console.log('user status changed', event);
-    hasLogin = event.data === LoginStatus.Logged;
   });
   oim.on(CbEvents.OnKickedOffline, event => {
     console.log('kicked offline', event);
-    hasLogin = false;
   })
 }
 
