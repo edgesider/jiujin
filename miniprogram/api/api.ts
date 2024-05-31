@@ -6,7 +6,7 @@ import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 import { User } from '../types';
 
-const DEV_BASE_URL = 'http://localhost:8080';
+const DEV_BASE_URL = '';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 let openId: string | undefined;
 
@@ -17,9 +17,9 @@ export function initNetwork() {
 }
 
 export const Axios = axios.create({
-  baseURL: (version === 'release' || version === 'trial' || !DEV_BASE_URL)
-    ? 'https://lllw.cc'
-    : DEV_BASE_URL,
+  baseURL: (version === 'develop' && DEV_BASE_URL)
+    ? DEV_BASE_URL
+    : 'https://lllw.cc',
   timeout: 10000,
   headers: {
     'content-type': 'application/json;charset=utf-8',

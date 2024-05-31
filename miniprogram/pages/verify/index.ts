@@ -5,6 +5,7 @@ import { getGlobals } from '../../utils/globals';
 import { VerifyAPI, VerifyStatus } from '../../api/verify';
 import { User } from '../../types';
 import { sleep, toastError, toastSucceed } from '../../utils/other';
+import { ErrCode } from '../../api/ErrCode';
 
 type Input = WechatMiniprogram.Input;
 const app = getApp()
@@ -114,7 +115,11 @@ Page({
 
       const resp = await VerifyAPI.verifyByCardImage(imageResp.data);
       if (resp.isError) {
-        toastError('服务器打瞌睡了，请稍后重试');
+        let error = '服务器打瞌睡了，请稍后重试';
+        if (resp.errno === ErrCode.SecCheckError) {
+          error = '内容含有违法违规内容';
+        }
+        toastError(error);
         return;
       }
     } finally {

@@ -85,7 +85,7 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
 }
 
 export function isOimLogged() {
-  return oim.isLoggedIn();
+  return Boolean(oim?.isLoggedIn());
 }
 
 export async function waitForOimLogged() {
