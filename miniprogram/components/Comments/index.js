@@ -6,6 +6,7 @@ import { CommentAPI } from "../../api/CommentAPI";
 import { EntityType } from "../../types";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
+import { ErrCode } from "../../api/ErrCode";
 
 const app = getApp();
 
@@ -101,11 +102,7 @@ Component({
       const resp = await CommentAPI.add(this.getEntityId(), this.getEntityType(), content, replyTo ?? -1);
       if (resp.isError) {
         console.error(resp);
-        await wx.showToast({
-          title: '发送失败',
-          icon: 'error',
-          mask: true,
-        })
+        toastError(resp.errno === ErrCode.SecCheckError ? '内容含有违法违规内容' : '发送失败');
         return;
       }
       await this.fetchComments();

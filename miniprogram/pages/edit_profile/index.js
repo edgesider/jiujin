@@ -2,6 +2,7 @@ import api, { getOpenId } from "../../api/api";
 import rules from "../../utils/rules";
 import getConstants, { GENDER } from "../../constants";
 import { getL1Regions, getRegionPath, getRegionsByParent, sleep } from "../../utils/other";
+import { ErrCode } from "../../api/ErrCode";
 
 const app = getApp();
 
@@ -185,6 +186,8 @@ Page({
       let msg = '保存失败\n' + JSON.stringify(resp);
       if (resp.errno === -2) {
         msg = '位置修改得太频繁啦！';
+      } else if (resp.errno === ErrCode.SecCheckError) {
+        msg = '内容含有违法违规内容';
       }
       await wx.showToast({
         title: msg,

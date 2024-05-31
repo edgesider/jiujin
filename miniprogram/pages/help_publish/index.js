@@ -2,9 +2,10 @@
 import rules from "../../utils/rules";
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
-import { sleep } from "../../utils/other";
+import { sleep, toastError } from "../../utils/other";
 import { waitForAppReady } from "../../utils/globals";
 import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
+import { ErrCode } from "../../api/ErrCode";
 
 const app = getApp()
 Page({
@@ -229,10 +230,12 @@ Page({
     await wx.hideLoading();
     if (resp.isError) {
       console.error(resp);
-      await wx.showToast({
-        title: editing ? '保存失败' : '发布失败',
-        icon: 'error',
-      });
+      let err = editing ? '保存失败' : '发布失败';
+      if (resp.errno === ErrCode.SecCheckError) {
+        err = '内容含有违法违规内容';
+      }
+      toastError(err);
+      this.submitting = false;
       return;
     }
     this.getOpenerEventChannel().emit(editing ? 'afterEdited' : 'afterPublished');
