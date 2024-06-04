@@ -54,14 +54,13 @@ Page({
       })
       return;
     }
-    this.setData({ conversationId, });
-
     this.subscription!!.add(kbHeightChanged.subscribe(res => {
       this.setData({
         keyboardHeight: res.height,
       })
     }));
 
+    this.setData({ conversationId, });
     await this.loadData();
 
     this.subscription!!.add(listenMessage(conversationId).subscribe(msg => {
@@ -82,8 +81,10 @@ Page({
     if (!this.data.conversationId) {
       return;
     }
+    console.log(this.route, this.data.conversationId);
     const conversation = await getConversationById(this.data.conversationId);
     if (!conversation) {
+      console.log('getConversationById failed');
       await wx.showToast({
         title: '网络错误',
         icon: 'error',
@@ -95,6 +96,7 @@ Page({
     }
     const group = await getGroup(conversation.groupID);
     if (!group) {
+      console.log('getGroupById failed');
       await wx.showToast({
         title: '网络错误',
         icon: 'error',
@@ -111,6 +113,8 @@ Page({
 
     const coAttr = await getCommodityGroupAttributes(group);
     const helpAttr = await getHelpGroupAttributes(group);
+    console.log('co', coAttr);
+    console.log('help', helpAttr);
     if (coAttr) {
       const { commodityId, sellerId, buyerId, transactionId } = coAttr;
       const [
@@ -118,14 +122,14 @@ Page({
         transactionResp,
         sellerResp,
         buyerResp
-      ] =
-        await Promise.all([
-          CommodityAPI.getOne(commodityId),
-          TransactionAPI.getById(transactionId),
-          api.getUserInfo(sellerId),
-          api.getUserInfo(buyerId),
-        ])
+      ] = await Promise.all([
+        CommodityAPI.getOne(commodityId),
+        TransactionAPI.getById(transactionId),
+        api.getUserInfo(sellerId),
+        api.getUserInfo(buyerId),
+      ]);
       if (commodityResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
+        console.error(commodityResp, transactionResp, sellerResp, buyerResp);
         await wx.showToast({ title: '网络错误', icon: 'error' });
         return;
       }
@@ -140,14 +144,14 @@ Page({
         transactionResp,
         sellerResp,
         buyerResp
-      ] =
-        await Promise.all([
-          HelpAPI.getOne(helpId),
-          HelpTransactionAPI.getById(transactionId),
-          api.getUserInfo(sellerId),
-          api.getUserInfo(buyerId),
-        ])
+      ] = await Promise.all([
+        HelpAPI.getOne(helpId),
+        HelpTransactionAPI.getById(transactionId),
+        api.getUserInfo(sellerId),
+        api.getUserInfo(buyerId),
+      ]);
       if (helpResp.isError || transactionResp.isError || sellerResp.isError || buyerResp.isError) {
+        console.error(helpResp, transactionResp, sellerResp, buyerResp);
         await wx.showToast({ title: '网络错误', icon: 'error' });
         return;
       }
@@ -156,6 +160,7 @@ Page({
       seller = sellerResp.data!!;
       buyer = buyerResp.data!!;
     } else {
+      console.error('both coAttr and helpAttr is undefined');
       await wx.showToast({
         title: '网络错误',
         icon: 'error',

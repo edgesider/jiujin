@@ -63,7 +63,7 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
   globalThis.oim = oim;
 
   try {
-    const platform = Platform.Web;
+    const platform = getConstants().Platform === 'devtools' ? Platform.MacOSX : Platform.Web;
     const token = (await api.getOimToken(platform, forceUpdateToken)).data;
     const res = await oim.login({
       userID: self._id,
