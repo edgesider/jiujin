@@ -62,15 +62,18 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
   // @ts-ignore
   globalThis.oim = oim;
 
+  oim.addOnLoginStateChangeListener(onLoginStateChanged);
+
   try {
-    const platform = getConstants().Platform === 'devtools' ? Platform.MacOSX : Platform.Web;
-    const token = (await api.getOimToken(platform, forceUpdateToken)).data;
+    const platformID =
+      getConstants().Platform === 'devtools' ? Platform.MacOSX : Platform.Web;
+    const token = (await api.getOimToken(platformID, forceUpdateToken)).data;
     const res = await oim.login({
       userID: self._id,
       token,
       wsAddr: 'wss://im.lllw.cc/ws/',
       apiAddr: 'https://im.lllw.cc/api/',
-      platformID: platform,
+      platformID,
     });
     checkOimResult(res, true);
   } catch (e) {
@@ -82,6 +85,12 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
   loginWaiters.forEach(([res, _]) => res());
   loginWaiters.length = 0;
   listenEvents();
+}
+
+async function onLoginStateChanged(loggedIn: boolean) {
+  if (loggedIn) {
+    loginWaiters.forEach(w => w[0]());
+  }
 }
 
 export function isOimLogged() {

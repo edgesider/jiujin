@@ -44,6 +44,8 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
   private wsManager?: WebSocketManager;
   private handlerMap = new Map<string, Handler>();
 
+  private onLoginStateChangeListeners: ((loggedIn: boolean) => void)[] = [];
+
   constructor() {
     super();
     Object.assign(this, setupUser(this));
@@ -118,6 +120,7 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       this.handlerMap.forEach(v => v.reject(Error(`Disconnected unexpectedly (max retries reached)`)));
       this.handlerMap.clear();
     }
+    this.onLoginStateChanged(true);
   }
 
   private handleReconnectSuccess = async () => {
@@ -130,6 +133,7 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       userID: this.userID,
       reqFuncName: RequestApi.Login,
     });
+    this.onLoginStateChanged(true);
     console.log('re-logged');
     for (const [_, handler] of this.handlerMap.entries()) {
       if (handler.request.reqFuncName === RequestApi.Login) {
@@ -139,6 +143,18 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       this.wsManager!!.sendMessage(handler.request);
     }
   };
+
+  private onLoginStateChanged(loggedIn: boolean) {
+    try {
+      this.onLoginStateChangeListeners.forEach(r => r(loggedIn));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  addOnLoginStateChangeListener(listener: (loggedIn: boolean) => void) {
+    this.onLoginStateChangeListeners.push(listener);
+  }
 
   createRequestFunction = <T, R = unknown>(
     reqFuncName: RequestApi,
@@ -201,6 +217,7 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
         event: RequestApi.Login,
       });
     }
+    this.onLoginStateChanged(true);
     return this.sendRequest({
       data: JSON.stringify([params.userID, params.token]),
       operationID,

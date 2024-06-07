@@ -82,7 +82,15 @@ Page({
       return;
     }
     console.log(this.route, this.data.conversationId);
-    const conversation = await getConversationById(this.data.conversationId);
+    let conversation: ConversationItem | undefined;
+    for (let i = 3; i > 0; i--) {
+      try {
+        conversation = await getConversationById(this.data.conversationId);
+        break;
+      } catch (e: any) {
+        console.error(`getConversationById error: ${e?.message}${i > 0 ? ', retrying' : ''}`);
+      }
+    }
     if (!conversation) {
       console.log('getConversationById failed');
       await wx.showToast({

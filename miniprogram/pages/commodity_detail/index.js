@@ -18,18 +18,21 @@ import { startTransaction } from "../../utils/transaction";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { reportCommodity } from "../../utils/report";
 import { drawCommodityShareImage } from "../../utils/canvas";
+import { TransactionAPI, TransactionStatus } from "../../api/TransactionAPI";
 
 const app = getApp();
 
 Page({
   data: {
     ...getConstants(),
+    self,
     scrollToView: '',
     scrollToComment: false,
     ridToRegion: {},
     loading: true,
     isMine: false,
     commodity: null,
+    transaction: null,
     createTime: '',
     polishTime: '', // 3天前
     polishTimeGeneral: '', // 2022/2/2 10:10
@@ -69,7 +72,6 @@ Page({
       return;
     }
     const commodity = commResp.data;
-    // commodity.img_urls = [await drawCommodityShareImage(commodity)];
 
     const sellerResp = await api.getUserInfo(commodity.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
@@ -85,17 +87,26 @@ Page({
     }
 
     const { self } = app.globalData;
+    const isMine = self && self._id === commodity.seller_id;
+
+    const transactionsResp = await TransactionAPI.listByCommodity(
+      commodity._id,
+      isMine ? { status: TransactionStatus.Booked } : null
+    );
+    const transaction = transactionsResp.data?.[0];
 
     this.setData({
+      self,
       loading: false,
       commodity,
+      transaction,
       createTime: moment(commodity.create_time).format(DATETIME_FORMAT),
       polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
       polishTimeGeneral: moment(commodity.polish_time ?? commodity.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
       regionName: getRegionPathName(commodity.rid),
-      isMine: self && self._id === commodity.seller_id,
+      isMine,
       firstImageSize,
     });
   },
@@ -179,7 +190,7 @@ Page({
   async previewImages(param) {
     const { curr } = param.currentTarget.dataset;
     await wx.previewImage({
-      current: curr,
+      current: `${curr}/detail`,
       urls: this.data.commodity.img_urls.map(u => `${u}/detail`)
     });
   },
@@ -236,20 +247,19 @@ Page({
   // },
 
   async onPrivateMessage() {
-    ensureRegistered();
     await ensureVerified();
-    await wx.showLoading({
-      title: '请稍后',
-      mask: true
-    })
-    const tact = await startTransaction(this.data.commodity, this.data.seller);
-    await wx.hideLoading();
+    let tact = this.data.transaction;
     if (!tact) {
-      await wx.showToast({
-        title: '发起私聊失败，请稍后再试',
-        icon: 'error'
-      });
-      return;
+      await wx.showLoading({
+        title: '请稍后',
+        mask: true
+      })
+      tact = await startTransaction(this.data.commodity, this.data.seller);
+      await wx.hideLoading();
+      if (!tact) {
+        toastError('发起私聊失败，请稍后再试');
+        return;
+      }
     }
     await openConversationDetail(tact.conversation_id);
   },

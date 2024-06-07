@@ -1,5 +1,4 @@
 import type { WsRequest, WsResponse } from '../types/entity';
-import { utf8Decode, utf8Encode } from './textCoder';
 import { RequestApi } from '../constant/api';
 
 type SocketTask = WechatMiniprogram.SocketTask;
@@ -12,6 +11,8 @@ export enum WsOpenState {
   CLOSING = 2,
   CLOSED = 3,
 }
+
+const isWx = typeof wx === 'object';
 
 class WebSocketManager {
   ws?: SocketTask;
@@ -26,7 +27,7 @@ class WebSocketManager {
     private onReconnectSuccess: () => void,
     private onDisconnect: (willRetry: boolean) => void,
     private reconnectInterval = 1000,
-    private maxReconnectAttempts = Infinity
+    private maxReconnectAttempts = 100
   ) {
     this.url = url;
     this.reconnectAttempts = 0;
@@ -45,7 +46,7 @@ class WebSocketManager {
           this.connected = true;
           resolve();
         };
-        const onWsMessage = (event: any) => this.onBinaryMessage(event.data);
+        const onWsMessage = (event: any) => this.onBinaryMessage(event);
         const onWsClose = () => {
           this.connected = false;
           const willRetry =
@@ -66,11 +67,23 @@ class WebSocketManager {
           onWsClose();
         }
 
-        this.ws = wx.connectSocket({ url: this.url });
-        this.ws.onOpen(onWsOpen);
-        this.ws.onMessage(onWsMessage);
-        this.ws.onClose(onWsClose);
-        this.ws.onError(onWsError);
+        if (isWx) {
+          this.ws = wx.connectSocket({ url: this.url });
+          this.ws.onOpen(onWsOpen);
+          this.ws.onMessage(onWsMessage);
+          this.ws.onClose(onWsClose);
+          this.ws.onError(onWsError);
+        } else {
+          this.ws = new WebSocket(this.url);
+          // @ts-ignore
+          this.ws!.on('open', onWsOpen);
+          // @ts-ignore
+          this.ws!.on('message', onWsMessage);
+          // @ts-ignore
+          this.ws!.on('close', onWsClose);
+          // @ts-ignore
+          this.ws!.on('error', onWsError);
+        }
       } else if (this.ws.readyState === WsOpenState.OPEN) {
         resolve();
       } else {
@@ -79,8 +92,9 @@ class WebSocketManager {
     });
   };
 
-  private onBinaryMessage = async (message: string) => {
+  private onBinaryMessage = async (event: { data: string } | any) => {
     this.isProcessingMessage = true;
+    let message = typeof event.data === 'string' ? event.data : event.toString();
     const json: WsResponse = JSON.parse(message);
     this.onMessage(json);
     if (json.event === RequestApi.Login && json.errCode === 0) {
@@ -91,10 +105,11 @@ class WebSocketManager {
 
   public sendMessage = (message: WsRequest) => {
     if (this.ws?.readyState === WsOpenState.OPEN) {
-      this.ws.send({
+      this.ws.send(
         //@ts-ignore
-        data: JSON.stringify(message),
-      });
+        isWx
+          ? { data: JSON.stringify(message) }
+          : JSON.stringify(message));
     } else {
       console.error('Connection lost');
     }

@@ -1,7 +1,7 @@
 import getConstants, { DEFAULT_REGION_ID, GENDER } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import randomName from '../../utils/randomName';
-import { sleep } from '../../utils/other';
+import { sleep, toastError } from '../../utils/other';
 import Identicon from '../../utils/randomAvatar';
 import { getLastEnterByShareInfo } from '../../utils/share';
 import { decode } from 'base64-arraybuffer';
@@ -41,10 +41,14 @@ Page({
     openWebView('https://static.lllw.cc/privacy_policy.html');
   },
 
+  registering: false,
   async onGetPhone(ev: CustomEvent) {
     const { code, errno, errMsg } = ev.detail;
     if (errno || !code) {
       console.error(`getPhoneNumber failed, errno=${errno}, errMsg=${errMsg}`);
+      return;
+    }
+    if (this.registering) {
       return;
     }
     await wx.showLoading({ title: '注册中', });
@@ -55,17 +59,16 @@ Page({
         console.error('getPhoneNumber failed', resp);
         error = '获取手机号码失败';
       }
+      this.registering = true;
       await this.register(resp.data);
     } catch (e: any) {
       error = e?.message ?? '注册失败';
     } finally {
+      this.registering = false;
       await wx.hideLoading()
     }
     if (error) {
-      await wx.showToast({
-        title: error,
-        icon: 'error',
-      });
+      toastError(error);
     }
   },
 
@@ -93,6 +96,8 @@ Page({
     await wx.showToast({
       title: '注册成功',
       icon: 'success',
+      mask: true,
+      duration: 2000
     });
     const self = await app.fetchSelfInfo();
     await app.fetchRegions();

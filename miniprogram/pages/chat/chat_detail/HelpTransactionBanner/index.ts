@@ -204,7 +204,7 @@ Component({
         tips = ({
           [HelpTransactionStatus.Booked]: [
             '点击“已解决”，求助将终止；点击“未解决”，求助将继续悬赏',
-            `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
+            `如12小时内无任何操作，会自动转为“已解决”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
           ],
         })[transaction.status];
       } else {
@@ -213,7 +213,7 @@ Component({
             '和悬赏人沟通好需求细节后，点击“我要帮忙”锁定赏金'
           ],
           [HelpTransactionStatus.Booked]: [
-            `如12小时内无任何操作，会自动转为“已售出”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
+            `如12小时内无任何操作，会自动转为“已解决”状态 | <span style="color: var(--brand-green)">剩余${remain}</span>`,
           ]
         })[transaction.status];
       }

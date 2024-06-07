@@ -1,0 +1,16 @@
+{
+  "name": "imtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/ws": "^8.5.10",
+    "axios": "^1.7.2",
+    "ws": "^8.17.0"
+  }
+}

@@ -114,7 +114,6 @@ Page({
     if (!user) {
       return;
     }
-    console.log(user);
 
     wx.previewImage({
       current: user.avatar_url,

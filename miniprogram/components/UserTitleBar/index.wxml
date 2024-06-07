@@ -2,8 +2,9 @@
 
 <view class="top-user" style="height: {{CustomBar}}px;">
   <text
-    class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}"
     wx:if="{{!isTabBarPage}}"
+    class="back {{isFirstPage ? 'cuIcon-home' : 'cuIcon-back'}}"
+    style="font-size: 52rpx"
     bindtap="back"
   />
   <image

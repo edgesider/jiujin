@@ -114,7 +114,7 @@ Component({
     async previewImages(param: BaseEvent) {
       const { curr } = param.currentTarget.dataset;
       await wx.previewImage({
-        current: curr,
+        current: `${curr}/detail`,
         urls: this.data.help.img_urls.map(u => `${u}/detail`)
       });
     },

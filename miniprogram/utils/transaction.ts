@@ -1,12 +1,15 @@
-import { TransactionAPI } from '../api/TransactionAPI';
-import { HelpTransactionAPI } from '../api/HelpTransactionAPI';
+import { TransactionAPI, TransactionStatus } from '../api/TransactionAPI';
+import { HelpTransactionAPI, HelpTransactionStatus } from '../api/HelpTransactionAPI';
 import { getOpenId } from '../api/api';
 import { Commodity, Help, User } from '../types';
 import {
-  getConversationByGroup, getGroupIdForHelpTransaction,
+  getConversationByGroup,
+  getGroupIdForHelpTransaction,
   getGroupIdForTransaction,
   getImUidFromUid,
-  getOrCreateGroup, setCommodityGroupAttributes, setHelpGroupAttributes,
+  getOrCreateGroup,
+  setCommodityGroupAttributes,
+  setHelpGroupAttributes,
   tryDeleteConversationAndGroup
 } from './oim';
 
@@ -20,13 +23,17 @@ function getDesc(obj: Commodity | Help): string {
  * 根据商品和卖家创建群聊
  */
 export async function startTransaction(commodity: Commodity, seller: User) {
-  const transactions = await TransactionAPI.listByCommodity(commodity._id);
+  const transactions = await TransactionAPI.listByCommodity(
+    commodity._id,
+    { status: TransactionStatus.Booked }
+  );
   if (transactions.isError) {
     console.error('failed to query existed transactions');
     return;
   }
   const transaction = transactions.data?.[0];
   if (transaction) {
+    transaction.buyer
     return transaction;
   }
   const [group, newCreate] = await getOrCreateGroup(
@@ -63,7 +70,10 @@ export async function startTransaction(commodity: Commodity, seller: User) {
 }
 
 export async function startHelpTransaction(help: Help, seller: User) {
-  const transactions = await HelpTransactionAPI.listByHelp(help._id);
+  const transactions = await HelpTransactionAPI.listByHelp(
+    help._id,
+    { status: HelpTransactionStatus.Booked }
+  );
   if (transactions.isError) {
     console.error('failed to query existed transactions');
     return;

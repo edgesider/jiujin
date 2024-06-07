@@ -84,7 +84,7 @@
           </block>
         </block>
         <block wx:elif="{{help.status === HELP_STATUS_RESOLVING}}">
-          <block wx:if="{{isMine}}">
+          <block wx:if="{{isMine || transaction.buyer === self._id}}">
             <view class="button" bindtap="onPrivateMessage">查看对话</view>
           </block>
           <block wx:else>

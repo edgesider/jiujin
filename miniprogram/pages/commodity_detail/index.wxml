@@ -81,7 +81,7 @@
           <view class="button button-disabled">交易已完成</view>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_BOOKED}}">
-          <block wx:if="{{isMine}}">
+          <block wx:if="{{isMine || transaction.buyer === self._id}}">
             <view class="button" bindtap="onPrivateMessage">查看对话</view>
           </block>
           <block wx:else>

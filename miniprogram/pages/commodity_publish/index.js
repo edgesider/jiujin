@@ -140,8 +140,8 @@ Page({
   },
   onViewCommodityImg(e) {
     wx.previewImage({
+      current: e.currentTarget.dataset.url,
       urls: this.data.commodityImg,
-      current: e.currentTarget.dataset.url
     });
   },
   async onDelCommodityImg(e) {

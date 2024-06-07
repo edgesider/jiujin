@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "node16",
+    "target": "es2017",
+    "moduleResolution": "node16",
+    "sourceMap": true,
+    "lib": ["es6", "dom"],
+    "strict": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+  },
+  "include": [
+    "./ext.d.ts",
+    "./**/*.js",
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

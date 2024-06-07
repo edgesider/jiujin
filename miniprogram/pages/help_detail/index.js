@@ -15,19 +15,21 @@ import { setNeedRefresh } from "../home/index";
 import { startHelpTransaction } from "../../utils/transaction";
 import { HelpAPI } from "../../api/HelpAPI";
 import { reportHelp } from "../../utils/report";
-import { drawHelpShareImage } from "../../utils/canvas";
+import { HelpTransactionAPI, HelpTransactionStatus } from "../../api/HelpTransactionAPI";
 
 const app = getApp();
 
 Page({
   data: {
     ...getConstants(),
+    self,
     scrollToView: '',
     scrollToComment: false,
     ridToRegion: {},
     loading: true,
     isMine: false,
     help: null,
+    transaction: null,
     createTime: '',
     regionName: '',
     seller: null,
@@ -63,7 +65,6 @@ Page({
       return;
     }
     const help = helpResp.data;
-    // help.img_urls = [await drawHelpShareImage(help)];
 
     const sellerResp = await api.getUserInfo(help.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
@@ -89,10 +90,19 @@ Page({
     }
 
     const { self } = app.globalData;
+    const isMine = self && self._id === help.seller_id;
+
+    const transactionsResp = await HelpTransactionAPI.listByHelp(
+      help._id,
+      isMine ? { status: HelpTransactionStatus.Booked } : null
+    );
+    const transaction = transactionsResp.data?.[0];
 
     this.setData({
+      self,
       loading: false,
       help,
+      transaction,
       createTime: moment(help.create_time).format(DATETIME_FORMAT),
       helpPolishTime: moment(help.polish_time ?? help.create_time).fromNow(),
       polishTimeGeneral: moment(help.polish_time ?? help.create_time).format(DATETIME_FORMAT),
@@ -141,7 +151,7 @@ Page({
   async previewImages(param) {
     const { curr } = param.currentTarget.dataset;
     await wx.previewImage({
-      current: curr,
+      current: `${curr}/detail`,
       urls: this.data.help.img_urls.map(u => `${u}/detail`)
     });
   },
@@ -250,16 +260,18 @@ Page({
 
   async onPrivateMessage() {
     await ensureVerified();
-    await wx.showLoading({
-      title: '请稍后', mask: true
-    })
-    const tact = await startHelpTransaction(this.data.help, this.data.seller);
-    await wx.hideLoading();
+    let tact = this.data.transaction;
     if (!tact) {
-      await wx.showToast({
-        title: '发起私聊失败，请稍后再试', icon: 'error'
-      });
-      return;
+      await wx.showLoading({
+        title: '请稍后',
+        mask: true
+      })
+      tact = await startHelpTransaction(this.data.help, this.data.seller);
+      await wx.hideLoading();
+      if (!tact) {
+        toastError('发起私聊失败，请稍后再试');
+        return;
+      }
     }
     await openConversationDetail(tact.conversation_id);
   },
