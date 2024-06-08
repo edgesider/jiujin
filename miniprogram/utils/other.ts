@@ -2,6 +2,9 @@ import { Region, User } from '../types';
 import { openLogin, openVerify } from './router';
 import { Observable, Subject } from 'rxjs';
 import { VerifyStatus } from '../api/verify';
+import Identicon from './randomAvatar';
+import { decode } from 'base64-arraybuffer';
+import api, { getOpenId } from '../api/api';
 
 type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
 
@@ -198,5 +201,36 @@ export function toastError(msg: string, mask = false) {
     title: msg,
     icon: 'error',
     mask
+  })
+}
+
+export function generateRandomAvatarAndUpload(): Promise<string> {
+  return new Promise((resolve, rej) => {
+    const avatarB64 = (new Identicon(Date.now().toString() + Date.now().toString())).toString();
+    const avatar = decode(avatarB64);
+    const fs = wx.getFileSystemManager();
+    fs.writeFile({
+      filePath: `${wx.env.USER_DATA_PATH}/generated_avatar_tmp.png`,
+      data: avatar,
+      encoding: 'binary',
+      success: async (res) => {
+        if (!res.errMsg.includes('ok')) {
+          rej(`failed to write generated avatar ${res.errMsg}`);
+          return;
+        }
+        const resp = await api.uploadImage(
+          `${wx.env.USER_DATA_PATH}/generated_avatar_tmp.png`,
+          `avatar/${getOpenId()}_${Date.now()}_${Math.random() * 10000000}`
+        );
+        if (resp.isError || !resp.data) {
+          rej(`failed to upload image: ${resp.message}`);
+          return;
+        }
+        resolve(resp.data);
+      },
+      fail(res) {
+        rej(res);
+      }
+    })
   })
 }

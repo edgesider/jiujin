@@ -120,10 +120,10 @@ Page({
               if (currTab === 'bought') {
                 resp = await CommodityAPI.listMine({
                   start, count,
-                  status: COMMODITY_STATUS_SOLD,
+                  status: [COMMODITY_STATUS_SOLD, COMMODITY_STATUS_BOOKED],
                   role: 'buyer'
                 });
-                showStatusImage = false;
+                showStatusImage = true;
               } else {
                 const status = {
                   selling: [COMMODITY_STATUS_SELLING, COMMODITY_STATUS_BOOKED],
@@ -143,7 +143,10 @@ Page({
             } else if (type === 'my_helps') {
               listType = 'help';
               if (currTab === 'got-bounty') {
-                resp = await HelpAPI.listMine({ start, count, role: 'buyer', status: HELP_STATUS_RESOLVED });
+                resp = await HelpAPI.listMine({
+                  start, count,
+                  role: 'buyer', status: [HELP_STATUS_RESOLVED, HELP_STATUS_RESOLVING]
+                });
               } else {
                 const status = {
                   'all': [HELP_STATUS_RUNNING, HELP_STATUS_RESOLVING],

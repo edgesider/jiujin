@@ -6,7 +6,7 @@ import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 import { User } from '../types';
 
-const DEV_BASE_URL = '';
+const DEV_BASE_URL = 'http://localhost:8080';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 let openId: string | undefined;
 
@@ -76,6 +76,7 @@ export async function request(param) {
     url: param.path,
     method: param.method ?? 'POST',
     params: param.params,
+    headers: param.headers ?? {},
     data: param.data,
   });
 }
@@ -130,7 +131,6 @@ const api = {
       method: 'POST',
       data: {
         ...params,
-        openid: getOpenId()
       }
     });
     return wrapResp(res);

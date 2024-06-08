@@ -81,6 +81,7 @@ Page({
     }
   },
   async onClickLogo() {
+    // await mock();
   },
 
   async onShow() {

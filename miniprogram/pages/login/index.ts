@@ -1,10 +1,8 @@
 import getConstants, { DEFAULT_REGION_ID, GENDER } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import randomName from '../../utils/randomName';
-import { sleep, toastError } from '../../utils/other';
-import Identicon from '../../utils/randomAvatar';
+import { generateRandomAvatarAndUpload, sleep, toastError } from '../../utils/other';
 import { getLastEnterByShareInfo } from '../../utils/share';
-import { decode } from 'base64-arraybuffer';
 import { openWebView } from '../../utils/router';
 import { initOpenIM } from '../../utils/oim';
 
@@ -76,7 +74,7 @@ Page({
     const shareInfo = getLastEnterByShareInfo();
     console.log('lastShareInfo', shareInfo);
     const params = {
-      avatar_url: await this.generateAvatar(),
+      avatar_url: await generateRandomAvatarAndUpload(),
       name: randomName.getNickName(),
       sex: GENDER.MALE,
       rid: DEFAULT_REGION_ID,
@@ -106,36 +104,5 @@ Page({
     await wx.reLaunch({
       url: '/pages/me/index',
     });
-  },
-
-  async generateAvatar() {
-    return new Promise<string>((resolve, rej) => {
-      const avatarB64 = (new Identicon(Date.now().toString() + Date.now().toString())).toString();
-      const avatar = decode(avatarB64);
-      const fs = wx.getFileSystemManager();
-      fs.writeFile({
-        filePath: `${wx.env.USER_DATA_PATH}/generated_avatar_tmp.png`,
-        data: avatar,
-        encoding: 'binary',
-        success: async (res) => {
-          if (!res.errMsg.includes('ok')) {
-            rej(`failed to write generated avatar ${res.errMsg}`);
-            return;
-          }
-          const resp = await api.uploadImage(
-            `${wx.env.USER_DATA_PATH}/generated_avatar_tmp.png`,
-            `avatar/${getOpenId()}_${Date.now()}_${Math.random() * 10000000}`
-          );
-          if (resp.isError || !resp.data) {
-            rej(`failed to upload image: ${resp.message}`);
-            return;
-          }
-          resolve(resp.data);
-        },
-        fail(res) {
-          rej(res);
-        }
-      })
-    })
   },
 })

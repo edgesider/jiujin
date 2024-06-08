@@ -57,3 +57,22 @@
   bottom: 10rpx;
   left: 8rpx;
 }
+
+.item .count {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  /*transform: translateX(2rpx);*/
+  /*background-color: var(--brand-yellow);*/
+  color: #0000004D;
+  font-size: 18rpx;
+  height: 24rpx;
+  border-radius: 12rpx;
+}
+
+.item-on .count {
+  color: var(--brand-yellow);
+}

@@ -24,7 +24,7 @@ Page({
     l2l3l4Text: '',
   },
 
-  async onLoad(options) {
+  async onLoad() {
     const { ridToRegion, self } = app.globalData;
     const [l4, l3, l2, l1] = getRegionPath(self.rid);
     const availableRegions = [

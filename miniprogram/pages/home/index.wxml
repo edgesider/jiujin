@@ -47,6 +47,8 @@
         class="region-filter"
         selected="{{selectedRegionIndex}}"
         regions="{{regions}}"
+        showCount="{{true}}"
+        type="{{EntityType.Commodity}}"
         bind:regionClick="onRegionClick"
       />
       <image id="ranking-switch" class="switch" src="/images/switch.png" bind:tap="onToggleRankingSwitch" />

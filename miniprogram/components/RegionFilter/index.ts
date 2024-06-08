@@ -1,8 +1,7 @@
-import getConstants, { DEFAULT_REGION_ID } from '../../constants';
+import getConstants from '../../constants';
 import { Subscription } from 'rxjs';
-import { getGlobals, waitForAppReady } from '../../utils/globals';
-import { Region } from '../../types';
-import { getRegionPath } from '../../utils/other';
+import { EntityType, Region } from '../../types';
+import { CommodityAPI } from '../../api/CommodityAPI';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 
@@ -17,6 +16,10 @@ export interface RegionClickEvent {
 
 Component({
   properties: {
+    type: {
+      type: Number,
+      value: EntityType.Commodity,
+    },
     selected: {
       type: Number,
       value: 0
@@ -24,22 +27,25 @@ Component({
     regions: {
       type: Array,
       value: [],
+      observer() {
+        this.updateCounts();
+      },
+    },
+    showCount: {
+      type: Boolean,
+      value: false,
     },
   },
   data: {
     ...getConstants(),
     regions: [] as Region[],
     scrollIntoView: null as string | null,
+    counts: [] as number[],
   },
   lifetimes: {
     async attached() {
       // @ts-ignore
       this._subscription = new Subscription();
-      // await waitForAppReady();
-      // const { self } = getGlobals();
-      // const path = getRegionPath(self?.rid ?? DEFAULT_REGION_ID);
-      // path.reverse();
-      // this.setData({ regions: path });
     },
     detached() {
       this.getSubscription().unsubscribe();
@@ -49,6 +55,16 @@ Component({
     getSubscription(): Subscription {
       // @ts-ignore
       return this._subscription as Subscription;
+    },
+    async updateCounts() {
+      if (this.properties.showCount) {
+        const resp = await CommodityAPI.getCountInRegion(this.properties.regions.map(r => r._id));
+        if (resp.data) {
+          this.setData({
+            counts: resp.data.map(c => c.count)
+          });
+        }
+      }
     },
     onRegionClick(ev: TouchEvent) {
       const targetIdx = ev.currentTarget.dataset.idx;

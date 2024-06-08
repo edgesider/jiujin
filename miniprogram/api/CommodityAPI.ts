@@ -80,7 +80,7 @@ export const CommodityAPI = {
   },
   async listMine(params: {
     status: number | number[], role: 'buyer' | 'seller',
-    start: number, count: number
+    start: number, count: number,
   }) {
     return convertListResp(wrapResp(await request({
       path: '/commodity/getMyCommodities',
@@ -108,5 +108,11 @@ export const CommodityAPI = {
       path: '/commodity/cancelCollect',
       data: { cid: id }
     }));
+  },
+  async getCountInRegion(rids: number[]) {
+    return wrapResp<{ rid: number, count: number }[]>(await request({
+      path: '/commodity/getRegionCommodityCount',
+      data: { rids }
+    }))
   },
 }
