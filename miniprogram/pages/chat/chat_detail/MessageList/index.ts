@@ -96,13 +96,11 @@ Component({
         }
 
         const prevMsg = newList[i - 1];
-        if (prevMsg) {
-          if (msg.sendTime - prevMsg.sendTime > 2 * 60 * 1000 /* 2min */) {
-            // @ts-ignore
-            msg.__showTime = true;
-            // @ts-ignore
-            msg.__sendTimeStr = moment(msg.sendTime).format(IM_TIME_FORMAT);
-          }
+        if (i === 0 || (prevMsg && msg.sendTime - prevMsg.sendTime > 2 * 60 * 1000 /* 2min */)) {
+          // @ts-ignore
+          msg.__showTime = true;
+          // @ts-ignore
+          msg.__sendTimeStr = moment(msg.sendTime).format(IM_TIME_FORMAT);
         }
       }
       this.data.messageList.splice(type === 'older' ? 0 : this.data.messageList.length, 0, ...newList);

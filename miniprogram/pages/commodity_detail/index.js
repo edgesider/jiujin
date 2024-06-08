@@ -204,7 +204,8 @@ Page({
     }
     this.togglingCollect = true;
     try {
-      if (this.data.commodity.is_collected) {
+      const { commodity } = this.data;
+      if (commodity.is_collected) {
         const resp = await CommodityAPI.uncollect(this.data.commodity._id);
         if (resp.isError) {
           toastError('取消收藏失败');
@@ -221,12 +222,13 @@ Page({
           toastSucceed('已收藏');
         }
       }
+      const newCommodity = { ...commodity };
+      newCommodity.is_collected = !commodity.is_collected;
+      newCommodity.collected_count = newCommodity.is_collected
+        ? commodity.collected_count + 1
+        : commodity.collected_count - 1;
       this.setData({
-        commodity: Object.assign(
-          {},
-          this.data.commodity,
-          { is_collected: !this.data.commodity.is_collected }
-        )
+        commodity: newCommodity
       })
     } finally {
       this.togglingCollect = false;

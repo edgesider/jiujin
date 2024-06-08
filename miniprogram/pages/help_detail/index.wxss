@@ -184,6 +184,7 @@
   font-size: 20rpx;
   font-weight: 500;
   color: #979797;
+  height: 1em;
 }
 
 .footer .left .button button {

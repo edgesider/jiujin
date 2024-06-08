@@ -24,7 +24,7 @@
             wx:key="*this"
             class="image"
             mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
-            style="background-image: url('{{img}}/card'); {{firstImageStyle}}};"
+            style="background-image: url('{{img}}/detail'); {{firstImageStyle}}};"
             data-curr="{{img}}"
             catchtap="previewImages"
           />

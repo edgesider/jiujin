@@ -39,10 +39,12 @@
     </scroll-view>
     <view class="footer">
       <view class="left">
-        <view wx:if="{{!isMine}}" class="button" bind:tap="onToggleCollect">
-          <image class="icon"
-                 src="{{commodity.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}" />
-          <text class="text">收藏</text>
+        <view class="button" bind:tap="onToggleCollect">
+          <image
+            class="icon"
+            src="{{commodity.is_collected ? '/images/bookmark_on.png' : '/images/bookmark_off.png'}}"
+          />
+          <text class="text">{{commodity.collected_count || '收藏'}}</text>
         </view>
         <view class="button">
           <image class="icon" src="/images/share.png" />

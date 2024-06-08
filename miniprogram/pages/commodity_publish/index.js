@@ -236,13 +236,7 @@ Page({
     return fileIDs;
   },
 
-  submitting: false,
-  // 上传商品信息
-  async onSubmit() {
-    if (this.submitting) {
-      return;
-    }
-    this.submitting = true;
+  async doSubmit() {
     try {
       await requestNotifySubscribe([NotifyType.CommodityChat]);
     } catch (e) {
@@ -332,5 +326,21 @@ Page({
 
     await sleep(1500);
     await wx.navigateBack();
+  },
+
+  submitting: false,
+  // 上传商品信息
+  async onSubmit() {
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
+    try {
+      await this.doSubmit();
+    } catch (e) {
+      toastError(this.data.editingCommodity ? '保存失败' : '发布失败');
+      console.error(e);
+      this.submitting = false;
+    }
   }
 })

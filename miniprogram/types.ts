@@ -40,6 +40,7 @@ export interface Commodity {
   only_same_campus: boolean;
   only_same_sex: boolean;
   only_same_building: boolean;
+  collected_count: number;
 }
 
 function convertImgUrls(urls: string | undefined): string[] {

@@ -45,6 +45,7 @@ Component({
       const help = this.properties.help as Help;
       const { self } = app.globalData;
 
+      // 异步加载，根据图片的大小决定显示的样式
       (async () => {
         if (help.img_urls.length === 1) {
           let ratio = 0;
@@ -66,7 +67,8 @@ Component({
         contentParagraphs: help.content.split('\n').map(s => s.trim()),
         regionName: getRegionPathName(help.rid),
         isMine: self && self._id === help.seller_id,
-        hasImg: help.img_urls.length > 0
+        hasImg: help.img_urls.length > 0,
+        firstImageStyle: 'opacity: 0 !important;',
       });
 
       const userResp = await api.getUserInfo(help.seller_id);
