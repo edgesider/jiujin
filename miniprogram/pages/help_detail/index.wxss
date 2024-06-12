@@ -90,6 +90,7 @@
 }
 
 .body .content .info .bounty {
+  margin-right: 12rpx;
   align-self: flex-start;
   height: 80rpx;
   min-width: 80rpx;
@@ -123,6 +124,14 @@
 
 .body .content .info .bounty .amount {
   font-size: 32rpx;
+}
+
+.body .content .info .views {
+  margin-bottom: 20rpx;
+  font-size: 24rpx;
+  font-weight: 300;
+  color: #979797;
+  transform: translateY(20rpx);
 }
 
 .body .content .paragraphs {

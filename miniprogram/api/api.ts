@@ -311,15 +311,6 @@ const api = {
       data: { code }
     }));
   },
-
-  async addViewCount(commodity_id) {
-    return wrapResp(await request({
-      path: '/commodity/add_view',
-      data: {
-        _id: commodity_id,
-      }
-    }));
-  },
 }
 
 export default api;

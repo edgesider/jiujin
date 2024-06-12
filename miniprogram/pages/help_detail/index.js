@@ -53,7 +53,9 @@ Page({
     await this.loadData(id);
     this.setData({
       scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
-    })
+    });
+
+    await HelpAPI.addViewCount(id);
   },
 
   async loadData(id) {

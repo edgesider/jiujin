@@ -95,4 +95,10 @@ export const HelpAPI = {
   async countByUser() {
     throw Error('not implemented');
   },
+  async addViewCount(id: string) {
+    return wrapResp(await request({
+      path: '/help/add_view',
+      data: { _id: id }
+    }));
+  },
 }

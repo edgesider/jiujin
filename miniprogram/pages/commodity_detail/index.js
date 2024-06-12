@@ -57,7 +57,7 @@ Page({
       scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
     });
 
-    await api.addViewCount(id);
+    await CommodityAPI.addViewCount(id);
   },
   back() {
     wx.navigateBack().then();

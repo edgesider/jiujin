@@ -115,4 +115,10 @@ export const CommodityAPI = {
       data: { rids }
     }))
   },
+  async addViewCount(id: string) {
+    return wrapResp(await request({
+      path: '/commodity/add_view',
+      data: { _id: id }
+    }));
+  },
 }

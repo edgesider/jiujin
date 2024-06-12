@@ -26,7 +26,7 @@
             <text class="unit">￥</text>
             <text class="amount">{{commodity.price / 100}}</text>
           </text>
-          <text class="views">{{commodity.view_count}}浏览</text>
+          <text class="views">{{commodity.view_count + 1}}浏览</text>
           <view class="spacer" />
           <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
         </view>
