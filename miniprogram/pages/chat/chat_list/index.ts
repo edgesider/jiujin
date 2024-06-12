@@ -4,6 +4,7 @@ import { User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { getNotifySwitches, NotifyType } from '../../../utils/notify';
 import {
+  getAllConversationList,
   getConversationList, isOimLogged, isOthersNewCreateConversation,
   isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
 } from '../../../utils/oim';
@@ -64,21 +65,24 @@ Page({
     }));
 
     await this.doRefresh();
-
+  },
+  updateNotifyTip() {
     const switches = getNotifySwitches();
     if (!switches.mainSwitch
       || switches[NotifyType.CommodityChat] === 'reject'
       || switches[NotifyType.HelpChat] === 'reject'
     ) {
-      this.setData({
-        showNotifyTip: true,
-      });
+      this.setData({ showNotifyTip: true, });
+    } else {
+      this.setData({ showNotifyTip: false });
     }
   },
   onUnload() {
     this.subscription?.unsubscribe();
   },
   async onShow() {
+    await sleep(500);
+    this.updateNotifyTip();
   },
   sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   async onConversationListUpdate(convList: ConversationItem[]) {
@@ -124,7 +128,7 @@ Page({
     });
   },
   async doRefresh() {
-    await this.onConversationListUpdate(await getConversationList());
+    await this.onConversationListUpdate(await getConversationList(0, 20));
   },
   async onRefresh() {
     if (this.data.refreshing) {
@@ -143,6 +147,10 @@ Page({
       await sleep(500);
       this.setData({ refreshing: false });
     }
+  },
+  async onReachBottom() {
+    const oldList = await getConversationList(this.data.conversations.length, 20);
+    await this.onConversationListUpdate([...this.data.conversations, ...oldList]);
   },
   gotoNotifySetting() {
     wx.openSetting();

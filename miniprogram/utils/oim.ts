@@ -106,9 +106,12 @@ export async function waitForOimLogged() {
   })
 }
 
-export async function getConversationList(): Promise<ConversationItem[]> {
-  // TODO 支持分页
-  const res = await oim.getAllConversationList();
+export async function getAllConversationList(): Promise<ConversationItem[]> {
+  return allConvListSubject.value;
+}
+
+export async function getConversationList(offset: number, count: number): Promise<ConversationItem[]> {
+  const res = await oim.getConversationListSplit({ offset, count });
   return checkOimResult(res);
 }
 
@@ -263,8 +266,13 @@ const convByGroupIdSubjects = new Map<string, Subject<ConversationItem>>();
 const allMsgSubject = new Subject<MessageItem>();
 const convMsgSubjects = new Map<string, Subject<MessageItem>>();
 const totalUnreadCountSubject = new BehaviorSubject(0);
+const allConvListSubject = new BehaviorSubject<ConversationItem[]>([]);
 
 function listenEvents() {
+  oim.getAllConversationList().then(res => {
+    const convList = checkOimResult(res);
+    allConvListSubject.next(convList)
+  });
   oim.on(CbEvents.OnRecvNewMessages, event => {
     const msgList = event.data as MessageItem[];
     msgList.forEach(msg => {
@@ -278,18 +286,28 @@ function listenEvents() {
     const convList = event.data as ConversationItem[];
     console.log('new conversation', convList);
     newConvListSubject.next(convList);
+    allConvListSubject.next([...convList, ...allConvListSubject.value]);
   })
   // 会话更新
   oim.on(CbEvents.OnConversationChanged, async (event) => {
     console.log('onConversationChanged', event);
-    const convList = event.data as ConversationItem[];
-    convChangeSubjects.next(convList);
-    convList.forEach(conv => {
+    const updated = event.data as ConversationItem[];
+    convChangeSubjects.next(updated);
+    updated.forEach(conv => {
       convSubjects.get(conv.conversationID)?.next(conv);
       if (conv.groupID) {
         convByGroupIdSubjects.get(conv.groupID)?.next(conv);
       }
     })
+
+    for (const updatedConv of updated) {
+      const allConvList = allConvListSubject.value;
+      const idx = allConvList.findIndex(c => c.conversationID === updatedConv.conversationID);
+      if (idx >= 0) {
+        allConvList[idx] = updatedConv;
+      }
+      allConvListSubject.next(allConvList);
+    }
   });
   oim.on(CbEvents.OnUserTokenExpired, async (event) => {
     const self = getGlobals().self; // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
@@ -319,6 +337,10 @@ export function listenNewConvList(): Observable<ConversationItem[]> {
 
 export function listenConversations(): Observable<ConversationItem[]> {
   return convChangeSubjects;
+}
+
+export function listenAllConversationsList(): Observable<ConversationItem[]> {
+  return allConvListSubject;
 }
 
 export function listenConversation(conv: string | ConversationItem): Observable<ConversationItem> {

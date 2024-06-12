@@ -34,6 +34,8 @@
   bindrefresherrefresh="onRefresh"
   scroll-into-view="{{scrollToTop ? 'top' : null}}"
   scroll-with-animation
+  bindscrolltolower="onReachBottom"
+  lower-threshold="400"
 >
   <view id="top" style="width: 100%; height: 0;" />
   <SystemConversation

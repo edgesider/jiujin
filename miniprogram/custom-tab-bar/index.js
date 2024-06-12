@@ -1,7 +1,7 @@
 import getConstants from '../constants';
-import { ensureRegistered } from '../utils/other';
+import { ensureRegistered, sleep } from '../utils/other';
 import {
-  getConversationList,
+  getAllConversationList,
   isOthersNewCreateConversation,
   listenUnreadCount,
   markConvMessageAsRead,
@@ -68,28 +68,29 @@ Component({
   lifetimes: {
     async created() {
       const tab = this;
-      this.updateTo = function (url, onClick) {
+      this.updateTo = async function (url, onClick) {
         const i = this.data.list.findIndex(item => item.pagePath === '/' + url);
         tab.onClick = onClick;
         this.setData({ selected: i, url })
+
+        await waitForAppReady();
+        await waitForOimLogged();
+
+        listenUnreadCount().subscribe(async (sumCount) => {
+          await sleep(500);
+          if (sumCount <= 0) {
+            this.setImUnreadCount(0);
+            return;
+          }
+          const convList = await getAllConversationList();
+          const count = convList
+            .filter(c => !isOthersNewCreateConversation(c))
+            .map(c => c.unreadCount)
+            .reduce((count, curr) => count + curr, 0);
+          this.setImUnreadCount(count);
+          convList.filter(isOthersNewCreateConversation).forEach(markConvMessageAsRead);
+        });
       }
-
-      await waitForAppReady();
-      await waitForOimLogged();
-
-      listenUnreadCount().subscribe(async (sumCount) => {
-        if (sumCount <= 0) {
-          this.setImUnreadCount(0);
-          return;
-        }
-        const convList = await getConversationList();
-        const count = convList
-          .filter(c => !isOthersNewCreateConversation(c))
-          .map(c => c.unreadCount)
-          .reduce((count, curr) => count + curr, 0);
-        this.setImUnreadCount(count);
-        convList.filter(isOthersNewCreateConversation).forEach(markConvMessageAsRead);
-      });
     },
   },
   methods: {
