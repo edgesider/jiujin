@@ -40,6 +40,10 @@ export async function syncNotifySwitches(): Promise<NotifySwitchState> {
   return switches;
 }
 
+export function getNotifySwitches() {
+  return switches;
+}
+
 export async function checkNotifySettingAndRequest(type: NotifyType): Promise<boolean> {
   syncNotifySwitches().then();
   if (switches[type] !== 'accept') {

@@ -2,7 +2,7 @@ import getConstants from '../../../constants';
 import { setTabBar, sleep } from '../../../utils/other';
 import { User } from '../../../types';
 import { Subscription } from 'rxjs';
-import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
+import { getNotifySwitches, NotifyType } from '../../../utils/notify';
 import {
   getConversationList, isOimLogged, isOthersNewCreateConversation,
   isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
@@ -64,6 +64,16 @@ Page({
     }));
 
     await this.doRefresh();
+
+    const switches = getNotifySwitches();
+    if (!switches.mainSwitch
+      || switches[NotifyType.CommodityChat] === 'reject'
+      || switches[NotifyType.HelpChat] === 'reject'
+    ) {
+      this.setData({
+        showNotifyTip: true,
+      });
+    }
   },
   onUnload() {
     this.subscription?.unsubscribe();
@@ -134,7 +144,7 @@ Page({
       this.setData({ refreshing: false });
     }
   },
-  requestNotifySubscribe() {
-    requestNotifySubscribe([NotifyType.CommodityChat, NotifyType.HelpChat]).then();
+  gotoNotifySetting() {
+    wx.openSetting();
   },
 })
