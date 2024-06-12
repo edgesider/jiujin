@@ -1,26 +1,57 @@
 export enum NotifyType {
-  HelpChat = 'xxgi6jsrFygWbALoLlnPfeV-_h5slR8QLg2LpjRFD60',
   CommodityChat = 'Y690e4bn__l8hqMEj5bCejjnFvjeJ5wPgzLB6W-l5Sc',
+  HelpChat = 'xxgi6jsrFygWbALoLlnPfeV-_h5slR8QLg2LpjRFD60',
+}
+
+const prompts = {
+  [NotifyType.CommodityChat]: '为更快达成交易，我们将在您收到私聊时向您发送通知，请在“订阅消息”设置中允许通知',
+  [NotifyType.HelpChat]: '为更快达成交易，我们将在您收到私聊时向您发送通知，请在“订阅消息”设置中允许通知',
 }
 
 export async function requestNotifySubscribe(
   types: NotifyType[]
 ): Promise<Boolean> {
-  const res = await wx.requestSubscribeMessage({ tmplIds: types });
-  console.warn(res);
-  return true;
+  try {
+    const res = await wx.requestSubscribeMessage({ tmplIds: types });
+    console.log(res.errMsg)
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }
 
 export type NotifySwitchState = {
-  [type in NotifyType]?: boolean;
+  [type in NotifyType]?: 'accept' | 'reject';
 } & {
   mainSwitch: boolean;
 };
 
-export async function getNotifySwitches(): Promise<NotifySwitchState> {
+let switches: NotifySwitchState = { mainSwitch: true };
+syncNotifySwitches().then();
+
+export async function syncNotifySwitches(): Promise<NotifySwitchState> {
+  console.log('syncNotifySwitches');
   const res = await wx.getSetting({ withSubscriptions: true, });
-  return {
+  switches = {
     mainSwitch: res.subscriptionsSetting.mainSwitch,
     ...res.subscriptionsSetting.itemSettings,
   };
+  return switches;
+}
+
+export async function checkNotifySettingAndRequest(type: NotifyType): Promise<boolean> {
+  syncNotifySwitches().then();
+  if (switches[type] !== 'accept') {
+    wx.showModal({
+      content: prompts[type] ?? '请求授权通知',
+      success: () => {
+        wx.openSetting();
+      }
+    })
+    return false;
+  } else {
+    await requestNotifySubscribe([type]);
+    return true;
+  }
 }

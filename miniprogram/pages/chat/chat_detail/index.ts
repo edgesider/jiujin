@@ -9,13 +9,18 @@ import { ConversationItem, GroupItem, PicBaseInfo, SessionType } from '../../../
 import {
   checkOimResult,
   getCommodityGroupAttributes,
-  getConversationById, getGroup, getHelpGroupAttributes,
-  listenMessage, markConvMessageAsRead,
-  sendMessage, waitForOimLogged
+  getConversationById,
+  getGroup,
+  getHelpGroupAttributes,
+  listenMessage,
+  markConvMessageAsRead,
+  sendMessage,
+  waitForOimLogged
 } from '../../../utils/oim';
 import { CommodityAPI } from '../../../api/CommodityAPI';
 import { HelpTransaction, HelpTransactionAPI } from '../../../api/HelpTransactionAPI';
 import { HelpAPI } from '../../../api/HelpAPI';
+import { checkNotifySettingAndRequest, NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 
 type Input = WechatMiniprogram.Input;
 
@@ -312,6 +317,8 @@ Page({
       inputting: false,
       input: '',
     });
+    // checkNotifySettingAndRequest(this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat).then();
+    requestNotifySubscribe([this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat]).then();
     await this.sendTextMessage(input);
   },
   async onSendImageIconClick() {

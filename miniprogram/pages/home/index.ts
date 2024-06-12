@@ -7,6 +7,8 @@ import { getGlobals, waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { Resp } from '../../api/resp';
+import { getEnvVersion } from '../../utils/env';
+import { processSchema } from '../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -81,7 +83,9 @@ Page({
     }
   },
   async onClickLogo() {
-    // await mock();
+    if (getEnvVersion() === 'develop') {
+      await wx.openSetting({});
+    }
   },
 
   async onShow() {
@@ -224,10 +228,10 @@ Page({
 
   async onClickBanner(ev: TouchEvent) {
     const banner = ev.currentTarget.dataset.banner as Banner;
-    if (banner.page_path) {
-      await wx.navigateTo({
-        url: banner.page_path,
-      });
+    if (banner.schema) {
+      await processSchema(banner.schema);
+    } else if (banner.page_path) {
+      await wx.navigateTo({ url: banner.page_path, });
     } else {
       await wx.previewImage({
         current: banner.url,

@@ -156,3 +156,26 @@ export async function openWebView(src: string) {
     url: `/pages/webview/index?src=${src}`,
   });
 }
+
+export async function processSchema(str: string) {
+  if (str.startsWith('lllw://')) {
+    const url = new globalThis.URL(str);
+    if (url.pathname === '//route') {
+      const type = url.searchParams.get('type');
+      const page = url.searchParams.get('page');
+      if (page) {
+        await wx.navigateTo({ url: page });
+      } else if (type) {
+        switch (type) {
+          case 'setting':
+            await wx.openSetting();
+            break;
+        }
+      }
+    } else {
+      throw Error(`unhandled schema ${url.pathname}`);
+    }
+  } else {
+    await wx.navigateTo({ url: str });
+  }
+}

@@ -135,6 +135,6 @@ Page({
     }
   },
   requestNotifySubscribe() {
-    requestNotifySubscribe([NotifyType.HelpChat, NotifyType.CommodityChat]).then();
+    requestNotifySubscribe([NotifyType.CommodityChat, NotifyType.HelpChat]).then();
   },
 })

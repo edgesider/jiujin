@@ -119,4 +119,5 @@ export interface Banner {
   url: string;
   rid: number;
   page_path?: string;
+  schema?: string;
 }

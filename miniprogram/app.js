@@ -4,6 +4,7 @@ import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
 import { initOpenIM } from "./utils/oim";
 import { clearSavedImages } from "./utils/canvas";
+import { syncNotifySwitches } from "./utils/notify";
 
 App({
   _ready: false,
@@ -54,6 +55,7 @@ App({
   async onShow() {
     await this.waitForReady();
     InAppMonitor.start();
+    syncNotifySwitches().then();
   },
   onHide() {
     InAppMonitor.stop();

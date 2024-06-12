@@ -1,9 +1,9 @@
 declare const TextEncoder: any | undefined;
 declare const TextDecoder: any | undefined;
 declare const FileReader: any | undefined;
-declare const URL: any | undefined;
+// declare const URL: any | undefined;
 declare const Headers: any | undefined;
-declare const URLSearchParams: any | undefined;
+// declare const URLSearchParams: any | undefined;
 declare const WebSocket: any | undefined;
 
 declare type WebSocket = typeof WebSocket;
