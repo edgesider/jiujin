@@ -157,12 +157,38 @@ export async function openWebView(src: string) {
   });
 }
 
+export function parseURL(url: string): {
+  protocol: string,
+  path: string,
+  params: Map<string, string>
+} {
+  const result = /^([^:]+):\/\/([^?]*)/.exec(url);
+  if (!result) {
+    throw Error('invalid url');
+  }
+  const [prefix, protocol, path] = result;
+  const params = url.substring(prefix.length + 1).split('&');
+  const paramsMap = new Map<string, string>();
+  for (const param of params) {
+    const eqPos = param.indexOf('=');
+    if (eqPos === -1) {
+      paramsMap.set(decodeURIComponent(param), '');
+    } else {
+      paramsMap.set(
+        decodeURIComponent(param.substring(0, eqPos)),
+        decodeURIComponent(param.substring(eqPos + 1)),
+      );
+    }
+  }
+  return { protocol, path, params: paramsMap };
+}
+
 export async function processSchema(str: string) {
   if (str.startsWith('lllw://')) {
-    const url = new globalThis.URL(str);
-    if (url.pathname === '//route') {
-      const type = url.searchParams.get('type');
-      const page = url.searchParams.get('page');
+    const url = parseURL(str);
+    if (url.path === 'route') {
+      const type = url.params.get('type');
+      const page = url.params.get('page');
       if (page) {
         await wx.navigateTo({ url: page });
       } else if (type) {
@@ -173,7 +199,7 @@ export async function processSchema(str: string) {
         }
       }
     } else {
-      throw Error(`unhandled schema ${url.pathname}`);
+      throw Error(`unhandled schema ${url.path}`);
     }
   } else {
     await wx.navigateTo({ url: str });
