@@ -102,7 +102,7 @@ Page({
     await initOpenIM(self);
     await sleep(1000);
     await wx.reLaunch({
-      url: '/pages/me/index',
+      url: '/pages/edit_profile/index',
     });
   },
 })

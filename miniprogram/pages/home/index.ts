@@ -84,7 +84,8 @@ Page({
   },
   async onClickLogo() {
     if (getEnvVersion() === 'develop') {
-      await wx.openSetting({});
+      // await wx.openSetting({});
+      // openLogin();
     }
   },
 
