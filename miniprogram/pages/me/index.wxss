@@ -81,12 +81,14 @@ page {
 .info .region .icon {
   width: 24rpx;
   height: 24rpx;
+  transform: translateY(-2rpx);
 }
 
 .info .region .name {
   margin-left: 4rpx;
   font-size: 22rpx;
-  color: #979797;
+  font-weight: 700;
+  color: #818181;
 }
 
 .spacer {

@@ -1,6 +1,6 @@
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
-import getConstants from "../../constants";
+import getConstants, { POLISH_MIN_DURATION } from "../../constants";
 import {
   ensureRegistered,
   ensureVerified,
@@ -34,7 +34,7 @@ Page({
     commodity: null,
     transaction: null,
     createTime: '',
-    polishTime: '', // 3天前
+    canPolishDuration: 0,
     polishTimeGeneral: '', // 2022/2/2 10:10
     regionName: '',
     seller: null,
@@ -101,7 +101,7 @@ Page({
       commodity,
       transaction,
       createTime: moment(commodity.create_time).format(DATETIME_FORMAT),
-      polishTime: moment(commodity.polish_time ?? commodity.create_time).fromNow(),
+      canPolishDuration: (commodity.polish_time ?? commodity.create_time) + POLISH_MIN_DURATION - Date.now(),
       polishTimeGeneral: moment(commodity.polish_time ?? commodity.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
@@ -112,13 +112,18 @@ Page({
   },
 
   polishing: false,
-  async onPolish() {
+  async onPolish(ev) {
+    if (ev.detail.remain > 0) {
+      // 倒计时未结束
+      return;
+    }
+    const { commodity } = this.data;
     await ensureVerified();
     if (this.polishing)
       return;
     this.polishing = true;
     await wx.showLoading({ mask: true, title: '擦亮中...' });
-    const resp = await api.polishCommodity({ id: this.data.commodity._id });
+    const resp = await api.polishCommodity({ id: commodity._id });
     await wx.hideLoading();
     this.polishing = false;
     if (resp.isError) {

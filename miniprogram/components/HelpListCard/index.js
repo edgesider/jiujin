@@ -1,7 +1,7 @@
 // pages/help_list/index.ts
 import getConstants, {
   HELP_STATUS_RUNNING,
-  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED, HELP_STATUS_RESOLVING
+  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED, HELP_STATUS_RESOLVING, POLISH_MIN_DURATION
 } from "../../constants";
 import { getContentDesc, getQualitiesMap } from "../../utils/strings";
 import { DATETIME_FORMAT } from "../../utils/time";
@@ -30,6 +30,8 @@ Component({
     polishAt: '',
     ridToRegion: app.globalData.ridToRegion,
     statusImage: '',
+    canPolish: false,
+    canPolishDuration: 0,
   },
   methods: {
     async gotoHelpDetail() {
@@ -42,7 +44,10 @@ Component({
         help: this.properties.help,
       })
     },
-    polish() {
+    polish(ev) {
+      if (ev.detail.remain > 0) {
+        return;
+      }
       this.triggerEvent('onPolish', {
         help: this.properties.help,
       })
@@ -59,18 +64,20 @@ Component({
     },
     onUpdate() {
       const { showStatusImage } = this.properties;
-      const { content, create_time, update_time, status } = this.properties.help
+      const { content, create_time, polish_time, status } = this.properties.help
       this.setData({
         self: app.globalData.self,
         desc: getContentDesc(content, 40),
         createTime: moment(create_time).format(DATETIME_FORMAT),
-        polishAt: moment(update_time).fromNow(),
+        polishAt: moment(polish_time).fromNow(),
         ridToRegion: app.globalData.ridToRegion,
         statusImage: !showStatusImage ? null : ({
           [HELP_STATUS_RESOLVED]: '/images/已解决.png',
           [HELP_STATUS_RESOLVING]: '/images/解决中.png',
           [HELP_STATUS_FINISHED]: '/images/已完成.png',
         })[status] ?? '',
+        canPolishDuration: polish_time + POLISH_MIN_DURATION - Date.now(),
+        canPolish: Date.now() - polish_time > POLISH_MIN_DURATION
       })
     },
   },

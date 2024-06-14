@@ -2,7 +2,8 @@
   "usingComponents": {
     "Comments": "/components/Comments/index",
     "HelpCard": "/components/HelpCard/index",
-    "UserTitleBar": "/components/UserTitleBar/index"
+    "UserTitleBar": "/components/UserTitleBar/index",
+    "CountdownButton": "/components/CountdownButton/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

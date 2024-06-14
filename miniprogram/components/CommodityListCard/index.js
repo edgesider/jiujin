@@ -3,7 +3,7 @@ import moment from 'moment';
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
-  COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_BOOKED
+  COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_BOOKED, POLISH_MIN_DURATION
 } from "../../constants";
 import { DATETIME_FORMAT } from "../../utils/time";
 
@@ -33,6 +33,8 @@ Component({
     ridToRegion: app.globalData.ridToRegion,
     qualitiesMap: getQualitiesMap(),
     statusImage: '',
+    canPolish: false,
+    canPolishDuration: 0,
   },
   methods: {
     async gotoDetail() {
@@ -45,7 +47,10 @@ Component({
         commodity: this.properties.commodity,
       })
     },
-    polish() {
+    polish(ev) {
+      if (ev.detail.remain > 0) {
+        return;
+      }
       this.triggerEvent('onPolish', {
         commodity: this.properties.commodity,
       })
@@ -73,19 +78,21 @@ Component({
 
     onUpdate() {
       const { showStatusImage } = this.properties;
-      const { content, create_time, update_time, selled_time, status } = this.properties.commodity
+      const { content, create_time, polish_time, selled_time, status } = this.properties.commodity
       this.setData({
         self: app.globalData.self,
         desc: getContentDesc(content, 40),
         createTime: moment(create_time).format(DATETIME_FORMAT),
         soldTime: selled_time && moment(selled_time).format(DATETIME_FORMAT) || '',
-        polishAt: moment(update_time).fromNow(),
+        polishAt: moment(polish_time).fromNow(),
         ridToRegion: app.globalData.ridToRegion,
         statusImage: !showStatusImage ? null : ({
           [COMMODITY_STATUS_SOLD]: '/images/已成交.png',
           [COMMODITY_STATUS_BOOKED]: '/images/已预订.png',
           [COMMODITY_STATUS_DEACTIVATED]: '/images/已结束.png',
         })[status] ?? '',
+        canPolishDuration: polish_time + POLISH_MIN_DURATION - Date.now(),
+        canPolish: Date.now() - polish_time > POLISH_MIN_DURATION
       })
     },
   },

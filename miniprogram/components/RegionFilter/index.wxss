@@ -26,6 +26,7 @@
 
 .region-filter .item {
   position: relative;
+  top: 4rpx;
   height: 100%;
   font-size: 32rpx;
   color: #0000004D;
@@ -54,7 +55,7 @@
   height: 6rpx;
   border-radius: 6rpx;
   position: absolute;
-  bottom: 10rpx;
+  bottom: 14rpx;
   left: 8rpx;
 }
 
@@ -63,16 +64,20 @@
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: 0;
+  top: 3rpx;
   right: 0;
   /*transform: translateX(2rpx);*/
   /*background-color: var(--brand-yellow);*/
   color: #0000004D;
-  font-size: 18rpx;
+  font-size: 16rpx;
   height: 24rpx;
   border-radius: 12rpx;
 }
 
 .item-on .count {
   color: var(--brand-yellow);
+}
+
+.item .item-text {
+  /*font-size: 28rpx;*/
 }

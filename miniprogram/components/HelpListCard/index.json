@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "TextPreview": "/components/TextPreview/index"
+    "TextPreview": "/components/TextPreview/index",
+    "CountdownButton": "../CountdownButton/index"
   }
 }

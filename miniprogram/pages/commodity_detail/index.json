@@ -3,7 +3,8 @@
     "Comments": "/components/Comments/index",
     "CommodityCard": "/components/CommodityCard/index",
     "UserTitleBar": "/components/UserTitleBar/index",
-    "FullPageLoading": "/components/FullPageLoading/index"
+    "FullPageLoading": "/components/FullPageLoading/index",
+    "CountdownButton": "/components/CountdownButton/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

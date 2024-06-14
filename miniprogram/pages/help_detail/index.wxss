@@ -214,20 +214,20 @@
   align-items: center;
 }
 
-.footer .right .polish-time {
-  margin-right: 24rpx;
-  flex-shrink: 1;
-  font-size: 24rpx;
-  text-align: right;
-  color: rgba(0, 0, 0, 0.7);
-}
+/*.footer .right .polish-time {*/
+/*  margin-right: 24rpx;*/
+/*  flex-shrink: 1;*/
+/*  font-size: 24rpx;*/
+/*  text-align: right;*/
+/*  color: rgba(0, 0, 0, 0.7);*/
+/*}*/
 
-.footer .right .polish-time-hint {
-  flex-shrink: 1;
-  font-size: 20rpx;
-  color: rgba(0, 0, 0, 0.5);
-  text-align: right;
-}
+/*.footer .right .polish-time-hint {*/
+/*  flex-shrink: 1;*/
+/*  font-size: 20rpx;*/
+/*  color: rgba(0, 0, 0, 0.5);*/
+/*  text-align: right;*/
+/*}*/
 
 .footer .right .button {
   margin-right: 10rpx;
@@ -256,6 +256,12 @@
 
 .footer .right .button.button-green {
   background: var(--brand-green);
+}
+
+.footer .right .button.button-countdown {
+  align-self: stretch;
+  padding: 0;
+  background: unset;
 }
 
 .button-disabled {

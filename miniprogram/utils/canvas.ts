@@ -1,5 +1,5 @@
 import { Commodity, Help } from '../types';
-import { generateUUID, getRegionPath, getRegionPathName } from './other';
+import { generateUUID, getCompressedImageUrl, getRegionPath, getRegionPathName } from './other';
 
 type OffscreenCanvas = WechatMiniprogram.OffscreenCanvas;
 type CanvasContext = WechatMiniprogram.CanvasContext;
@@ -36,6 +36,7 @@ export function drawAppShareImage(): string {
 }
 
 async function drawImage(canvas: OffscreenCanvas, ctx: CanvasContext, imgUrl: string, x: number, y: number, w: number, h: number) {
+  imgUrl = getCompressedImageUrl(imgUrl);
   return new Promise<void>((res, rej) => {
     const img = canvas.createImage()
     img.onload = () => {

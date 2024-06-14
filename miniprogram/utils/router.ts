@@ -1,6 +1,7 @@
 import { Commodity, Help, User } from '../types';
 import { ConversationItem } from '../lib/openim/index';
 import { AboutType } from '../pages/about';
+import { parseURL } from './other';
 
 export async function openProfile(user: string | User) {
   if (typeof user === 'object') {
@@ -155,32 +156,6 @@ export async function openWebView(src: string) {
   await wx.navigateTo({
     url: `/pages/webview/index?src=${src}`,
   });
-}
-
-export function parseURL(url: string): {
-  protocol: string,
-  path: string,
-  params: Map<string, string>
-} {
-  const result = /^([^:]+):\/\/([^?]*)/.exec(url);
-  if (!result) {
-    throw Error('invalid url');
-  }
-  const [prefix, protocol, path] = result;
-  const params = url.substring(prefix.length + 1).split('&');
-  const paramsMap = new Map<string, string>();
-  for (const param of params) {
-    const eqPos = param.indexOf('=');
-    if (eqPos === -1) {
-      paramsMap.set(decodeURIComponent(param), '');
-    } else {
-      paramsMap.set(
-        decodeURIComponent(param.substring(0, eqPos)),
-        decodeURIComponent(param.substring(eqPos + 1)),
-      );
-    }
-  }
-  return { protocol, path, params: paramsMap };
 }
 
 export async function processSchema(str: string) {

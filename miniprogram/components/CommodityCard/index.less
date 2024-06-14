@@ -33,16 +33,21 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    align-items: baseline;
+    align-items: flex-end;
+    height: 48rpx;
+    padding-bottom: 6rpx;
 
     .price-unit {
       font-size: 22rpx;
       color: var(--brand-green);
       font-weight: bold;
+      line-height: 1em;
+      transform: translateY(-2rpx);
     }
 
     .price {
       font-size: 38rpx;
+      line-height: 1em;
       color: var(--brand-green);
       font-weight: bold;
     }
@@ -55,13 +60,13 @@
       margin-left: 8rpx;
       width: 24rpx;
       height: 24rpx;
-      align-self: center;
+      transform: translateY(-2rpx);
     }
 
     .region {
-      color: #80899a;
+      color: #818181;
       font-size: 20rpx;
-      align-self: center;
+      font-weight: 700;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;

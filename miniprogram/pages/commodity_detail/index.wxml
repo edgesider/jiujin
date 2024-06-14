@@ -62,8 +62,16 @@
       <view class="right">
         <block wx:if="{{commodity.status === COMMODITY_STATUS_SELLING}}">
           <block wx:if="{{isMine}}">
-            <text class="polish-time">{{polishTime}}\n<text class="polish-time-hint">上次擦亮</text></text>
-            <view class="button button-green" bindtap="onPolish">擦亮</view>
+            <CountdownButton
+              class="button button-countdown"
+              fontSize="28"
+              initialMillSeconds="{{canPolishDuration}}"
+              suffixText="后可擦亮"
+              finishedText="擦亮"
+              bgStyle="padding: 0 20rpx; font-size: 28rpx;"
+              finishedBgStyle="padding: 14rpx 32rpx;"
+              bind:onClick="onPolish"
+            />
             <view class="button button-yellowgreen" bindtap="onEdit">编辑</view>
             <view class="button button-yellow" bindtap="onDeactivate">下架</view>
           </block>

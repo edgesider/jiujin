@@ -5,6 +5,7 @@ export const DATETIME_FORMAT = 'YYYY/MM/DD HH:mm';
 export const IM_TIME_FORMAT = 'MM/DD HH:mm';
 
 export function initMoment() {
+  // @ts-ignore
   wx.moment = moment;
   // moment.tz('Asia/Shanghai'); // TODO
   moment.defineLocale('zh-cn', {
@@ -63,6 +64,7 @@ export function initMoment() {
       sameDay: '[今天]LT',
       nextDay: '[明天]LT',
       nextWeek: function (now) {
+        // @ts-ignore
         if (now.week() !== this.week()) {
           return '[下]dddLT';
         } else {
@@ -71,6 +73,7 @@ export function initMoment() {
       },
       lastDay: '[昨天]LT',
       lastWeek: function (now) {
+        // @ts-ignore
         if (this.week() !== now.week()) {
           return '[上]dddLT';
         } else {
@@ -80,6 +83,7 @@ export function initMoment() {
       sameElse: 'L',
     },
     dayOfMonthOrdinalParse: /\d{1,2}(日|月|周)/,
+    // @ts-ignore
     ordinal: function (number, period) {
       switch (period) {
         case 'd':
@@ -129,7 +133,7 @@ export function initMoment() {
  * @param ms 需要拆解的毫秒数
  * @return [毫秒, 秒, 分钟, 小时, 天]
  */
-export function splitMilliseconds(ms) {
+export function splitMilliseconds(ms: number): number[] {
   const dividers = [
     /* 毫秒每天 */ 1000 * 60 * 60 * 24,
     /* 毫秒每小时 */ 1000 * 60 * 60,
@@ -137,7 +141,7 @@ export function splitMilliseconds(ms) {
     /* 毫秒每秒 */ 1000,
     /* 毫秒每毫秒 */ 1,
   ];
-  const res = [];
+  const res: number[] = [];
   for (const div of dividers) {
     res.push(parseInt((ms / div).toString()));
     ms = ms % div;
@@ -154,7 +158,7 @@ export function splitMilliseconds(ms) {
  * @param hideZeroDay 0天的时候是否隐藏天，例如："0天02:46:40"会变成"02:46:40"
  * @return 'XX天XX小时XX分钟XX秒'
  */
-export function splitMillisecondsToString(ms, hideZeroDay) {
+export function splitMillisecondsToString(ms: number, hideZeroDay: boolean) {
   const div = splitMilliseconds(ms);
   return ((div[4] === 0 && hideZeroDay) ? '' : `${div[4]}天`) +
     `${div[3].toString().padStart(2, '0')}` +

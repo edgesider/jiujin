@@ -234,3 +234,54 @@ export function generateRandomAvatarAndUpload(): Promise<string> {
     })
   })
 }
+
+export interface UrlObject {
+  protocol: string,
+  path: string,
+  params: Map<string, string>
+}
+
+export function parseURL(url: string): UrlObject {
+  const result = /^([^:]+):\/\/([^?]*)/.exec(url);
+  if (!result) {
+    throw Error('invalid url');
+  }
+  const [prefix, protocol, path] = result;
+  const params = url.substring(prefix.length + 1).split('&');
+  const paramsMap = new Map<string, string>();
+  for (const param of params) {
+    const eqPos = param.indexOf('=');
+    if (eqPos === -1) {
+      paramsMap.set(decodeURIComponent(param), '');
+    } else {
+      paramsMap.set(
+        decodeURIComponent(param.substring(0, eqPos)),
+        decodeURIComponent(param.substring(eqPos + 1)),
+      );
+    }
+  }
+  return { protocol, path, params: paramsMap };
+}
+
+export function assembleUrlObject(u: UrlObject): string {
+  const paramStr = [...u.params.entries()]
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&');
+  return `${u.protocol}://${u.path}?${paramStr}`;
+}
+
+export function getCompressedImageUrl(url: string): string {
+  // https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/commodity/o5j6j6_EoDgUMEY6nudpmFfrvLV0_1718272983467_9198324.275033996?t=1718381375778
+  const u = parseURL(url);
+  if (u.protocol !== 'http' && u.protocol !== 'https') {
+    return url;
+  }
+  if (!u.path.match(/^[^.\/]*\.tcb\.qcloud\.la\//)) {
+    return url;
+  }
+  if (u.path.endsWith('/detail')) {
+    return url;
+  }
+  u.path = `${u.path}/detail`;
+  return assembleUrlObject(u);
+}

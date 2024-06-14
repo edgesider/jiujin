@@ -17,6 +17,7 @@ export const HELP_STATUS_RESOLVED = 2; // 已解决
 export const HELP_STATUS_RESOLVING= 3; // 解决中
 export const HELP_STATUS_REPORTED = 4; // 被举报
 
+export const POLISH_MIN_DURATION = 1000 * 60 * 60 * 3;
 
 export const DEFAULT_AVATAR = 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132';
 export const DEFAULT_REGION_ID = 6
@@ -79,6 +80,7 @@ const constants = {
   HELP_STATUS_FINISHED,
   HELP_STATUS_RESOLVING,
   HELP_STATUS_REPORTED,
+  POLISH_MIN_DURATION,
   GENDER, GENDER_NAME_MAP,
   DEFAULT_AVATAR,
   TransactionStatus,

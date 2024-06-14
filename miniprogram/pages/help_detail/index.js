@@ -1,4 +1,4 @@
-import getConstants from "../../constants";
+import getConstants, { POLISH_MIN_DURATION } from "../../constants";
 import { onShareHelp, parseShareInfo, reportShareInfo } from "../../utils/share";
 import api from "../../api/api";
 import moment from "moment";
@@ -36,7 +36,7 @@ Page({
     contentParagraphs: [],
     firstImageSize: [],
     hasImg: true,
-    helpPolishTime: '',
+    canPolishDuration: 0,
     polishTimeGeneral: '',
   },
 
@@ -106,7 +106,7 @@ Page({
       help,
       transaction,
       createTime: moment(help.create_time).format(DATETIME_FORMAT),
-      helpPolishTime: moment(help.polish_time ?? help.create_time).fromNow(),
+      canPolishDuration: (help.polish_time ?? help.create_time) + POLISH_MIN_DURATION - Date.now(),
       polishTimeGeneral: moment(help.polish_time ?? help.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: help.content.split('\n').map(s => s.trim()),
@@ -121,7 +121,11 @@ Page({
   },
 
   polishing: false,
-  async polish() {
+  async onPolish(ev) {
+    if (ev.detail.remain > 0) {
+      // 倒计时未结束
+      return;
+    }
     await ensureVerified();
     if (this.polishing)
       return;

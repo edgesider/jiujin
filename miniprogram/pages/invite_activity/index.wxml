@@ -3,7 +3,7 @@
 <view class="root">
   <image
     class="title"
-    src="https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/banners/invite_title.png?sign=2ef63cb8295b282ba4006007ab7b4591"
+    src="https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/invite_title.png"
     mode="aspectFit"
   />
 
@@ -34,7 +34,7 @@
         用户数每满一千人时
       </view>
       <view class="text">
-        抽取10位新用户<text class="highlight">及其邀请人</text>
+        抽取10位新用户<text class="highlight">及其邀请人（每次20人）</text>
       </view>
       <view class="text">
         平分1000元现金红包
@@ -76,10 +76,10 @@
         1.邀请者和被邀请者需为北航<text class="highlight">在校师生或校友</text>；
       </view>
       <view class="text">
-        2.分享小程序任意页面（首页、闲置物品详情页、互助页、互助详情页、本页面）给好友、微信群或朋友圈，好友通过你的分享首次进入小程序，待其注册并<text class="highlight">发布任意内容后</text>即视为你邀请成功；
+        2.分享小程序任意页面（首页、闲置物品详情页、互助页、互助详情页、本页面）给好友、微信群，他人通过你的分享卡片或链接首次进入小程序，待其注册并<text class="highlight">发布至少一条闲置或互助信息</text>即视为你邀请成功；
       </view>
       <view class="text">
-        3.抽奖规则：以第1000、2000、3000……10000位用户完成注册后最近一次福彩3D开奖数字为抽奖依据，注册编号后两位数字与开奖后两位一致的10位新用户<text class="highlight">及其邀请人</text>皆为中奖用户；
+        3.抽奖规则：以第1000位、第2000位…第10000位用户完成认证后最近一次福彩3D开奖数字为抽奖依据，注册编号后两位数字与开奖后两位一致的10位新用户及其邀请人皆为中奖用户；
       </view>
       <view class="text">
         4.若多位中奖新用户邀请人为同一人，则该邀请人可相应获得多份奖金；
@@ -88,7 +88,10 @@
         5.开奖前<text class="highlight">未发布任何内容的</text>视为无效中奖，其奖金由其他中奖用户平分；
       </view>
       <view class="text">
-        6.以任何非正当手段虚假邀请注册视为无效，取消中奖资格。
+        6.以任何非正当手段虚假邀请注册视为无效，取消中奖资格；
+      </view>
+      <view class="text">
+        7.领奖：每次开奖后会在首页公布获奖名单，中奖者七日内联系工作人员出示与中奖信息一致的“我的”页截图、学生证（教职工证或毕业证）以及开奖前发布的内容证明后兑奖。
       </view>
     </view>
   </view>

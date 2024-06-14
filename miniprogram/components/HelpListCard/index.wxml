@@ -12,7 +12,15 @@
   </view>
   <view class="right" wx:if="{{help.seller_id === self._id}}">
     <block wx:if="{{help.status === 0}}">
-      <view class="button green" catch:tap="polish">擦亮</view>
+      <CountdownButton
+        class="button"
+        suffixText="后可擦亮"
+        finishedText="擦亮"
+        initialMillSeconds="{{canPolishDuration}}"
+        bgStyle="font-size: 20rpx"
+        finishedBgStyle="font-size: 28rpx"
+        bind:onClick="polish"
+      />
       <view class="button greenyellow" catch:tap="gotoEdit">编辑</view>
       <view class="button yellow" catch:tap="deactivate">结束</view>
     </block>
