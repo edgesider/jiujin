@@ -16,6 +16,10 @@ Page({
     userCount: 0,
     userCountNumbers: ['0', '0', '0', '0', '0'],
     myInvitation: [] as User[],
+    /**
+     * 有效邀请的数量（发布过内容的）
+     */
+    myInvitationCount: 0,
 
     kiloRound: 0, // 每千人抽奖轮次
     kiloPercent: 0, // 每千人抽奖进度
@@ -65,7 +69,10 @@ Page({
         console.error(resp);
         return;
       }
-      this.setData({ myInvitation: resp.data });
+      this.setData({
+        myInvitation: resp.data,
+        myInvitationCount: resp.data.filter(u => (u.total_release + u.total_help_release) > 0).length
+      });
     })().then();
   },
   onUnload() {

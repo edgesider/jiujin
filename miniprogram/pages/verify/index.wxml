@@ -1,6 +1,7 @@
 <TitleBar title="身份认证" />
 
 <view class="root">
+  <view class="tip">*任选其一认证即可</view>
   <view class="card card-gps">
     <view class="title">GPS认证</view>
     <view class="subtitle">只要身在校园内即可快速认证</view>
@@ -32,5 +33,4 @@
     <view class="button button-email" bindtap="onConfirmEmailVerify">发送验证链接认证</view>
     <image class="icon icon-email" src="/images/icon-email.png" />
   </view>
-  <view class="bottom">*任选其一认证即可</view>
 </view>

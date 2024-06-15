@@ -8,7 +8,7 @@ import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { Resp } from '../../api/resp';
 import { getEnvVersion } from '../../utils/env';
-import { processSchema } from '../../utils/router';
+import { openVerify, processSchema } from '../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -84,8 +84,6 @@ Page({
   },
   async onClickLogo() {
     if (getEnvVersion() === 'develop') {
-      // await wx.openSetting({});
-      // openLogin();
     }
   },
 

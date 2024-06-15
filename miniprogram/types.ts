@@ -8,6 +8,7 @@ export interface User {
   rid: number;
   sex: number;
   total_release: number;
+  total_help_release: number;
   total_selled: number;
   total_bought: number;
   total_collect: number;

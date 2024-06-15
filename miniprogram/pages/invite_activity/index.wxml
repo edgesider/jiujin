@@ -138,6 +138,6 @@
         </view>
       </view>
     </view>
-    <view class="bottom text-green">*已成功邀请{{myInvitation.length}}人</view>
+    <view class="bottom text-green">*已成功邀请{{myInvitationCount}}人</view>
   </view>
 </view>
