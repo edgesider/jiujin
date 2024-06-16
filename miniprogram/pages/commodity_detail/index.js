@@ -12,13 +12,13 @@ import {
 import moment from "moment";
 import { openCommodityEdit, openConversationDetail, openProfile, openVerify } from "../../utils/router";
 import { DATETIME_FORMAT } from "../../utils/time";
-import { buildShareParam, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { onShareCommodity, parseShareInfo, reportShareInfo } from "../../utils/share";
 import { waitForAppReady } from "../../utils/globals";
 import { startTransaction } from "../../utils/transaction";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { reportCommodity } from "../../utils/report";
-import { drawCommodityShareImage } from "../../utils/canvas";
 import { TransactionAPI, TransactionStatus } from "../../api/TransactionAPI";
+import { metric } from "../../utils/metric";
 
 const app = getApp();
 
@@ -58,6 +58,7 @@ Page({
     });
 
     await CommodityAPI.addViewCount(id);
+    metric.write('commodity_detail_show', { id: id, shareInfo: shareInfoStr });
   },
   back() {
     wx.navigateBack().then();
@@ -281,22 +282,7 @@ Page({
     if (!commodity) {
       return;
     }
-    const shareInfo = buildShareParam({
-      type: 'commodity',
-      from: options.from,
-      commodityId: commodity._id,
-      fromUid: getOpenId(),
-      timestamp: Date.now(),
-      method: 'card'
-    });
-    const path = await drawCommodityShareImage(commodity);
-    return {
-      title: '闲置 | ' + commodity.content,
-      path: '/pages/commodity_detail/index' +
-        `?id=${commodity._id}` +
-        `&shareInfo=${encodeURIComponent(shareInfo)}`,
-      imageUrl: path,
-    }
+    return onShareCommodity(options, commodity);
   },
   onCommentLoadFinished() {
     if (this.data.scrollToComment) {

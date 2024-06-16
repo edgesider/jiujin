@@ -16,6 +16,7 @@ import { startHelpTransaction } from "../../utils/transaction";
 import { HelpAPI } from "../../api/HelpAPI";
 import { reportHelp } from "../../utils/report";
 import { HelpTransactionAPI, HelpTransactionStatus } from "../../api/HelpTransactionAPI";
+import { metric } from "../../utils/metric";
 
 const app = getApp();
 
@@ -56,6 +57,7 @@ Page({
     });
 
     await HelpAPI.addViewCount(id);
+    metric.write('help_detail_show', { id: id, shareInfo: shareInfoStr });
   },
 
   async loadData(id) {

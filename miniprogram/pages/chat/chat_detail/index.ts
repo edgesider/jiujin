@@ -21,6 +21,7 @@ import { CommodityAPI } from '../../../api/CommodityAPI';
 import { HelpTransaction, HelpTransactionAPI } from '../../../api/HelpTransactionAPI';
 import { HelpAPI } from '../../../api/HelpAPI';
 import { checkNotifySettingAndRequest, NotifyType, requestNotifySubscribe } from '../../../utils/notify';
+import { metric } from '../../../utils/metric';
 
 type Input = WechatMiniprogram.Input;
 
@@ -64,16 +65,23 @@ Page({
         keyboardHeight: res.height,
       })
     }));
-
-    this.setData({ conversationId, });
-    await this.loadData();
-
     this.subscription!!.add(listenMessage(conversationId).subscribe(msg => {
       const custom = tryJsonParse(msg.ex);
       if (custom?.needUpdateTransaction) {
         this.updateTransaction().then();
       }
     }));
+
+    this.setData({ conversationId, });
+    try {
+      await this.loadData();
+    } catch (e) {
+      metric.write('im_load_failed', {
+        error: JSON.stringify(e),
+        conversationId
+      });
+    }
+    metric.write('im_load_succeed', { conversationId });
   },
   onUnload() {
     const conv = this.data.conversation;

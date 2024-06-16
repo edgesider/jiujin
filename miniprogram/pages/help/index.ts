@@ -195,10 +195,6 @@ Page({
   async onShareAppMessage(options) {
     await ensureVerified();
     const help = options.target?.dataset?.help;
-    if (!help) {
-      return await onShareApp(options);
-    } else {
-      return await onShareHelp(options)
-    }
+    return await onShareHelp(options, help)
   },
 })

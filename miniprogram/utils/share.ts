@@ -1,7 +1,8 @@
 import { tryJsonParse } from './other';
 import { getOpenId } from '../api/api';
-import { Help } from '../types';
-import { drawHelpShareImage } from './canvas';
+import { Commodity, Help } from '../types';
+import { drawCommodityShareImage, drawHelpShareImage } from './canvas';
+import { metric } from './metric';
 
 type IShareAppMessageOption = WechatMiniprogram.Page.IShareAppMessageOption;
 
@@ -43,6 +44,7 @@ export type ShareInfo =
   ;
 
 export function buildShareParam(shareInfo: ShareInfo): string {
+  metric.write('share_click', shareInfo);
   return JSON.stringify(shareInfo);
 }
 
@@ -102,6 +104,26 @@ export async function onShareApp(options: IShareAppMessageOption) {
     title: '我发现一个有趣的小程序，快来看看吧！',
     path,
   };
+}
+
+export async function onShareCommodity(options: IShareAppMessageOption, commodity: Commodity) {
+  const shareInfo = buildShareParam({
+    type: 'commodity',
+    from: options.from,
+    commodityId: commodity._id,
+    fromUid: getOpenId(),
+    timestamp: Date.now(),
+    method: 'card'
+  });
+  const path = await drawCommodityShareImage(commodity);
+  return {
+    title: '闲置 | ' + commodity.content,
+    path: '/pages/commodity_detail/index' +
+      `?id=${commodity._id}` +
+      `&shareInfo=${encodeURIComponent(shareInfo)}`,
+    imageUrl: path,
+  }
+
 }
 
 export async function onShareHelp(options: IShareAppMessageOption, help_?: Help) {

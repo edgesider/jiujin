@@ -5,6 +5,7 @@ import { InAppMonitor } from "./monitor/index";
 import { initOpenIM } from "./utils/oim";
 import { clearSavedImages } from "./utils/canvas";
 import { syncNotifySwitches } from "./utils/notify";
+import { metric } from "./utils/metric";
 
 App({
   _ready: false,
@@ -18,6 +19,12 @@ App({
   userChangedSubject: new BehaviorSubject(null),
 
   async onLaunch() {
+    wx.onError(error => {
+      metric.write('on_error', { error });
+    });
+    wx.onUnhandledRejection((result) => {
+      metric.write('on_unhandled_rejection', { reason: result.reason });
+    })
     try {
       initMoment();
       initNetwork();
@@ -37,9 +44,11 @@ App({
       this._readyWaiters.length = 0;
     } catch (e) {
       console.error('app initialize failed');
+      metric.write('app_init_failed');
       this.launchFailed = true;
       this._readyWaiters.forEach(waiter => waiter[1](e));
       this._readyWaiters.length = 0;
+      throw e;
     }
 
     // 执行一些不重要的任务
