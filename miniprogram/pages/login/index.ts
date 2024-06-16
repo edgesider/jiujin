@@ -1,6 +1,6 @@
 import getConstants, { DEFAULT_REGION_ID, GENDER } from '../../constants';
 import api, { getOpenId } from '../../api/api';
-import randomName from '../../utils/randomName';
+import { randomIdName } from '../../utils/randomName';
 import { generateRandomAvatarAndUpload, sleep, toastError } from '../../utils/other';
 import { getLastEnterByShareInfo } from '../../utils/share';
 import { openWebView } from '../../utils/router';
@@ -75,7 +75,7 @@ Page({
     console.log('lastShareInfo', shareInfo);
     const params = {
       avatar_url: await generateRandomAvatarAndUpload(),
-      name: randomName.getNickName(),
+      name: randomIdName(),
       sex: GENDER.MALE,
       rid: DEFAULT_REGION_ID,
       phone_number: phone,

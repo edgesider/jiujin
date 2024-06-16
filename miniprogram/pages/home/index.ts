@@ -8,7 +8,7 @@ import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { Resp } from '../../api/resp';
 import { getEnvVersion } from '../../utils/env';
-import { openVerify, processSchema } from '../../utils/router';
+import { handleSchema } from '../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -83,7 +83,7 @@ Page({
     }
   },
   async onClickLogo() {
-    if (getEnvVersion() === 'develop') {
+    if (getEnvVersion() === 'develop' || getEnvVersion() === 'trial') {
     }
   },
 
@@ -228,7 +228,7 @@ Page({
   async onClickBanner(ev: TouchEvent) {
     const banner = ev.currentTarget.dataset.banner as Banner;
     if (banner.schema) {
-      await processSchema(banner.schema);
+      await handleSchema(banner.schema);
     } else if (banner.page_path) {
       await wx.navigateTo({ url: banner.page_path, });
     } else {

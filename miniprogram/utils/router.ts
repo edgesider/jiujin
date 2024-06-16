@@ -158,7 +158,7 @@ export async function openWebView(src: string) {
   });
 }
 
-export async function processSchema(str: string) {
+export async function handleSchema(str: string) {
   if (str.startsWith('lllw://')) {
     const url = parseURL(str);
     if (url.path === 'route') {

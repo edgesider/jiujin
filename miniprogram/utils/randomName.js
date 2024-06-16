@@ -759,3 +759,28 @@ class RandomName {
 
 let randomName = new RandomName();
 export default randomName;
+
+function getCharsFromAsciiRange(start, end) {
+  if (start >= end) {
+    return [String.fromCharCode(start)];
+  }
+  const chars = [];
+  for (let i = start; i <= end; i++) {
+    chars.push(String.fromCharCode(i));
+  }
+  return chars;
+}
+
+const IdChars = [
+  ...getCharsFromAsciiRange('0'.charCodeAt(0), '9'.charCodeAt(0)),
+  ...getCharsFromAsciiRange('a'.charCodeAt(0), 'z'.charCodeAt(0)),
+  ...getCharsFromAsciiRange('A'.charCodeAt(0), 'Z'.charCodeAt(0)),
+];
+
+export function randomIdName(len = 8) {
+  let s = '';
+  for (let i = 0; i < len; i++) {
+    s += IdChars[Math.floor(Math.random() * 10000) % IdChars.length];
+  }
+  return `用户${s}`;
+}
