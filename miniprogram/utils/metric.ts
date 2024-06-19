@@ -12,7 +12,7 @@ class Metric {
       if (resp.isError) {
         console.error('metric write error', resp);
       }
-    });
+    }).catch(e => console.error('metric write error', e));
   }
 
   private getCommonParams(): Record<string, any> {

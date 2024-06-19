@@ -26,6 +26,7 @@ import { waitForAppReady } from "../../utils/globals";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { HelpAPI } from "../../api/HelpAPI";
 import { VerifyStatus } from "../../api/verify";
+import { UserAPI } from "../../api/UserAPI";
 
 const app = getApp()
 
@@ -35,7 +36,7 @@ Page({
     pageIndex: 1,
     selfInfo: null,
     regionName: '',
-    totalUnread: 0,
+    qrcode: '',
   },
 
   async onLoad() {
@@ -293,6 +294,16 @@ Page({
       }
     });
   },
+
+  async showMyQrCode() {
+    this.setData({
+      qrcode: await UserAPI.getMyQrCode()
+    });
+  },
+  hideMyQrCode() {
+    this.setData({ qrcode: '' });
+  },
+
   onClickAvatar() {
     ensureRegistered();
     openProfile(app.globalData.self).then();

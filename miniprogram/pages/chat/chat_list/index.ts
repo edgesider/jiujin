@@ -68,10 +68,7 @@ Page({
   },
   updateNotifyTip() {
     const switches = getNotifySwitches();
-    if (!switches.mainSwitch
-      || switches[NotifyType.CommodityChat] === 'reject'
-      || switches[NotifyType.HelpChat] === 'reject'
-    ) {
+    if (!switches.mainSwitch || switches[NotifyType.Message] === 'reject') {
       this.setData({ showNotifyTip: true, });
     } else {
       this.setData({ showNotifyTip: false });

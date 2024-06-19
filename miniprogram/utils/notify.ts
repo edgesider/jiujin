@@ -1,18 +1,32 @@
+import { UserAPI } from '../api/UserAPI';
+
 export enum NotifyType {
-  CommodityChat = 'Y690e4bn__l8hqMEj5bCejjnFvjeJ5wPgzLB6W-l5Sc',
-  HelpChat = 'xxgi6jsrFygWbALoLlnPfeV-_h5slR8QLg2LpjRFD60',
+  Message = 0,
+  Comment = 1,
+}
+
+export function getNotifyTemplateId(type: NotifyType) {
+  return {
+    [NotifyType.Message]: '5sRWB8VfznDEREza9aPSy4mPeS_xPyTYmaMt38gvqFc',
+    [NotifyType.Comment]: 'BiNOMg_tomsLL8p5tYjwLb4dcSRSidFcZ6vwkrhTX7k',
+  }[type];
 }
 
 const prompts = {
-  [NotifyType.CommodityChat]: '为更快达成交易，我们将在您收到私聊时向您发送通知，请在“订阅消息”设置中允许通知',
-  [NotifyType.HelpChat]: '为更快达成交易，我们将在您收到私聊时向您发送通知，请在“订阅消息”设置中允许通知',
+  [NotifyType.Message]: '为更快达成交易，我们将在您收到私聊时向您发送通知，请在“订阅消息”设置中允许通知',
+  [NotifyType.Comment]: '为更快达成交易，我们将在您收到评论时向您发送通知，请在“订阅消息”设置中允许通知',
 }
 
 export async function requestNotifySubscribe(
   types: NotifyType[]
 ): Promise<Boolean> {
   try {
-    const res = await wx.requestSubscribeMessage({ tmplIds: types });
+    const res = await wx.requestSubscribeMessage({
+      tmplIds: types.map(getNotifyTemplateId)
+    });
+    for (const type of types) {
+      UserAPI.addNotifyCount(type).then();
+    }
     console.log(res.errMsg)
     return true;
   } catch (e) {
@@ -46,7 +60,7 @@ export function getNotifySwitches() {
 
 export async function checkNotifySettingAndRequest(type: NotifyType): Promise<boolean> {
   syncNotifySwitches().then();
-  if (switches[type] !== 'accept') {
+  if (switches[getNotifyTemplateId(type)] !== 'accept') {
     wx.showModal({
       content: prompts[type] ?? '请求授权通知',
       success: () => {

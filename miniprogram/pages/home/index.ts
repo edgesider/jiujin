@@ -54,11 +54,24 @@ Page({
   async onLoad(options) {
     setTabBar(this);
 
-    const { shareInfo: shareInfoStr } = options;
-    const shareInfo = parseShareInfo(shareInfoStr);
-    if (shareInfo) {
-      console.log('shareInfo', shareInfo);
-      reportShareInfo(shareInfo).then();
+    const {
+      shareInfo: shareInfoStr,
+      scene // 从分享二维码来的时候，scene的值为 'u@' + 分享人的uid
+    } = options;
+    if (shareInfoStr) {
+      const shareInfo = parseShareInfo(shareInfoStr);
+      if (shareInfo) {
+        console.log('shareInfo', shareInfo);
+        reportShareInfo(shareInfo).then();
+      }
+    } else if (scene && scene.startsWith('u@')) {
+      const fromUid = scene.substring(2);
+      reportShareInfo({
+        fromUid,
+        method: 'qrcode',
+        type: 'qrcode',
+        timestamp: 0,
+      }).then();
     }
     await this.init();
   },

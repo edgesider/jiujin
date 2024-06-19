@@ -33,6 +33,11 @@
 </view>
 <scroll-view>
   <view class="List">
+    <view class="list" bindtap="showMyQrCode">
+      <view class="list_title">我的二维码</view>
+    </view>
+  </view>
+  <view class="List">
     <view class="list" bindtap="gotoList" data-type="my_commodities">
       <view class="list_title">我的闲置</view>
       <image class="right" src="/images/right.png"></image>
@@ -72,5 +77,10 @@
     </view>
   </view>
 </scroll-view>
+
+<view class="qrcode" wx:if="{{qrcode}}">
+  <view class="mask" bindtap="hideMyQrCode" />
+  <image src="{{qrcode}}" />
+</view>
 
 <NotVerifiedCard />

@@ -116,7 +116,7 @@ Component({
       this.afterTransactionActionDone('我已申请提供帮助');
       wx.showToast({ title: '已申请' }).then();
       await sleep(200);
-      requestNotifySubscribe([NotifyType.HelpChat]).then()
+      requestNotifySubscribe([NotifyType.Message]).then()
     },
     async cancelBooking() {
       const { transaction } = this.data;

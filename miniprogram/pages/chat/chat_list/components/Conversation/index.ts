@@ -1,7 +1,7 @@
 import moment from 'moment';
 import api, { getOpenId } from '../../../../../api/api';
 import { Resp } from '../../../../../api/resp';
-import { Help, User } from '../../../../../types';
+import { User } from '../../../../../types';
 import { openConversationDetail } from '../../../../../utils/router';
 import { Subscription } from 'rxjs';
 import { DATETIME_FORMAT } from '../../../../../utils/time';
@@ -117,7 +117,7 @@ Component({
     },
     async gotoDetail() {
       if (getConstants().Platform !== 'devtools') {
-        requestNotifySubscribe([NotifyType.CommodityChat, NotifyType.HelpChat]).then()
+        requestNotifySubscribe([NotifyType.Message]).then()
       }
       await openConversationDetail(this.data.conversation.conversationID as string);
     },

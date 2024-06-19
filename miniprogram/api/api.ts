@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import mpAdapter from 'axios-miniprogram-adapter';
 import { COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_SELLING } from '../constants';
 import { Resp, RespError, RespSuccess } from './resp';
@@ -6,7 +6,7 @@ import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 import { User } from '../types';
 
-const DEV_BASE_URL = '';
+const DEV_BASE_URL = 'http://192.168.2.218:8080';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 let openId: string | undefined;
 
@@ -71,13 +71,11 @@ export function wrapResp<T = any>(resp: AxiosResponse): Resp<T> {
   return new RespSuccess(resp.data?.data);
 }
 
-export async function request(param) {
-  return Axios({
+export async function request<T>(param: AxiosRequestConfig & { path: string }) {
+  return Axios.request<T>({
+    ...param,
     url: param.path,
     method: param.method ?? 'POST',
-    params: param.params,
-    headers: param.headers ?? {},
-    data: param.data,
   });
 }
 

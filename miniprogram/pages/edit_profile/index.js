@@ -3,6 +3,7 @@ import rules from "../../utils/rules";
 import getConstants, { GENDER } from "../../constants";
 import { getL1Regions, getRegionPath, getRegionsByParent, sleep } from "../../utils/other";
 import { ErrCode } from "../../api/ErrCode";
+import { redirectToHome } from "../../utils/router";
 
 const app = getApp();
 
@@ -203,6 +204,10 @@ Page({
       icon: 'success',
     });
     await sleep(1500);
-    await wx.navigateBack()
+    if (getCurrentPages().length === 1) {
+      await redirectToHome();
+    } else {
+      await wx.navigateBack()
+    }
   }
 })

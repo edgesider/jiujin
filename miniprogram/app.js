@@ -23,7 +23,7 @@ App({
       metric.write('on_error', { error });
     });
     wx.onUnhandledRejection((result) => {
-      metric.write('on_unhandled_rejection', { reason: result.reason });
+      metric.write('on_unhandled_rejection', { reason: (result.reason ?? '').substring(0, 10240) });
     })
     try {
       initMoment();

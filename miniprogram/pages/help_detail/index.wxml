@@ -40,7 +40,7 @@
           <text class="views">{{help.view_count + 1}}浏览</text>
         </view>
         <view class="paragraphs">
-          <text class="paragraph" selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+          <text class="paragraph" user-select selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
         </view>
       </view>
       <view class="divider" />

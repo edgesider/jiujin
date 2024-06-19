@@ -20,7 +20,7 @@ import {
 import { CommodityAPI } from '../../../api/CommodityAPI';
 import { HelpTransaction, HelpTransactionAPI } from '../../../api/HelpTransactionAPI';
 import { HelpAPI } from '../../../api/HelpAPI';
-import { checkNotifySettingAndRequest, NotifyType, requestNotifySubscribe } from '../../../utils/notify';
+import { NotifyType, requestNotifySubscribe } from '../../../utils/notify';
 import { metric } from '../../../utils/metric';
 
 type Input = WechatMiniprogram.Input;
@@ -326,7 +326,7 @@ Page({
       input: '',
     });
     // checkNotifySettingAndRequest(this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat).then();
-    requestNotifySubscribe([this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat]).then();
+    requestNotifySubscribe([NotifyType.Message]).then();
     await this.sendTextMessage(input);
   },
   async onSendImageIconClick() {

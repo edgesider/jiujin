@@ -117,7 +117,7 @@ Component({
       this.afterTransactionActionDone('我已发出预订申请');
       wx.showToast({ title: '已申请预订' }).then();
       await sleep(200);
-      requestNotifySubscribe([NotifyType.HelpChat]).then()
+      requestNotifySubscribe([NotifyType.Message]).then()
     },
     async cancelBooking() {
       const { transaction } = this.data;

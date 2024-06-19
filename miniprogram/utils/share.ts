@@ -12,7 +12,7 @@ export interface BaseShareInfo {
    *
    * See {@link IShareAppMessageOption.from}
    */
-  from: 'button' | 'menu' | string;
+  from?: 'button' | 'menu' | string;
   fromUid: string;
   timestamp: number;
   method: 'card' | 'qrcode';
@@ -36,11 +36,17 @@ export interface InviteActivityShareInfo extends BaseShareInfo {
   type: 'invite_activity';
 }
 
+export interface QrcodeShareInfo extends BaseShareInfo {
+  type: 'qrcode';
+  method: 'qrcode';
+}
+
 export type ShareInfo =
   | AppShareInfo
   | CommodityShareInfo
   | HelpShareInfo
   | InviteActivityShareInfo
+  | QrcodeShareInfo
   ;
 
 export function buildShareParam(shareInfo: ShareInfo): string {
@@ -81,10 +87,6 @@ export function getLastEnterByShareInfo(): ShareInfo | undefined {
 }
 
 export async function reportShareInfo(shareInfo: ShareInfo) {
-  const data = {
-    ...shareInfo,
-    reachedUser: getOpenId(),
-  }
   if (shareInfo.fromUid !== getOpenId()) {
     saveLastEnterByShareInfo(shareInfo);
   }
