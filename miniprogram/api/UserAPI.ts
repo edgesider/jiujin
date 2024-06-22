@@ -20,11 +20,11 @@ export const UserAPI = {
       }
     }))
   },
-  async getMyQrCode() {
+  async getMyQrCode(): Promise<ArrayBuffer | undefined> {
     const resp = await request<ArrayBuffer>({
       path: '/user/getInviteQrcode',
       responseType: 'arraybuffer'
     });
-    return 'data:image/png;base64,' + encode(resp.data);
+    return resp.data;
   },
 }

@@ -100,3 +100,6 @@
     </view>
   </view>
 </view>
+
+
+<NotifyCounter wx:if="{{showNotifyCounter}}" bind:onDismiss="onNotifyCounterDismiss" />

@@ -58,7 +58,7 @@ export const CommodityAPI = {
   },
   async listByUser(params: {
     uid: string;
-    status: number;
+    status?: number;
     start?: number;
     count?: number;
   }) {
@@ -69,7 +69,7 @@ export const CommodityAPI = {
   },
   async countByUser(params: {
     uid: string;
-    status: number;
+    status?: number;
     start?: number;
     count?: number;
   }) {

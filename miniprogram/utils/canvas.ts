@@ -1,12 +1,14 @@
 import { Commodity, Help } from '../types';
 import { generateUUID, getCompressedImageUrl, getRegionPath, getRegionPathName } from './other';
+import { saveToFile } from './fs';
 
 type OffscreenCanvas = WechatMiniprogram.OffscreenCanvas;
 type CanvasContext = WechatMiniprogram.CanvasContext;
 
-const REGION_ICON = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/region.png?sign=cf7bf85968fa8ea87c072475eee3be64';
-const HELP_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_bounty.png?sign=cf7bf85968fa8ea87c072475eee3be64';
-const HELP_NO_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_no_bounty.png?sign=cf7bf85968fa8ea87c072475eee3be64';
+const REGION_ICON = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/region.png';
+const HELP_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_bounty.png';
+const HELP_NO_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_no_bounty.png';
+const QRCODE_BG = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/qrcode.png'
 
 const fs = wx.getFileSystemManager();
 const shareImageDir = `${wx.env.USER_DATA_PATH}/share_images/`;
@@ -19,20 +21,9 @@ export function clearSavedImages() {
   }
 }
 
-export function saveBase64ToFile(base64: string) {
-  const prefixToRemove = 'data:image/png;base64,';
-  if (base64.startsWith(prefixToRemove)) {
-    base64 = base64.substring(prefixToRemove.length);
-  }
-
+function getRandomPath(ext: string = 'png') {
   fs.mkdir({ dirPath: shareImageDir });
-  const path = `${shareImageDir}/${generateUUID()}.png`;
-  fs.writeFileSync(path, base64, 'base64');
-  return path;
-}
-
-export function drawAppShareImage(): string {
-  return ''
+  return `${shareImageDir}/${generateUUID()}.${ext}`;
 }
 
 async function drawImage(canvas: OffscreenCanvas, ctx: CanvasContext, imgUrl: string, x: number, y: number, w: number, h: number) {
@@ -110,10 +101,11 @@ export async function drawCommodityShareImage(commodity: Commodity): Promise<str
     60, 60
   );
 
-  console.log('save file')
-  return saveBase64ToFile(
+  return saveToFile(
     // @ts-ignore
-    cvs.toDataURL());
+    cvs.toDataURL(),
+    getRandomPath(),
+  );
 }
 
 export async function drawHelpShareImage(help: Help): Promise<string> {
@@ -196,8 +188,25 @@ export async function drawHelpShareImage(help: Help): Promise<string> {
     60, 60
   );
 
-  console.log('save file')
-  return saveBase64ToFile(
+  return saveToFile(
     // @ts-ignore
-    cvs.toDataURL());
+    cvs.toDataURL(),
+    getRandomPath()
+  );
+}
+
+export async function drawMyQrcode(qrcode: ArrayBuffer, path: string): Promise<string> {
+  const cvs = wx.createOffscreenCanvas({
+    width: 1080,
+    height: 1080,
+    type: '2d'
+  });
+  const ctx = cvs.getContext('2d') as CanvasContext;
+  await drawImage(cvs, ctx, QRCODE_BG, 0, 0, 1080, 1080);
+  const qrPath = saveToFile(qrcode, getRandomPath());
+  await drawImage(cvs, ctx, qrPath, 680, 700, 300, 300);
+  return saveToFile(
+    // @ts-ignore
+    cvs.toDataURL(),
+    path);
 }

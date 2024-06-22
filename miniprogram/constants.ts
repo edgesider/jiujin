@@ -3,6 +3,7 @@ import { HelpTransactionFinishReason, HelpTransactionStatus } from './api/HelpTr
 import { MessageStatus, MessageType, SessionType } from './lib/openim/index';
 import { VerifyStatus } from './api/verify';
 import { EntityType } from './types';
+import { NotifyType } from './utils/notify';
 
 export const COMMODITY_STATUS_SELLING = 0; // 出售中
 export const COMMODITY_STATUS_DEACTIVATED = 1; // 已下架
@@ -90,6 +91,7 @@ const constants = {
   VerifyStatus,
   ...initConstants(),
   EntityType,
+  NotifyType,
 };
 
 export default function getConstants() {

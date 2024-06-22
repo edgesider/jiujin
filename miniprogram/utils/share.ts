@@ -1,8 +1,9 @@
 import { tryJsonParse } from './other';
 import { getOpenId } from '../api/api';
-import { Commodity, Help } from '../types';
+import { Commodity, Help, User } from '../types';
 import { drawCommodityShareImage, drawHelpShareImage } from './canvas';
 import { metric } from './metric';
+import { getRouteFromHomePageUrl } from './router';
 
 type IShareAppMessageOption = WechatMiniprogram.Page.IShareAppMessageOption;
 
@@ -41,12 +42,18 @@ export interface QrcodeShareInfo extends BaseShareInfo {
   method: 'qrcode';
 }
 
+export interface ProfileShareInfo extends BaseShareInfo {
+  type: 'profile';
+  uid: string;
+}
+
 export type ShareInfo =
   | AppShareInfo
   | CommodityShareInfo
   | HelpShareInfo
   | InviteActivityShareInfo
   | QrcodeShareInfo
+  | ProfileShareInfo
   ;
 
 export function buildShareParam(shareInfo: ShareInfo): string {
@@ -86,7 +93,7 @@ export function getLastEnterByShareInfo(): ShareInfo | undefined {
   return res;
 }
 
-export async function reportShareInfo(shareInfo: ShareInfo) {
+export async function saveShareInfo(shareInfo: ShareInfo) {
   if (shareInfo.fromUid !== getOpenId()) {
     saveLastEnterByShareInfo(shareInfo);
   }
@@ -120,12 +127,12 @@ export async function onShareCommodity(options: IShareAppMessageOption, commodit
   const path = await drawCommodityShareImage(commodity);
   return {
     title: '闲置 | ' + commodity.content,
-    path: '/pages/commodity_detail/index' +
+    path: getRouteFromHomePageUrl(
+      '/pages/commodity_detail/index' +
       `?id=${commodity._id}` +
-      `&shareInfo=${encodeURIComponent(shareInfo)}`,
+      `&shareInfo=${encodeURIComponent(shareInfo)}`),
     imageUrl: path,
   }
-
 }
 
 export async function onShareHelp(options: IShareAppMessageOption, help_?: Help) {
@@ -143,9 +150,10 @@ export async function onShareHelp(options: IShareAppMessageOption, help_?: Help)
   });
   return {
     title: '互助 | ' + help.content,
-    path: '/pages/help_detail/index' +
+    path: getRouteFromHomePageUrl(
+      '/pages/help_detail/index' +
       `?id=${help._id}` +
-      `&shareInfo=${encodeURIComponent(shareInfo)}`,
+      `&shareInfo=${encodeURIComponent(shareInfo)}`),
     imageUrl: await drawHelpShareImage(help),
   };
 }
@@ -160,6 +168,23 @@ export function onShareInviteActivity(options: IShareAppMessageOption) {
   });
   return {
     title: '邀同学分万元红包',
-    path: `/pages/invite_activity/index?shareInfo=${encodeURIComponent(shareInfo)}`,
+    path: getRouteFromHomePageUrl(
+      `/pages/invite_activity/index?shareInfo=${encodeURIComponent(shareInfo)}`),
+  };
+}
+
+export function onShareProfile(options: IShareAppMessageOption, user: User) {
+  const shareInfo = buildShareParam({
+    type: 'profile',
+    uid: user._id,
+    from: options.from,
+    fromUid: getOpenId(),
+    timestamp: Date.now(),
+    method: 'card'
+  });
+  return {
+    title: '我发现一个宝藏用户，快来看看',
+    path: getRouteFromHomePageUrl(
+      `/pages/profile/index?user_id=${user._id}&shareInfo=${encodeURIComponent(shareInfo)}`),
   };
 }

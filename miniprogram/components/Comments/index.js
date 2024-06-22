@@ -7,7 +7,6 @@ import { EntityType } from "../../types";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
 import { ErrCode } from "../../api/ErrCode";
-import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
 
 const app = getApp();
 

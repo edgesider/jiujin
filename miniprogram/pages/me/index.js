@@ -27,6 +27,10 @@ import { CommodityAPI } from "../../api/CommodityAPI";
 import { HelpAPI } from "../../api/HelpAPI";
 import { VerifyStatus } from "../../api/verify";
 import { UserAPI } from "../../api/UserAPI";
+import { drawMyQrcode } from "../../utils/canvas";
+import { metric } from "../../utils/metric";
+import { isFileAccess, rmFileIfExist } from "../../utils/fs";
+import { getEnvVersion } from "../../utils/env";
 
 const app = getApp()
 
@@ -36,7 +40,6 @@ Page({
     pageIndex: 1,
     selfInfo: null,
     regionName: '',
-    qrcode: '',
   },
 
   async onLoad() {
@@ -211,7 +214,7 @@ Page({
                   return;
                 }
                 toastSucceed('擦亮成功')
-                return { action: 'fetchAll' };
+                return { action: 'fetchSingle' };
               },
               deactivate: async () => {
                 await ensureVerified();
@@ -296,12 +299,37 @@ Page({
   },
 
   async showMyQrCode() {
-    this.setData({
-      qrcode: await UserAPI.getMyQrCode()
+    let path = `${wx.env.USER_DATA_PATH}/my_qrcode.png`;
+    if (!isFileAccess(path)) {
+      await wx.showLoading({ title: '生成中' });
+      try {
+        const bytes = await UserAPI.getMyQrCode();
+        if (!bytes) {
+          toastError('获取二维码失败，请稍后重试');
+          return;
+        }
+        path = await drawMyQrcode(bytes, path);
+      } catch (e) {
+        metric.write('qrcode_create_failed', { reason: e?.message || e?.toString() });
+        toastError('获取二维码失败，请稍后重试');
+        console.error(e);
+        return;
+      } finally {
+        await wx.hideLoading();
+      }
+    }
+    await wx.previewImage({
+      current: path,
+      urls: [path]
     });
   },
-  hideMyQrCode() {
-    this.setData({ qrcode: '' });
+
+  async clearQrCodeCache() {
+    if (getEnvVersion() !== 'release') {
+      if (rmFileIfExist(`${wx.env.USER_DATA_PATH}/my_qrcode.png`)) {
+        toastSucceed('已清除二维码缓存');
+      }
+    }
   },
 
   onClickAvatar() {

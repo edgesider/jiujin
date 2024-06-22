@@ -4,7 +4,7 @@ import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
 import { sleep, toastError } from "../../utils/other";
 import { waitForAppReady } from "../../utils/globals";
-import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
+import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { ErrCode } from "../../api/ErrCode";
 
 const app = getApp()
@@ -175,7 +175,7 @@ Page({
     }
     this.submitting = true;
     try {
-      await requestNotifySubscribe([NotifyType.Message]);
+      await requestNotifySubscribes([NotifyType.Message]);
     } catch (e) {
       console.warn('用户拒绝订阅消息');
     }

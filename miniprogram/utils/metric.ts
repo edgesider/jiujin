@@ -4,15 +4,19 @@ import { getEnvVersion, getVersionInfo } from './env';
 
 class Metric {
   write(key: string, fields?: Record<string, any>, tags?: Record<string, string>) {
-    MetricAPI.write(
-      key,
-      Object.assign({}, this.getCommonParams(), fields ?? {}),
-      tags ?? {}
-    ).then(resp => {
-      if (resp.isError) {
-        console.error('metric write error', resp);
-      }
-    }).catch(e => console.error('metric write error', e));
+    try {
+      MetricAPI.write(
+        key,
+        Object.assign({}, this.getCommonParams(), fields ?? {}),
+        tags ?? {}
+      ).then(resp => {
+        if (resp.isError) {
+          console.error('metric write error', resp);
+        }
+      }).catch(e => console.error('metric write error', e));
+    } catch (e) {
+      console.error('metric write error', e)
+    }
   }
 
   private getCommonParams(): Record<string, any> {

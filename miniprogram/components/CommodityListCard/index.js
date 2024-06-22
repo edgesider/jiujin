@@ -13,6 +13,9 @@ Component({
   properties: {
     commodity: {
       type: Object,
+      observer() {
+        this.onUpdate();
+      }
     },
     type: {
       type: String,
@@ -98,10 +101,5 @@ Component({
   },
   attached() {
     this.onUpdate();
-  },
-  observers: {
-    commodity() {
-      this.onUpdate();
-    }
   },
 });

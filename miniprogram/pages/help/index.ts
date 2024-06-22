@@ -1,6 +1,6 @@
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
 import { ensureVerified, getRegionPath, setTabBar } from '../../utils/other';
-import { onShareApp, onShareHelp, parseShareInfo, reportShareInfo } from '../../utils/share';
+import { onShareApp, onShareHelp, parseShareInfo, saveShareInfo } from '../../utils/share';
 import { waitForAppReady } from '../../utils/globals';
 import { HelpAPI } from '../../api/HelpAPI';
 import { Help, Region, User } from '../../types';
@@ -42,7 +42,7 @@ Page({
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
-      reportShareInfo(shareInfo).then();
+      saveShareInfo(shareInfo).then();
     }
 
     this.setData({
@@ -195,6 +195,11 @@ Page({
   async onShareAppMessage(options) {
     await ensureVerified();
     const help = options.target?.dataset?.help;
-    return await onShareHelp(options, help)
+    try {
+      wx.showLoading({ title: '请稍等' });
+      return await onShareHelp(options, help)
+    } finally {
+      wx.hideLoading();
+    }
   },
 })

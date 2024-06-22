@@ -17,8 +17,8 @@
         suffixText="后可擦亮"
         finishedText="擦亮"
         initialMillSeconds="{{canPolishDuration}}"
-        bgStyle="font-size: 20rpx; border-radius: 12rpx;"
-        finishedBgStyle="font-size: 28rpx"
+        bgStyle="font-size: 20rpx; border-radius: 12rpx; background-color: rgba(0,0,0,0.5)"
+        finishedBgStyle="font-size: 28rpx; background-color: var(--brand-green);"
         bind:onClick="polish"
       />
       <view class="button greenyellow" catch:tap="gotoEdit">编辑</view>

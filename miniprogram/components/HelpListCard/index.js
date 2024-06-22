@@ -12,6 +12,9 @@ Component({
   properties: {
     help: {
       type: Object,
+      observer() {
+        this.onUpdate();
+      }
     },
     type: {
       type: String,
@@ -83,10 +86,5 @@ Component({
   },
   attached() {
     this.onUpdate();
-  },
-  observers: {
-    help() {
-      this.onUpdate();
-    }
   },
 })

@@ -1,7 +1,7 @@
 import { cloudProtocolToHttp, getRegionPath, setTabBar } from '../../utils/other';
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
-import { buildShareParam, parseShareInfo, reportShareInfo } from '../../utils/share';
+import { buildShareParam, parseShareInfo, saveShareInfo } from '../../utils/share';
 import { Banner, Commodity, Region, User } from '../../types';
 import { getGlobals, waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
@@ -47,6 +47,8 @@ Page({
     chosenRankingKey: 'polish_time-desc',
 
     scrollIntoView: null as string | null,
+
+    showNotifyCounter: false,
   },
   initialized: false,
   fetchToken: 0,
@@ -56,22 +58,26 @@ Page({
 
     const {
       shareInfo: shareInfoStr,
-      scene // 从分享二维码来的时候，scene的值为 'u@' + 分享人的uid
+      scene, // 从分享二维码来的时候，scene的值为 'u@' + 分享人的uid
+      routeTo, // 初始化的schema/page路径
     } = options;
     if (shareInfoStr) {
       const shareInfo = parseShareInfo(shareInfoStr);
       if (shareInfo) {
         console.log('shareInfo', shareInfo);
-        reportShareInfo(shareInfo).then();
+        saveShareInfo(shareInfo).then();
       }
     } else if (scene && scene.startsWith('u@')) {
       const fromUid = scene.substring(2);
-      reportShareInfo({
+      saveShareInfo({
         fromUid,
         method: 'qrcode',
         type: 'qrcode',
         timestamp: 0,
       }).then();
+    }
+    if (routeTo) {
+      await handleSchema(decodeURIComponent(routeTo));
     }
     await this.init();
   },
@@ -97,6 +103,9 @@ Page({
   },
   async onClickLogo() {
     if (getEnvVersion() === 'develop' || getEnvVersion() === 'trial') {
+      this.setData({
+        showNotifyCounter: true,
+      })
     }
   },
 
@@ -294,6 +303,11 @@ Page({
       // imageUrl: drawCommodityShareImage(),
     }
   },
+  onNotifyCounterDismiss() {
+    this.setData({
+      showNotifyCounter: false,
+    })
+  }
 
   // onShareTimeline() {
   //   const shareInfo = buildShareParam({

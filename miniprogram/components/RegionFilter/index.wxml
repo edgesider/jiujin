@@ -6,6 +6,7 @@
         wx:key="_id"
         wx:for-index="idx"
       >
+        <view wx:if="{{idx !== 0}}" class="arrow">></view>
         <view class="space" id="space-{{idx}}" />
         <view
           class="item {{selected === idx ? 'item-on' : ''}}"

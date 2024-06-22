@@ -4,7 +4,7 @@ import { getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
 import { sleep, textToPrice, toastError } from "../../utils/other";
 import getConstants, { GENDER } from "../../constants";
-import { NotifyType, requestNotifySubscribe } from "../../utils/notify";
+import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { waitForAppReady } from "../../utils/globals";
 import { ErrCode } from "../../api/ErrCode";
 
@@ -238,7 +238,7 @@ Page({
 
   async doSubmit() {
     try {
-      await requestNotifySubscribe([NotifyType.Message]);
+      await requestNotifySubscribes([NotifyType.Message]);
     } catch (e) {
       console.warn('用户拒绝订阅消息');
     }

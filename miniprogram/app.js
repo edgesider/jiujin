@@ -4,7 +4,7 @@ import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
 import { initOpenIM } from "./utils/oim";
 import { clearSavedImages } from "./utils/canvas";
-import { syncNotifySwitches } from "./utils/notify";
+import { syncNotifyStates } from "./utils/notify";
 import { metric } from "./utils/metric";
 
 App({
@@ -23,7 +23,7 @@ App({
       metric.write('on_error', { error });
     });
     wx.onUnhandledRejection((result) => {
-      metric.write('on_unhandled_rejection', { reason: (result.reason ?? '').substring(0, 10240) });
+      metric.write('on_unhandled_rejection', { reason: (result.reason ?? '').toString().substring(0, 10240) });
     })
     try {
       initMoment();
@@ -53,7 +53,7 @@ App({
 
     // 执行一些不重要的任务
     try {
-      setTimeout(() => {
+      setTimeout(async () => {
         clearSavedImages();
       }, 0);
     } catch (e) {
@@ -64,7 +64,7 @@ App({
   async onShow() {
     await this.waitForReady();
     InAppMonitor.start();
-    syncNotifySwitches().then();
+    await syncNotifyStates();
   },
   onHide() {
     InAppMonitor.stop();

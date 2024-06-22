@@ -81,3 +81,12 @@
 .item .item-text {
   /*font-size: 28rpx;*/
 }
+
+.arrow {
+  font-size: 32rpx;
+  color: #0000004D;
+  transform: translate(12rpx, 4rpx);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

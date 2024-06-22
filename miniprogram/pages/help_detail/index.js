@@ -1,5 +1,5 @@
 import getConstants, { POLISH_MIN_DURATION } from "../../constants";
-import { onShareHelp, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { onShareHelp, parseShareInfo, saveShareInfo } from "../../utils/share";
 import api from "../../api/api";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
@@ -48,7 +48,7 @@ Page({
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
-      reportShareInfo(shareInfo).then();
+      saveShareInfo(shareInfo).then();
     }
 
     await this.loadData(id);
@@ -290,7 +290,12 @@ Page({
 
   async onShareAppMessage(options) {
     await ensureVerified();
-    return await onShareHelp(options, this.data.help);
+    try {
+      wx.showLoading({ title: '请稍等' });
+      return await onShareHelp(options, this.data.help);
+    } finally {
+      wx.hideLoading();
+    }
   },
   onCommentLoadFinished() {
     if (this.data.scrollToComment) {

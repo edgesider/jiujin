@@ -7,6 +7,9 @@ Component({
   properties: {
     initialMillSeconds: {
       type: Number,
+      observer(newVal) {
+        this.reset(newVal);
+      }
     },
     suffixText: {
       type: String,
@@ -31,26 +34,17 @@ Component({
     text: '',
     finished: false,
     remainMs: 0,
+    token: 0,
+    isDetached: false,
   },
   lifetimes: {
     attached() {
       // @ts-ignore
       this._subscription = new Subscription();
-      this.setData({
-        remainMs: this.properties.initialMillSeconds ?? 0
-      });
-
-      let detached = false;
-      (async () => {
-        while (!detached && this.updateCountdown() > 0) {
-          await sleep(1000);
-        }
-      })();
-      this.getSubscription().add(() => {
-        detached = true;
-      })
+      this.reset(this.properties.initialMillSeconds ?? 0);
     },
     detached() {
+      this.setData({ isDetached: true });
       this.getSubscription().unsubscribe();
     }
   },
@@ -58,6 +52,23 @@ Component({
     getSubscription(): Subscription {
       // @ts-ignore
       return this._subscription as Subscription;
+    },
+    reset(remainMs: number) {
+      this.setData({
+        finished: false,
+        remainMs: remainMs,
+        token: this.data.token + 1,
+      });
+
+      (async () => {
+        let currToken = this.data.token;
+        while (!this.data.isDetached && this.updateCountdown() > 0) {
+          await sleep(1000);
+          if (currToken !== this.data.token) {
+            break;
+          }
+        }
+      })();
     },
     updateCountdown() {
       let ms = this.data.remainMs - 1000;

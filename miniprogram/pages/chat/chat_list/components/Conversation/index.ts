@@ -5,7 +5,7 @@ import { User } from '../../../../../types';
 import { openConversationDetail } from '../../../../../utils/router';
 import { Subscription } from 'rxjs';
 import { DATETIME_FORMAT } from '../../../../../utils/time';
-import { NotifyType, requestNotifySubscribe } from '../../../../../utils/notify';
+import { NotifyType, requestNotifySubscribes } from '../../../../../utils/notify';
 import {
   getCommodityGroupAttributes,
   getGroup,
@@ -117,7 +117,7 @@ Component({
     },
     async gotoDetail() {
       if (getConstants().Platform !== 'devtools') {
-        requestNotifySubscribe([NotifyType.Message]).then()
+        requestNotifySubscribes([NotifyType.Message]).then()
       }
       await openConversationDetail(this.data.conversation.conversationID as string);
     },

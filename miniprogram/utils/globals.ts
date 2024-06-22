@@ -16,3 +16,8 @@ export async function waitForAppReady() {
 export function isAppReady() {
   return getApp().isReady();
 }
+
+export async function updateSelfInfo(): Promise<User | undefined> {
+  await getApp().fetchSelfInfo();
+  return getGlobals().self;
+}

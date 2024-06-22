@@ -1,7 +1,7 @@
 import getConstants from '../../../../constants';
 import { getContentDesc } from '../../../../utils/strings';
 import { HelpTransaction, HelpTransactionAPI, HelpTransactionStatus } from '../../../../api/HelpTransactionAPI';
-import { NotifyType, requestNotifySubscribe } from '../../../../utils/notify';
+import { NotifyType, requestNotifySubscribes } from '../../../../utils/notify';
 import { sleep, toastError } from '../../../../utils/other';
 import { Help } from '../../../../types';
 import { openHelpDetail } from '../../../../utils/router';
@@ -116,7 +116,7 @@ Component({
       this.afterTransactionActionDone('我已申请提供帮助');
       wx.showToast({ title: '已申请' }).then();
       await sleep(200);
-      requestNotifySubscribe([NotifyType.Message]).then()
+      requestNotifySubscribes([NotifyType.Message]).then()
     },
     async cancelBooking() {
       const { transaction } = this.data;

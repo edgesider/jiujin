@@ -1,8 +1,10 @@
-import getConstants, { COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from "../../constants";
-import api from "../../api/api";
-import moment from "moment";
-import { getRegionPathName } from "../../utils/other";
-import { CommodityAPI } from "../../api/CommodityAPI";
+import getConstants, { COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD } from '../../constants';
+import api from '../../api/api';
+import moment from 'moment';
+import { getRegionPathName } from '../../utils/other';
+import { CommodityAPI } from '../../api/CommodityAPI';
+import { Commodity, User } from '../../types';
+import { onShareProfile } from '../../utils/share';
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -10,7 +12,7 @@ const COUNT_PER_PAGE = 12
 Page({
   data: {
     ...getConstants(),
-    user: null,
+    user: null as User | null,
     userLoadState: 'loading', // loading | loaded | error
     filters: [
       { key: 'all', name: '全部' },
@@ -19,7 +21,7 @@ Page({
     ],
     currFilter: 'selling',
     cursor: 0,
-    commodityList: [],
+    commodityList: [] as Commodity[],
     sumCount: -1,
     listLoading: false,
   },
@@ -88,13 +90,16 @@ Page({
   },
 
   getApiParams() {
-    const { currFilter, user: { _id: uid } } = this.data;
+    const { currFilter, user } = this.data;
+    const uid = user!!._id;
     if (currFilter === 'all') {
-      return { uid, };
+      return { uid };
     } else if (currFilter === 'selling') {
       return { uid, status: COMMODITY_STATUS_SELLING };
     } else if (currFilter === 'sold') {
       return { uid, status: COMMODITY_STATUS_SOLD };
+    } else {
+      return { uid };
     }
   },
 
@@ -120,4 +125,11 @@ Page({
       urls: [user.avatar_url]
     });
   },
+  // @ts-ignore
+  async onShareAppMessage(options) {
+    if (!this.data.user) {
+      return;
+    }
+    return onShareProfile(options, this.data.user);
+  }
 })

@@ -19,6 +19,8 @@ export interface User {
   verify_email?: string;
   verify_time?: number;
   verify_index: number;
+  notify_comment_count: number;
+  notify_message_count: number;
 }
 
 export interface Commodity {

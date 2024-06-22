@@ -2,6 +2,17 @@ import { Commodity, Help, User } from '../types';
 import { ConversationItem } from '../lib/openim/index';
 import { AboutType } from '../pages/about';
 import { parseURL } from './other';
+import { metric } from './metric';
+
+export function getRouteFromHomePageUrl(
+  targetPageOrSchema: string,
+  homeParams: Record<string, any> = {},
+) {
+  homeParams['routeTo'] = targetPageOrSchema;
+  const params = Object.entries(homeParams)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+  return `/pages/home/index?${params}`;
+}
 
 export async function openProfile(user: string | User) {
   if (typeof user === 'object') {
@@ -158,9 +169,9 @@ export async function openWebView(src: string) {
   });
 }
 
-export async function handleSchema(str: string) {
-  if (str.startsWith('lllw://')) {
-    const url = parseURL(str);
+export async function handleSchema(schema: string) {
+  if (schema.startsWith('lllw://')) {
+    const url = parseURL(schema);
     if (url.path === 'route') {
       const type = url.params.get('type');
       const page = url.params.get('page');
@@ -174,9 +185,13 @@ export async function handleSchema(str: string) {
         }
       }
     } else {
-      throw Error(`unhandled schema ${url.path}`);
+      metric.write('unknown_schema', { schema });
+      console.error(`unhandled schema ${url.path}`);
     }
+  } else if (schema.startsWith('/pages')) {
+    await wx.navigateTo({ url: schema });
   } else {
-    await wx.navigateTo({ url: str });
+    metric.write('unknown_schema', { schema });
+    console.error(`unhandled schema ${schema}`);
   }
 }

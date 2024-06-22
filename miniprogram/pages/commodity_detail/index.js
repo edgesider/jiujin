@@ -12,7 +12,7 @@ import {
 import moment from "moment";
 import { openCommodityEdit, openConversationDetail, openProfile, openVerify } from "../../utils/router";
 import { DATETIME_FORMAT } from "../../utils/time";
-import { onShareCommodity, parseShareInfo, reportShareInfo } from "../../utils/share";
+import { onShareCommodity, parseShareInfo, saveShareInfo } from "../../utils/share";
 import { waitForAppReady } from "../../utils/globals";
 import { startTransaction } from "../../utils/transaction";
 import { CommodityAPI } from "../../api/CommodityAPI";
@@ -49,7 +49,7 @@ Page({
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
-      reportShareInfo(shareInfo).then();
+      saveShareInfo(shareInfo).then();
     }
 
     await this.loadData(id);
@@ -282,7 +282,12 @@ Page({
     if (!commodity) {
       return;
     }
-    return onShareCommodity(options, commodity);
+    try {
+      wx.showLoading({ title: '请稍等' });
+      return await onShareCommodity(options, commodity);
+    } finally {
+      wx.hideLoading()
+    }
   },
   onCommentLoadFinished() {
     if (this.data.scrollToComment) {

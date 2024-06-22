@@ -1,6 +1,6 @@
 <view
   class="button {{finished ? '' : 'disabled'}}"
-  style="background: var(--brand-green); {{bgStyle}}; {{finished ? finishedBgStyle : ''}};"
+  style="background-color: var(--brand-green); {{bgStyle}}; {{finished ? finishedBgStyle : ''}};"
   catchtap="onClick"
 >
   <block wx:if="{{!finished}}">
