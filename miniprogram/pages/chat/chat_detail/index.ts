@@ -326,7 +326,7 @@ Page({
       input: '',
     });
     // checkNotifySettingAndRequest(this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat).then();
-    requestNotifySubscribes([NotifyType.Message]).then();
+    requestNotifySubscribes([this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat]).then();
     await this.sendTextMessage(input);
   },
   async onSendImageIconClick() {

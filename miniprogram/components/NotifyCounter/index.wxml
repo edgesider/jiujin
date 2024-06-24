@@ -2,7 +2,7 @@
   <view class="mask" bindtap="onMaskClick" />
   <view class="card">
     <view class="title">通知可用次数</view>
-    <view class="state" wx:for="{{states}}" wx:for-item="state">
+    <view class="state" wx:for="{{states}}" wx:for-item="state" wx:key="type">
       <view class="name">{{state.name}}通知可用次数</view>
       <view class="prompt">{{state.prompt}}</view>
       <view class="count">{{state.count}}</view>

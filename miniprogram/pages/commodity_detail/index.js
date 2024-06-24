@@ -275,6 +275,13 @@ Page({
   async onAvatarClick() {
     await openProfile(this.data.seller);
   },
+  onCommentLoadFinished() {
+    if (this.data.scrollToComment) {
+      this.setData({
+        scrollToView: 'comments'
+      });
+    }
+  },
 
   async onShareAppMessage(options) {
     await ensureVerified();
@@ -289,11 +296,17 @@ Page({
       wx.hideLoading()
     }
   },
-  onCommentLoadFinished() {
-    if (this.data.scrollToComment) {
-      this.setData({
-        scrollToView: 'comments'
-      });
+  async onShareTimeline() {
+    await ensureVerified();
+    const { commodity } = this.data;
+    if (!commodity) {
+      return;
     }
-  },
+    try {
+      wx.showLoading({ title: '请稍等' });
+      return await onShareCommodity(null, commodity);
+    } finally {
+      wx.hideLoading()
+    }
+  }
 });

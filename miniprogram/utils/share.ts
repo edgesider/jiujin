@@ -115,10 +115,10 @@ export async function onShareApp(options: IShareAppMessageOption) {
   };
 }
 
-export async function onShareCommodity(options: IShareAppMessageOption, commodity: Commodity) {
+export async function onShareCommodity(options: IShareAppMessageOption | null, commodity: Commodity) {
   const shareInfo = buildShareParam({
     type: 'commodity',
-    from: options.from,
+    from: options?.from,
     commodityId: commodity._id,
     fromUid: getOpenId(),
     timestamp: Date.now(),

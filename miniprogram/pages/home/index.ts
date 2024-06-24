@@ -288,6 +288,11 @@ Page({
     });
     this.fetchList();
   },
+  onNotifyCounterDismiss() {
+    this.setData({
+      showNotifyCounter: false,
+    })
+  },
 
   onShareAppMessage(options) {
     const shareInfo = buildShareParam({
@@ -303,12 +308,6 @@ Page({
       // imageUrl: drawCommodityShareImage(),
     }
   },
-  onNotifyCounterDismiss() {
-    this.setData({
-      showNotifyCounter: false,
-    })
-  }
-
   // onShareTimeline() {
   //   const shareInfo = buildShareParam({
   //     type: 'app',
@@ -320,7 +319,7 @@ Page({
   //   return {
   //     title: '闲置买卖，又近又快',
   //     path: `/pages/home/index?shareInfo=${encodeURIComponent(shareInfo)}`,
-  //     imageUrl: 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_bounty.png?sign=cf7bf85968fa8ea87c072475eee3be64'
+  //     // imageUrl: 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_bounty.png?sign=cf7bf85968fa8ea87c072475eee3be64'
   //   }
   // }
 })

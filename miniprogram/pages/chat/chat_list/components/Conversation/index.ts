@@ -117,7 +117,7 @@ Component({
     },
     async gotoDetail() {
       if (getConstants().Platform !== 'devtools') {
-        requestNotifySubscribes([NotifyType.Message]).then()
+        requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.HelpChat]).then()
       }
       await openConversationDetail(this.data.conversation.conversationID as string);
     },

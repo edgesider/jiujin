@@ -1,11 +1,11 @@
 import { UserAPI } from '../api/UserAPI';
 import { getGlobals, updateSelfInfo } from './globals';
 
-const app = getApp();
-
 export enum NotifyType {
   Message = 0,
   Comment = 1,
+  CommodityChat = 2,
+  HelpChat = 3,
 }
 
 const prompts = {
@@ -22,7 +22,8 @@ export interface NotifySubscribeState {
   count: number;
 }
 
-const states: { [type in NotifyType]: NotifySubscribeState } = {
+export type NotifySubscribeStates = { [type in NotifyType]: NotifySubscribeState };
+const states: NotifySubscribeStates = {
   [NotifyType.Message]: {
     type: NotifyType.Message,
     name: '私聊',
@@ -36,6 +37,22 @@ const states: { [type in NotifyType]: NotifySubscribeState } = {
     name: '评论',
     prompt: '',
     tmpId: 'BiNOMg_tomsLL8p5tYjwLb4dcSRSidFcZ6vwkrhTX7k',
+    state: undefined,
+    count: 0,
+  },
+  [NotifyType.CommodityChat]: {
+    type: NotifyType.CommodityChat,
+    name: '闲置私聊',
+    prompt: '',
+    tmpId: 'Y690e4bn__l8hqMEj5bCejjnFvjeJ5wPgzLB6W-l5Sc',
+    state: undefined,
+    count: 0,
+  },
+  [NotifyType.HelpChat]: {
+    type: NotifyType.HelpChat,
+    name: '互助私聊',
+    prompt: '',
+    tmpId: 'xxgi6jsrFygWbALoLlnPfeV-_h5slR8QLg2LpjRFD60',
     state: undefined,
     count: 0,
   },
@@ -96,7 +113,7 @@ export function getNotifySwitches() {
   return switches;
 }
 
-export function getNotifyStates() {
+export function getNotifyStates(): NotifySubscribeStates {
   return states;
 }
 

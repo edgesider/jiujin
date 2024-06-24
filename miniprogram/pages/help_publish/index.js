@@ -175,7 +175,7 @@ Page({
     }
     this.submitting = true;
     try {
-      await requestNotifySubscribes([NotifyType.Message]);
+      await requestNotifySubscribes([NotifyType.HelpChat]);
     } catch (e) {
       console.warn('用户拒绝订阅消息');
     }

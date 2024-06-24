@@ -8,6 +8,7 @@
     placeholder="描述一下物品基本信息…"
   />
 
+  <view class="image-tip">📎 建议首图将物品完整展示，首页展示效果会更好~</view>
   <view class="images">
     <image
       wx:for="{{commodityImg}}" wx:key="index"

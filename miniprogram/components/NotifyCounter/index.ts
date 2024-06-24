@@ -1,10 +1,11 @@
 import getConstants from '../../constants';
 import { Subscription } from 'rxjs';
 import {
-  getNotifyCount, getNotifyStates,
-  getNotifySwitches, NotifySubscribeState,
+  getNotifyStates,
+  NotifySubscribeState, NotifySubscribeStates,
   NotifyType, requestNotifySubscribes, syncNotifyStates,
 } from '../../utils/notify';
+import { metric } from '../../utils/metric';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 
@@ -18,6 +19,7 @@ Component({
   data: {
     ...getConstants(),
     states: [] as NotifySubscribeState[],
+    adding: false,
   },
   lifetimes: {
     attached() {
@@ -35,17 +37,26 @@ Component({
       return this._subscription as Subscription;
     },
     async update() {
-      this.setData({ states: Object.values(getNotifyStates()) });
-      this.setData({ states: Object.values(await syncNotifyStates()) });
+      if (this.data.states.length === 0) {
+        this.updateStates(getNotifyStates());
+      }
+      this.updateStates(await syncNotifyStates());
+    },
+    updateStates(states: NotifySubscribeStates) {
+      this.setData({ states: this.properties.types.map(t => states[t]).filter(Boolean) });
     },
     async onAddClick(ev: TouchEvent) {
+      if (this.data.adding) {
+        return;
+      }
+      this.setData({ adding: true });
       const type = ev.currentTarget.dataset.type as NotifyType;
-      wx.showLoading({ mask: true, title: '请稍等' });
+      const startAt = Date.now();
       await requestNotifySubscribes([type]);
-      this.setData({
-        states: Object.values(getNotifyStates()),
-      })
-      wx.hideLoading();
+      this.updateStates(getNotifyStates());
+      const duration = Date.now() - startAt;
+      metric.write('added_subscribe', { duration, type: NotifyType[type] });
+      this.setData({ adding: false });
     },
     async onMaskClick() {
       this.triggerEvent('onDismiss');
