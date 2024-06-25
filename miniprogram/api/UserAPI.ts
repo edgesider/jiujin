@@ -1,7 +1,7 @@
 import { request, wrapResp } from './api';
 import { User } from '../types';
 import { NotifyType } from '../utils/notify';
-import { encode } from 'base64-arraybuffer';
+import { getEnvVersion } from '../utils/env';
 
 export const UserAPI = {
   async getInvitedUsers(inviterId: string) {
@@ -23,6 +23,7 @@ export const UserAPI = {
   async getMyQrCode(): Promise<ArrayBuffer | undefined> {
     const resp = await request<ArrayBuffer>({
       path: '/user/getInviteQrcode',
+      data: { env: getEnvVersion() },
       responseType: 'arraybuffer'
     });
     return resp.data;

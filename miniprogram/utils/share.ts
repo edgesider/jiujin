@@ -86,10 +86,11 @@ export function getLastEnterByShareInfo(): ShareInfo | undefined {
   if (!res) {
     return undefined;
   }
-  if (Date.now() - res.timestamp > 10 * 24 * 60 * 60 * 1000) {
-    wx.setStorageSync('lastShareInfo', null);
-    return undefined;
-  }
+  // if (res.timestamp > 0 && Date.now() - res.timestamp > 10 * 24 * 60 * 60 * 1000) {
+  //   // 如果分享信息有时间戳，那么超过十天之后就不算了
+  //   wx.setStorageSync('lastShareInfo', null);
+  //   return undefined;
+  // }
   return res;
 }
 

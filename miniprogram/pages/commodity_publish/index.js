@@ -238,7 +238,7 @@ Page({
 
   async doSubmit() {
     try {
-      await requestNotifySubscribes([NotifyType.CommodityChat]);
+      await requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.Comment]);
     } catch (e) {
       console.warn('用户拒绝订阅消息');
     }

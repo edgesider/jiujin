@@ -7,6 +7,7 @@ import { EntityType } from "../../types";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
 import { ErrCode } from "../../api/ErrCode";
+import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 
 const app = getApp();
 
@@ -160,12 +161,12 @@ Component({
     },
     requesting: false,
     async onConfirmComment() {
-      // await requestNotifySubscribe([NotifyType.Comment]);
       if (this.requesting) {
         return;
       }
       this.requesting = true;
       try {
+        await requestNotifySubscribes([NotifyType.Comment]);
         await wx.showLoading();
         await ensureVerified();
         const { commentingText, commentingTo } = this.data;

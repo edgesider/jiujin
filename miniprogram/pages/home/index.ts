@@ -9,6 +9,7 @@ import { CommodityAPI } from '../../api/CommodityAPI';
 import { Resp } from '../../api/resp';
 import { getEnvVersion } from '../../utils/env';
 import { handleSchema } from '../../utils/router';
+import { decode } from 'base64-arraybuffer';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -56,19 +57,27 @@ Page({
   async onLoad(options) {
     setTabBar(this);
 
+    Object.keys(options).forEach(key => {
+      const value = options[key];
+      if (value) {
+        options[key] = decodeURIComponent(value);
+      }
+    })
     const {
       shareInfo: shareInfoStr,
       scene, // 从分享二维码来的时候，scene的值为 'u@' + 分享人的uid
       routeTo, // 初始化的schema/page路径
     } = options;
+    console.log('start options', options);
     if (shareInfoStr) {
       const shareInfo = parseShareInfo(shareInfoStr);
       if (shareInfo) {
-        console.log('shareInfo', shareInfo);
+        console.log(`shareInfo, uid=${shareInfo.fromUid}`, shareInfo);
         saveShareInfo(shareInfo).then();
       }
     } else if (scene && scene.startsWith('u@')) {
       const fromUid = scene.substring(2);
+      console.log(`shareFromQrcode, uid=${fromUid}`);
       saveShareInfo({
         fromUid,
         method: 'qrcode',
@@ -77,7 +86,7 @@ Page({
       }).then();
     }
     if (routeTo) {
-      await handleSchema(decodeURIComponent(routeTo));
+      await handleSchema(routeTo);
     }
     await this.init();
   },
