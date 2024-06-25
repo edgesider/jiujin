@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { waitForAppReady } from '../../utils/globals';
 import { openWebView } from '../../utils/router';
 import { toastSucceed } from '../../utils/other';
+import { decodeOptions } from '../../utils/strings';
 
 const app = getApp()
 
@@ -20,6 +21,7 @@ Page({
     await waitForAppReady();
     this._subscription = new Subscription();
 
+    options = decodeOptions(options);
     const { type } = options;
     if (['contract_us', 'about_us'].indexOf(type ?? '') === -1) {
       throw Error(`unknown type ${type}`);

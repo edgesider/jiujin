@@ -39,12 +39,16 @@
               <view class="username">{{idToComment[comment.reply_to].sender.name}}</view>
             </block>
           </view>
-          <view
+          <mp-html
             class="content"
+            content="{{comment.htmlContent}}"
+            copy-link="{{false}}"
+            selectable="{{true}}"
+            bind:error="onRichTextError"
+            bind:linktap="onLinkTap"
             bindtap="onStartComment"
             data-comment="{{comment}}"
-          >{{comment.content}}
-          </view>
+          />
           <view class="time">{{comment.timeStr}}</view>
         </view>
       </view>

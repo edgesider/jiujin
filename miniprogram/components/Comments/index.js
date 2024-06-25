@@ -1,4 +1,4 @@
-import { openProfile } from "../../utils/router";
+import { handleLink, openProfile } from "../../utils/router";
 import { ensureRegistered, ensureVerified, kbHeightChanged, toastError } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
@@ -8,6 +8,8 @@ import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
 import { ErrCode } from "../../api/ErrCode";
 import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
+import { textToRichText } from "../../utils/strings";
+import { metric } from "../../utils/metric";
 
 const app = getApp();
 
@@ -88,7 +90,8 @@ Component({
           children.push({
             ...c,
             level,
-            timeStr: moment(c.create_time).format(DATETIME_FORMAT)
+            timeStr: moment(c.create_time).format(DATETIME_FORMAT),
+            htmlContent: textToRichText(c.content)
           });
           children.push(...collectChildren(c.id, level + 1));
         }
@@ -115,12 +118,6 @@ Component({
     async openProfile(ev) {
       const { sender } = ev.currentTarget.dataset.comment;
       await openProfile(sender);
-    },
-    onStartComment({ currentTarget: { dataset: { comment } } }) {
-      this.setData({
-        commenting: true,
-        commentingTo: comment ?? null, // 如果是回复则有这个字段
-      })
     },
     async onLongPress({ currentTarget: { dataset: { comment } } }) {
       const options = [];
@@ -159,6 +156,18 @@ Component({
     onPopupInput(ev) {
       this.setData({ commentingText: ev.detail.value });
     },
+    async onStartComment({ currentTarget: { dataset: { comment } } }) {
+      if (getConstants().Platform === 'ios') {
+        // iOS 用键盘发送时，获取不了订阅消息，所以放到这里获取
+        wx.showLoading();
+        await requestNotifySubscribes([NotifyType.Comment]);
+        wx.hideLoading()
+      }
+      this.setData({
+        commenting: true,
+        commentingTo: comment ?? null, // 如果是回复则有这个字段
+      })
+    },
     requesting: false,
     async onConfirmComment() {
       if (this.requesting) {
@@ -166,8 +175,11 @@ Component({
       }
       this.requesting = true;
       try {
-        await requestNotifySubscribes([NotifyType.Comment]);
         await wx.showLoading();
+        if (getConstants().Platform !== 'ios') {
+          // 安卓在发送时获取[
+          await requestNotifySubscribes([NotifyType.Comment]);
+        }
         await ensureVerified();
         const { commentingText, commentingTo } = this.data;
         const text = commentingText.trim();
@@ -187,5 +199,14 @@ Component({
         commentingText: '',
       })
     },
+    async onLinkTap(ev) {
+      console.log('linkTap', ev);
+      const link = ev?.detail?.href || '';
+      await handleLink(link);
+    },
+    onRichTextError(err) {
+      console.error('onRichTextError', err);
+      metric.write('rich_text_error', {}, { err: err?.toString() });
+    }
   }
 });

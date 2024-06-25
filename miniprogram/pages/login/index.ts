@@ -16,8 +16,6 @@ Page({
     agreed: false,
   },
 
-  async onLoad(options) {},
-
   onToggleAgree() {
     this.setData({
       agreed: !this.data.agreed

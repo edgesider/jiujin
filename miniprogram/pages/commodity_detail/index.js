@@ -10,7 +10,14 @@ import {
   toastSucceed
 } from "../../utils/other";
 import moment from "moment";
-import { openCommodityEdit, openConversationDetail, openProfile, openVerify } from "../../utils/router";
+import {
+  handleLink,
+  openCommodityEdit,
+  openConversationDetail,
+  openProfile,
+  openVerify,
+  openWebView
+} from "../../utils/router";
 import { DATETIME_FORMAT } from "../../utils/time";
 import { onShareCommodity, parseShareInfo, saveShareInfo } from "../../utils/share";
 import { waitForAppReady } from "../../utils/globals";
@@ -19,6 +26,7 @@ import { CommodityAPI } from "../../api/CommodityAPI";
 import { reportCommodity } from "../../utils/report";
 import { TransactionAPI, TransactionStatus } from "../../api/TransactionAPI";
 import { metric } from "../../utils/metric";
+import { textToRichText } from "../../utils/strings";
 
 const app = getApp();
 
@@ -38,6 +46,7 @@ Page({
     polishTimeGeneral: '', // 2022/2/2 10:10
     regionName: '',
     seller: null,
+    htmlContent: '',
     contentParagraphs: [],
     firstImageSize: [],
     showNotVerifiedDialog: false,
@@ -106,6 +115,7 @@ Page({
       polishTimeGeneral: moment(commodity.polish_time ?? commodity.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
+      htmlContent: textToRichText(commodity.content),
       regionName: getRegionPathName(commodity.rid),
       isMine,
       firstImageSize,
@@ -296,17 +306,27 @@ Page({
       wx.hideLoading()
     }
   },
-  async onShareTimeline() {
-    await ensureVerified();
-    const { commodity } = this.data;
-    if (!commodity) {
-      return;
-    }
-    try {
-      wx.showLoading({ title: '请稍等' });
-      return await onShareCommodity(null, commodity);
-    } finally {
-      wx.hideLoading()
-    }
+  // async onShareTimeline() {
+  //   await ensureVerified();
+  //   const { commodity } = this.data;
+  //   if (!commodity) {
+  //     return;
+  //   }
+  //   try {
+  //     await wx.showLoading({ title: '请稍等' });
+  //     return await onShareCommodity(null, commodity);
+  //   } finally {
+  //     await wx.hideLoading();
+  //   }
+  // },
+
+  async onLinkTap(ev) {
+    console.log('linkTap', ev);
+    const link = ev?.detail?.href || '';
+    await handleLink(link);
+  },
+  onRichTextError(err) {
+    console.error('onRichTextError', err);
+    metric.write('rich_text_error', {}, { err: err?.toString() });
   }
 });

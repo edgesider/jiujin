@@ -31,7 +31,14 @@
           <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
         </view>
         <view class="paragraphs">
-          <text class="paragraph" user-select wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+          <mp-html
+            class="paragraph"
+            content="{{htmlContent}}"
+            copy-link="{{false}}"
+            selectable="{{true}}"
+            bind:error="onRichTextError"
+            bind:linktap="onLinkTap"
+          />
         </view>
       </view>
       <view class="divider" />

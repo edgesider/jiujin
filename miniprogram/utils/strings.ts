@@ -1,3 +1,6 @@
+import { openWebView } from './router';
+import { toastSucceed } from './other';
+
 const qualitiesMap: Readonly<Record<number, { name: string; namePrefix: string; value: number }>> = Object.freeze({
   10: { name: '全新', namePrefix: '全', value: 10 },
   9: { name: '9成新', namePrefix: '九', value: 9 },
@@ -26,4 +29,32 @@ export function getContentDesc(content: string, len?: number) {
     content = content.substring(0, content.indexOf('\n')) // 从第一个回车截断
   }
   return content;
+}
+
+export function decodeOptions(options: Record<string, string | undefined>): Record<string, string | undefined> {
+  options = { ...options };
+  Object.keys(options).forEach(key => {
+    const value = options[key];
+    if (value) {
+      options[key] = decodeURIComponent(value);
+    }
+  })
+  return options;
+}
+
+function htmlEncode(text: string) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // .replace(/ /g, '&nbsp;')
+    .replace(/'/g, '&#39;')
+    .replace(/"/g, '&quot;')
+}
+
+export function textToRichText(text: string) {
+  text = htmlEncode(text);
+  return text
+    .replace(/\n/g, '<br />')
+    .replace(/https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g, '<a href="$&">$&</a>');
 }

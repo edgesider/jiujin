@@ -22,6 +22,7 @@ import { HelpTransaction, HelpTransactionAPI } from '../../../api/HelpTransactio
 import { HelpAPI } from '../../../api/HelpAPI';
 import { NotifyType, requestNotifySubscribes } from '../../../utils/notify';
 import { metric } from '../../../utils/metric';
+import { decodeOptions } from '../../../utils/strings';
 
 type Input = WechatMiniprogram.Input;
 
@@ -52,6 +53,7 @@ Page({
     await waitForAppReady();
     await waitForOimLogged();
 
+    options = decodeOptions(options);
     const { conversationId } = options;
     if (!conversationId) {
       await wx.showToast({

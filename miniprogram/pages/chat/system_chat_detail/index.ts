@@ -13,7 +13,7 @@ import {
   markConvMessageAsRead
 } from '../../../utils/oim';
 import { ConversationItem, MessageItem, MessageType } from '../../../lib/openim/index';
-import { getContentDesc } from '../../../utils/strings';
+import { decodeOptions, getContentDesc } from '../../../utils/strings';
 
 type CustomEvent = WechatMiniprogram.CustomEvent;
 
@@ -87,6 +87,7 @@ Page({
   },
   subscription: null as Subscription | null,
   async onLoad(options) {
+    options = decodeOptions(options);
     const { conversationId, convName } = options;
     this.setData({ convName });
     if (!conversationId) {

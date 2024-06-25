@@ -4,7 +4,8 @@
     "CommodityCard": "/components/CommodityCard/index",
     "UserTitleBar": "/components/UserTitleBar/index",
     "FullPageLoading": "/components/FullPageLoading/index",
-    "CountdownButton": "/components/CountdownButton/index"
+    "CountdownButton": "/components/CountdownButton/index",
+    "mp-html": "mp-html"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

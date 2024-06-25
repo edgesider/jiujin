@@ -5,6 +5,7 @@ import { getRegionPathName } from '../../utils/other';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { Commodity, User } from '../../types';
 import { onShareProfile } from '../../utils/share';
+import { decodeOptions } from '../../utils/strings';
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -27,6 +28,7 @@ Page({
   },
 
   async onLoad(options) {
+    options = decodeOptions(options);
     const { user_id } = options;
     await this.fetchUser(user_id);
     await this.fetchList();

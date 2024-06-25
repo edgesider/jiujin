@@ -1,8 +1,9 @@
 import { Commodity, Help, User } from '../types';
 import { ConversationItem } from '../lib/openim/index';
 import { AboutType } from '../pages/about';
-import { parseURL } from './other';
+import { parseURL, toastSucceed } from './other';
 import { metric } from './metric';
+import { encode } from 'base64-arraybuffer';
 
 export function getRouteFromHomePageUrl(
   targetPageOrSchema: string,
@@ -76,7 +77,7 @@ export async function openVerify() {
 export async function openCommodityPublish(from?: Commodity, waitFinished = false) {
   return new Promise<void>(async (res) => {
     await wx.navigateTo({
-      url: from ? `../commodity_publish/index?commodity=${JSON.stringify(from)}` : `../commodity_publish/index`,
+      url: from ? `../commodity_publish/index?commodity=${encodeURIComponent(JSON.stringify(from))}` : `../commodity_publish/index`,
       events: {
         afterPublished: waitFinished ? res() : undefined
       },
@@ -90,13 +91,13 @@ export async function openCommodityPublish(from?: Commodity, waitFinished = fals
 export async function openCommodityEdit(commodity: Commodity, waitFinished = false) {
   if (!waitFinished) {
     await wx.navigateTo({
-      url: `/pages/commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
+      url: `/pages/commodity_publish/index?commodity=${encodeURIComponent(JSON.stringify(commodity))}&isEdit=1`,
     });
     return;
   } else {
     return new Promise<void>(res => {
       wx.navigateTo({
-        url: `/pages/commodity_publish/index?commodity=${JSON.stringify(commodity)}&isEdit=1`,
+        url: `/pages/commodity_publish/index?commodity=${encodeURIComponent(JSON.stringify(commodity))}&isEdit=1`,
         events: {
           afterEdited: res
         },
@@ -136,13 +137,13 @@ export async function openHelpPublish(from?: Help, waitFinished = false) {
 export async function openHelpEdit(help: Help, waitFinished = false) {
   if (!waitFinished) {
     await wx.navigateTo({
-      url: `/pages/help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
+      url: `/pages/help_publish/index?help=${encodeURIComponent(JSON.stringify(help))}&isEdit=1`,
     });
     return;
   } else {
     return new Promise<void>(res => {
       wx.navigateTo({
-        url: `/pages/help_publish/index?help=${JSON.stringify(help)}&isEdit=1`,
+        url: `/pages/help_publish/index?help=${encodeURIComponent(JSON.stringify(help))}&isEdit=1`,
         events: {
           afterEdited: res
         },
@@ -193,5 +194,14 @@ export async function handleSchema(schema: string) {
   } else {
     metric.write('unknown_schema', { schema });
     console.error(`unhandled schema ${schema}`);
+  }
+}
+
+export async function handleLink(link: string) {
+  if (link.match(/^(http|https):\/\/([^\/]*\.)?lllw.cc/)) {
+    await openWebView(link);
+  } else {
+    await wx.setClipboardData({ data: link });
+    toastSucceed('链接已复制');
   }
 }

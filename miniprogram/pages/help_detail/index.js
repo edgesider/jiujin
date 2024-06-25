@@ -10,13 +10,14 @@ import {
   toastError,
   toastSucceed
 } from "../../utils/other";
-import { openConversationDetail, openHelpEdit, openProfile } from "../../utils/router";
+import { handleLink, openConversationDetail, openHelpEdit, openProfile } from "../../utils/router";
 import { setNeedRefresh } from "../home/index";
 import { startHelpTransaction } from "../../utils/transaction";
 import { HelpAPI } from "../../api/HelpAPI";
 import { reportHelp } from "../../utils/report";
 import { HelpTransactionAPI, HelpTransactionStatus } from "../../api/HelpTransactionAPI";
 import { metric } from "../../utils/metric";
+import { textToRichText } from "../../utils/strings";
 
 const app = getApp();
 
@@ -34,6 +35,7 @@ Page({
     createTime: '',
     regionName: '',
     seller: null,
+    htmlContent: '',
     contentParagraphs: [],
     firstImageSize: [],
     hasImg: true,
@@ -111,6 +113,7 @@ Page({
       canPolishDuration: (help.polish_time ?? help.create_time) + POLISH_MIN_DURATION - Date.now(),
       polishTimeGeneral: moment(help.polish_time ?? help.create_time).format(DATETIME_FORMAT),
       seller,
+      htmlContent: textToRichText(help.content),
       contentParagraphs: help.content.split('\n').map(s => s.trim()),
       regionName: getRegionPathName(help.rid),
       isMine: self && self._id === help.seller_id,
@@ -304,4 +307,14 @@ Page({
       });
     }
   },
+
+  async onLinkTap(ev) {
+    console.log('linkTap', ev);
+    const link = ev?.detail?.href || '';
+    await handleLink(link);
+  },
+  onRichTextError(err) {
+    console.error('onRichTextError', err);
+    metric.write('rich_text_error', {}, { err: err?.toString() });
+  }
 })

@@ -3,11 +3,13 @@ import api from '../../api/api';
 import moment from 'moment';
 import { DATETIME_FORMAT } from '../../utils/time';
 import { ensureRegistered, getRegionPathName, sleep, toastError, toastSucceed } from '../../utils/other';
-import { openConversationDetail, openProfile } from '../../utils/router';
+import { handleLink, openConversationDetail, openProfile } from '../../utils/router';
 import { Help, Region, User } from '../../types';
 import { startHelpTransaction } from '../../utils/transaction';
 import { HelpAPI } from '../../api/HelpAPI';
 import { reportHelp } from '../../utils/report';
+import { textToRichText } from '../../utils/strings';
+import { metric } from '../../utils/metric';
 
 type BaseEvent = WechatMiniprogram.BaseEvent;
 const app = getApp();
@@ -34,6 +36,7 @@ Component({
     createTime: '',
     regionName: '',
     user: null as User | null,
+    htmlContent: '',
     contentParagraphs: [] as string[],
     // 单个图片时，图片的样式
     firstImageStyle: '',
@@ -65,6 +68,7 @@ Component({
         loading: false,
         createTime: moment(help.create_time).format(DATETIME_FORMAT),
         contentParagraphs: help.content.split('\n').map(s => s.trim()),
+        htmlContent: textToRichText(help.content),
         regionName: getRegionPathName(help.rid),
         isMine: self && self._id === help.seller_id,
         hasImg: help.img_urls.length > 0,
@@ -229,5 +233,15 @@ Component({
         await openProfile(this.data.user);
       }
     },
+
+    async onLinkTap(ev: CustomEvent) {
+      console.log('linkTap', ev);
+      const link = ev?.detail?.href || '';
+      await handleLink(link);
+    },
+    onRichTextError(err: any) {
+      console.error('onRichTextError', err);
+      metric.write('rich_text_error', {}, { err: err?.toString() });
+    }
   },
 })

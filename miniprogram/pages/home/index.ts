@@ -10,6 +10,7 @@ import { Resp } from '../../api/resp';
 import { getEnvVersion } from '../../utils/env';
 import { handleSchema } from '../../utils/router';
 import { decode } from 'base64-arraybuffer';
+import { decodeOptions } from '../../utils/strings';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -57,12 +58,7 @@ Page({
   async onLoad(options) {
     setTabBar(this);
 
-    Object.keys(options).forEach(key => {
-      const value = options[key];
-      if (value) {
-        options[key] = decodeURIComponent(value);
-      }
-    })
+    options = decodeOptions(options);
     const {
       shareInfo: shareInfoStr,
       scene, // 从分享二维码来的时候，scene的值为 'u@' + 分享人的uid

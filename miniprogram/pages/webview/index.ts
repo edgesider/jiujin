@@ -1,6 +1,7 @@
 import getConstants from '../../constants';
 import { Subscription } from 'rxjs';
 import { waitForAppReady } from '../../utils/globals';
+import { decodeOptions } from '../../utils/strings';
 
 const app = getApp()
 
@@ -14,6 +15,7 @@ Page({
     await waitForAppReady();
     this._subscription = new Subscription();
 
+    options = decodeOptions(options);
     const { src } = options;
     this.setData({ src });
   },

@@ -6,6 +6,7 @@ import { sleep, toastError } from "../../utils/other";
 import { waitForAppReady } from "../../utils/globals";
 import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { ErrCode } from "../../api/ErrCode";
+import { decodeOptions } from "../../utils/strings";
 
 const app = getApp()
 Page({
@@ -29,9 +30,9 @@ Page({
     await waitForAppReady();
     //获取一些全局变量
     const { self } = app.globalData;
-    this.setData({
-      self
-    })
+    this.setData({ self })
+
+    options = decodeOptions(options);
     // 判断为编辑还是新建求助
     const {
       isEdit = false, // 是否是编辑
@@ -168,12 +169,7 @@ Page({
     return fileIDs;
   },
 
-  submitting: false,
-  async onSubmit() {
-    if (this.submitting) {
-      return;
-    }
-    this.submitting = true;
+  async doSubmit() {
     try {
       await requestNotifySubscribes([NotifyType.HelpChat, NotifyType.Comment]);
     } catch (e) {
@@ -235,7 +231,6 @@ Page({
         err = '内容含有违法违规内容';
       }
       toastError(err);
-      this.submitting = false;
       return;
     }
     this.getOpenerEventChannel().emit(editing ? 'afterEdited' : 'afterPublished');
@@ -250,5 +245,21 @@ Page({
 
     await sleep(1500);
     await wx.navigateBack();
+  },
+
+  submitting: false,
+  async onSubmit() {
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
+    try {
+      await this.doSubmit();
+    } catch (e) {
+      toastError(this.data.editingCommodity ? '保存失败' : '发布失败');
+      console.error(e);
+    } finally {
+      this.submitting = false;
+    }
   },
 })

@@ -35,7 +35,8 @@
     "TitleBar": "/components/TitleBar/index",
     "UserTitleBar": "/components/UserTitleBar/index",
     "FullPageLoading": "/components/FullPageLoading/index",
-    "NotVerifiedCard": "/components/NotVerifiedCard/index"
+    "NotVerifiedCard": "/components/NotVerifiedCard/index",
+    "mp-html": "mp-html"
   },
   "tabBar": {
     "custom": true,

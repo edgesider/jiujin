@@ -4,6 +4,7 @@ import { onShareApp, onShareHelp, parseShareInfo, saveShareInfo } from '../../ut
 import { waitForAppReady } from '../../utils/globals';
 import { HelpAPI } from '../../api/HelpAPI';
 import { Help, Region, User } from '../../types';
+import { decodeOptions } from '../../utils/strings';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 
@@ -38,6 +39,7 @@ Page({
   async onLoad(options) {
     setTabBar(this);
 
+    options = decodeOptions(options);
     const { shareInfo: shareInfoStr } = options;
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {

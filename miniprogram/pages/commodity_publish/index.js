@@ -1,6 +1,6 @@
 import api, { getOpenId } from "../../api/api";
 import rules from "../../utils/rules";
-import { getQualitiesMap } from "../../utils/strings";
+import { decodeOptions, getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
 import { sleep, textToPrice, toastError } from "../../utils/other";
 import getConstants, { GENDER } from "../../constants";
@@ -44,6 +44,7 @@ Page({
     const { self } = app.globalData;
     this.setData({ self });
 
+    options = decodeOptions(options);
     const {
       isEdit = false, // 是否是编辑
       commodity: commodityJson = null // 编辑或重新发布时，要填充的数据
@@ -311,7 +312,6 @@ Page({
         err = '内容含有违法违规内容';
       }
       toastError(err);
-      this.submitting = false;
       return;
     }
     this.getOpenerEventChannel().emit(editing ? 'afterEdited' : 'afterPublished');
@@ -340,6 +340,7 @@ Page({
     } catch (e) {
       toastError(this.data.editingCommodity ? '保存失败' : '发布失败');
       console.error(e);
+    } finally {
       this.submitting = false;
     }
   }

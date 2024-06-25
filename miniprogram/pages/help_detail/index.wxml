@@ -40,7 +40,14 @@
           <text class="views">{{help.view_count + 1}}浏览</text>
         </view>
         <view class="paragraphs">
-          <text class="paragraph" user-select selectable="true" wx:for="{{contentParagraphs}}" wx:key="*this">{{item}}</text>
+          <mp-html
+            class="paragraph"
+            content="{{htmlContent}}"
+            copy-link="{{false}}"
+            selectable="{{true}}"
+            bind:error="onRichTextError"
+            bind:linktap="onLinkTap"
+          />
         </view>
       </view>
       <view class="divider" />
