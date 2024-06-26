@@ -204,6 +204,13 @@ export async function tryDeleteConversationAndGroup(conv: ConversationItem) {
   checkOimResult(await oim.dismissGroup(conv.groupID), false);
 }
 
+export async function deleteConversation(conv: ConversationItem | string) {
+  if (typeof conv === 'object') {
+    conv = conv.conversationID;
+  }
+  checkOimResult(await oim.deleteConversationAndDeleteAllMsg(conv), false);
+}
+
 export async function setCommodityGroupAttributes(groupID: string, attrs: CommodityGroupAttributes) {
   if (!isCommodityTransactionGroup(groupID)) {
     throw Error(`not transaction group: ${groupID}`);

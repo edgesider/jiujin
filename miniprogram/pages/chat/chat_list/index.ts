@@ -4,12 +4,15 @@ import { User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { getNotifySwitches, NotifyType } from '../../../utils/notify';
 import {
+  deleteConversation,
   getAllConversationList,
   getConversationList, isOimLogged, isOthersNewCreateConversation,
   isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
 } from '../../../utils/oim';
 import { ConversationItem } from '../../../lib/openim/index';
 import { getOpenId } from '../../../api/api';
+
+type TouchEvent = WechatMiniprogram.TouchEvent;
 
 const app = getApp();
 
@@ -84,7 +87,7 @@ Page({
   sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   async onConversationListUpdate(convList: ConversationItem[]) {
     const list: ConversationItem[] = [];
-    let systemConv: ConversationItem | null = null;
+    let systemConv = this.data.systemConv;
     for (const conv of convList) {
       if (!conv.groupID) {
         continue;
@@ -151,5 +154,25 @@ Page({
   },
   gotoNotifySetting() {
     wx.openSetting();
+  },
+  async onLongPressConv(ev: TouchEvent) {
+    const { idx } = ev.currentTarget.dataset;
+    const conv = this.data.conversations[idx];
+    if (!conv) {
+      return;
+    }
+    const { confirm } = await wx.showModal({ title: '确认删除此会话？' });
+    if (!confirm) {
+      return;
+    }
+    await wx.showLoading({ title: '删除中' });
+    try {
+      await deleteConversation(conv);
+      const list = this.data.conversations;
+      list.splice(idx, 1);
+      this.setData({ conversations: list });
+    } finally {
+      await wx.hideLoading();
+    }
   },
 })

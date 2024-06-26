@@ -25,6 +25,7 @@
               src="{{img}}"
               data-curr="{{img}}"
               bindtap="previewImages"
+              show-menu-by-longpress="{{true}}"
             />
             <view class="divider" />
           </view>

@@ -19,6 +19,7 @@
             src="{{img}}/detail"
             data-curr="{{img}}"
             bindtap="previewImages"
+            show-menu-by-longpress="{{true}}"
           />
         </view>
         <view class="info">
