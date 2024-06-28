@@ -77,18 +77,19 @@ Component({
         await waitForOimLogged();
 
         listenUnreadCount().subscribe(async (sumCount) => {
-          await sleep(500);
-          if (sumCount <= 0) {
-            this.setImUnreadCount(0);
-            return;
-          }
-          const convList = await getAllConversationList();
-          const count = convList
-            .filter(c => !isOthersNewCreateConversation(c))
-            .map(c => c.unreadCount)
-            .reduce((count, curr) => count + curr, 0);
-          this.setImUnreadCount(count);
-          convList.filter(isOthersNewCreateConversation).forEach(markConvMessageAsRead);
+          this.setImUnreadCount(sumCount);
+          // await sleep(500);
+          // if (sumCount <= 0) {
+          //   this.setImUnreadCount(0);
+          //   return;
+          // }
+          // const convList = await getAllConversationList();
+          // const count = convList
+          //   .filter(c => !isOthersNewCreateConversation(c))
+          //   .map(c => c.unreadCount)
+          //   .reduce((count, curr) => count + curr, 0);
+          // this.setImUnreadCount(count);
+          // convList.filter(isOthersNewCreateConversation).forEach(markConvMessageAsRead);
         });
       }
     },

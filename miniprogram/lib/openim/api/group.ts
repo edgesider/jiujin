@@ -185,6 +185,7 @@ export interface GroupApi {
     operationID?: string
   ) => Promise<WsResponse<unknown>>;
   getGroupMemberList: (
+    params: GetGroupMemberParams,
     operationID?: string
   ) => Promise<WsResponse<GroupMemberItem[]>>;
   getSpecifiedGroupMembersInfo: (

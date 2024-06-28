@@ -3,7 +3,8 @@ import {
   CbEvents,
   ConversationItem,
   GroupItem,
-  GroupType, LoginStatus,
+  GroupMemberFilter,
+  GroupType,
   MessageItem,
   MessageType,
   OpenIMSDK,
@@ -200,8 +201,12 @@ export async function getConversationById(conv: string | ConversationItem): Prom
 }
 
 export async function tryDeleteConversationAndGroup(conv: ConversationItem) {
-  checkOimResult(await oim.deleteConversationAndDeleteAllMsg(conv.conversationID), false);
-  checkOimResult(await oim.dismissGroup(conv.groupID), false);
+  try {
+    checkOimResult(await oim.deleteConversationAndDeleteAllMsg(conv.conversationID), false);
+    checkOimResult(await oim.dismissGroup(conv.groupID), false);
+  } catch (e) {
+    console.warn(e);
+  }
 }
 
 export async function deleteConversation(conv: ConversationItem | string) {
@@ -431,4 +436,16 @@ export async function markConvMessageAsRead(conv: string | ConversationItem) {
 
 export function listenUnreadCount(): Subject<number> {
   return totalUnreadCountSubject;
+}
+
+export async function getMemberList(group: string | GroupItem) {
+  if (typeof group === 'object') {
+    group = group.groupID;
+  }
+  return checkOimResult(await oim.getGroupMemberList({
+    groupID: group,
+    filter: GroupMemberFilter.All,
+    count: 20,
+    offset: 0
+  }));
 }

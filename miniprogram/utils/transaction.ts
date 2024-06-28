@@ -41,8 +41,8 @@ export async function startTransaction(commodity: Commodity, seller: User) {
     {
       name: seller.name,
       avatar: commodity.img_urls[0],
-      members: [getImUidFromUid(seller._id)],
-      adminMembers: [],
+      members: [],
+      adminMembers: ['imAdmin'],
     }
   );
   console.log(`created group ${group.groupID} for commodity ${commodity._id}`);
@@ -87,8 +87,8 @@ export async function startHelpTransaction(help: Help, seller: User) {
     {
       name: seller.name,
       avatar: help.img_urls[0],
-      members: [getImUidFromUid(seller._id)],
-      adminMembers: [],
+      members: [],
+      adminMembers: ['imAdmin'],
     }
   );
   console.log(`created group ${group.groupID} for help ${help._id}`);

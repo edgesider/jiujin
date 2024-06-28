@@ -3,15 +3,15 @@ import api, { getOpenId } from '../../../api/api';
 import { Transaction, TransactionAPI } from '../../../api/TransactionAPI';
 import { Commodity, Help, User } from '../../../types';
 import { Subscription } from 'rxjs';
-import { generateUUID, kbHeightChanged, tryJsonParse } from '../../../utils/other';
+import { generateUUID, kbHeightChanged, toastError, tryJsonParse } from '../../../utils/other';
 import { waitForAppReady } from '../../../utils/globals';
-import { ConversationItem, GroupItem, PicBaseInfo, SessionType } from '../../../lib/openim/index';
+import { ConversationItem, GroupItem, GroupMemberItem, PicBaseInfo, SessionType } from '../../../lib/openim/index';
 import {
   checkOimResult,
   getCommodityGroupAttributes,
   getConversationById,
   getGroup,
-  getHelpGroupAttributes,
+  getHelpGroupAttributes, getImUidFromUid, getMemberList,
   listenMessage,
   markConvMessageAsRead,
   sendMessage,
@@ -41,6 +41,7 @@ Page({
     help: null as Help | null,
     commodityTact: null as Transaction | null,
     helpTact: null as HelpTransaction | null,
+    members: [] as GroupMemberItem[],
 
     keyboardHeight: 0,
     inputting: false,
@@ -117,7 +118,7 @@ Page({
     if (conversation.unreadCount > 0) {
       markConvMessageAsRead(conversation).then();
     }
-    const group = await getGroup(conversation.groupID);
+    const [group, members] = await Promise.all([getGroup(conversation.groupID), getMemberList(conversation.groupID)]);
     if (!group) {
       console.log('getGroupById failed');
       await wx.showToast({
@@ -195,7 +196,7 @@ Page({
       help: help,
       isSeller: seller._id === app.globalData.self._id,
       seller, buyer,
-      conversation, group,
+      conversation, group, members,
       commodityTact, helpTact,
     });
     this.updateOpenTime().then();
@@ -222,6 +223,7 @@ Page({
     }
   },
   async sendTextMessage(text: string, updatePeerTransaction: boolean = false) {
+    await this.inviteSeller();
     const { group } = this.data;
     if (!group) {
       return;
@@ -238,6 +240,7 @@ Page({
     await sendMessage(msg, group.groupID, 'group');
   },
   async sendImageMessage(img: string, size: number) {
+    await this.inviteSeller();
     const { group } = this.data;
     if (!group) {
       return;
@@ -338,5 +341,32 @@ Page({
       sourceType: ['album', 'camera'],
     });
     await this.sendImageMessage(res.tempFiles[0].path, res.tempFiles[0].size);
+  },
+  /**
+   * 刚建群之后卖家可能还没被拉进来，在发送消息的时候拉一下
+   */
+  async inviteSeller() {
+    const { group, seller, isSeller, members } = this.data;
+    if (isSeller) {
+      return;
+    }
+    if (!group || !seller) {
+      return;
+    }
+    // 卖家已经进群
+    if (members.find(u => u.userID === getImUidFromUid(seller._id))) {
+      return;
+    }
+    try {
+      await oim.inviteUserToGroup({
+        groupID: group.groupID,
+        userIDList: [getImUidFromUid(seller._id)],
+        reason: 'initial-message'
+      });
+    } catch (e) {
+      toastError('会话初始化失败');
+      metric.write('invite_seller_failed', { error: e?.toString() });
+      throw e;
+    }
   },
 });

@@ -84,9 +84,14 @@ Component({
       }
     },
     onMessageUpdate(newList: MessageItem[], type: 'older' | 'newer') {
-      newList = newList.filter(msg => {
-        return msg.contentType === MessageType.TextMessage || msg.contentType === MessageType.PictureMessage;
-      });
+      newList = newList.filter(msg =>
+        msg.contentType === MessageType.TextMessage || msg.contentType === MessageType.PictureMessage);
+      function setSendTime(msg: MessageItem) {
+        // @ts-ignore
+        msg.__showTime = true;
+        // @ts-ignore
+        msg.__sendTimeStr = moment(msg.sendTime).format(IM_TIME_FORMAT);
+      }
       for (let i = 0; i < newList.length; i++) {
         const msg = newList[i];
         const custom = tryJsonParse(msg.ex);
@@ -96,14 +101,14 @@ Component({
         }
 
         const prevMsg = newList[i - 1];
-        if (i === 0 || (prevMsg && msg.sendTime - prevMsg.sendTime > 2 * 60 * 1000 /* 2min */)) {
-          // @ts-ignore
-          msg.__showTime = true;
-          // @ts-ignore
-          msg.__sendTimeStr = moment(msg.sendTime).format(IM_TIME_FORMAT);
+        if (prevMsg && msg.sendTime - prevMsg.sendTime > 2 * 60 * 1000 /* 2min */) {
+          setSendTime(msg);
         }
       }
       this.data.messageList.splice(type === 'older' ? 0 : this.data.messageList.length, 0, ...newList);
+      if (this.data.messageList[0]) {
+        setSendTime(this.data.messageList[0]);
+      }
       this.setData({ messageList: this.data.messageList });
     },
     async fetchOlderMessages() {
