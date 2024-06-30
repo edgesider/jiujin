@@ -1,9 +1,8 @@
 import api, { getOpenId } from "../../api/api";
-import rules from "../../utils/rules";
 import { decodeOptions, getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
-import { sleep, textToPrice, toastError } from "../../utils/other";
-import getConstants, { GENDER } from "../../constants";
+import { sleep, toastError, toastLoading, toastLoadingHide, toastSucceed } from "../../utils/other";
+import getConstants from "../../constants";
 import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { waitForAppReady } from "../../utils/globals";
 import { ErrCode } from "../../api/ErrCode";
@@ -22,11 +21,10 @@ Page({
     buttonText: '',
 
     commodityImg: [],
-    categoryIndex: 0,
     commodityContent: "",
     commodityCurrentPriceText: '',
     // 单位：分
-    priceFen: 0,
+    priceFen: -1,
     qualityIndex: 0,
 
     filters: [
@@ -52,7 +50,7 @@ Page({
     const commodity = commodityJson ? JSON.parse(commodityJson) : null;
     if (isEdit) {
       if (!commodity) {
-        await wx.showToast({ icon: 'error', title: '无法编辑不存在的商品' });
+        toastError('无法编辑不存在的商品');
         throw Error('无法编辑不存在的商品')
       }
     }
@@ -83,10 +81,6 @@ Page({
     this.setData(data);
   },
 
-  onNavigateBack() {
-    wx.navigateBack();
-  },
-
   // 表单
   onChangeCommodityContent(event) {
     this.setData({
@@ -95,9 +89,8 @@ Page({
   },
   onPriceInputBlur() {
     if (this.data.commodityCurrentPriceText.length === 0) {
-      // 支持空白
       this.setData({
-        priceFen: 0,
+        priceFen: -1,
       });
       return;
     }
@@ -113,11 +106,6 @@ Page({
     const valid = /^\d*(\.\d{0,2})?$/.test(text);
     this.setData({
       commodityCurrentPriceText: valid ? text : this.data.commodityCurrentPriceText
-    })
-  },
-  onChangeCommodityCategory(event) {
-    this.setData({
-      categoryIndex: event.detail.value
     })
   },
 
@@ -200,20 +188,14 @@ Page({
 
   // 验证表单格式
   checkForm(params) {
-    if (!rules.required(params.content)) {
-      return '请填写商品描述';
+    if (!params.content) {
+      return '请填写物品描述';
     }
     if (params.img_urls.length === 0) {
       return '请至少上传一张商品图片';
     }
-    // if (!rules.required(params.cid)) {
-    //   return '请选择商品分类';
-    // }
-    if (!rules.required(params.quality)) {
-      return '请选择成色';
-    }
     if (typeof params.price !== 'number' || params.price < 0) {
-      return '无效的价格';
+      return '请指定物品价格';
     }
     return null;
   },
@@ -238,11 +220,6 @@ Page({
   },
 
   async doSubmit() {
-    try {
-      await requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.Comment]);
-    } catch (e) {
-      console.warn('用户拒绝订阅消息');
-    }
     // 更新一下输入的价格值
     this.onPriceInputBlur();
 
@@ -274,37 +251,28 @@ Page({
     });
     const error = this.checkForm(info);
     if (error) {
-      await wx.showToast({
-        title: error,
-        icon: 'error',
-      })
+      toastError(error)
       return;
     }
-    console.log(editing ? 'editing commodity' : 'creating commodity', info);
+    await requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.Comment]);
 
+    console.log(editing ? 'editing commodity' : 'creating commodity', info);
     console.log('uploading images', info.img_urls);
-    await wx.showLoading({ title: '正在上传图片', mask: true });
+    toastLoading('正在上传图片');
     try {
       info.img_urls = await this.uploadImages(info.img_urls);
     } catch (e) {
       console.error('upload failed', e);
-      await wx.showToast({ title: '图片上传失败', mask: true, icon: 'error' });
+      toastError('图片上传失败');
       return;
-    } finally {
-      await wx.hideLoading();
     }
     console.log('uploaded images', info.img_urls);
 
-    await wx.showLoading({
-      title: editing ? '正在保存' : '正在发布',
-      mask: true
-    });
+    toastLoading(editing ? '正在保存' : '正在发布');
 
-    const resp =
-      editing
-        ? await api.updateCommodity(editing._id, info)
-        : await api.createCommodity(info);
-    await wx.hideLoading();
+    const resp = editing
+      ? await api.updateCommodity(editing._id, info)
+      : await api.createCommodity(info);
     if (resp.isError) {
       console.error(resp);
       let err = editing ? '保存失败' : '发布失败';
@@ -319,10 +287,7 @@ Page({
       // TODO 使用Channel
       setNeedRefresh();
     }
-    await wx.showToast({
-      title: editing ? '已保存' : '发布成功！',
-      duration: 1500, mask: true
-    });
+    toastSucceed(editing ? '已保存' : '发布成功！');
 
     await sleep(1500);
     await wx.navigateBack();
@@ -336,12 +301,14 @@ Page({
     }
     this.submitting = true;
     try {
+      toastLoading('请稍后');
       await this.doSubmit();
     } catch (e) {
       toastError(this.data.editingCommodity ? '保存失败' : '发布失败');
       console.error(e);
     } finally {
       this.submitting = false;
+      toastLoadingHide();
     }
   }
 })

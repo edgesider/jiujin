@@ -37,7 +37,6 @@
     bindblur="onPriceInputBlur"
     bindinput="onChangeCommodityCurrentPrice"
     name="price"
-    placeholder="0"
     type="digit"
   />
 </view>

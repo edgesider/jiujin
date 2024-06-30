@@ -188,20 +188,28 @@ export function cloudProtocolToHttp(url: string) {
   return url.replace(/cloud:\/\/[^.]*?\.([^\/]*)(.*)/, 'https://$1.tcb.qcloud.la$2');
 }
 
-export function toastSucceed(msg: string, mask = false) {
+export function toastSucceed(msg: string, mask = true) {
   wx.showToast({
     title: msg,
     icon: 'success',
     mask
-  })
+  }).then();
 }
 
-export function toastError(msg: string, mask = false) {
+export function toastError(msg: string, mask = true) {
   wx.showToast({
     title: msg,
     icon: 'error',
     mask
-  })
+  }).then();
+}
+
+export function toastLoading(msg: string, mask = true) {
+  wx.showLoading({ title: msg, mask }).then();
+}
+
+export function toastLoadingHide() {
+  wx.hideLoading().then();
 }
 
 export function generateRandomAvatarAndUpload(): Promise<string> {

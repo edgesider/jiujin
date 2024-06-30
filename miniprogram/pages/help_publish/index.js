@@ -1,8 +1,6 @@
-// pages/help_publish/index.ts
-import rules from "../../utils/rules";
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
-import { sleep, toastError } from "../../utils/other";
+import { sleep, toastError, toastLoading, toastLoadingHide, toastSucceed } from "../../utils/other";
 import { waitForAppReady } from "../../utils/globals";
 import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { ErrCode } from "../../api/ErrCode";
@@ -10,15 +8,11 @@ import { decodeOptions } from "../../utils/strings";
 
 const app = getApp()
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     self: null,
     // 编辑模式下正在编辑的求助，如果是新建则为null
     helpImg: [],
-    helpContent: "",
+    helpContent: '',
     helpCurrentBountyText: '',
     helpCurrentBounty: 0, // 赏金，单位分
     editingHelp: null,
@@ -41,7 +35,7 @@ Page({
     const help = helpJson ? JSON.parse(helpJson) : null;
     if (isEdit) {
       if (!help) {
-        await wx.showToast({ icon: 'error', title: '无法编辑不存在的求助' });
+        toastError('无法编辑不存在的求助');
         throw Error('无法编辑不存在的求助')
       }
     }
@@ -77,7 +71,6 @@ Page({
   // 赏金失去焦点时
   onBountyInputBlur() {
     if (this.data.helpCurrentBountyText.length === 0) {
-      // 支持空白
       this.setData({
         helpCurrentBounty: 0,
       });
@@ -138,12 +131,9 @@ Page({
 
   // 验证表单格式
   checkForm(params) {
-    if (!rules.required(params.content)) {
-      return '请填写求助描述';
+    if (!params.content) {
+      return '请填写内容';
     }
-    // if (!rules.required(params.img_urls)) {
-    //   return '请至少上传一张求助图片';
-    // }
     if (typeof params.bounty !== 'number' || params.price < 0) {
       return '无效的悬赏';
     }
@@ -170,11 +160,6 @@ Page({
   },
 
   async doSubmit() {
-    try {
-      await requestNotifySubscribes([NotifyType.HelpChat, NotifyType.Comment]);
-    } catch (e) {
-      console.warn('用户拒绝订阅消息');
-    }
     this.onBountyInputBlur();
     const {
       editingHelp: editing,
@@ -196,21 +181,18 @@ Page({
     });
     const error = this.checkForm(info);
     if (error) {
-      await wx.showToast({
-        title: error,
-        icon: 'error',
-      })
+      toastError(error);
       return;
     }
+    await requestNotifySubscribes([NotifyType.HelpChat, NotifyType.Comment]);
+
     await wx.showLoading({ title: '正在上传图片', mask: true });
     try {
       info.img_urls = await this.uploadImages(info.img_urls);
     } catch (e) {
       console.error('upload failed', e);
-      await wx.showToast({ title: '图片上传失败', mask: true, icon: 'error' });
+      toastError('图片上传失败');
       return;
-    } finally {
-      await wx.hideLoading();
     }
     console.log('uploaded images', info.img_urls);
 
@@ -223,7 +205,6 @@ Page({
       editing
         ? await api.updateHelp(editing._id, info)
         : await api.createHelp(info);
-    await wx.hideLoading();
     if (resp.isError) {
       console.error(resp);
       let err = editing ? '保存失败' : '发布失败';
@@ -238,10 +219,7 @@ Page({
       // TODO 使用Channel
       setNeedRefresh();
     }
-    await wx.showToast({
-      title: editing ? '已保存' : '发布成功！',
-      duration: 1500, mask: true
-    });
+    toastSucceed(editing ? '已保存' : '发布成功！');
 
     await sleep(1500);
     await wx.navigateBack();
@@ -254,12 +232,14 @@ Page({
     }
     this.submitting = true;
     try {
+      toastLoading('请稍后');
       await this.doSubmit();
     } catch (e) {
       toastError(this.data.editingCommodity ? '保存失败' : '发布失败');
       console.error(e);
     } finally {
       this.submitting = false;
+      toastLoadingHide();
     }
   },
 })
