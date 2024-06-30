@@ -4,6 +4,7 @@ import getConstants, { GENDER } from "../../constants";
 import { getL1Regions, getRegionPath, getRegionsByParent, sleep } from "../../utils/other";
 import { ErrCode } from "../../api/ErrCode";
 import { redirectToHome } from "../../utils/router";
+import { compressImage } from "../../utils/canvas";
 
 const app = getApp();
 
@@ -150,7 +151,7 @@ Page({
     const rid = this.getSelectedRegion()._id;
     if (avatar_url && !/^(cloud|http|https):\/\//.test(avatar_url) || /http:\/\/tmp\//.test(avatar_url)) {
       const resp = await api.uploadImage(
-        avatar_url,
+        await compressImage(avatar_url, { width: 128 }),
         `avatar/${getOpenId()}_${Date.now()}_${Math.random() * 10000000}`
       );
       console.log('uploaded', resp.data);

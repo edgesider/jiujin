@@ -23,6 +23,7 @@ import { HelpAPI } from '../../../api/HelpAPI';
 import { NotifyType, requestNotifySubscribes } from '../../../utils/notify';
 import { metric } from '../../../utils/metric';
 import { decodeOptions } from '../../../utils/strings';
+import { compressImage } from '../../../utils/canvas';
 
 type Input = WechatMiniprogram.Input;
 
@@ -247,7 +248,10 @@ Page({
     }
     const info = await wx.getImageInfo({ src: img });
     const uuid = generateUUID();
-    const res = await api.uploadImage(img, `chat/${getOpenId()}/${uuid}`);
+    const res = await api.uploadImage(
+      await compressImage(img, { width: 720 }),
+      `chat/${getOpenId()}/${uuid}`
+    );
     if (res.isError || !res.data) {
       await wx.showToast({ title: '图片上传失败', icon: 'error' });
       throw Error('upload file failed');

@@ -6,6 +6,7 @@ import { initOpenIM } from "./utils/oim";
 import { clearSavedImages } from "./utils/canvas";
 import { syncNotifyStates } from "./utils/notify";
 import { metric } from "./utils/metric";
+import { initSettings } from "./utils/settings";
 
 App({
   _ready: false,
@@ -31,6 +32,7 @@ App({
 
       wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
 
+      initSettings().then();
       const self = await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
       await this.fetchRegions();
 

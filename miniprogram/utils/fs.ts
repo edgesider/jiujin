@@ -1,5 +1,5 @@
-import { generateUUID } from './other';
-
+type Canvas = WechatMiniprogram.Canvas;
+type OffscreenCanvas = WechatMiniprogram.OffscreenCanvas;
 const fs = wx.getFileSystemManager();
 
 export function isFileAccess(path: string): boolean {
@@ -33,4 +33,24 @@ export function saveToFile(content: string | ArrayBuffer, path: string): string 
     fs.writeFileSync(path, content);
   }
   return path;
+}
+
+export async function saveCanvasToTempFile(
+  canvas: Canvas | OffscreenCanvas,
+  type: 'png' | 'jpg'
+): Promise<string> {
+  return new Promise((res, rej) => {
+    wx.canvasToTempFilePath({
+      canvas,
+      x: 0, y: 0,
+      width: canvas.width,
+      height: canvas.height,
+      fileType: type,
+      quality: 0.8,
+      success: result => {
+        res(result.tempFilePath);
+      },
+      fail: err => rej(err)
+    });
+  })
 }

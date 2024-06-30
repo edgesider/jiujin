@@ -6,6 +6,7 @@ import getConstants from "../../constants";
 import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { waitForAppReady } from "../../utils/globals";
 import { ErrCode } from "../../api/ErrCode";
+import { compressImage } from "../../utils/canvas";
 
 const app = getApp()
 
@@ -202,12 +203,12 @@ Page({
 
   async uploadImages(paths) {
     const fileIDs = [];
-    for (const path of paths) {
+    for (let path of paths) {
       if (/^(cloud|http|https):\/\//.test(path) && !/http:\/\/tmp\//.test(path)) {
         fileIDs.push(path);
       } else {
         const resp = await api.uploadImage(
-          path,
+          await compressImage(path, { width: 720 }),
           `commodity/${getOpenId()}_${Date.now()}_${Math.random() * 10000000}`
         );
         if (resp.isError) {

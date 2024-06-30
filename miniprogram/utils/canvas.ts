@@ -1,6 +1,7 @@
 import { Commodity, Help } from '../types';
 import { generateUUID, getCompressedImageUrl, getRegionPath, getRegionPathName } from './other';
-import { saveToFile } from './fs';
+import { saveCanvasToTempFile, saveToFile } from './fs';
+import { getSettings } from './settings';
 
 type OffscreenCanvas = WechatMiniprogram.OffscreenCanvas;
 type CanvasContext = WechatMiniprogram.CanvasContext;
@@ -13,6 +14,8 @@ const QRCODE_BG = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/qrc
 const fs = wx.getFileSystemManager();
 const shareImageDir = `${wx.env.USER_DATA_PATH}/share_images/`;
 
+// const compressedImageDir = `${wx.env.USER_DATA_PATH}/compressed/`;
+
 export function clearSavedImages() {
   try {
     fs.rmdir({ dirPath: shareImageDir, recursive: true });
@@ -22,7 +25,7 @@ export function clearSavedImages() {
 }
 
 function getRandomPath(ext: string = 'png') {
-  fs.mkdir({ dirPath: shareImageDir });
+  fs.mkdir({ dirPath: shareImageDir, recursive: true });
   return `${shareImageDir}/${generateUUID()}.${ext}`;
 }
 
@@ -209,4 +212,45 @@ export async function drawMyQrcode(qrcode: ArrayBuffer, path: string): Promise<s
     // @ts-ignore
     cvs.toDataURL(),
     path);
+}
+
+export async function compressImage(path: string, target: {
+  width?: number;
+  height?: number;
+}): Promise<string> {
+  if (!getSettings().enableImageLocalCompress) {
+    console.log('local compress image is disabled');
+    return path;
+  }
+  if (typeof target.width !== 'number') {
+    target.width = 0;
+  }
+  if (typeof target.height !== 'number') {
+    target.height = 0;
+  }
+  if (target.width <= 0 && target.height <= 0) {
+    throw Error('both width and height is not specified');
+  }
+  const { width, height } = await wx.getImageInfo({ src: path });
+  if (target.width <= 0) {
+    target.width = target.height * width / height;
+  } else if (target.height <= 0) {
+    target.height = target.width * height / width;
+  }
+  if (target.width >= width) {
+    console.log('压缩后的大小不比之前的小');
+    return path;
+  }
+  console.log(`compressing image from ${width}x${height} to ${target.width}x${target.height} `);
+  const cvs = wx.createOffscreenCanvas({
+    width: target.width,
+    height: target.height,
+    type: '2d'
+  });
+  const ctx = cvs.getContext('2d') as CanvasContext;
+  await drawImage(cvs, ctx, path, 0, 0, target.width, target.height);
+  // fs.mkdir({ dirPath: compressedImageDir, recursive: true });
+  const result = await saveCanvasToTempFile(cvs, 'jpg');
+  console.log('compressed path', result);
+  return result;
 }

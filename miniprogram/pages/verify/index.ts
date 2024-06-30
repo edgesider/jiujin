@@ -6,6 +6,7 @@ import { VerifyAPI, VerifyStatus } from '../../api/verify';
 import { User } from '../../types';
 import { sleep, toastError, toastSucceed } from '../../utils/other';
 import { ErrCode } from '../../api/ErrCode';
+import { compressImage } from '../../utils/canvas';
 
 type Input = WechatMiniprogram.Input;
 const app = getApp()
@@ -107,7 +108,10 @@ Page({
     this.uploading = true;
     try {
       await wx.showLoading({ title: '请稍后', mask: true });
-      const imageResp = await api.uploadImage(imageToUpload, `verify/${self._id}_${Date.now()}`);
+      const imageResp = await api.uploadImage(
+        await compressImage(imageToUpload, { width: 720 }),
+        `verify/${self._id}_${Date.now()}`
+      );
       if (imageResp.isError || !imageResp.data) {
         toastError('照片上传失败');
         return;
