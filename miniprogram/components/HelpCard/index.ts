@@ -53,7 +53,9 @@ Component({
         if (help.img_urls.length === 1) {
           let ratio = 0;
           try {
-            const size = await wx.getImageInfo({ src: help.img_urls[0] });
+            const size = await wx.getImageInfo({
+              src: `${help.img_urls[0]}/probe`
+            });
             ratio = size.width / size.height;
           } catch (e) {
             ratio = 0;

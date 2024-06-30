@@ -82,7 +82,9 @@ Page({
       })
     } else {
       try {
-        const size = await wx.getImageInfo({ src: help.img_urls[0] });
+        const size = await wx.getImageInfo({
+          src: `${help.img_urls[0]}/probe`
+        });
         firstImageSize = [size.width, size.height];
       } catch (e) {
         firstImageSize = [500, 500];
