@@ -25,7 +25,10 @@
       </block>
     </block>
     <block wx:else>
-      <block wx:if='{{transaction.status === TransactionStatus.Idle}}'>
+      <block wx:if='{{othersBooked}}'>
+        <view class="button disabled">他人已预定</view>
+      </block>
+      <block wx:elif='{{transaction.status === TransactionStatus.Idle}}'>
         <view class="button" bindtap="requestBooking">预订</view>
       </block>
       <block wx:elif='{{transaction.status === TransactionStatus.RequestingBooking}}'>

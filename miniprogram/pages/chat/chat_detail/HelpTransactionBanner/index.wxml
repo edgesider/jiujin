@@ -30,7 +30,10 @@
       </block>
     </block>
     <block wx:else>
-      <block wx:if='{{transaction.status === HelpTransactionStatus.Idle}}'>
+      <block wx:if='{{othersBooked}}'>
+        <view class="button disabled">他人解决中</view>
+      </block>
+      <block wx:elif='{{transaction.status === HelpTransactionStatus.Idle}}'>
         <view class="button" bindtap="requestBooking">我要帮忙</view>
       </block>
       <block wx:elif='{{transaction.status === HelpTransactionStatus.Terminated}}'>

@@ -1,4 +1,4 @@
-import getConstants from '../../../../constants';
+import getConstants, { COMMODITY_STATUS_BOOKED } from '../../../../constants';
 import { Commodity } from '../../../../types';
 import { getContentDesc } from '../../../../utils/strings';
 import { Transaction, TransactionAPI, TransactionStatus } from '../../../../api/TransactionAPI';
@@ -29,10 +29,7 @@ Component({
     commodityDesc: '',
     statusImage: null as string | null,
     tips: [] as string[],
-  },
-  lifetimes: {
-    attached() {
-    }
+    othersBooked: false,
   },
   methods: {
     async update() {
@@ -43,6 +40,7 @@ Component({
         commodityDesc: getContentDesc(commodity.content, 40),
         tips: this.getTransactionStatusTip(transaction),
         statusImage: this.getTransactionStatusImage(transaction),
+        othersBooked: transaction.status !== TransactionStatus.Booked && commodity.status === COMMODITY_STATUS_BOOKED,
       })
     },
     afterTransactionActionDone(messageToPeer: string) {
@@ -195,6 +193,9 @@ Component({
       })[transaction.status] ?? null;
     },
     getTransactionStatusTip(transaction: Transaction): string[] {
+      if (this.data.othersBooked) {
+        return [];
+      }
       let tips;
       let remain = '';
       if (transaction.book_time) {

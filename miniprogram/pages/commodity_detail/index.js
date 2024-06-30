@@ -1,6 +1,6 @@
 import api, { getOpenId } from "../../api/api";
 import { setNeedRefresh } from "../home/index";
-import getConstants, { POLISH_MIN_DURATION } from "../../constants";
+import getConstants, { COMMODITY_STATUS_BOOKED, POLISH_MIN_DURATION } from "../../constants";
 import {
   ensureRegistered,
   ensureVerified,
@@ -50,6 +50,7 @@ Page({
     contentParagraphs: [],
     firstImageSize: [],
     showNotVerifiedDialog: false,
+    statusImage: '',
   },
   onLoad: async function (options) {
     await waitForAppReady();
@@ -106,6 +107,9 @@ Page({
       isMine ? { status: TransactionStatus.Booked } : null
     );
     const transaction = transactionsResp.data?.[0];
+    const statusImage = {
+      [COMMODITY_STATUS_BOOKED]: '/images/已预订.png'
+    }[commodity.status];
 
     this.setData({
       self,
@@ -121,6 +125,7 @@ Page({
       regionName: getRegionPathName(commodity.rid),
       isMine,
       firstImageSize,
+      statusImage,
     });
   },
 

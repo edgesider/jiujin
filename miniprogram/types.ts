@@ -68,7 +68,7 @@ export interface Help {
   _id: string;
   bounty: number;
   content: string;
-  status: 0;
+  status: number;
   seller_id: string;
   rid: number;
   img_urls: string[];

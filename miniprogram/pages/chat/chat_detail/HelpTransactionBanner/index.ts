@@ -1,4 +1,4 @@
-import getConstants from '../../../../constants';
+import getConstants, { HELP_STATUS_RESOLVING } from '../../../../constants';
 import { getContentDesc } from '../../../../utils/strings';
 import { HelpTransaction, HelpTransactionAPI, HelpTransactionStatus } from '../../../../api/HelpTransactionAPI';
 import { NotifyType, requestNotifySubscribes } from '../../../../utils/notify';
@@ -29,10 +29,7 @@ Component({
     helpDesc: '',
     statusImage: null as string | null,
     tips: [] as string[],
-  },
-  lifetimes: {
-    attached() {
-    }
+    othersBooked: false,
   },
   methods: {
     async update() {
@@ -43,6 +40,7 @@ Component({
         helpDesc: getContentDesc(help.content, 40),
         tips: this.getTransactionStatusTip(transaction),
         statusImage: this.getTransactionStatusImage(transaction),
+        othersBooked: transaction.status !== HelpTransactionStatus.Booked && help.status === HELP_STATUS_RESOLVING,
       })
     },
     afterTransactionActionDone(messageToPeer: string) {
@@ -192,6 +190,9 @@ Component({
       })[transaction.status] ?? null;
     },
     getTransactionStatusTip(transaction: HelpTransaction): string[] {
+      if (this.data.othersBooked) {
+        return [];
+      }
       let tips;
       let remain = '';
       if (transaction.book_time) {

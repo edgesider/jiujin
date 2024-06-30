@@ -23,10 +23,7 @@ function getDesc(obj: Commodity | Help): string {
  * 根据商品和卖家创建群聊
  */
 export async function startTransaction(commodity: Commodity, seller: User) {
-  const transactions = await TransactionAPI.listByCommodity(
-    commodity._id,
-    { status: TransactionStatus.Booked }
-  );
+  const transactions = await TransactionAPI.listByCommodity(commodity._id);
   if (transactions.isError) {
     console.error('failed to query existed transactions');
     return;
@@ -70,10 +67,7 @@ export async function startTransaction(commodity: Commodity, seller: User) {
 }
 
 export async function startHelpTransaction(help: Help, seller: User) {
-  const transactions = await HelpTransactionAPI.listByHelp(
-    help._id,
-    { status: HelpTransactionStatus.Booked }
-  );
+  const transactions = await HelpTransactionAPI.listByHelp(help._id);
   if (transactions.isError) {
     console.error('failed to query existed transactions');
     return;

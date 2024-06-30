@@ -79,6 +79,15 @@
   height: calc((100vw - var(--gap) * (var(--column) - 1) - var(--content-padding) * 2) / var(--column));
 }
 
+.body .content .status-image {
+  visibility: hidden;
+  position: absolute;
+  width: 136rpx;
+  height: 96rpx;
+  left: 30rpx;
+  top: 20rpx;
+}
+
 .body .content .info {
   margin-top: 20rpx;
   display: flex;
