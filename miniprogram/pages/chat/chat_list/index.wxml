@@ -52,13 +52,13 @@
       wx:for-index="idx"
       wx:key="conversationID"
     >
-      <Conversation
+      <ConversationWithActions
         wx:if="{{!item.__others_new_create}}"
         data-idx="{{idx}}"
         class="conversation"
-        conversation="{{item}}"
+        initConversation="{{item}}"
         updateIndex="{{updateIndex}}"
-        bindlongpress="onLongPressConv"
+        bind:onDelete="onDeleteConv"
       />
     </block>
   </view>

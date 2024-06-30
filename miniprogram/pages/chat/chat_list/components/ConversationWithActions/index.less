@@ -1,0 +1,33 @@
+.movable-area-conv {
+  width: 100vw;
+  height: 128rpx;
+}
+
+.movable-view-conv {
+  width: calc(100% + var(--actions-width));
+  height: 128rpx;
+  display: flex;
+  flex-direction: row;
+}
+
+.conversation {
+  width: calc(100% - var(--actions-width));
+  height: 128rpx;
+}
+
+.actions {
+  width: var(--actions-width);
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  .button {
+    color: white;
+    flex-grow: 1;
+    background: rgb(246, 59, 66);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

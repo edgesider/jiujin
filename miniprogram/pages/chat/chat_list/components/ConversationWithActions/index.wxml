@@ -1,0 +1,25 @@
+<movable-area
+  class="movable-area-conv"
+  style="--actions-width: {{actionsWidth}};"
+>
+  <movable-view
+    class="movable-view-conv"
+    direction="horizontal"
+    inertia="true"
+    x="{{moveX}}"
+    bindchange="onMovableChange"
+    bindtouchend="onTouchEnd"
+  >
+    <Conversation
+      class="conversation"
+      initConversation="{{initConversation}}"
+      updateIndex="{{updateIndex}}"
+    />
+    <view class="actions">
+      <view
+        class="button"
+        bindtap="onDeleteConv"
+      >删除</view>
+    </view>
+  </movable-view>
+</movable-area>

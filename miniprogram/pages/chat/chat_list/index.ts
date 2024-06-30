@@ -1,5 +1,5 @@
 import getConstants from '../../../constants';
-import { setTabBar, sleep } from '../../../utils/other';
+import { setTabBar, sleep, toastLoading, toastLoadingHide } from '../../../utils/other';
 import { User } from '../../../types';
 import { Subscription } from 'rxjs';
 import { getNotifySwitches, NotifyType } from '../../../utils/notify';
@@ -155,7 +155,7 @@ Page({
   gotoNotifySetting() {
     wx.openSetting();
   },
-  async onLongPressConv(ev: TouchEvent) {
+  async onDeleteConv(ev: TouchEvent) {
     const { idx } = ev.currentTarget.dataset;
     const conv = this.data.conversations[idx];
     if (!conv) {
@@ -165,14 +165,14 @@ Page({
     if (!confirm) {
       return;
     }
-    await wx.showLoading({ title: '删除中' });
+    toastLoading('删除中');
     try {
       await deleteConversation(conv);
       const list = this.data.conversations;
       list.splice(idx, 1);
       this.setData({ conversations: list });
     } finally {
-      await wx.hideLoading();
+      toastLoadingHide();
     }
   },
 })

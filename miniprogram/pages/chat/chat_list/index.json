@@ -1,7 +1,7 @@
 {
   "usingComponents": {
     "TitleBar": "/components/TitleBar/index",
-    "Conversation": "./components/Conversation/index",
+    "ConversationWithActions": "./components/ConversationWithActions/index",
     "SystemConversation": "./components/SystemConversation/index"
   },
   "enablePullDownRefresh": false,

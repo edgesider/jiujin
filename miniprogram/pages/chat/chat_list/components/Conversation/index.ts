@@ -18,7 +18,7 @@ import getConstants from '../../../../../constants';
 
 Component({
   properties: {
-    conversation: {
+    initConversation: {
       type: Object,
       // 不支持更新
       // observer(newVal, oldVal)
@@ -44,13 +44,13 @@ Component({
   },
   lifetimes: {
     async attached() {
-      const { conversation } = this.properties;
+      const initConv = this.properties.initConversation as ConversationItem;
       // @ts-ignore
       this.subscription =
-        listenConversation(conversation.conversationID).subscribe(conv => {
+        listenConversation(initConv.conversationID).subscribe(conv => {
           this.onConversationUpdate(conv);
         });
-      this.onConversationUpdate(conversation).then();
+      this.onConversationUpdate(initConv).then();
       this.createIntersectionObserver({ thresholds: [0.5] })
         .relativeToViewport()
         .observe('#root', res => {
@@ -92,6 +92,9 @@ Component({
     },
     async updateOtherInfo() {
       const { conversation } = this.data;
+      if (!conversation) {
+        return;
+      }
       const group = await getGroup(conversation.groupID);
       if (!group) {
         throw Error(`failed to get group: groupId=${conversation.groupID}`)
@@ -116,6 +119,9 @@ Component({
       }
     },
     async gotoDetail() {
+      if (!this.data.conversation) {
+        return;
+      }
       if (getConstants().Platform !== 'devtools') {
         requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.HelpChat]).then()
       }
