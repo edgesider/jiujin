@@ -7,6 +7,7 @@ import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { waitForAppReady } from "../../utils/globals";
 import { ErrCode } from "../../api/ErrCode";
 import { compressImage } from "../../utils/canvas";
+import { metric } from "../../utils/metric";
 
 const app = getApp()
 
@@ -252,8 +253,7 @@ Page({
     });
     const error = this.checkForm(info);
     if (error) {
-      toastError(error)
-      return;
+      return error;
     }
     await requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.Comment]);
 
@@ -264,8 +264,7 @@ Page({
       info.img_urls = await this.uploadImages(info.img_urls);
     } catch (e) {
       console.error('upload failed', e);
-      toastError('图片上传失败');
-      return;
+      return '图片上传失败';
     }
     console.log('uploaded images', info.img_urls);
 
@@ -280,15 +279,14 @@ Page({
       if (resp.errno === ErrCode.SecCheckError) {
         err = '内容含有违法违规内容';
       }
-      toastError(err);
-      return;
+      return err;
     }
     this.getOpenerEventChannel().emit(editing ? 'afterEdited' : 'afterPublished');
     if (!editing) {
       // TODO 使用Channel
       setNeedRefresh();
     }
-    toastSucceed(editing ? '已保存' : '发布成功！');
+    toastSucceed(editing ? '已保存' : '发布成功');
 
     await sleep(1500);
     await wx.navigateBack();
@@ -301,15 +299,26 @@ Page({
       return;
     }
     this.submitting = true;
+    let errMsg;
+    let error;
     try {
       toastLoading('请稍后');
-      await this.doSubmit();
+      errMsg = await this.doSubmit();
     } catch (e) {
-      toastError(this.data.editingCommodity ? '保存失败' : '发布失败');
       console.error(e);
+      error = e;
+      errMsg = this.data.editingCommodity ? '保存失败' : '发布失败';
     } finally {
       this.submitting = false;
       toastLoadingHide();
+    }
+    if (errMsg) {
+      toastError(errMsg);
+      metric.write('commodity_submit_failed', {
+        type: this.data.editingCommodity ? 'edit' : 'create',
+        msg: errMsg,
+        error: error?.toString()
+      });
     }
   }
 })
