@@ -28,8 +28,6 @@
         />
         <view
           class="right"
-          bindtap="onStartComment"
-          bindlongpress="onLongPress"
           data-comment="{{comment}}"
         >
           <view class="line1">
@@ -49,7 +47,23 @@
             bindtap="onStartComment"
             data-comment="{{comment}}"
           />
-          <view class="time">{{comment.timeStr}}</view>
+          <view class="line3">
+            <view class="time">{{comment.timeStr}}</view>
+            <view class="spacer" />
+            <view
+              class="button"
+              bindtap="onStartComment"
+              data-comment="{{comment}}"
+            >回复
+            </view>
+            <view
+              wx:if="{{selfInfo._id === comment.sender._id}}"
+              class="button"
+              bindtap="onDeleteComment"
+              data-comment="{{comment}}"
+            >删除
+            </view>
+          </view>
         </view>
       </view>
     </view>

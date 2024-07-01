@@ -1,6 +1,10 @@
 @import "colorui/main.wxss";
 @import "colorui/icon.wxss";
 
+.spacer {
+  flex-grow: 1;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }

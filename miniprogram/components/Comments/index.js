@@ -153,6 +153,21 @@ Component({
         }
       }
     },
+    async onDeleteComment({ currentTarget: { dataset: { comment } } }) {
+      const { confirm } = await wx.showModal({
+        content: '确认删除此条评论',
+      });
+      if (!confirm) {
+        return;
+      }
+      const resp = await CommentAPI.del(comment.id);
+      if (resp.isError) {
+        console.log(resp);
+        toastError('删除失败');
+      } else {
+        await this.fetchComments();
+      }
+    },
     onPopupInput(ev) {
       this.setData({ commentingText: ev.detail.value });
     },
