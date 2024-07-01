@@ -25,6 +25,7 @@ Page({
     self: null as User | null,
     showNotifyTip: false,
     scrollToTop: false,
+    loading: false,
 
     updateIndex: 0,
   },
@@ -57,13 +58,12 @@ Page({
       for (const updatedConv of updated) {
         const idx = conversations.findIndex(c => c.conversationID === updatedConv.conversationID);
         if (idx >= 0) {
-          // @ts-ignore
-          updatedConv.__others_new_create = isOthersNewCreateConversation(updatedConv);
+          this.patchConv(updatedConv);
           conversations[idx] = updatedConv;
         }
       }
       this.setData({
-        conversations: conversations.sort(this.sorter),
+        conversations: conversations,
       });
     }));
 
@@ -84,27 +84,37 @@ Page({
     await sleep(500);
     this.updateNotifyTip();
   },
-  sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
+  // sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
+  patchConv(conv: ConversationItem) {
+    let canShow = true;
+    if (!conv.groupID) {
+      canShow = false;
+    }
+    if (isTransactionGroup(conv.groupID)) {
+      if (isOthersNewCreateConversation(conv)) {
+        // 新建的群
+        canShow = false;
+      }
+    } else if (conv.groupID.startsWith(getOpenId())) {
+      // 系统通知群
+      canShow = false;
+    }
+    // @ts-ignore
+    conv.__can_show = canShow;
+  },
   async onConversationListUpdate(convList: ConversationItem[]) {
     const list: ConversationItem[] = [];
     let systemConv = this.data.systemConv;
     for (const conv of convList) {
-      if (!conv.groupID) {
-        continue;
-      }
-      if (isTransactionGroup(conv.groupID)) {
-        // @ts-ignore
-        conv.__others_new_create = isOthersNewCreateConversation(conv);
-        list.push(conv);
-      } else if (conv.groupID === `${getOpenId()}_system`) {
+      this.patchConv(conv);
+      if (conv.groupID === `${getOpenId()}_system`) {
         systemConv = conv;
       }
+      list.push(conv);
     }
-    list.sort(this.sorter);
     this.setData({
       conversations: list,
       systemConv,
-      updateIndex: this.data.updateIndex + 1, // 触发已有子组件的更新
     });
 
     const { self } = this.data;
@@ -149,8 +159,13 @@ Page({
     }
   },
   async onReachBottom() {
-    const oldList = await getConversationList(this.data.conversations.length, 20);
-    await this.onConversationListUpdate([...this.data.conversations, ...oldList]);
+    this.setData({ loading: true });
+    try {
+      const oldList = await getConversationList(this.data.conversations.length, 20);
+      await this.onConversationListUpdate([...this.data.conversations, ...oldList]);
+    } finally {
+      this.setData({ loading: false });
+    }
   },
   gotoNotifySetting() {
     wx.openSetting();

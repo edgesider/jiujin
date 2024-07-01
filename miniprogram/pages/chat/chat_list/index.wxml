@@ -53,7 +53,7 @@
       wx:key="conversationID"
     >
       <ConversationWithActions
-        wx:if="{{!item.__others_new_create}}"
+        wx:if="{{item.__can_show}}"
         data-idx="{{idx}}"
         class="conversation"
         initConversation="{{item}}"
@@ -61,6 +61,7 @@
         bind:onDelete="onDeleteConv"
       />
     </block>
+    <view class="{{loading ? 'loading' : 'load-more'}}" bindtap="onReachBottom">{{loading ? '加载中' : '加载更多'}}</view>
   </view>
   <image wx:else src="/images/empty.png" class="empty" mode="aspectFit" />
 </scroll-view>
