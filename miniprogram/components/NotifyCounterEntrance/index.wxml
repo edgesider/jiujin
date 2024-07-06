@@ -1,5 +1,5 @@
-<view wx:if="{{state.state === 'accept'}}" class="root {{state.count < 5 ? 'highlight' : ''}}">
-  当前还可收到 {{state.count}} 次消息通知
+<view wx:if="{{state.state === 'accept' || state.state === undefined}}" class="root {{state.count < 5 ? 'highlight' : ''}}">
+  当前还可收到 {{state.state === undefined ? 0 : state.count}} 次消息通知
   <view class="button" bindtap="onAdd">增加</view>
 </view>
 <view wx:else class="root highlight">
