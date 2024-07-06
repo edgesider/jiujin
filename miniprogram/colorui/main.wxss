@@ -71,6 +71,9 @@ page {
   --brand-yellow: #fac000;
   --brand-yellowgreen: #a7d000;
   --brand-grey: #979797;
+  --z-dialog: 1000;
+  --z-dialog-mask: -1;
+
 	background-color: var(--ghostWhite);
 	font-size: 28rpx;
 	color: var(--black);

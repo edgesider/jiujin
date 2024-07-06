@@ -175,7 +175,7 @@ Component({
       if (getConstants().Platform === 'ios') {
         // iOS 用键盘发送时，获取不了订阅消息，所以放到这里获取
         wx.showLoading();
-        await requestNotifySubscribes([NotifyType.Comment]);
+        await requestNotifySubscribes([NotifyType.Message]);
         wx.hideLoading()
       }
       this.setData({
@@ -193,7 +193,7 @@ Component({
         await wx.showLoading();
         if (getConstants().Platform !== 'ios') {
           // 安卓在发送时获取[
-          await requestNotifySubscribes([NotifyType.Comment]);
+          await requestNotifySubscribes([NotifyType.Message]);
         }
         await ensureVerified();
         const { commentingText, commentingTo } = this.data;

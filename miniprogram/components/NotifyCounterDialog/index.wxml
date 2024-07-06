@@ -1,0 +1,15 @@
+<view class="root" wx:if="{{show}}">
+  <view class="mask" bindtap="onMaskClick" />
+  <view class="card">
+    <image class="icon" src="./res/icon.png" />
+    <view class="title">通知次数剩余 <text class="count">{{states[0].count}}</text> 次
+    </view>
+    <view class="info">
+      小程序没有无限通知的权限，需要手动增加获取通知的次数，当通知次数用完后您将无法及时收到消息通知，请在剩余通知次数较少时及时手动增加。
+    </view>
+    <view class="add-button" bindtap="onAddClick" data-type="{{states[0].type}}">
+      <image class="icon" src="./res/add-icon.png" />
+      <view class="text">增加次数</view>
+    </view>
+  </view>
+</view>

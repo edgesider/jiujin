@@ -8,8 +8,7 @@ import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { Resp } from '../../api/resp';
 import { getEnvVersion } from '../../utils/env';
-import { handleSchema } from '../../utils/router';
-import { decode } from 'base64-arraybuffer';
+import { handleSchema, openNotifyCounterDialog } from '../../utils/router';
 import { decodeOptions } from '../../utils/strings';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
@@ -49,8 +48,6 @@ Page({
     chosenRankingKey: 'polish_time-desc',
 
     scrollIntoView: null as string | null,
-
-    showNotifyCounter: false,
   },
   initialized: false,
   fetchToken: 0,
@@ -108,9 +105,7 @@ Page({
   },
   async onClickLogo() {
     if (getEnvVersion() === 'develop' || getEnvVersion() === 'trial') {
-      this.setData({
-        showNotifyCounter: true,
-      })
+      openNotifyCounterDialog();
     }
   },
 

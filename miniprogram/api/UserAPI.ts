@@ -1,6 +1,6 @@
 import { request, wrapResp } from './api';
 import { User } from '../types';
-import { NotifyType } from '../utils/notify';
+import { getNotifyStates, NotifyType } from '../utils/notify';
 import { getEnvVersion } from '../utils/env';
 
 export const UserAPI = {
@@ -16,7 +16,7 @@ export const UserAPI = {
     return wrapResp(await request( {
       path: '/user/addNotifyCount',
       data: {
-        notify_type: type
+        template_id: getNotifyStates()[type].tmpId
       }
     }))
   },

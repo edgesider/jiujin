@@ -1,0 +1,8 @@
+<view wx:if="{{state.state === 'accept'}}" class="root {{state.count < 5 ? 'highlight' : ''}}">
+  当前还可收到 {{state.count}} 次消息通知
+  <view class="button" bindtap="onAdd">增加</view>
+</view>
+<view wx:else class="root highlight">
+  订阅消息后可及时收到私信通知
+  <view class="button" bindtap="gotoNotifySetting">去订阅</view>
+</view>

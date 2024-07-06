@@ -185,7 +185,7 @@ Page({
     if (error) {
       return error;
     }
-    await requestNotifySubscribes([NotifyType.HelpChat, NotifyType.Comment]);
+    await requestNotifySubscribes([NotifyType.Message]);
 
     await wx.showLoading({ title: '正在上传图片', mask: true });
     try {

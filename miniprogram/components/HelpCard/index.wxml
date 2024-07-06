@@ -5,7 +5,7 @@
   </view>
   <block wx:else>
     <view class="body" data-status="{{help.status}}">
-      <HelpCardTitleBar user="{{user}}" hasBack="{{false}}" time="{{createTime}}" bounty="{{help.bounty}}" />
+      <HelpCardTitleBar user="{{user}}" hasBack="{{false}}" time="{{polishTime}}" bounty="{{help.bounty}}" />
       <image class="status-icon" wx:if="{{help.status === HELP_STATUS_RESOLVED}}" src="/images/已解决.png" />
       <image class="status-icon" wx:elif="{{help.status === HELP_STATUS_RESOLVING}}" src="/images/解决中.png" />
       <view class="content">

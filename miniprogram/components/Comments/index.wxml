@@ -1,5 +1,6 @@
 <view class="root">
   <view class="title">{{comments.length}} 条评论</view>
+  <NotifyCounterEntrance style="width: 100vw; transform: translateX(-20rpx)" />
   <view class="input-area">
     <image
       src='{{selfInfo.avatar_url || DEFAULT_AVATAR}}'

@@ -32,10 +32,10 @@
     "navigationBarBackgroundColor": "#ffffff"
   },
   "usingComponents": {
-    "TitleBar": "/components/TitleBar/index",
-    "UserTitleBar": "/components/UserTitleBar/index",
-    "FullPageLoading": "/components/FullPageLoading/index",
-    "NotVerifiedCard": "/components/NotVerifiedCard/index",
+    "TitleBar": "/components/TitleBar",
+    "UserTitleBar": "/components/UserTitleBar",
+    "FullPageLoading": "/components/FullPageLoading",
+    "Dialogs": "/components/Dialogs",
     "mp-html": "mp-html"
   },
   "tabBar": {

@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "NotifyCounterDialog": "/components/NotifyCounterDialog",
+    "NotVerifiedDialog": "/components/NotVerifiedDialog"
+  }
+}

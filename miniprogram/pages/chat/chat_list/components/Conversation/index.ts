@@ -123,7 +123,7 @@ Component({
         return;
       }
       if (getConstants().Platform !== 'devtools') {
-        requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.HelpChat]).then()
+        requestNotifySubscribes([NotifyType.Message]).then()
       }
       await openConversationDetail(this.data.conversation.conversationID as string);
     },

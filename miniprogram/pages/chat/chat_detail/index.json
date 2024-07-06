@@ -3,7 +3,8 @@
     "UserTitleBar": "/components/UserTitleBar",
     "TransactionBanner": "./TransactionBanner",
     "HelpTransactionBanner": "./HelpTransactionBanner",
-    "MessageList": "./MessageList"
+    "MessageList": "./MessageList",
+    "NotifyCounterEntrance": "/components/NotifyCounterEntrance"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

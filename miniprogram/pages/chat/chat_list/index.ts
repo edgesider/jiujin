@@ -2,10 +2,8 @@ import getConstants from '../../../constants';
 import { setTabBar, sleep, toastLoading, toastLoadingHide } from '../../../utils/other';
 import { User } from '../../../types';
 import { Subscription } from 'rxjs';
-import { getNotifySwitches, NotifyType } from '../../../utils/notify';
 import {
   deleteConversation,
-  getAllConversationList,
   getConversationList, isOimLogged, isOthersNewCreateConversation,
   isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
 } from '../../../utils/oim';
@@ -23,7 +21,6 @@ Page({
     systemConv: null as ConversationItem | null,
     refreshing: false,
     self: null as User | null,
-    showNotifyTip: false,
     scrollToTop: false,
     loading: false,
 
@@ -69,20 +66,8 @@ Page({
 
     await this.doRefresh();
   },
-  updateNotifyTip() {
-    const switches = getNotifySwitches();
-    if (!switches.mainSwitch || switches[NotifyType.Message] === 'reject') {
-      this.setData({ showNotifyTip: true, });
-    } else {
-      this.setData({ showNotifyTip: false });
-    }
-  },
   onUnload() {
     this.subscription?.unsubscribe();
-  },
-  async onShow() {
-    await sleep(500);
-    this.updateNotifyTip();
   },
   // sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   patchConv(conv: ConversationItem) {

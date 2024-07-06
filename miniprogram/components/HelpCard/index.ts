@@ -34,6 +34,7 @@ Component({
     loading: true,
     isMine: false,
     createTime: '',
+    polishTime: '',
     regionName: '',
     user: null as User | null,
     htmlContent: '',
@@ -69,6 +70,7 @@ Component({
       this.setData({
         loading: false,
         createTime: moment(help.create_time).format(DATETIME_FORMAT),
+        polishTime: moment(help.polish_time).format(DATETIME_FORMAT),
         contentParagraphs: help.content.split('\n').map(s => s.trim()),
         htmlContent: textToRichText(help.content),
         regionName: getRegionPathName(help.rid),

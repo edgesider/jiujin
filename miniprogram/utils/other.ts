@@ -1,5 +1,5 @@
 import { Region, User } from '../types';
-import { openLogin, openVerify } from './router';
+import { openLogin, openNotVerifyDialog, openVerify } from './router';
 import { Observable, Subject } from 'rxjs';
 import { VerifyStatus } from '../api/verify';
 import Identicon from './randomAvatar';
@@ -99,7 +99,7 @@ export async function ensureVerified(openDialog = true) {
   const self = ensureRegistered();
   if (self.verify_status === VerifyStatus.NotVerified) {
     if (openDialog) {
-      getCurrentPage().__not_verified_dialog.show();
+      openNotVerifyDialog();
     }
     throw Error('not verified');
   }

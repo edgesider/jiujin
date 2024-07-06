@@ -76,4 +76,4 @@
   </scroll-view>
 </view>
 
-<NotVerifiedCard />
+<Dialogs />

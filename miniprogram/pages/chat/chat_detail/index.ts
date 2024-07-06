@@ -11,7 +11,9 @@ import {
   getCommodityGroupAttributes,
   getConversationById,
   getGroup,
-  getHelpGroupAttributes, getImUidFromUid, getMemberList,
+  getHelpGroupAttributes,
+  getImUidFromUid,
+  getMemberList,
   listenMessage,
   markConvMessageAsRead,
   sendMessage,
@@ -335,7 +337,7 @@ Page({
       input: '',
     });
     // checkNotifySettingAndRequest(this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat).then();
-    requestNotifySubscribes([this.data.commodity ? NotifyType.CommodityChat : NotifyType.HelpChat]).then();
+    requestNotifySubscribes([NotifyType.Message]).then();
     await this.sendTextMessage(input);
   },
   async onSendImageIconClick() {

@@ -2,7 +2,8 @@
   "usingComponents": {
     "TitleBar": "/components/TitleBar/index",
     "ConversationWithActions": "./components/ConversationWithActions/index",
-    "SystemConversation": "./components/SystemConversation/index"
+    "SystemConversation": "./components/SystemConversation/index",
+    "NotifyCounterEntrance": "/components/NotifyCounterEntrance/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

@@ -1,9 +1,6 @@
 <TitleBar title="消息" />
 
-<view class="notify-tip" wx:if="{{showNotifyTip}}">
-  <text>订阅消息后可及时收到私信通知</text>
-  <view class="button" bindtap="gotoNotifySetting">去订阅</view>
-</view>
+<NotifyCounterEntrance />
 
 <view class="header">
   <SystemConversation
@@ -61,8 +58,11 @@
         bind:onDelete="onDeleteConv"
       />
     </block>
-    <view class="{{loading ? 'loading' : 'load-more'}}" bindtap="onReachBottom">{{loading ? '加载中' : '加载更多'}}</view>
+    <view class="{{loading ? 'loading' : 'load-more'}}" bindtap="onReachBottom">{{loading ? '加载中' : '加载更多'}}
+    </view>
   </view>
   <image wx:else src="/images/empty.png" class="empty" mode="aspectFit" />
 </scroll-view>
 <view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />
+
+<Dialogs />

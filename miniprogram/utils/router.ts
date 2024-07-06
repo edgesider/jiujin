@@ -1,7 +1,7 @@
 import { Commodity, Help, User } from '../types';
 import { ConversationItem } from '../lib/openim/index';
 import { AboutType } from '../pages/about';
-import { parseURL, toastSucceed } from './other';
+import { getCurrentPage, parseURL, toastSucceed } from './other';
 import { metric } from './metric';
 import { encode } from 'base64-arraybuffer';
 
@@ -204,4 +204,12 @@ export async function handleLink(link: string) {
     await wx.setClipboardData({ data: link });
     toastSucceed('链接已复制');
   }
+}
+
+export function openNotVerifyDialog() {
+  getCurrentPage().__not_verified_dialog.show();
+}
+
+export function openNotifyCounterDialog() {
+  getCurrentPage().__notify_counter_dialog.show();
 }

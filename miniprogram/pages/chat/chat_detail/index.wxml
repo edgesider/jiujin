@@ -1,5 +1,6 @@
 <view class="container" style="margin-bottom: {{BottomIndicatorHeight}}px">
   <UserTitleBar user="{{isSeller ? buyer : seller}}" />
+  <NotifyCounterEntrance />
   <TransactionBanner
     class="banner"
     wx:if="{{commodity && commodityTact}}"
@@ -52,3 +53,5 @@
     <view class="button" bind:tap="onInputConfirm">发送</view>
   </view>
 </view>
+
+<Dialogs />

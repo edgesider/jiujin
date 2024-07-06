@@ -255,7 +255,7 @@ Page({
     if (error) {
       return error;
     }
-    await requestNotifySubscribes([NotifyType.CommodityChat, NotifyType.Comment]);
+    await requestNotifySubscribes([NotifyType.Message]);
 
     console.log(editing ? 'editing commodity' : 'creating commodity', info);
     console.log('uploading images', info.img_urls);

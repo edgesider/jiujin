@@ -1,5 +1,7 @@
 import { UserAPI } from '../api/UserAPI';
 import { getGlobals, updateSelfInfo } from './globals';
+import { BehaviorSubject, Observable } from 'rxjs';
+import getConstants from '../constants';
 
 export enum NotifyType {
   Message = 0,
@@ -26,9 +28,9 @@ export type NotifySubscribeStates = { [type in NotifyType]: NotifySubscribeState
 const states: NotifySubscribeStates = {
   [NotifyType.Message]: {
     type: NotifyType.Message,
-    name: '私聊',
+    name: '消息',
     prompt: '',
-    tmpId: '5sRWB8VfznDEREza9aPSy4mPeS_xPyTYmaMt38gvqFc',
+    tmpId: 'Y_GR5zar7z5ZLym55AZ-zlO-vlGFbj6OMFjGIsybjwU',
     state: undefined,
     count: 0,
   },
@@ -76,8 +78,11 @@ export async function requestNotifySubscribes(types: NotifyType[]): Promise<Bool
       .filter(t => res[getTmpId(t)] === 'accept')
       .map(t => UserAPI.addNotifyCount(t))
     )
-    await syncNotifyStates();
-    console.log(`send to server and sync to client cost ${Date.now() - time}`);
+    console.log(`send to server cost ${Date.now() - time}`);
+    time = Date.now();
+    await syncNotifyCount();
+    syncNotifySwitches().then();
+    console.log(`sync to client cost ${Date.now() - time}`);
     return true;
   } catch (e) {
     console.error(e);
@@ -96,34 +101,36 @@ export function getNotifyCount(type: NotifyType): number {
     return 0;
   }
   if (type === NotifyType.Message) {
-    return self.notify_message_count;
+    return self.notify_info_count;
   } else if (type === NotifyType.Comment) {
     return self.notify_comment_count;
   }
   return 0;
 }
 
-export type NotifySwitches =
-  & { [type in NotifyType]?: 'accept' | 'reject' | 'ban'; }
-  & { mainSwitch: boolean; };
-
-let switches: NotifySwitches = { mainSwitch: true };
-
-export function getNotifySwitches() {
-  return switches;
-}
-
 export function getNotifyStates(): NotifySubscribeStates {
   return states;
 }
 
-async function syncNotifySwitches(): Promise<NotifySwitches> {
+async function syncNotifySwitches() {
   const res = await wx.getSetting({ withSubscriptions: true, });
-  switches = {
-    mainSwitch: res.subscriptionsSetting.mainSwitch,
-    ...res.subscriptionsSetting.itemSettings,
-  };
-  return switches;
+  if (!res.subscriptionsSetting.mainSwitch) {
+    Object.values(states).forEach(state => {
+      state.state = 'reject';
+    })
+  } else {
+    Object.values(states).forEach(state => {
+      if (getConstants().Platform === 'devtools') {
+        state.state = 'accept';
+      } else {
+        const templateState = res.subscriptionsSetting.itemSettings?.[state.tmpId]
+        if (templateState) {
+          state.state = templateState;
+        }
+      }
+    })
+  }
+  statesChangedSubject.next(states);
 }
 
 async function syncNotifyCount() {
@@ -131,6 +138,7 @@ async function syncNotifyCount() {
   for (const type of notifyTypes) {
     states[type].count = getNotifyCount(type);
   }
+  statesChangedSubject.next(states);
 }
 
 export async function syncNotifyStates() {
@@ -138,18 +146,8 @@ export async function syncNotifyStates() {
   return states;
 }
 
-export async function checkNotifySettingAndRequest(type: NotifyType): Promise<boolean> {
-  syncNotifySwitches().then();
-  if (switches[getTmpId(type)] !== 'accept') {
-    wx.showModal({
-      content: prompts[type] ?? '请求授权通知',
-      success: () => {
-        wx.openSetting();
-      }
-    })
-    return false;
-  } else {
-    await requestNotifySubscribes([type]);
-    return true;
-  }
+const statesChangedSubject = new BehaviorSubject<NotifySubscribeStates>(states);
+
+export function listenNotifyStatesChanged(): Observable<NotifySubscribeStates> {
+  return statesChangedSubject;
 }
