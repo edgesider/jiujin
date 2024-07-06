@@ -3,6 +3,11 @@ import { getGlobals } from './globals';
 import { getEnvVersion, getVersionInfo } from './env';
 
 class Metric {
+  /**
+   * @param key 事件名
+   * @param fields 数值类的参数，可以用来分析计算
+   * @param tags 可枚举的参数，可以用来分组计数等
+   */
   write(key: string, fields?: Record<string, any>, tags?: Record<string, string>) {
     try {
       MetricAPI.write(

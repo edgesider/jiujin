@@ -57,7 +57,7 @@ export type ShareInfo =
   ;
 
 export function buildShareParam(shareInfo: ShareInfo): string {
-  metric.write('share_click', shareInfo);
+  metric.write('share_click', {}, { shareInfo: JSON.stringify(shareInfo) });
   return JSON.stringify(shareInfo);
 }
 

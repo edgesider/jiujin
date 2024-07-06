@@ -314,7 +314,7 @@ Page({
     }
     if (errMsg) {
       toastError(errMsg);
-      metric.write('commodity_submit_failed', {
+      metric.write('commodity_submit_failed', {}, {
         type: this.data.editingCommodity ? 'edit' : 'create',
         msg: errMsg,
         error: error?.toString()

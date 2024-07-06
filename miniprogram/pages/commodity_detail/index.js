@@ -68,7 +68,7 @@ Page({
     });
 
     await CommodityAPI.addViewCount(id);
-    metric.write('commodity_detail_show', { id: id, shareInfo: shareInfoStr });
+    metric.write('commodity_detail_show', {}, { id });
   },
   back() {
     wx.navigateBack().then();

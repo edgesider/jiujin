@@ -80,12 +80,12 @@ Page({
     try {
       await this.loadData();
     } catch (e) {
-      metric.write('im_load_failed', {
+      metric.write('im_load_failed', {}, {
         error: JSON.stringify(e),
         conversationId
       });
     }
-    metric.write('im_load_succeed', { conversationId });
+    metric.write('im_load_succeed');
   },
   onUnload() {
     const conv = this.data.conversation;

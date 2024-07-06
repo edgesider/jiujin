@@ -186,13 +186,13 @@ export async function handleSchema(schema: string) {
         }
       }
     } else {
-      metric.write('unknown_schema', { schema });
+      metric.write('unknown_schema', {}, { schema });
       console.error(`unhandled schema ${url.path}`);
     }
   } else if (schema.startsWith('/pages')) {
     await wx.navigateTo({ url: schema });
   } else {
-    metric.write('unknown_schema', { schema });
+    metric.write('unknown_schema', {}, { schema });
     console.error(`unhandled schema ${schema}`);
   }
 }

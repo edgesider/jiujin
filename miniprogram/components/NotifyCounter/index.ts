@@ -55,7 +55,7 @@ Component({
       await requestNotifySubscribes([type]);
       this.updateStates(getNotifyStates());
       const duration = Date.now() - startAt;
-      metric.write('added_subscribe', { duration, type: NotifyType[type] });
+      metric.write('added_subscribe', { duration }, { type: NotifyType[type] });
       this.setData({ adding: false });
     },
     async onMaskClick() {

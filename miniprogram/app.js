@@ -21,10 +21,14 @@ App({
 
   async onLaunch() {
     wx.onError(error => {
-      metric.write('on_error', { error });
+      metric.write('on_error', {}, { error: error?.toString()?.substring(0, 10240) });
     });
     wx.onUnhandledRejection((result) => {
-      metric.write('on_unhandled_rejection', { reason: (result.reason ?? '').toString().substring(0, 10240) });
+      metric.write(
+        'on_unhandled_rejection',
+        {},
+        { reason: (result.reason ?? '').toString().substring(0, 10240) }
+      );
     })
     try {
       initMoment();
@@ -46,7 +50,7 @@ App({
       this._readyWaiters.length = 0;
     } catch (e) {
       console.error('app initialize failed');
-      metric.write('app_init_failed');
+      metric.write('app_init_failed', {}, { error: e?.toString() });
       this.launchFailed = true;
       this._readyWaiters.forEach(waiter => waiter[1](e));
       this._readyWaiters.length = 0;

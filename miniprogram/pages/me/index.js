@@ -310,7 +310,7 @@ Page({
         }
         path = await drawMyQrcode(bytes, path);
       } catch (e) {
-        metric.write('qrcode_create_failed', { reason: e?.message || e?.toString() });
+        metric.write('qrcode_create_failed', {}, { reason: e?.message || e?.toString() });
         toastError('获取二维码失败，请稍后重试');
         console.error(e);
         return;

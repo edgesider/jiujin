@@ -59,7 +59,7 @@ Page({
     });
 
     await HelpAPI.addViewCount(id);
-    metric.write('help_detail_show', { id: id, shareInfo: shareInfoStr });
+    metric.write('help_detail_show', {}, { id: id, shareInfo: shareInfoStr });
   },
 
   async loadData(id) {
