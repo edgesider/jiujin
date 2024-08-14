@@ -1,4 +1,4 @@
-import api, { initNetwork } from './api/api';
+import api, { getOpenId, initNetwork } from './api/api';
 import { BehaviorSubject } from "rxjs";
 import { initMoment } from "./utils/time";
 import { InAppMonitor } from "./monitor/index";
@@ -7,6 +7,7 @@ import { clearSavedImages } from "./utils/canvas";
 import { syncNotifyStates } from "./utils/notify";
 import { metric } from "./utils/metric";
 import { initSettings } from "./utils/settings";
+import getConstants from "./constants";
 
 App({
   _ready: false,
@@ -31,11 +32,11 @@ App({
       );
     })
     try {
+      console.log(`application initializing, openId=${getOpenId()}`);
+      wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
+      getConstants();
       initMoment();
       initNetwork();
-
-      wx.cloud.init({ env: 'jj-4g1ndtns7f1df442', });
-
       initSettings().then();
       const self = await this.fetchSelfInfo(); // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
       await this.fetchRegions();
@@ -93,6 +94,7 @@ App({
     const ridToRegion = {};
     for (const region of regions) {
       ridToRegion[region._id] = region;
+      region.short_name = region.name.replace(/校区/, '');
     }
     this.globalData.regions = regions;
     this.globalData.ridToRegion = ridToRegion;

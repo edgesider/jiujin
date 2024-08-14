@@ -50,7 +50,7 @@
       <view class="divider" />
       <Comments id="comments" class="comments" commodity="{{commodity}}" bind:loadFinished="onCommentLoadFinished" />
     </scroll-view>
-    <view class="footer">
+    <view class="footer" wx:if="{{!SinglePageMode}}">
       <view class="left">
         <view class="button" bind:tap="onToggleCollect">
           <image

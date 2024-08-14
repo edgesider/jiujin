@@ -1,6 +1,6 @@
 <TitleBar title="消息" />
 
-<NotifyCounterEntrance />
+<NotifyCounterEntrance wx:if="{{!SinglePageMode}}" />
 
 <view class="header">
   <SystemConversation

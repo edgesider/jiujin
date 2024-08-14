@@ -6,6 +6,7 @@ import { CommodityAPI } from '../../api/CommodityAPI';
 import { Commodity, User } from '../../types';
 import { onShareProfile } from '../../utils/share';
 import { decodeOptions } from '../../utils/strings';
+import { waitForAppReady } from '../../utils/globals';
 
 const app = getApp()
 const COUNT_PER_PAGE = 12
@@ -30,6 +31,7 @@ Page({
   async onLoad(options) {
     options = decodeOptions(options);
     const { user_id } = options;
+    await waitForAppReady();
     await this.fetchUser(user_id);
     await this.fetchList();
   },
@@ -133,5 +135,11 @@ Page({
       return;
     }
     return onShareProfile(options, this.data.user);
+  },
+  onShareTimeline() {
+    if (!this.data.user) {
+      return;
+    }
+    return onShareProfile(null, this.data.user);
   }
 })

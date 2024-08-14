@@ -5,6 +5,7 @@ import { Resp, RespError, RespSuccess } from './resp';
 import { cloudProtocolToHttp } from '../utils/other';
 import { Platform } from '../lib/openim/index';
 import { User } from '../types';
+import { isInSingleMode } from '../utils/globals';
 
 const DEV_BASE_URL = '';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
@@ -34,6 +35,9 @@ Axios.interceptors.request.use(cfg => {
 
 Axios.interceptors.response.use(async resp => {
   if (resp.config.url && !resp.config.url.endsWith('/user/authorize') && resp.status === 401) {
+    if (isInSingleMode()) {
+      throw Error(`cannot fetch url ${resp.config.url} in single page mode (need login)`);
+    }
     // @ts-ignore
     resp.config.__authorize_tries__ = (resp.config.__authorize_tries__ ?? 0) + 1
     // @ts-ignore
@@ -48,12 +52,16 @@ Axios.interceptors.response.use(async resp => {
 })
 
 async function doAuthorize() {
+  if (isInSingleMode()) {
+    throw Error('cannot authorize in single page mode');
+  }
   const { code } = await wx.login();
   const resp = await api.authorize(code);
   if (resp.isError) {
     throw new Error(`authorize failed: ${JSON.stringify(resp)}`);
   }
   const { open_id, session_key } = resp.data;
+  console.log(`authorized ${open_id}`);
   openId = open_id;
   wx.setStorageSync('open_id', open_id);
   wx.setStorageSync('session_key', session_key);
@@ -80,9 +88,13 @@ export async function request<T>(param: AxiosRequestConfig & { path: string }) {
 }
 
 const api = {
-  async getSelfInfo(): Promise<Resp<User>> {
+  async getSelfInfo(): Promise<Resp<User | null>> {
     if (!openId) {
-      await doAuthorize();
+      if (isInSingleMode()) {
+        return new RespSuccess(null);
+      } else {
+        await doAuthorize();
+      }
     }
     return this.getUserInfo(getOpenId());
   },

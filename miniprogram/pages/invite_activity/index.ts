@@ -1,6 +1,6 @@
 import getConstants from '../../constants';
 import { Subscription } from 'rxjs';
-import { waitForAppReady } from '../../utils/globals';
+import { isInSingleMode, waitForAppReady } from '../../utils/globals';
 import { ActivityAPI, InvitationRankItem } from '../../api/ActivityAPI';
 import { UserAPI } from '../../api/UserAPI';
 import { getOpenId } from '../../api/api';
@@ -64,6 +64,9 @@ Page({
     })().then();
 
     (async () => {
+      if (isInSingleMode()) {
+        return
+      }
       const resp = await UserAPI.getInvitedUsers(getOpenId());
       if (resp.isError || !resp.data) {
         console.error(resp);
@@ -83,5 +86,8 @@ Page({
   },
   onShareAppMessage(options) {
     return onShareInviteActivity(options);
+  },
+  onShareTimeline(){
+    return onShareInviteActivity();
   }
 })

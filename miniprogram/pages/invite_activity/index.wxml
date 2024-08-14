@@ -119,7 +119,7 @@
     </view>
   </view>
 
-  <view class="my-invitation card bg-white">
+  <view class="my-invitation card bg-white" wx:if="{{!SinglePageMode}}">
     <view class="title">我的邀请记录</view>
     <view class="users">
       <view

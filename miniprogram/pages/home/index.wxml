@@ -30,7 +30,7 @@
 >
   <view>
     <swiper autoplay circular class="top-swiper">
-      <swiper-item wx:for="{{banners}}" wx:key="url">
+      <swiper-item wx:for="{{banners}}" wx:key="url" style="transform: translateY({{Platform === 'ios' ? '-4rpx' : '0'}}});">
         <view
           class="banner-image"
           style="background-image: url('{{item.url}}')"
@@ -86,7 +86,7 @@
   </view>
 </scroll-view>
 
-<view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />
+<view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" wx:if="{{!SinglePageMode}}" />
 
 <view class="ranking-container" wx:if="{{showRankingPopup}}">
   <view class="ranking-mask" bind:tap="onToggleRankingSwitch" />

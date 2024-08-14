@@ -1,6 +1,6 @@
 <view class="container" style="margin-bottom: {{BottomIndicatorHeight}}px">
   <UserTitleBar user="{{isSeller ? buyer : seller}}" />
-  <NotifyCounterEntrance />
+  <NotifyCounterEntrance wx:if="{{!SinglePageMode}}" />
   <TransactionBanner
     class="banner"
     wx:if="{{commodity && commodityTact}}"

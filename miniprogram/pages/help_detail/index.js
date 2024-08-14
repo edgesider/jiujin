@@ -1,10 +1,10 @@
 import getConstants, { POLISH_MIN_DURATION } from "../../constants";
-import { onShareHelp, parseShareInfo, saveShareInfo } from "../../utils/share";
+import { onShareHelp, onShareHelpSync, parseShareInfo, saveShareInfo } from "../../utils/share";
 import api from "../../api/api";
 import moment from "moment";
 import { DATETIME_FORMAT } from "../../utils/time";
 import {
-  ensureVerified,
+  ensureVerified, ensureVerifiedSync,
   getRegionPathName,
   sleep,
   toastError,
@@ -18,6 +18,7 @@ import { reportHelp } from "../../utils/report";
 import { HelpTransactionAPI, HelpTransactionStatus } from "../../api/HelpTransactionAPI";
 import { metric } from "../../utils/metric";
 import { textToRichText } from "../../utils/strings";
+import { isInSingleMode } from "../../utils/globals";
 
 const app = getApp();
 
@@ -58,7 +59,9 @@ Page({
       scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
     });
 
-    await HelpAPI.addViewCount(id);
+    if (!isInSingleMode()) {
+      await HelpAPI.addViewCount(id);
+    }
     metric.write('help_detail_show', {}, { id: id, shareInfo: shareInfoStr });
   },
 
@@ -99,12 +102,15 @@ Page({
 
     const { self } = app.globalData;
     const isMine = self && self._id === help.seller_id;
+    let transaction = null;
 
-    const transactionsResp = await HelpTransactionAPI.listByHelp(
-      help._id,
-      isMine ? { status: HelpTransactionStatus.Booked } : null
-    );
-    const transaction = transactionsResp.data?.[0];
+    if (!isInSingleMode()) {
+      const transactionsResp = await HelpTransactionAPI.listByHelp(
+        help._id,
+        isMine ? { status: HelpTransactionStatus.Booked } : null
+      );
+      transaction = transactionsResp.data?.[0];
+    }
 
     this.setData({
       self,
@@ -302,6 +308,11 @@ Page({
       wx.hideLoading();
     }
   },
+  onShareTimeline() {
+    ensureVerifiedSync();
+    return onShareHelpSync(this.data.help);
+  },
+
   onCommentLoadFinished() {
     if (this.data.scrollToComment) {
       this.setData({

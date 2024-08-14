@@ -41,10 +41,11 @@ Component({
       const { currRegionLevel = 1 } = this.properties;
       const { content, rid } = this.properties.commodity;
       this.setData({
-        desc: getContentDesc(content),
+        desc: getContentDesc(content).trim(),
         regionName: getRegionPathName(
           rid,
-          currRegionLevel + 1 // 最多展示到当前级别的下一级
+          currRegionLevel + 1, // 最多展示到当前级别的下一级
+          true
         ) || '楼里', // 没有要展示的就展示“楼里”
       });
     },

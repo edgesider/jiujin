@@ -11,7 +11,7 @@
 .region-filter scroll-view {
   height: 100%;
   flex-grow: 1;
-  background: #f1f1f1;
+  background-color: white;
   border-radius: 16rpx;
   overflow: hidden;
 }
@@ -60,22 +60,28 @@
 }
 
 .item .count {
+  position: absolute;
+  top: 2rpx;
+  right: -8rpx;
+  background-color: #ff4d4d;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  top: 3rpx;
-  right: 0;
-  /*transform: translateX(2rpx);*/
-  /*background-color: var(--brand-yellow);*/
-  color: #0000004D;
-  font-size: 16rpx;
   height: 24rpx;
   border-radius: 12rpx;
+  padding: 8rpx;
+  transform: scale(calc(16 / 18));
+  transform-origin: right bottom;
+}
+
+.item .count text {
+  color: #FFFFFF;
+  font-size: 18rpx !important;
+  font-weight: 500;
 }
 
 .item-on .count {
-  color: var(--brand-yellow);
+  /*color: var(--brand-yellow);*/
 }
 
 .item .item-text {

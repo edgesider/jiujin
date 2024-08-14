@@ -1,5 +1,5 @@
 import { handleLink, openProfile } from "../../utils/router";
-import { ensureRegistered, ensureVerified, kbHeightChanged, toastError } from "../../utils/other";
+import { ensureRegistered, ensureVerified, kbHeightChanged, toastError, toastSucceed } from "../../utils/other";
 import getConstants from "../../constants";
 import { Subscription } from "rxjs";
 import { CommentAPI } from "../../api/CommentAPI";
@@ -10,6 +10,7 @@ import { ErrCode } from "../../api/ErrCode";
 import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { textToRichText } from "../../utils/strings";
 import { metric } from "../../utils/metric";
+import { isInSingleMode } from "../../utils/globals";
 
 const app = getApp();
 
@@ -172,6 +173,10 @@ Component({
       this.setData({ commentingText: ev.detail.value });
     },
     async onStartComment({ currentTarget: { dataset: { comment } } }) {
+      if (isInSingleMode()) {
+        toastSucceed('点击底部“前往小程序”再互动哦');
+        return;
+      }
       if (getConstants().Platform === 'ios') {
         // iOS 用键盘发送时，获取不了订阅消息，所以放到这里获取
         wx.showLoading();

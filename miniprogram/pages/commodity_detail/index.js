@@ -3,7 +3,7 @@ import { setNeedRefresh } from "../home/index";
 import getConstants, { COMMODITY_STATUS_BOOKED, POLISH_MIN_DURATION } from "../../constants";
 import {
   ensureRegistered,
-  ensureVerified,
+  ensureVerified, ensureVerifiedSync,
   getRegionPathName,
   sleep,
   toastError,
@@ -19,8 +19,8 @@ import {
   openWebView
 } from "../../utils/router";
 import { DATETIME_FORMAT } from "../../utils/time";
-import { onShareCommodity, parseShareInfo, saveShareInfo } from "../../utils/share";
-import { waitForAppReady } from "../../utils/globals";
+import { onShareCommodity, onShareCommoditySync, parseShareInfo, saveShareInfo } from "../../utils/share";
+import { isInSingleMode, waitForAppReady } from "../../utils/globals";
 import { startTransaction } from "../../utils/transaction";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { reportCommodity } from "../../utils/report";
@@ -67,7 +67,9 @@ Page({
       scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
     });
 
-    await CommodityAPI.addViewCount(id);
+    if (!isInSingleMode()) {
+      await CommodityAPI.addViewCount(id);
+    }
     metric.write('commodity_detail_show', {}, { id });
   },
   back() {
@@ -102,11 +104,16 @@ Page({
     const { self } = app.globalData;
     const isMine = self && self._id === commodity.seller_id;
 
-    const transactionsResp = await TransactionAPI.listByCommodity(
-      commodity._id,
-      isMine ? { status: TransactionStatus.Booked } : null
-    );
-    const transaction = transactionsResp.data?.[0];
+    let transaction = null;
+
+    if (!isInSingleMode()) {
+      const transactionsResp = await TransactionAPI.listByCommodity(
+        commodity._id,
+        isMine ? { status: TransactionStatus.Booked } : null
+      );
+      transaction = transactionsResp.data?.[0];
+    }
+
     const statusImage = {
       [COMMODITY_STATUS_BOOKED]: '/images/已预订.png'
     }[commodity.status];
@@ -263,15 +270,10 @@ Page({
     await reportCommodity(this.data.commodity._id);
   },
 
-  // async onClickShare() {
-  // ensureRegistered();
-  // const {} = await wx.showShareMenu({
-  //   withShareTicket: true,
-  //   menus: ['shareAppMessage', 'shareTimeline'],
-  // })
-  // },
-
   async onPrivateMessage() {
+    if (isInSingleMode()) {
+      return;
+    }
     await ensureVerified();
     let tact = this.data.transaction;
     if (!tact) {
@@ -313,22 +315,12 @@ Page({
       wx.hideLoading()
     }
   },
-  // async onShareTimeline() {
-  //   await ensureVerified();
-  //   const { commodity } = this.data;
-  //   if (!commodity) {
-  //     return;
-  //   }
-  //   try {
-  //     await wx.showLoading({ title: '请稍等' });
-  //     return await onShareCommodity(null, commodity);
-  //   } finally {
-  //     await wx.hideLoading();
-  //   }
-  // },
+  onShareTimeline() {
+    ensureVerifiedSync();
+    return onShareCommoditySync(this.data.commodity);
+  },
 
   async onLinkTap(ev) {
-    console.log('linkTap', ev);
     const link = ev?.detail?.href || '';
     await handleLink(link);
   },

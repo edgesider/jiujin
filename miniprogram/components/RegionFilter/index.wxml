@@ -15,7 +15,9 @@
           data-idx="{{idx}}"
         >
           <text class="item-text">{{item.name}}</text>
-          <view wx:if="{{showCount}}" class="count">{{counts[idx] || 0}}件</view>
+          <view wx:if="{{showCount}}" class="count">
+            <text>{{counts[idx] || 0}}件</text>
+          </view>
           <view class="item-indicator" wx:if="{{selected === idx}}" />
         </view>
       </block>

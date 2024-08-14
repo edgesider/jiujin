@@ -1,7 +1,7 @@
 import { tryJsonParse } from './other';
 import { getOpenId } from '../api/api';
 import { Commodity, Help, User } from '../types';
-import { drawCommodityShareImage, drawHelpShareImage } from './canvas';
+import { drawCommodityShareImage, drawHelpShareImage, HELP_BOUNTY_IMAGE, HELP_NO_BOUNTY_IMAGE } from './canvas';
 import { metric } from './metric';
 import { getRouteFromHomePageUrl } from './router';
 
@@ -61,6 +61,13 @@ export function buildShareParam(shareInfo: ShareInfo): string {
   return JSON.stringify(shareInfo);
 }
 
+/**
+ * 适配普通分享和朋友圈分享
+ */
+export function processShareData(info: { title: string, path: string, imageUrl?: string }) {
+  return info;
+}
+
 export function parseShareInfo(info: string | undefined | null): ShareInfo | null {
   if (!info) {
     return null;
@@ -100,20 +107,20 @@ export async function saveShareInfo(shareInfo: ShareInfo) {
   }
 }
 
-export async function onShareApp(options: IShareAppMessageOption) {
+export function onShareApp(options?: IShareAppMessageOption) {
   const shareInfo = buildShareParam({
     type: 'app',
-    from: options.from,
+    from: options?.from,
     fromUid: getOpenId(),
     timestamp: Date.now(),
     method: 'card',
   });
   const page = getCurrentPages()[0];
   const path = `${page.route.split('?')[0]}?shareInfo=${encodeURIComponent(shareInfo)}`;
-  return {
+  return processShareData({
     title: '我发现一个有趣的小程序，快来看看吧！',
     path,
-  };
+  });
 }
 
 export async function onShareCommodity(options: IShareAppMessageOption | null, commodity: Commodity) {
@@ -126,66 +133,105 @@ export async function onShareCommodity(options: IShareAppMessageOption | null, c
     method: 'card'
   });
   const path = await drawCommodityShareImage(commodity);
-  return {
+  return processShareData({
     title: '闲置 | ' + commodity.content,
     path: getRouteFromHomePageUrl(
       '/pages/commodity_detail/index' +
       `?id=${commodity._id}` +
       `&shareInfo=${encodeURIComponent(shareInfo)}`),
     imageUrl: path,
-  }
+  });
 }
 
-export async function onShareHelp(options: IShareAppMessageOption, help_?: Help) {
-  const help = help_ || options.target.dataset.help as Help | undefined;
+/**
+ * 用于朋友圈分享（朋友圈不支持异步结果）
+ */
+export function onShareCommoditySync(co: Commodity) {
+  const shareInfo = buildShareParam({
+    type: 'commodity',
+    commodityId: co._id,
+    fromUid: getOpenId(),
+    timestamp: Date.now(),
+    method: 'card'
+  });
+  return processShareData({
+    title: '闲置 | ' + co.content,
+    path: getRouteFromHomePageUrl(
+      '/pages/commodity_detail/index' +
+      `?id=${co._id}` +
+      `&shareInfo=${encodeURIComponent(shareInfo)}`),
+    imageUrl: co.img_urls[0],
+  });
+}
+
+export async function onShareHelp(options?: IShareAppMessageOption, help_?: Help) {
+  const help = help_ || options?.target.dataset.help as Help | undefined;
   if (!help) {
     return onShareApp(options);
   }
   const shareInfo = buildShareParam({
     type: 'help',
-    from: options.from,
+    from: options?.from,
     fromUid: getOpenId(),
     timestamp: Date.now(),
     method: 'card',
     helpId: help._id,
   });
-  return {
+  return processShareData({
     title: '互助 | ' + help.content,
     path: getRouteFromHomePageUrl(
       '/pages/help_detail/index' +
       `?id=${help._id}` +
       `&shareInfo=${encodeURIComponent(shareInfo)}`),
     imageUrl: await drawHelpShareImage(help),
-  };
+  });
 }
 
-export function onShareInviteActivity(options: IShareAppMessageOption) {
+export function onShareHelpSync(help: Help) {
+  const shareInfo = buildShareParam({
+    type: 'help',
+    fromUid: getOpenId(),
+    timestamp: Date.now(),
+    method: 'card',
+    helpId: help._id,
+  });
+  return processShareData({
+    title: '互助 | ' + help.content,
+    path: getRouteFromHomePageUrl(
+      '/pages/help_detail/index' +
+      `?id=${help._id}` +
+      `&shareInfo=${encodeURIComponent(shareInfo)}`),
+    imageUrl: help.img_urls[0] ?? (help.bounty > 0 ? HELP_BOUNTY_IMAGE : HELP_NO_BOUNTY_IMAGE),
+  });
+}
+
+export function onShareInviteActivity(options?: IShareAppMessageOption) {
   const shareInfo = buildShareParam({
     type: 'invite_activity',
-    from: options.from,
+    from: options?.from,
     fromUid: getOpenId(),
     timestamp: Date.now(),
     method: 'card',
   });
-  return {
+  return processShareData({
     title: '邀同学分万元红包',
     path: getRouteFromHomePageUrl(
       `/pages/invite_activity/index?shareInfo=${encodeURIComponent(shareInfo)}`),
-  };
+  });
 }
 
-export function onShareProfile(options: IShareAppMessageOption, user: User) {
+export function onShareProfile(options: IShareAppMessageOption | null, user: User) {
   const shareInfo = buildShareParam({
     type: 'profile',
     uid: user._id,
-    from: options.from,
+    from: options?.from,
     fromUid: getOpenId(),
     timestamp: Date.now(),
     method: 'card'
   });
-  return {
-    title: '我发现一个宝藏用户，快来看看',
+  return processShareData({
+    title: user._id === getOpenId() ? '我有这些闲置宝贝' : 'TA有这些闲置宝贝',
     path: getRouteFromHomePageUrl(
       `/pages/profile/index?user_id=${user._id}&shareInfo=${encodeURIComponent(shareInfo)}`),
-  };
+  });
 }

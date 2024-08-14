@@ -1,6 +1,9 @@
 <view class="root">
   <view class="title">{{comments.length}} 条评论</view>
-  <NotifyCounterEntrance style="width: 100vw; transform: translateX(-20rpx)" />
+  <NotifyCounterEntrance
+    style="width: 100vw; transform: translateX(-20rpx)"
+    wx:if="{{!SinglePageMode}}"
+  />
   <view class="input-area">
     <image
       src='{{selfInfo.avatar_url || DEFAULT_AVATAR}}'
@@ -48,7 +51,7 @@
             bindtap="onStartComment"
             data-comment="{{comment}}"
           />
-          <view class="line3">
+          <view class="line3" wx:if="{{!SinglePageMode}}">
             <view class="time">{{comment.timeStr}}</view>
             <view class="spacer" />
             <view

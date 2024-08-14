@@ -1,6 +1,6 @@
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
-import { ensureVerified, getRegionPath, setTabBar } from '../../utils/other';
-import { onShareApp, onShareHelp, parseShareInfo, saveShareInfo } from '../../utils/share';
+import { ensureVerified, ensureVerifiedSync, getRegionPath, setTabBar } from '../../utils/other';
+import { onShareHelp, parseShareInfo, saveShareInfo } from '../../utils/share';
 import { waitForAppReady } from '../../utils/globals';
 import { HelpAPI } from '../../api/HelpAPI';
 import { Help, Region, User } from '../../types';
@@ -202,6 +202,13 @@ Page({
       return await onShareHelp(options, help)
     } finally {
       wx.hideLoading();
+    }
+  },
+  // @ts-ignore
+  onShareTimeline() {
+    ensureVerifiedSync();
+    return {
+      title: '互助 | 北航',
     }
   },
 })

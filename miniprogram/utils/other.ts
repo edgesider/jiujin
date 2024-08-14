@@ -5,6 +5,7 @@ import { VerifyStatus } from '../api/verify';
 import Identicon from './randomAvatar';
 import { decode } from 'base64-arraybuffer';
 import api, { getOpenId } from '../api/api';
+import { isInSingleMode } from './globals';
 
 type OnKeyboardHeightChangeCallbackResult = WechatMiniprogram.OnKeyboardHeightChangeCallbackResult;
 
@@ -24,6 +25,9 @@ export function getCurrentPage() {
 }
 
 export function setTabBar(page: any, onClick?: () => void) {
+  if (isInSingleMode()) {
+    return;
+  }
   page.getTabBar().updateTo(page.route, onClick);
 }
 
@@ -61,8 +65,10 @@ export function getRegionPath(rid: number, {
 /**
  * @return 学院路/大运村/1公寓
  */
-export function getRegionPathName(rid: number, minLevel = 2) {
-  return getRegionPath(rid, { minLevel }).map(r => r.name).reverse().join('/')
+export function getRegionPathName(rid: number, minLevel = 2, short = false) {
+  return getRegionPath(rid, { minLevel })
+    .map(r => short ? r.short_name : r.name)
+    .reverse().join('/')
 }
 
 export function getL1Regions(ridToRegion?: Record<number, Region | undefined>): Region[] {
@@ -96,6 +102,17 @@ export function ensureRegistered(): User {
 
 export async function ensureVerified(openDialog = true) {
   await getApp().fetchSelfInfo();
+  const self = ensureRegistered();
+  if (self.verify_status === VerifyStatus.NotVerified) {
+    if (openDialog) {
+      openNotVerifyDialog();
+    }
+    throw Error('not verified');
+  }
+  return self;
+}
+
+export function ensureVerifiedSync(openDialog = true) {
   const self = ensureRegistered();
   if (self.verify_status === VerifyStatus.NotVerified) {
     if (openDialog) {

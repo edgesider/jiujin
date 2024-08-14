@@ -54,4 +54,4 @@
 
 <Dialogs />
 
-<view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" />
+<view style="width: 100%; flex: 0 0 {{BottomBarHeight}}px" wx:if="{{!SinglePageMode}}" />

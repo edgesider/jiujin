@@ -1,4 +1,5 @@
 import { Region, User } from '../types';
+import getConstants, { SceneType } from '../constants';
 
 interface Globals {
   self?: User,
@@ -20,4 +21,8 @@ export function isAppReady() {
 export async function updateSelfInfo(): Promise<User | undefined> {
   await getApp().fetchSelfInfo();
   return getGlobals().self;
+}
+
+export function isInSingleMode(): boolean {
+  return getConstants().SinglePageMode;
 }

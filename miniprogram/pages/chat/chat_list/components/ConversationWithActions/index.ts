@@ -45,6 +45,7 @@ Component({
       const { source, x } = ev.detail;
       if (source === 'friction' || source === 'touch') {
         this.setData({ tmpMoveX: x });
+        actionsVisibilitySubject.next(this.properties.initConversation.conversationID);
       }
     },
     onTouchEnd(ev) {

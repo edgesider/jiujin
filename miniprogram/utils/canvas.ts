@@ -6,9 +6,9 @@ import { getSettings } from './settings';
 type OffscreenCanvas = WechatMiniprogram.OffscreenCanvas;
 type CanvasContext = WechatMiniprogram.CanvasContext;
 
-const REGION_ICON = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/region.png';
-const HELP_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_bounty.png';
-const HELP_NO_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_no_bounty.png';
+export const REGION_ICON = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/region.png';
+export const HELP_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_bounty.png';
+export const HELP_NO_BOUNTY_IMAGE = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/help_share_no_bounty.png';
 const QRCODE_BG = 'https://6a6a-jj-4g1ndtns7f1df442-1322373141.tcb.qcloud.la/qrcode.png'
 
 const fs = wx.getFileSystemManager();

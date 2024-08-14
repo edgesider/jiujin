@@ -59,6 +59,7 @@ export function convertCommodity(raw: any): Commodity {
 export interface Region {
   _id: number;
   name: string;
+  short_name: string;
   level: number;
   parents: number[];
   children: number[];

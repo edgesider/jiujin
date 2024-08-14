@@ -55,7 +55,7 @@
 
       <Comments id="comments" class="comments" help="{{help}}" bind:loadFinished="onCommentLoadFinished" />
     </scroll-view>
-    <view class="footer">
+    <view class="footer" wx:if="{{!SinglePageMode}}">
       <view class="left">
         <view class="button" bind:tap="onToggleLike">
           <image class="icon"
