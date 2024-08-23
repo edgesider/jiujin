@@ -21,7 +21,7 @@
         <view class="time">{{msg.timeStr}}</view>
         <view class="card">
           <view class="title">{{msg.title}}</view>
-          <view class="content">{{msg.text}}</view>
+          <view class="content"><text>{{msg.text}}</text></view>
         </view>
       </view>
     </block>
