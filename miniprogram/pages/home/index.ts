@@ -115,8 +115,9 @@ Page({
       await this.fetchList();
     }
     if (this.initialized && this.data.self?.rid !== getGlobals().self?.rid) {
+      this.setData({ self: app.globalData.self, });
       this.updateRegions();
-      await Promise.all([this.fetchList(), this.loadBanners()]);
+      await this.fetchList();
     }
   },
 

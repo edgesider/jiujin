@@ -1,5 +1,12 @@
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
-import { ensureVerified, ensureVerifiedSync, getRegionPath, setTabBar } from '../../utils/other';
+import {
+  ensureVerified,
+  ensureVerifiedSync,
+  getRegionPath,
+  setTabBar,
+  toastLoading,
+  toastLoadingHide
+} from '../../utils/other';
 import { onShareHelp, parseShareInfo, saveShareInfo } from '../../utils/share';
 import { waitForAppReady } from '../../utils/globals';
 import { HelpAPI } from '../../api/HelpAPI';
@@ -193,15 +200,15 @@ Page({
     });
   },
 
-// @ts-ignore
+  // @ts-ignore
   async onShareAppMessage(options) {
     await ensureVerified();
     const help = options.target?.dataset?.help;
     try {
-      wx.showLoading({ title: '请稍等' });
+      toastLoading('请稍等', true);
       return await onShareHelp(options, help)
     } finally {
-      wx.hideLoading();
+      toastLoadingHide();
     }
   },
   // @ts-ignore

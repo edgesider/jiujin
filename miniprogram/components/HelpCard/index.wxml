@@ -51,7 +51,7 @@
             />
             <text class="text">{{help.collected_count > 0 ? help.collected_count : '收藏'}}</text>
           </view>
-          <view wx:if="{{!isMine}}" class="button" catchtap="gotoDetail">
+          <view class="button" catchtap="gotoDetail">
             <image class="icon" src="/images/comment-icon.png" />
             <text class="text">{{help.comment_count > 0 ? help.comment_count : '评论'}}</text>
           </view>

@@ -164,8 +164,7 @@ export function onShareCommoditySync(co: Commodity) {
   });
 }
 
-export async function onShareHelp(options?: IShareAppMessageOption, help_?: Help) {
-  const help = help_ || options?.target.dataset.help as Help | undefined;
+export async function onShareHelp(options?: IShareAppMessageOption, help?: Help) {
   if (!help) {
     return onShareApp(options);
   }
