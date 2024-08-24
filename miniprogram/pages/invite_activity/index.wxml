@@ -48,6 +48,43 @@
     </view>
   </view>
 
+  <view class="card records-card">
+    <view class="title">开奖记录（第一轮）</view>
+    <view class="records">
+      <view class="column">
+        <text class="title">尾号相同者</text>
+        <text class="item">No.00000012</text>
+        <text class="item invalid">No.00000112</text>
+        <text class="item">No.00000212</text>
+        <text class="item invalid">No.00000312</text>
+        <text class="item invalid">No.00000412</text>
+        <text class="item invalid">No.00000512</text>
+        <text class="item">No.00000612</text>
+        <text class="item">No.00000712</text>
+        <text class="item invalid">No.00000812</text>
+        <text class="item invalid">No.00000912</text>
+      </view>
+      <view class="column">
+        <view class="title">邀请人</view>
+        <view class="item">No.00000001（奖金*3份）</view>
+        <view class="item">No.00000018</view>
+        <view class="item">No.00000020（奖金*2份）</view>
+        <view class="item">No.00000554</view>
+      </view>
+    </view>
+    <view class="notes">
+      <view class="text title">
+        本轮抽奖有效奖金11份，每份91元。
+      </view>
+      <view class="text">
+        “无效”指该用户未在开奖前发布任何内容，不满足活动规则5。
+      </view>
+      <view class="text">
+        多位中奖编号若为同一邀请人，则该邀请人可得多份奖金，多邀多得，不受所邀请用户中奖无效影响。
+      </view>
+    </view>
+  </view>
+
   <view class="card rule-card">
     <view class="title">-- 邀请排行榜 --</view>
     <view class="texts">

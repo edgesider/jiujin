@@ -40,8 +40,6 @@ page {
 }
 
 .rule-card {
-  border-radius: 16rpx;
-  padding: 20rpx;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -275,6 +273,84 @@ page {
       font-size: 24rpx;
       line-height: 40rpx;
       font-weight: 600;
+    }
+  }
+}
+
+.records-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  > .title {
+    align-self: center;
+    text-align: center;
+    font-size: 40rpx;
+    font-weight: 600;
+    color: #ffe17c;
+    padding: 10rpx 20rpx;
+    background-color: #ff3201;
+    border-radius: 16rpx;
+  }
+
+  .records {
+    margin-top: 16rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: flex-start;
+    background: #0000000d;
+    border-radius: 16rpx;
+    padding: 16rpx 0 16rpx 16rpx;
+
+    .column {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      line-height: 40rpx;
+      font-size: 28rpx;
+
+      > .title {
+        font-weight: 600;
+        color: #50555c;
+        line-height: 46rpx;
+      }
+
+      > .item {
+        color: #ff4d4d;
+
+        &.invalid {
+          color: #979797;
+
+          &::after {
+            content: '（无效）';
+          }
+        }
+      }
+    }
+  }
+
+  .notes {
+    margin-top: 16rpx;
+    background: #0000000d;
+    border-radius: 16rpx;
+    padding: 16rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    > .text {
+      font-size: 28rpx;
+      line-height: 40rpx;
+
+      &.title {
+        font-weight: 600;
+        color: #ff4d4d;
+      }
     }
   }
 }
