@@ -10,7 +10,7 @@
   </view>
   <view class="card card-image">
     <view class="title">证件认证</view>
-    <view class="subtitle">在校生可上传校园卡、学生证，校友可上传毕业证</view>
+    <view class="subtitle">上传任意可证明本人为在校师生或校友的证件</view>
     <view class="upload" bindtap="onUploadCardImage">
       <view wx:if="{{!imageToUpload}}" class="placeholder-image">
         <image src="res/student-card.png" />
