@@ -121,7 +121,10 @@ Page({
     if (conversation.unreadCount > 0) {
       markConvMessageAsRead(conversation).then();
     }
-    const [group, members] = await Promise.all([getGroup(conversation.groupID), getMemberList(conversation.groupID)]);
+    const [group, members] = await Promise.all([
+      getGroup(conversation.groupID),
+      getMemberList(conversation.groupID)
+    ]);
     if (!group) {
       console.log('getGroupById failed');
       await wx.showToast({
@@ -369,6 +372,9 @@ Page({
         userIDList: [getImUidFromUid(seller._id)],
         reason: 'initial-message'
       });
+      this.setData({
+        members: await getMemberList(group),
+      })
     } catch (e) {
       toastError('会话初始化失败');
       metric.write('invite_seller_failed', { error: e?.toString() });

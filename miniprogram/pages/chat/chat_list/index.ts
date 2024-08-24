@@ -4,11 +4,13 @@ import { User } from '../../../types';
 import { Subscription } from 'rxjs';
 import {
   deleteConversation,
-  getConversationList, isOimLogged, isOthersNewCreateConversation,
+  getConversationList, isOimLogged, isOthersNewCreateConversation, isSystemConv, isSystemGroup,
   isTransactionGroup, listenConversations, listenNewConvList, waitForOimLogged,
 } from '../../../utils/oim';
 import { ConversationItem } from '../../../lib/openim/index';
 import { getOpenId } from '../../../api/api';
+import { openConversationDetail, openSystemConversationDetail } from '../../../utils/router';
+import { decodeOptions } from '../../../utils/strings';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 
@@ -27,11 +29,12 @@ Page({
     updateIndex: 0,
   },
   subscription: null as Subscription | null,
-  async onLoad() {
-    setTabBar(this, () => {
-      this.scrollToTop();
-    });
+  async onLoad(options) {
+    setTabBar(this, () => this.scrollToTop());
     this.setData({ self: app.globalData.self });
+
+    options = decodeOptions(options);
+    const { convId } = options;
 
     if (!isOimLogged()) {
       await wx.showLoading({ title: '加载中' });
@@ -65,11 +68,27 @@ Page({
     }));
 
     await this.doRefresh();
+    if (convId) {
+      if (isSystemConv(convId)) {
+        let convName = '通知';
+        if (convId.endsWith('_system')) {
+          convName = '系统通知';
+        } else if (convId.endsWith('_comment')) {
+          convName = '评论';
+        } else if (convId.endsWith('_like')) {
+          convName = '点赞';
+        } else if (convId.endsWith('_collect')) {
+          convName = '收藏';
+        }
+        await openSystemConversationDetail(convId, convName);
+      } else {
+        await openConversationDetail(convId);
+      }
+    }
   },
   onUnload() {
     this.subscription?.unsubscribe();
   },
-  // sorter: (a: ConversationItem, b: ConversationItem) => b.latestMsgSendTime - a.latestMsgSendTime,
   patchConv(conv: ConversationItem) {
     let canShow = true;
     if (!conv.groupID) {

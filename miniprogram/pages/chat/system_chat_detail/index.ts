@@ -104,7 +104,6 @@ Page({
     this.setData({ conversation: conv });
 
     const subscription = new Subscription();
-
     subscription.add(listenConversation(conv.conversationID).subscribe(conv => {
       this.setData({ conversation: conv });
     }));
@@ -112,6 +111,7 @@ Page({
       this.onMessageUpdate([rawMsg], 'newer');
     }));
     this.subscription = subscription;
+
     await this.fetchMoreMessages();
     markConvMessageAsRead(conv).then();
   },

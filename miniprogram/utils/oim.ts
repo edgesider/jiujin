@@ -67,7 +67,8 @@ export async function initOpenIM(self: User, forceUpdateToken = false) {
 
   try {
     const platformID =
-      getConstants().Platform === 'devtools' ? Platform.MacOSX : Platform.Web;
+      getConstants().Platform === 'devtools' ? Platform.Windows : (
+        getConstants().Platform === 'android' ? Platform.Android : Platform.iOS);
     const token = (await api.getOimToken(platformID, forceUpdateToken)).data;
     const res = await oim.login({
       userID: self._id,
@@ -166,11 +167,28 @@ export function isHelpTransactionGroup(groupId: string): boolean {
   return groupId.startsWith('HELP_');
 }
 
+
 /**
  * 是否是用于交易的群组ID
  */
 export function isTransactionGroup(groupId: string): boolean {
   return isCommodityTransactionGroup(groupId) || isHelpTransactionGroup(groupId);
+}
+
+export function isTransactionConv(convId: string) {
+  return isTransactionGroup(getGroupIdFromConv(convId));
+}
+
+export function isSystemGroup(groupId: string): boolean {
+  const openId = getOpenId();
+  if (!openId) {
+    throw Error('not login');
+  }
+  return groupId.startsWith(getOpenId());
+}
+
+export function isSystemConv(convId: string) {
+  return isSystemGroup(getGroupIdFromConv(convId));
 }
 
 export function isOthersNewCreateConversation(conv: ConversationItem) {
@@ -269,6 +287,16 @@ export function getConvIdFromGroup(group: GroupItem | string) {
     group = group.groupID;
   }
   return 'sg_' + group;
+}
+
+export function getGroupIdFromConv(conv: ConversationItem | string) {
+  if (typeof conv === 'object') {
+    conv = conv.conversationID;
+  }
+  if (conv.startsWith('sg_')) {
+    return conv.substring('sg_'.length);
+  }
+  throw Error(`invalid conversation id: ${conv}`);
 }
 
 const newConvListSubject = new Subject<ConversationItem[]>();
