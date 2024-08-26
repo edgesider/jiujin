@@ -7,7 +7,7 @@ import { Platform } from '../lib/openim/index';
 import { User } from '../types';
 import { isInSingleMode } from '../utils/globals';
 
-const DEV_BASE_URL = 'http://im.lllw.cc:3365';
+const DEV_BASE_URL = '';
 const version = wx.getAccountInfoSync().miniProgram.envVersion;
 let openId: string | undefined;
 

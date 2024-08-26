@@ -218,12 +218,20 @@ Page({
               },
               deactivate: async () => {
                 await ensureVerified();
-                const { confirm } = await wx.showModal({
-                  title: listType === 'commodity' ? '确认下架？' : '确认结束？',
-                  content: ''
-                });
-                if (!confirm) {
-                  return;
+                if (listType === 'commodity') {
+                  const reasons = ['已在小程序售出', '已在其他平台售出', '不想卖了', '其他原因']
+                  const { tapIndex: idx } = await wx.showActionSheet({
+                    itemList: reasons,
+                  })
+                  metric.write('deactivate_reason', {}, { id: item._id, reason: reasons[idx] });
+                } else {
+                  const { confirm } = await wx.showModal({
+                    title: '确认结束？',
+                    content: ''
+                  });
+                  if (!confirm) {
+                    return;
+                  }
                 }
                 await wx.showLoading({ mask: true, title: '请稍后' });
                 const resp = listType === 'commodity'

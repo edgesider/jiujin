@@ -89,7 +89,7 @@ Page({
       await waitForAppReady();
       this.setData({ self: app.globalData.self, });
       this.updateRegions();
-      await this.loadBanners();
+      this.loadBanners();
       this.initialized = true;
 
       await this.fetchList();

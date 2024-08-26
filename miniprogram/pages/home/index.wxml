@@ -30,10 +30,13 @@
 >
   <view>
     <swiper autoplay circular class="top-swiper">
-      <swiper-item wx:for="{{banners}}" wx:key="url" style="transform: translateY({{Platform === 'ios' ? '-4rpx' : '0'}}});">
+      <swiper-item
+        wx:for="{{banners}}"
+        wx:key="url"
+      >
         <view
           class="banner-image"
-          style="background-image: url('{{item.url}}')"
+          style="background-image: url('{{item.url}}'); transform: translateY({{Platform === 'ios' ? '-4rpx' : '0'}}});"
           data-banner="{{item}}"
           bindtap="onClickBanner"
         />

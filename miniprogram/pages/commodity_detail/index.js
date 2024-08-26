@@ -175,10 +175,11 @@ Page({
     if (!commodity) {
       return;
     }
-    const { confirm } = await wx.showModal({ title: '确认下架该商品？' });
-    if (!confirm) {
-      return;
-    }
+    const reasons = ['已在小程序售出', '已在其他平台售出', '不想卖了', '其他原因']
+    const { tapIndex: idx } = await wx.showActionSheet({
+      itemList: reasons,
+    })
+    metric.write('deactivate_reason', {}, { id: commodity._id, reason: reasons[idx] });
     await wx.showLoading({ mask: true, title: '正在下架...' });
     const resp = await api.deactivateCommodity({ id: commodity._id, });
     await wx.hideLoading();
