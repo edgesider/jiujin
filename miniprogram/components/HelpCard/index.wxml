@@ -31,7 +31,7 @@
             wx:key="*this"
             class="image"
             mode="{{help.img_urls.length > 1 ? 'aspectFill' : 'aspectFit'}}"
-            style="background-image: url('{{img}}/detail'); {{firstImageStyle}}};"
+            style="background-image: url('{{img}}/detail'); {{help.img_urls.length === 1 ? firstImageStyle : ''}}};"
             data-curr="{{img}}"
             catchtap="previewImages"
           />
