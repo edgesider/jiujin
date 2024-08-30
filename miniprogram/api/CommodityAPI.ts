@@ -1,6 +1,6 @@
 import { request, wrapResp } from './api';
 import { Resp } from './resp';
-import { Commodity, convertCommodity } from '../types';
+import { Commodity, convertCommodity, ViewsInfo } from '../types';
 import { getGlobals } from '../utils/globals';
 
 function convertListResp(resp: Resp<any>): Resp<Commodity[]> {
@@ -120,5 +120,15 @@ export const CommodityAPI = {
       path: '/commodity/add_view',
       data: { _id: id }
     }));
+  },
+  /**
+   * 获取浏览量相关数据
+   */
+  async getViewsInfo(id: string): Promise<Resp<ViewsInfo>> {
+    return wrapResp(await request({
+      path: `/page_view/${id}`,
+      method: 'GET',
+      data: {}
+    }))
   },
 }

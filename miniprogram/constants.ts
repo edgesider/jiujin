@@ -5,6 +5,7 @@ import { VerifyStatus } from './api/verify';
 import { EntityType } from './types';
 import { NotifyType } from './utils/notify';
 import { isInSingleMode } from './utils/globals';
+import { DialogType } from './utils/router';
 
 export const COMMODITY_STATUS_SELLING = 0; // 出售中
 export const COMMODITY_STATUS_DEACTIVATED = 1; // 已下架
@@ -101,6 +102,7 @@ const constants = {
   ...initConstants(),
   EntityType,
   NotifyType,
+  DialogType,
 };
 
 export default function getConstants() {

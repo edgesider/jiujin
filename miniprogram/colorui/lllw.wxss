@@ -1,15 +1,3 @@
-@import "colorui/main.wxss";
-@import "colorui/icon.wxss";
-@import "colorui/lllw.wxss";
-
-.spacer {
-  flex-grow: 1;
-}
-
-::-webkit-scrollbar {
-  display: none;
-}
-
 .ll-btn {
   color: white;
   font-weight: 600;

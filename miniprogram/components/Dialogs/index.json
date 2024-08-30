@@ -2,6 +2,8 @@
   "component": true,
   "usingComponents": {
     "NotifyCounterDialog": "/components/NotifyCounterDialog",
-    "NotVerifiedDialog": "/components/NotVerifiedDialog"
+    "NotVerifiedDialog": "/components/NotVerifiedDialog",
+    "ShareRewardRuleDialog": "/components/ShareRewardRuleDialog",
+    "UsePolishCardDialog": "/components/UsePolishCardDialog"
   }
 }

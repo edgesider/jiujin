@@ -1,5 +1,5 @@
 import { Resp } from './resp';
-import { convertHelp, Help } from '../types';
+import { convertHelp, Help, ViewsInfo } from '../types';
 import { request, wrapResp } from './api';
 
 function convertListResp(resp: Resp<any>): Resp<Help[]> {
@@ -100,5 +100,15 @@ export const HelpAPI = {
       path: '/help/add_view',
       data: { _id: id }
     }));
+  },
+  /**
+   * 获取浏览量相关数据
+   */
+  async getViewsInfo(id: string): Promise<Resp<ViewsInfo>> {
+    return wrapResp(await request({
+      path: `/page_view/${id}`,
+      method: 'GET',
+      data: {}
+    }))
   },
 }

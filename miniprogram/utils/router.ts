@@ -4,6 +4,7 @@ import { AboutType } from '../pages/about';
 import { getCurrentPage, parseURL, toastSucceed } from './other';
 import { metric } from './metric';
 import { encode } from 'base64-arraybuffer';
+import { UsePolishCardDialogParams, UsePolishCardDialogResult } from '../components/UsePolishCardDialog';
 
 export function getRouteFromHomePageUrl(
   targetPageOrSchema: string,
@@ -212,4 +213,69 @@ export function openNotVerifyDialog() {
 
 export function openNotifyCounterDialog() {
   getCurrentPage().__notify_counter_dialog.show();
+}
+
+export enum DialogType {
+  Unknown,
+  // 分享奖励规则
+  ShareRewardRule,
+  // 确认使用擦亮卡
+  UsePolishCard,
+  AfterPublish,
+}
+
+export async function openDialog<P, R>(type: DialogType, params?: P): Promise<R | undefined> {
+  if (type === DialogType.Unknown) {
+    throw Error('unable open unknown dialog')
+  }
+  const dialog = getCurrentPage()[getDialogKey(type)];
+  if (!dialog) {
+    throw Error(`dialog ${DialogType[type]} is not registered in current page`);
+  }
+  return new Promise(res => {
+    DialogHelper.setParams(type, params);
+    dialog.show(() => {
+      res(DialogHelper.getResult(type));
+    });
+  });
+}
+
+export const DialogHelper = {
+  getParams<T>(dialog: DialogType): T | undefined {
+    const page = getCurrentPage();
+    const key = getDialogKey(dialog) + '_params';
+    const d = page[key];
+    delete page[key];
+    return d;
+  },
+  setParams<T>(dialog: DialogType, p: T) {
+    const page = getCurrentPage();
+    const key = getDialogKey(dialog) + '_params';
+    if (page.key) {
+      throw Error('last params is not consumed');
+    }
+    page[key] = p;
+  },
+  getResult<T>(dialog: DialogType): T | undefined {
+    const page = getCurrentPage();
+    const key = getDialogKey(dialog) + '_result';
+    const d = page[key];
+    delete page[key];
+    return d;
+  },
+  setResult<T>(dialog: DialogType, r: T) {
+    const page = getCurrentPage();
+    const key = getDialogKey(dialog) + '_result';
+    if (page.key) {
+      throw Error('last result is not consumed');
+    }
+    page[key] = r;
+  },
+  closeSelf(comp: any) {
+    comp.__dialog.hide();
+  }
+}
+
+export function getDialogKey(type: DialogType) {
+  return `__dialog_${type}`;
 }

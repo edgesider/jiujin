@@ -1,0 +1,13 @@
+<Dialog
+  type="{{DialogType.UsePolishCard}}"
+  title="您确认要使用1张擦亮卡吗？"
+>
+  <view class="texts">
+    <text>商品发布后每隔<text class="red">48小时</text>可手动擦亮一次</text>
+    <text>使用「擦亮卡」则不受此时间限制</text>
+  </view>
+  <view class="buttons">
+    <view class="ll-btn" bindtap="onClickOk">使用</view>
+    <view class="ll-btn ll-btn-yellow" bindtap="onClickCancel">不用了</view>
+  </view>
+</Dialog>

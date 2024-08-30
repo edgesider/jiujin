@@ -21,6 +21,7 @@ export interface User {
   verify_index: number;
   notify_comment_count: number;
   notify_info_count: number;
+  inviter_id?: string;
 }
 
 export interface Commodity {
@@ -44,6 +45,7 @@ export interface Commodity {
   only_same_sex: boolean;
   only_same_building: boolean;
   collected_count: number;
+  is_collected: boolean;
 }
 
 function convertImgUrls(urls: string | undefined): string[] {
@@ -124,4 +126,13 @@ export interface Banner {
   rid: number;
   page_path?: string;
   schema?: string;
+}
+
+export interface ViewsInfo {
+  /** 浏览量 */
+  count: number;
+  /** 奖励擦亮卡数量 */
+  polish_count: number;
+  /** 我分享带来的浏览量 */
+  share_view_count: number;
 }

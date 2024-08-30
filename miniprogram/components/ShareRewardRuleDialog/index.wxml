@@ -1,0 +1,2 @@
+<Dialog type="{{DialogType.ShareRewardRule}}" title="分享奖励规则" content="{{content}}">
+</Dialog>

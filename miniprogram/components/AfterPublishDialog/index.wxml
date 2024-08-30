@@ -1,0 +1,13 @@
+<Dialog type="{{DialogType.AfterPublish}}" title="您的内容已成功发布">
+  <view class="content">
+商品发布后每隔<text class="red">48小时</text>可手动擦亮一次
+使用「擦亮卡」不受此时间限制
+
+为避免失效内容浪费用户时间
+商品发布后<text class="red">30天后</text>未擦亮将自动下架
+
+分享内容可获得更多额外曝光以促成交易
+分享带来的浏览量还可兑换擦亮卡奖励
+分享带来新用户最高奖励10元/人
+  </view>
+</Dialog>

@@ -1,0 +1,3 @@
+<Dialog type="{{DialogType.Unknown}}">
+  <view>Some dialog</view>
+</Dialog>

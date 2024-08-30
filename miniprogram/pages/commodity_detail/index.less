@@ -90,44 +90,81 @@
 
 .body .content .info {
   margin-top: 20rpx;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
   padding: 0 var(--content-padding);
-}
-
-.body .content .info .price {
-  color: var(--brand-green);
   display: flex;
-  align-self: flex-end;
-  font-weight: bold;
-}
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 
-.body .content .info .price .unit {
-  font-size: 28rpx;
-}
+  .line1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 
-.body .content .info .price .amount {
-  font-size: 54rpx;
-}
+    .price {
+      color: var(--brand-green);
+      display: flex;
+      align-self: flex-end;
+      font-weight: bold;
+    }
 
-.body .content .info .views {
-  margin-left: 8rpx;
-  font-size: 24rpx;
-  font-weight: 300;
-  color: #979797;
-  transform: translateY(12rpx);
-}
+    .price .unit {
+      font-size: 28rpx;
+    }
 
-.body .content .info .spacer {
-  flex-grow: 1;
-}
+    .price .amount {
+      font-size: 54rpx;
+    }
 
-.body .content .info .quality {
-  width: 150rpx;
-  height: 60rpx;
-  align-self: flex-end;
+    .views {
+      margin-left: 8rpx;
+      font-size: 24rpx;
+      font-weight: 300;
+      color: #979797;
+      transform: translateY(12rpx);
+    }
+
+    .spacer {
+      flex-grow: 1;
+    }
+
+    .quality {
+      flex-grow: 0;
+      flex-shrink: 0;
+      width: 150rpx;
+      height: 60rpx;
+    }
+  }
+
+  .line2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8rpx;
+
+    .share-view-count {
+      color: var(--brand-green);
+      font-size: 20rpx;
+      border-radius: 8rpx;
+      padding: 4rpx 6rpx;
+      border: 0.5px solid var(--brand-green);
+    }
+
+    .polish-card-count {
+      color: var(--brand-yellow);
+      font-size: 20rpx;
+      border-radius: 8rpx;
+      padding: 4rpx 6rpx;
+      border: 0.5px solid var(--brand-yellow);
+    }
+
+    .question {
+      width: 32rpx;
+      height: 32rpx;
+    }
+  }
 }
 
 .body .content .paragraphs {

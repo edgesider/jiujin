@@ -1,32 +1,36 @@
-import api, { getOpenId } from "../../api/api";
-import { setNeedRefresh } from "../home/index";
-import getConstants, { COMMODITY_STATUS_BOOKED, POLISH_MIN_DURATION } from "../../constants";
+import api from '../../api/api';
+import { setNeedRefresh } from '../home/index';
+import getConstants, { COMMODITY_STATUS_BOOKED, POLISH_MIN_DURATION } from '../../constants';
 import {
   ensureRegistered,
-  ensureVerified, ensureVerifiedSync,
+  ensureVerified,
+  ensureVerifiedSync,
   getRegionPathName,
   sleep,
   toastError,
   toastSucceed
-} from "../../utils/other";
-import moment from "moment";
+} from '../../utils/other';
+import moment from 'moment';
 import {
+  DialogType,
   handleLink,
   openCommodityEdit,
   openConversationDetail,
+  openDialog,
   openProfile,
-  openVerify,
-  openWebView
-} from "../../utils/router";
-import { DATETIME_FORMAT } from "../../utils/time";
-import { onShareCommodity, onShareCommoditySync, parseShareInfo, saveShareInfo } from "../../utils/share";
-import { isInSingleMode, waitForAppReady } from "../../utils/globals";
-import { startTransaction } from "../../utils/transaction";
-import { CommodityAPI } from "../../api/CommodityAPI";
-import { reportCommodity } from "../../utils/report";
-import { TransactionAPI, TransactionStatus } from "../../api/TransactionAPI";
-import { metric } from "../../utils/metric";
-import { textToRichText } from "../../utils/strings";
+} from '../../utils/router';
+import { DATETIME_FORMAT } from '../../utils/time';
+import { onShareCommodity, onShareCommoditySync, parseShareInfo, saveShareInfo } from '../../utils/share';
+import { isInSingleMode, waitForAppReady } from '../../utils/globals';
+import { startTransaction } from '../../utils/transaction';
+import { CommodityAPI } from '../../api/CommodityAPI';
+import { reportCommodity } from '../../utils/report';
+import { Transaction, TransactionAPI, TransactionStatus } from '../../api/TransactionAPI';
+import { metric } from '../../utils/metric';
+import { textToRichText } from '../../utils/strings';
+import { Commodity, User, ViewsInfo } from '../../types';
+import { ViewsAPI } from '../../api/ViewsAPI';
+import { openUsePolishCardDialog } from '../../components/UsePolishCardDialog/index';
 
 const app = getApp();
 
@@ -39,23 +43,27 @@ Page({
     ridToRegion: {},
     loading: true,
     isMine: false,
-    commodity: null,
-    transaction: null,
+    commodity: null as Commodity | null,
+    transaction: null as Transaction | null,
     createTime: '',
     canPolishDuration: 0,
     polishTimeGeneral: '', // 2022/2/2 10:10
     regionName: '',
-    seller: null,
+    seller: null as User | null,
     htmlContent: '',
     contentParagraphs: [],
-    firstImageSize: [],
+    firstImageSize: [0, 0],
     showNotVerifiedDialog: false,
     statusImage: '',
+    viewsInfo: null as ViewsInfo | null,
   },
   onLoad: async function (options) {
     await waitForAppReady();
     const { id, scrollToComment, shareInfo: shareInfoStr } = options;
 
+    if (!id) {
+      throw Error('invalid id');
+    }
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
@@ -64,18 +72,19 @@ Page({
 
     await this.loadData(id);
     this.setData({
-      scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
+      scrollToComment: Boolean((scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0')),
     });
 
     if (!isInSingleMode()) {
-      await CommodityAPI.addViewCount(id);
+      // await CommodityAPI.addViewCount(id);
+      await ViewsAPI.addView(id);
     }
     metric.write('commodity_detail_show', {}, { id });
   },
   back() {
     wx.navigateBack().then();
   },
-  async loadData(id) {
+  async loadData(id: string) {
     const commResp = await CommodityAPI.getOne(id);
     if (commResp.isError) {
       await wx.showToast({
@@ -84,8 +93,15 @@ Page({
       });
       return;
     }
+    ViewsAPI.getViewsInfo(id).then(viewsInfo => {
+      if (viewsInfo.isError) {
+        console.error('failed to getViewsInfo', viewsInfo.message);
+        return;
+      }
+      console.log(viewsInfo);
+      this.setData({ viewsInfo: viewsInfo.data })
+    });
     const commodity = commResp.data;
-
     const sellerResp = await api.getUserInfo(commodity.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
 
@@ -104,14 +120,14 @@ Page({
     const { self } = app.globalData;
     const isMine = self && self._id === commodity.seller_id;
 
-    let transaction = null;
+    let transaction: Transaction | null = null;
 
     if (!isInSingleMode()) {
       const transactionsResp = await TransactionAPI.listByCommodity(
         commodity._id,
-        isMine ? { status: TransactionStatus.Booked } : null
+        isMine ? { status: TransactionStatus.Booked } : undefined
       );
-      transaction = transactionsResp.data?.[0];
+      transaction = transactionsResp.data?.[0] ?? null;
     }
 
     const statusImage = {
@@ -142,9 +158,9 @@ Page({
       // 倒计时未结束
       return;
     }
-    const { commodity } = this.data;
     await ensureVerified();
-    if (this.polishing)
+    const { commodity } = this.data;
+    if (this.polishing || !commodity)
       return;
     this.polishing = true;
     await wx.showLoading({ mask: true, title: '擦亮中...' });
@@ -214,7 +230,7 @@ Page({
     if (!commodity) {
       return;
     }
-    await openCommodityEdit(this.data.commodity, true);
+    await openCommodityEdit(commodity, true);
     await this.loadData(commodity._id);
   },
 
@@ -222,7 +238,7 @@ Page({
     const { curr } = param.currentTarget.dataset;
     await wx.previewImage({
       current: `${curr}/detail`,
-      urls: this.data.commodity.img_urls.map(u => `${u}/detail`)
+      urls: this.data.commodity!!.img_urls.map(u => `${u}/detail`)
     });
   },
 
@@ -236,8 +252,11 @@ Page({
     this.togglingCollect = true;
     try {
       const { commodity } = this.data;
+      if (!commodity) {
+        throw Error('commodity is null');
+      }
       if (commodity.is_collected) {
-        const resp = await CommodityAPI.uncollect(this.data.commodity._id);
+        const resp = await CommodityAPI.uncollect(commodity._id);
         if (resp.isError) {
           toastError('取消收藏失败');
           return;
@@ -245,7 +264,7 @@ Page({
           toastSucceed('已取消收藏');
         }
       } else {
-        const resp = await CommodityAPI.collect(this.data.commodity._id);
+        const resp = await CommodityAPI.collect(commodity._id);
         if (resp.isError) {
           toastError('收藏失败');
           return;
@@ -268,11 +287,13 @@ Page({
 
   async onClickReport() {
     await ensureVerified();
-    await reportCommodity(this.data.commodity._id);
+    if (this.data.commodity) {
+      await reportCommodity(this.data.commodity._id);
+    }
   },
 
   async onPrivateMessage() {
-    if (isInSingleMode()) {
+    if (isInSingleMode() || !this.data.commodity || !this.data.seller) {
       return;
     }
     await ensureVerified();
@@ -281,8 +302,8 @@ Page({
       await wx.showLoading({
         title: '请稍后',
         mask: true
-      })
-      tact = await startTransaction(this.data.commodity, this.data.seller);
+      });
+      tact = await startTransaction(this.data.commodity, this.data.seller) ?? null;
       await wx.hideLoading();
       if (!tact) {
         toastError('发起私聊失败，请稍后再试');
@@ -293,7 +314,9 @@ Page({
   },
 
   async onAvatarClick() {
-    await openProfile(this.data.seller);
+    if (this.data.seller) {
+      await openProfile(this.data.seller);
+    }
   },
   onCommentLoadFinished() {
     if (this.data.scrollToComment) {
@@ -303,6 +326,7 @@ Page({
     }
   },
 
+  // @ts-ignore
   async onShareAppMessage(options) {
     await ensureVerified();
     const { commodity } = this.data;
@@ -318,7 +342,9 @@ Page({
   },
   onShareTimeline() {
     ensureVerifiedSync();
-    return onShareCommoditySync(this.data.commodity);
+    if (this.data.commodity) {
+      return onShareCommoditySync(this.data.commodity);
+    }
   },
 
   async onLinkTap(ev) {
@@ -328,5 +354,9 @@ Page({
   onRichTextError(err) {
     console.error('onRichTextError', err);
     metric.write('rich_text_error', {}, { err: err?.toString() });
+  },
+
+  async onClickShareRuleQuestion() {
+    await openDialog(DialogType.ShareRewardRule)
   }
 });

@@ -23,13 +23,20 @@
           />
         </view>
         <view class="info">
-          <text class="price">
-            <text class="unit">￥</text>
-            <text class="amount">{{commodity.price / 100}}</text>
-          </text>
-          <text class="views">{{commodity.view_count + 1}}浏览</text>
-          <view class="spacer" />
-          <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
+          <view class="line1">
+            <text class="price">
+              <text class="unit">￥</text>
+              <text class="amount">{{commodity.price / 100}}</text>
+            </text>
+            <text class="views">{{(viewsInfo ? viewsInfo.count : commodity.view_count) + 1}}浏览</text>
+            <view class="spacer" />
+            <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
+          </view>
+          <view class="line2" wx:if="{{viewsInfo}}">
+            <view class="share-view-count">我分享带来{{viewsInfo.share_view_count}}浏览</view>
+            <view class="polish-card-count">奖励我{{viewsInfo.polish_count}}张擦亮卡</view>
+            <image class="question" src="/images/question.png" bindtap="onClickShareRuleQuestion" />
+          </view>
         </view>
         <view class="paragraphs">
           <mp-html
@@ -104,7 +111,8 @@
           <view class="button button-disabled">交易已完成</view>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_BOOKED}}">
-          <block wx:if="{{isMine || (transaction.buyer === self._id && transaction.status === TransactionStatus.Booked)}}">
+          <block
+            wx:if="{{isMine || (transaction.buyer === self._id && transaction.status === TransactionStatus.Booked)}}">
             <view class="button" bindtap="onPrivateMessage">查看对话</view>
           </block>
           <block wx:else>

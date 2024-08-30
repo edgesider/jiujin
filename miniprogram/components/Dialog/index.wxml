@@ -1,0 +1,10 @@
+<view class="root" wx:if="{{show}}">
+  <view class="mask" bindtap="onMaskClick" />
+  <view class="card">
+    <view class="wrapper">
+      <view wx:if="{{title}}" class="title">{{title}}</view>
+      <view wx:if="{{content}}" class="content">{{content}}</view>
+      <slot />
+    </view>
+  </view>
+</view>
