@@ -18,9 +18,8 @@ import Emitter from '../utils/emitter';
 import { CbEvents } from '../constant/callback';
 import SparkMD5 from 'spark-md5';
 import { confirmUpload, getMimeType, getUploadPartsize, getUploadUrl, } from '../utils/upload';
-import { LoginStatus, Platform } from '../types/enum';
+import { LoginStatus } from '../types/enum';
 import { uuid } from '../utils/uuid';
-import { isReleaseVersion } from '../../../utils/env';
 
 const forceCloseEvents = [
   RequestApi.Logout,
@@ -42,7 +41,6 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
   private userID?: string;
   private token?: string;
   private apiAddr?: string;
-  private loginParams?: LoginParams;
   private wsManager?: WebSocketManager;
   private handlerMap = new Map<string, Handler>();
 
@@ -125,18 +123,6 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
     this.onLoginStateChanged(true);
   }
 
-  private handleBeforeReconnect = async () => {
-    // 尝试换一个PlatformId
-    const oldId = this.loginParams!!.platformID;
-    let newPlatformId = (oldId + 1) % (Platform.iPad + 1);
-    if (newPlatformId === 0) {
-      newPlatformId = 1;
-    }
-    this.loginParams!!.platformID = newPlatformId;
-    console.error(`before reconnect: replace platform id from ${oldId}[${Platform[oldId]}] to ${newPlatformId}[${Platform[newPlatformId]}]`)
-    this.wsManager?.setUrl(this.getWsUrl());
-  }
-
   private handleReconnectSuccess = async () => {
     if (!this.userID) return;
 
@@ -197,14 +183,6 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       });
   };
 
-  private getWsUrl() {
-    const params = this.loginParams;
-    if (!params) {
-      throw Error('login params is not specified');
-    }
-    return `${params.wsAddr}?sendID=${params.userID}&token=${params.token}&platformID=${params.platformID}&operationID=${uuid()}`;
-  }
-
   login = async (
     params: LoginParams,
     operationID = uuid()
@@ -218,17 +196,15 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
         event: RequestApi.Login,
       });
     }
-    this.loginParams = params;
+    const internalWsUrl = `${params.wsAddr}?sendID=${params.userID}&token=${params.token}&platformID=${params.platformID}&operationID=${operationID}`;
     this.userID = params.userID;
     this.token = params.token;
     this.apiAddr = params.apiAddr;
     this.wsManager = new WebSocketManager(
-      this.getWsUrl(),
+      internalWsUrl,
       this.handleMessage,
       this.handleReconnectSuccess,
       this.handleDisconnect,
-      this.handleBeforeReconnect,
-      2000,
     );
     try {
       await this.wsManager.connect();
