@@ -26,12 +26,17 @@ class WebSocketManager {
     private onMessage: (data: WsResponse) => void,
     private onReconnectSuccess: () => void,
     private onDisconnect: (willRetry: boolean) => void,
+    private beforeReconnect: () => void = () => {},
     private reconnectInterval = 1000,
     private maxReconnectAttempts = 100
   ) {
     this.url = url;
     this.reconnectAttempts = 0;
     this.connected = false;
+  }
+
+  public setUrl(url: string) {
+    this.url = url;
   }
 
   public connect = (): Promise<void> => {
@@ -57,7 +62,10 @@ class WebSocketManager {
               return;
             }
             console.log('onReconnect');
-            setTimeout(() => this.connect(), this.reconnectInterval);
+            setTimeout(() => {
+              this.beforeReconnect();
+              this.connect()
+            }, this.reconnectInterval);
             this.reconnectAttempts++;
           }
           this.onDisconnect(willRetry);

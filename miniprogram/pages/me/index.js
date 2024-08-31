@@ -18,7 +18,7 @@ import {
   openAboutPage,
   openCommodityDetail,
   openCommodityEdit, openCommodityPublish,
-  openHelpDetail, openHelpEdit, openHelpPublish,
+  openHelpDetail, openHelpEdit, openHelpPublish, openMyPolishCard,
   openProfile,
   openVerify
 } from "../../utils/router";
@@ -50,9 +50,7 @@ Page({
       this.updateSelfInfo(self);
     }
     app.userChangedSubject.subscribe(user => {
-      this.setData({
-        selfInfo: user ?? null
-      })
+      this.updateSelfInfo(user);
     })
   },
 
@@ -82,11 +80,17 @@ Page({
   gotoList(ev) {
     ensureRegistered();
     const { type } = ev.currentTarget.dataset;
+    if (type === 'my-polish-card') {
+      openMyPolishCard();
+      return;
+    }
+
+    // 列表页
     const title = {
       my_commodities: '我的闲置',
       my_helps: '我的互助',
       collected: '我收藏的',
-      liked: '我赞过的'
+      liked: '我赞过的',
     }[type];
     const tabs = {
       my_commodities: [

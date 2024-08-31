@@ -222,6 +222,7 @@ export enum DialogType {
   // 确认使用擦亮卡
   UsePolishCard,
   AfterPublish,
+  PolishCardRule,
 }
 
 export async function openDialog<P, R>(type: DialogType, params?: P): Promise<R | undefined> {
@@ -241,6 +242,9 @@ export async function openDialog<P, R>(type: DialogType, params?: P): Promise<R 
 }
 
 export const DialogHelper = {
+  initDialog(comp) {
+    getCurrentPage()[getDialogKey(comp.properties.type)] = comp;
+  },
   getParams<T>(dialog: DialogType): T | undefined {
     const page = getCurrentPage();
     const key = getDialogKey(dialog) + '_params';
@@ -276,6 +280,10 @@ export const DialogHelper = {
   }
 }
 
-export function getDialogKey(type: DialogType) {
+function getDialogKey(type: DialogType) {
   return `__dialog_${type}`;
+}
+
+export function openMyPolishCard() {
+  wx.navigateTo({ url: '/pages/my_polish_card/index' }).then();
 }

@@ -20,7 +20,8 @@
     "pages/verify/index",
     "pages/invite_activity/index",
     "pages/about/index",
-    "pages/webview/index"
+    "pages/webview/index",
+    "pages/my_polish_card/index"
   ],
   "window": {
     "backgroundColor": "#f1f1f1",
@@ -35,6 +36,7 @@
     "TitleBar": "/components/TitleBar",
     "UserTitleBar": "/components/UserTitleBar",
     "FullPageLoading": "/components/FullPageLoading",
+    "Dialog": "/components/Dialog",
     "Dialogs": "/components/Dialogs",
     "mp-html": "mp-html"
   },

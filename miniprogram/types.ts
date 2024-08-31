@@ -136,3 +136,25 @@ export interface ViewsInfo {
   /** 我分享带来的浏览量 */
   share_view_count: number;
 }
+
+export interface ResponsePage<T> {
+  content: T[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  /** 页数 */
+  number: number;
+  /** 页大小 */
+  size: number;
+  /** 元素总数 */
+  total_elements: number;
+  /** 总页数 */
+  total_pages: number;
+}
+
+export interface PolishCardDetail {
+  event_info: string; // 事件类型，例如“分享带来10人次浏览”
+  event_time: number;
+  points_change: number; // 积分变动，+n/-n
+  open_id: string;
+}

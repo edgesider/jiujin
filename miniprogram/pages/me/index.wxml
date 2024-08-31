@@ -52,6 +52,11 @@
       <view class="list_title">我赞过的</view>
       <image class="right" src="/images/right.png"></image>
     </view>
+    <view class="divider" />
+    <view class="list" bindtap="gotoList" data-type="my-polish-card">
+      <view class="list_title">我的擦亮卡</view>
+      <image class="right" src="/images/right.png"></image>
+    </view>
   </view>
 
   <view class="List">

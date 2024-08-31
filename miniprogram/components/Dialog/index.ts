@@ -1,7 +1,7 @@
 import getConstants from '../../constants';
 import { Subscription } from 'rxjs';
 import { getCurrentPage } from '../../utils/other';
-import { DialogType, getDialogKey } from '../../utils/router';
+import { DialogHelper, DialogType } from '../../utils/router';
 
 Component({
   properties: {
@@ -32,7 +32,7 @@ Component({
       if (type === DialogType.Unknown || typeof type !== 'number' || !(type in DialogType)) {
         throw Error(`cannot register dialog type ${type}`);
       }
-      page[getDialogKey(this.properties.type)] = this;
+      DialogHelper.initDialog(this);
       const hasTabBar = page.getTabBar();
       this.setData({ hasTabBar });
     },
