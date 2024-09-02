@@ -38,6 +38,7 @@ Component({
     },
     detached() {
       this.getSubscription().unsubscribe();
+      DialogHelper.clearDialog(this);
     }
   },
   methods: {
@@ -50,9 +51,9 @@ Component({
       this.__callback = callback;
       this.setData({ show: true });
     },
-    hide() {
+    async hide() {
       // @ts-ignore
-      this.__callback();
+      await this.__callback();
       this.setData({ show: false });
     },
     async onMaskClick() {

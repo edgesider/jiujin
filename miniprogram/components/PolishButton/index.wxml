@@ -1,0 +1,23 @@
+<view
+  class="button {{!enabled ? 'disabled' : ((remainMs <= 0 || firstPolish) ? 'free' : (cards > 0 ? 'use-card' : 'disabled'))}}"
+  catchtap="onClick"
+>
+  <text class="button-text" style="{{tipText ? 'transform: translateY(-4rpx)' : ''}}">
+    <block wx:if="{{enabled && remainMs > 0 && !firstPolish && cards > 0}}">用卡擦亮</block>
+    <block wx:else>擦亮</block>
+  </text>
+
+  <view class="tip" wx:if="{{tipText}}">
+    <image
+      wx:if="{{enabled && remainMs > 0}}"
+      class="waiting-icon"
+      src="{{cards > 0 ? '/images/waiting-blue.png' : '/images/waiting.png'}}"
+      mode="scaleToFill"
+    />
+    <text>{{tipText}}</text>
+  </view>
+
+  <view class="cards-tag" wx:if="{{remainMs > 0 && !firstPolish}}">
+    {{cards}}擦亮卡
+  </view>
+</view>

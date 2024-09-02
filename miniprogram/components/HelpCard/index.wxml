@@ -56,7 +56,7 @@
             <text class="text">{{help.comment_count > 0 ? help.comment_count : '评论'}}</text>
           </view>
           <view class="button" catchtap="onClickShare">
-            <image class="icon" src="/images/share.png" />
+            <image class="icon" src="/images/share-wx.png" />
             <text class="text">分享</text>
             <button
               open-type="share" plain="true"

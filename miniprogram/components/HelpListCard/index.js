@@ -1,7 +1,7 @@
 // pages/help_list/index.ts
 import getConstants, {
   HELP_STATUS_RUNNING,
-  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED, HELP_STATUS_RESOLVING, POLISH_MIN_DURATION
+  HELP_STATUS_FINISHED, HELP_STATUS_RESOLVED, HELP_STATUS_RESOLVING, HELP_POLISH_MIN_DURATION
 } from "../../constants";
 import { getContentDesc, getQualitiesMap } from "../../utils/strings";
 import { DATETIME_FORMAT } from "../../utils/time";
@@ -79,8 +79,8 @@ Component({
           [HELP_STATUS_RESOLVING]: '/images/解决中.png',
           [HELP_STATUS_FINISHED]: '/images/已完成.png',
         })[status] ?? '',
-        canPolishDuration: polish_time + POLISH_MIN_DURATION - Date.now(),
-        canPolish: Date.now() - polish_time > POLISH_MIN_DURATION
+        canPolishDuration: polish_time + HELP_POLISH_MIN_DURATION - Date.now(),
+        canPolish: Date.now() - polish_time > HELP_POLISH_MIN_DURATION
       })
     },
   },

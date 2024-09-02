@@ -86,6 +86,7 @@ page {
   height: 90rpx;
   text-align: right;
   font-weight: bold;
+  color: var(--brand-green);
 }
 
 /* 成色 */
@@ -152,4 +153,33 @@ page {
   font-size: 38rpx;
   border-radius: 50rpx;
   text-shadow: 0 3rpx 5rpx #666666;
+}
+
+.success-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.success-dialog .content {
+  color: #00000099;
+  font-size: 24rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.success-dialog .buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.success-dialog .button {
+  width: 180rpx;
+  height: 80rpx;
 }

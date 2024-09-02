@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "CountdownButton": "../CountdownButton/index"
+    "CountdownButton": "../CountdownButton/index",
+    "PolishButton": "/components/PolishButton/index"
   }
 }

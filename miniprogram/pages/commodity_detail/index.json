@@ -5,8 +5,7 @@
     "UserTitleBar": "/components/UserTitleBar/index",
     "FullPageLoading": "/components/FullPageLoading/index",
     "CountdownButton": "/components/CountdownButton/index",
-    "mp-html": "mp-html"
-  },
+    "PolishButton": "/components/PolishButton/index" },
   "enablePullDownRefresh": false,
   "disableScroll": true
 }

@@ -1,11 +1,17 @@
-import { getContentDesc, getQualitiesMap } from "../../utils/strings";
+import { getContentDesc, getQualitiesMap } from '../../utils/strings';
 import moment from 'moment';
 import getConstants, {
   COMMODITY_STATUS_SOLD,
   COMMODITY_STATUS_SELLING,
-  COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_BOOKED, POLISH_MIN_DURATION
-} from "../../constants";
-import { DATETIME_FORMAT } from "../../utils/time";
+  COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_BOOKED, COMMODITY_POLISH_MIN_DURATION
+} from '../../constants';
+import { DATETIME_FORMAT } from '../../utils/time';
+import { ViewsAPI } from '../../api/ViewsAPI';
+import { Commodity, ViewsInfo } from '../../types';
+import { CommodityUtils } from '../../utils/commodity';
+import { getGlobals, updateSelfInfo } from '../../utils/globals';
+import { openUsePolishCardDialog } from '../UsePolishCardDialog/index';
+import { Subscription } from 'rxjs';
 
 const app = getApp();
 
@@ -38,8 +44,27 @@ Component({
     statusImage: '',
     canPolish: false,
     canPolishDuration: 0,
+    viewsInfo: null as ViewsInfo | null,
+  },
+  lifetimes: {
+    attached() {
+      // @ts-ignore
+      this._subscription = new Subscription();
+      this.onUpdate();
+      this.getSubscription().add(app.userChangedSubject.subscribe(user => {
+        this.setData({ self: user });
+        this.onUpdate();
+      }));
+    },
+    detached() {
+      this.getSubscription().unsubscribe();
+    }
   },
   methods: {
+    getSubscription(): Subscription {
+      // @ts-ignore
+      return this._subscription as Subscription;
+    },
     async gotoDetail() {
       this.triggerEvent('onClickCard', {
         commodity: this.properties.commodity,
@@ -50,10 +75,7 @@ Component({
         commodity: this.properties.commodity,
       })
     },
-    polish(ev) {
-      if (ev.detail.remain > 0) {
-        return;
-      }
+    async polish() {
       this.triggerEvent('onPolish', {
         commodity: this.properties.commodity,
       })
@@ -81,7 +103,14 @@ Component({
 
     onUpdate() {
       const { showStatusImage } = this.properties;
-      const { content, create_time, polish_time, selled_time, status } = this.properties.commodity
+      const { content, create_time, polish_time, selled_time, status, _id } = this.properties.commodity
+      ViewsAPI.getViewsInfo(_id).then(viewsInfo => {
+        if (viewsInfo.isError) {
+          console.error('failed to getViewsInfo', viewsInfo.message);
+          return;
+        }
+        this.setData({ viewsInfo: viewsInfo.data })
+      });
       this.setData({
         self: app.globalData.self,
         desc: getContentDesc(content, 40),
@@ -94,12 +123,9 @@ Component({
           [COMMODITY_STATUS_BOOKED]: '/images/已预订.png',
           [COMMODITY_STATUS_DEACTIVATED]: '/images/已结束.png',
         })[status] ?? '',
-        canPolishDuration: polish_time + POLISH_MIN_DURATION - Date.now(),
-        canPolish: Date.now() - polish_time > POLISH_MIN_DURATION
+        canPolishDuration: polish_time + COMMODITY_POLISH_MIN_DURATION - Date.now(),
+        canPolish: Date.now() - polish_time > COMMODITY_POLISH_MIN_DURATION
       })
     },
-  },
-  attached() {
-    this.onUpdate();
   },
 });

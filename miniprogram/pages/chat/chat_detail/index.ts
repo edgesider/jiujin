@@ -205,23 +205,9 @@ Page({
       conversation, group, members,
       commodityTact, helpTact,
     });
-    this.updateOpenTime().then();
   },
   async onMessagePullDown() {
     await this.loadData();
-  },
-  /**
-   * 更新用户上次查看会话的时间
-   */
-  async updateOpenTime() {
-    if (this.data.commodityTact) {
-      await TransactionAPI.userOpenConv(this.data.commodityTact.id);
-    } else if (this.data.helpTact) {
-      await HelpTransactionAPI.userOpenConv(this.data.helpTact.id);
-    }
-  },
-  async onShow() {
-    await this.updateOpenTime();
   },
   getConversationName(conversation: ConversationItem) {
     if (conversation.conversationType === SessionType.Group) {

@@ -38,7 +38,8 @@
     "FullPageLoading": "/components/FullPageLoading",
     "Dialog": "/components/Dialog",
     "Dialogs": "/components/Dialogs",
-    "mp-html": "mp-html"
+    "mp-html": "mp-html",
+    "LLButton": "/components/LLButton"
   },
   "tabBar": {
     "custom": true,

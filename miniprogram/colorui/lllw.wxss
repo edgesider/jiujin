@@ -11,3 +11,7 @@
 .ll-btn.ll-btn-yellow {
   background-color: var(--brand-yellow);
 }
+
+text.red {
+  color: #ff4d4d;
+}

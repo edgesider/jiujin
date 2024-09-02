@@ -1,0 +1,69 @@
+.button {
+  font-size: 28rpx;
+  font-weight: bold;
+  border-radius: 16rpx;
+  min-height: 68rpx;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: white;
+
+  &.disabled {
+    background-color: #bababa;
+  }
+
+  &.use-card {
+    background-color: #5d89e5;
+
+    .tip text {
+      color: #365aa5;
+    }
+  }
+
+  &.free {
+    background-color: var(--brand-green);
+  }
+
+  .tip {
+    position: absolute;
+    bottom: 4rpx;
+    left: 50%;
+    font-size: 14rpx;
+    transform: translate(-50%);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+
+    .waiting-icon {
+      left: 0;
+      top: 0;
+      width: 8.5rpx;
+      height: 12rpx;
+    }
+
+    text {
+      color: #828282;
+      font-weight: 500;
+      word-break: keep-all;
+    }
+  }
+
+  .cards-tag {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 4rpx;
+    border-radius: 8rpx;
+    background: #ff4d4d;
+    color: white;
+    font-size: 14rpx;
+    font-weight: 600;
+    transform: translate(8rpx, -8rpx);
+  }
+}
+

@@ -4,7 +4,7 @@ import { request, wrapResp } from './api';
 import { getGlobals } from '../utils/globals';
 
 export const ViewsAPI = {
-  async addView(id: string) {
+  async addView(id: string, sharer?: string) {
     const { self } = getGlobals();
     if (!self) {
       throw Error('self info is not ready');
@@ -14,7 +14,7 @@ export const ViewsAPI = {
       method: 'POST',
       data: {
         entity_id: id,
-        inviter_id: self.inviter_id,
+        sharer_id: sharer,
       }
     }))
   },

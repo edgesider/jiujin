@@ -156,16 +156,6 @@ const api = {
     }));
   },
 
-  async createCommodity(commodityInfo) {
-    commodityInfo.img_urls = commodityInfo.img_urls.join(',');
-    return wrapResp(await request({
-      path: '/commodity/create',
-      method: 'POST',
-      data: {
-        ...commodityInfo,
-      }
-    }));
-  },
   async createHelp(helpInfo) {
     helpInfo.img_urls = helpInfo.img_urls.join(',');
     return wrapResp(await request({
@@ -195,18 +185,6 @@ const api = {
       method: 'POST',
       data: {
         _id: id,
-      }
-    }));
-  },
-
-  async updateCommodity(id, info) {
-    Object.assign(info, { _id: id });
-    info.img_urls = info.img_urls.join(',');
-    return wrapResp(await request({
-      path: '/commodity/modify',
-      method: 'POST',
-      data: {
-        ...info,
       }
     }));
   },

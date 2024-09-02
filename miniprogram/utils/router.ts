@@ -223,6 +223,7 @@ export enum DialogType {
   UsePolishCard,
   AfterPublish,
   PolishCardRule,
+  PublishSuccessDialog,
 }
 
 export async function openDialog<P, R>(type: DialogType, params?: P): Promise<R | undefined> {
@@ -245,6 +246,10 @@ export const DialogHelper = {
   initDialog(comp) {
     getCurrentPage()[getDialogKey(comp.properties.type)] = comp;
   },
+  clearDialog(comp) {
+    delete getCurrentPage()[getDialogKey(comp.properties.type) + '_params'];
+    delete getCurrentPage()[getDialogKey(comp.properties.type) + '_result'];
+  },
   getParams<T>(dialog: DialogType): T | undefined {
     const page = getCurrentPage();
     const key = getDialogKey(dialog) + '_params';
@@ -255,9 +260,9 @@ export const DialogHelper = {
   setParams<T>(dialog: DialogType, p: T) {
     const page = getCurrentPage();
     const key = getDialogKey(dialog) + '_params';
-    if (page.key) {
-      throw Error('last params is not consumed');
-    }
+    // if (page[key]) {
+    //   throw Error('last params is not consumed');
+    // }
     page[key] = p;
   },
   getResult<T>(dialog: DialogType): T | undefined {
@@ -270,9 +275,9 @@ export const DialogHelper = {
   setResult<T>(dialog: DialogType, r: T) {
     const page = getCurrentPage();
     const key = getDialogKey(dialog) + '_result';
-    if (page.key) {
-      throw Error('last result is not consumed');
-    }
+    // if (page[key]) {
+    //   throw Error('last result is not consumed');
+    // }
     page[key] = r;
   },
   closeSelf(comp: any) {

@@ -213,6 +213,14 @@ export function toastSucceed(msg: string, mask = true) {
   }).then();
 }
 
+export function toastInfo(msg: string, mask = true) {
+  wx.showToast({
+    title: msg,
+    icon: 'none',
+    mask
+  }).then();
+}
+
 export function toastError(msg: string, mask = true) {
   wx.showToast({
     title: msg,

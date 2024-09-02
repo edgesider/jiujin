@@ -67,7 +67,7 @@
           <text class="text">{{commodity.collected_count || '收藏'}}</text>
         </view>
         <view class="button">
-          <image class="icon" src="/images/share.png" />
+          <image class="icon" src="/images/share-wx.png" />
           <text class="text">分享</text>
           <button
             open-type="share" plain="true"
@@ -82,45 +82,40 @@
       <view class="right">
         <block wx:if="{{commodity.status === COMMODITY_STATUS_SELLING}}">
           <block wx:if="{{isMine}}">
-            <CountdownButton
-              class="button button-countdown"
-              fontSize="28"
-              initialMillSeconds="{{canPolishDuration}}"
-              suffixText="后可擦亮"
-              finishedText="擦亮"
-              bgStyle="padding: 0 20rpx; font-size: 28rpx;"
-              finishedBgStyle="padding: 14rpx 32rpx;"
-              bind:onClick="onPolish"
+            <PolishButton
+              commodity="{{commodity}}"
+              class="button"
+              bind:doPolish="onPolish"
             />
-            <view class="button button-yellowgreen" bindtap="onEdit">编辑</view>
-            <view class="button button-yellow" bindtap="onDeactivate">下架</view>
+            <LLButton class="button" color="yellowgreen" text="编辑" bind:tap="onEdit" />
+            <LLButton class="button" color="yellow" text="下架" bind:tap="onDeactivate" />
           </block>
           <block wx:else>
-            <view class="button button-green" bind:tap="onPrivateMessage">去私聊</view>
+            <LLButton class="button" color="green" text="去私聊" bind:tap="onPrivateMessage" />
           </block>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">
           <block wx:if="{{isMine}}">
-            <view class="button" bindtap="onActivate">重新上架</view>
+            <LLButton class="button" text="重新上架" bind:tap="onActivate" />
           </block>
           <block wx:else>
-            <view class="button button-disabled">已下架</view>
+            <LLButton class="button" text="已下架" disabled />
           </block>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_SOLD}}">
-          <view class="button button-disabled">交易已完成</view>
+          <LLButton class="button" text="交易已完成" disabled />
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_BOOKED}}">
           <block
             wx:if="{{isMine || (transaction.buyer === self._id && transaction.status === TransactionStatus.Booked)}}">
-            <view class="button" bindtap="onPrivateMessage">查看对话</view>
+            <LLButton class="button" text="查看对话" bind:tap="onPrivateMessage" />
           </block>
           <block wx:else>
-            <view class="button button-disabled">他人已预订</view>
+            <LLButton class="button" text="他人已预订" disabled />
           </block>
         </block>
         <block wx:elif="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">
-          <view class="button button-disabled">已下架</view>
+          <LLButton class="button" text="已下架" disabled />
         </block>
       </view>
     </view>

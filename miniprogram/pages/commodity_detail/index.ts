@@ -1,6 +1,6 @@
 import api from '../../api/api';
 import { setNeedRefresh } from '../home/index';
-import getConstants, { COMMODITY_STATUS_BOOKED, POLISH_MIN_DURATION } from '../../constants';
+import getConstants, { COMMODITY_STATUS_BOOKED, COMMODITY_POLISH_MIN_DURATION } from '../../constants';
 import {
   ensureRegistered,
   ensureVerified,
@@ -20,8 +20,8 @@ import {
   openProfile,
 } from '../../utils/router';
 import { DATETIME_FORMAT } from '../../utils/time';
-import { onShareCommodity, onShareCommoditySync, parseShareInfo, saveShareInfo } from '../../utils/share';
-import { isInSingleMode, waitForAppReady } from '../../utils/globals';
+import { onShareCommodity, onShareCommoditySync, parseShareInfo, saveShareInfo, ShareInfo } from '../../utils/share';
+import { isInSingleMode, updateSelfInfo, waitForAppReady } from '../../utils/globals';
 import { startTransaction } from '../../utils/transaction';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { reportCommodity } from '../../utils/report';
@@ -56,6 +56,7 @@ Page({
     showNotVerifiedDialog: false,
     statusImage: '',
     viewsInfo: null as ViewsInfo | null,
+    shareInfo: null as ShareInfo | null
   },
   onLoad: async function (options) {
     await waitForAppReady();
@@ -68,6 +69,7 @@ Page({
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
       saveShareInfo(shareInfo).then();
+      this.setData({ shareInfo });
     }
 
     await this.loadData(id);
@@ -76,8 +78,7 @@ Page({
     });
 
     if (!isInSingleMode()) {
-      // await CommodityAPI.addViewCount(id);
-      await ViewsAPI.addView(id);
+      await ViewsAPI.addView(id, shareInfo?.fromUid);
     }
     metric.write('commodity_detail_show', {}, { id });
   },
@@ -98,7 +99,6 @@ Page({
         console.error('failed to getViewsInfo', viewsInfo.message);
         return;
       }
-      console.log(viewsInfo);
       this.setData({ viewsInfo: viewsInfo.data })
     });
     const commodity = commResp.data;
@@ -140,7 +140,7 @@ Page({
       commodity,
       transaction,
       createTime: moment(commodity.create_time).format(DATETIME_FORMAT),
-      canPolishDuration: (commodity.polish_time ?? commodity.create_time) + POLISH_MIN_DURATION - Date.now(),
+      canPolishDuration: (commodity.polish_time ?? commodity.create_time) + COMMODITY_POLISH_MIN_DURATION - Date.now(),
       polishTimeGeneral: moment(commodity.polish_time ?? commodity.create_time).format(DATETIME_FORMAT),
       seller,
       contentParagraphs: commodity.content.split('\n').map(s => s.trim()),
@@ -153,11 +153,7 @@ Page({
   },
 
   polishing: false,
-  async onPolish(ev) {
-    if (ev.detail.remain > 0) {
-      // 倒计时未结束
-      return;
-    }
+  async onPolish() {
     await ensureVerified();
     const { commodity } = this.data;
     if (this.polishing || !commodity)
@@ -169,7 +165,7 @@ Page({
     this.polishing = false;
     if (resp.isError) {
       await wx.showToast({
-        title: '三小时可擦亮一次',
+        title: '擦亮失败',
         icon: 'error',
         mask: true,
       });
@@ -184,6 +180,8 @@ Page({
     await sleep(500);
     setNeedRefresh();
     this.back();
+    // 擦亮卡有可能-1了，更新下自己的信息
+    updateSelfInfo();
   },
   async onDeactivate() {
     await ensureVerified();

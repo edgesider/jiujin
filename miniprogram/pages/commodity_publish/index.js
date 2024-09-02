@@ -1,13 +1,16 @@
 import api, { getOpenId } from "../../api/api";
 import { decodeOptions, getQualitiesMap } from "../../utils/strings";
 import { setNeedRefresh } from "../home/index";
-import { sleep, toastError, toastLoading, toastLoadingHide, toastSucceed } from "../../utils/other";
+import { sleep, toastError, toastInfo, toastLoading, toastLoadingHide, toastSucceed } from "../../utils/other";
 import getConstants from "../../constants";
 import { NotifyType, requestNotifySubscribes } from "../../utils/notify";
 import { waitForAppReady } from "../../utils/globals";
 import { ErrCode } from "../../api/ErrCode";
 import { compressImage } from "../../utils/canvas";
 import { metric } from "../../utils/metric";
+import { DialogType, openDialog } from "../../utils/router";
+import { onShareApp, onShareCommodity } from "../../utils/share";
+import { CommodityAPI } from "../../api/CommodityAPI";
 
 const app = getApp()
 
@@ -36,7 +39,9 @@ Page({
       { text: '同楼可见', key: 'building', selected: false },
     ],
     filtration: ["全部可见", "同校区可见", "同性别可见", "同楼可见"],
-    choose_filtration: "全部可见"
+    choose_filtration: "全部可见",
+
+    published: false,
   },
 
   async onLoad(options) {
@@ -271,8 +276,9 @@ Page({
     toastLoading(editing ? '正在保存' : '正在发布');
 
     const resp = editing
-      ? await api.updateCommodity(editing._id, info)
-      : await api.createCommodity(info);
+      ? await CommodityAPI.update(editing._id, info)
+      : await CommodityAPI.create(info);
+    toastLoadingHide();
     if (resp.isError) {
       console.error(resp);
       let err = editing ? '保存失败' : '发布失败';
@@ -286,10 +292,12 @@ Page({
       // TODO 使用Channel
       setNeedRefresh();
     }
-    toastSucceed(editing ? '已保存' : '发布成功');
-
-    await sleep(1500);
-    await wx.navigateBack();
+    if (!editing) {
+      this.setData({ published: resp.data });
+      await openDialog(DialogType.PublishSuccessDialog);
+    } else {
+      wx.navigateBack();
+    }
   },
 
   submitting: false,
@@ -319,6 +327,31 @@ Page({
         msg: errMsg,
         error: error?.toString()
       });
+    }
+  },
+
+  onShareWxClick() {
+  },
+  onSharePyqClick() {
+    // toastInfo('暂不支持？');
+    wx.showActionSheet({
+      itemList: ['复制链接', '分享海报', '分享微信'],
+    })
+  },
+  onShareDismissClick() {
+    wx.navigateBack();
+  },
+
+  async onShareAppMessage(options) {
+    if (this.data.published) {
+      toastLoading('请稍后');
+      try {
+        return await onShareCommodity(null, this.data.published);
+      } finally {
+        toastLoadingHide();
+      }
+    } else {
+      return onShareApp();
     }
   }
 })

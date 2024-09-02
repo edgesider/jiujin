@@ -33,7 +33,8 @@
 .tabs .tab.selected {
   font-weight: bold;
   padding: 4rpx 0;
-  border-bottom: 4rpx solid green;
+  color: var(--brand-green);
+  border-bottom: 4rpx solid var(--brand-yellow);
 }
 
 .list {

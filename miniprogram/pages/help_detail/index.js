@@ -1,4 +1,4 @@
-import getConstants, { POLISH_MIN_DURATION } from "../../constants";
+import getConstants, { HELP_POLISH_MIN_DURATION } from "../../constants";
 import { onShareHelp, onShareHelpSync, parseShareInfo, saveShareInfo } from "../../utils/share";
 import api from "../../api/api";
 import moment from "moment";
@@ -118,7 +118,7 @@ Page({
       help,
       transaction,
       createTime: moment(help.create_time).format(DATETIME_FORMAT),
-      canPolishDuration: (help.polish_time ?? help.create_time) + POLISH_MIN_DURATION - Date.now(),
+      canPolishDuration: (help.polish_time ?? help.create_time) + HELP_POLISH_MIN_DURATION - Date.now(),
       polishTimeGeneral: moment(help.polish_time ?? help.create_time).format(DATETIME_FORMAT),
       seller,
       htmlContent: textToRichText(help.content),

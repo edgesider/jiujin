@@ -115,12 +115,6 @@ export const CommodityAPI = {
       data: { rids }
     }))
   },
-  async addViewCount(id: string) {
-    return wrapResp(await request({
-      path: '/commodity/add_view',
-      data: { _id: id }
-    }));
-  },
   /**
    * 获取浏览量相关数据
    */
@@ -130,5 +124,30 @@ export const CommodityAPI = {
       method: 'GET',
       data: {}
     }))
+  },
+  async create(params: Record<string, any>): Promise<Resp<Commodity>> {
+    params.img_urls = params.img_urls.join(',');
+    const resp = wrapResp(await request({
+      path: '/commodity/create',
+      method: 'POST',
+      data: {
+        ...params,
+      }
+    }));
+    if (!resp.isError && resp.data) {
+      resp.data = convertCommodity(resp.data);
+    }
+    return resp;
+  },
+  async update(id: string, params: Record<string, any>): Promise<Resp<void>> {
+    params._id = id;
+    params.img_urls = params.img_urls.join(',');
+    return wrapResp(await request({
+      path: '/commodity/modify',
+      method: 'POST',
+      data: {
+        ...params,
+      }
+    }));
   },
 }

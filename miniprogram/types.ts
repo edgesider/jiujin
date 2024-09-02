@@ -22,6 +22,7 @@ export interface User {
   notify_comment_count: number;
   notify_info_count: number;
   inviter_id?: string;
+  polish_cards: number;
 }
 
 export interface Commodity {

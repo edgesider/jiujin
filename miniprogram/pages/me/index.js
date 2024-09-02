@@ -22,7 +22,7 @@ import {
   openProfile,
   openVerify
 } from "../../utils/router";
-import { waitForAppReady } from "../../utils/globals";
+import { updateSelfInfo, waitForAppReady } from "../../utils/globals";
 import { CommodityAPI } from "../../api/CommodityAPI";
 import { HelpAPI } from "../../api/HelpAPI";
 import { VerifyStatus } from "../../api/verify";
@@ -214,10 +214,12 @@ Page({
                 await wx.hideLoading();
                 if (resp.isError) {
                   console.error(resp);
-                  toastError('三小时可擦亮一次');
+                  toastError('48小时可擦亮一次');
                   return;
                 }
                 toastSucceed('擦亮成功')
+                // 擦亮卡有可能-1了，更新下自己的信息
+                updateSelfInfo();
                 return { action: 'fetchSingle' };
               },
               deactivate: async () => {

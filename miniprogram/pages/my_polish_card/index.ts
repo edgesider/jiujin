@@ -1,6 +1,6 @@
 import getConstants from '../../constants';
 import { Subscription } from 'rxjs';
-import { getGlobals, waitForAppReady } from '../../utils/globals';
+import { getGlobals, updateSelfInfo, waitForAppReady } from '../../utils/globals';
 import { DialogType, openDialog } from '../../utils/router';
 import { UserAPI } from '../../api/UserAPI';
 import { PolishCardDetail } from '../../types';
@@ -16,7 +16,7 @@ Page({
     loadError: false,
     details: [] as (PolishCardDetail & { time_str: string })[],
     sum: 0,
-    page: 0,
+    page: -1,
   },
   _subscription: null as Subscription | null,
   async onLoad() {
@@ -24,6 +24,10 @@ Page({
     this._subscription = new Subscription();
 
     await this.loadDetails();
+    const self = await updateSelfInfo();
+    this.setData({
+      sum: self?.polish_cards ?? 0
+    });
   },
   async loadDetails() {
     const { page, details } = this.data;
@@ -40,7 +44,6 @@ Page({
     const newItems = resp.data.content.map(item => ({...item, time_str: moment(item.event_time).format(DATETIME_FORMAT)}));
     this.setData({
       page: page + 1,
-      sum: resp.data.total_elements,
       details: [...details, ...newItems]
     });
   },
