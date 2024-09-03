@@ -222,8 +222,9 @@ export enum DialogType {
   // 确认使用擦亮卡
   UsePolishCard,
   AfterPublish,
-  PolishCardRule,
   PublishSuccessDialog,
+  // 无擦亮卡
+  NoPolishCardDialog,
 }
 
 export async function openDialog<P, R>(type: DialogType, params?: P): Promise<R | undefined> {

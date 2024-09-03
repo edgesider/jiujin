@@ -4,7 +4,34 @@
     <image class="bg" src="res/card.png" />
     <view class="title">擦亮卡</view>
     <view class="count">持有数量{{sum}}张</view>
-    <view class="rule-btn" bindtap="openRule">如何获得</view>
+<!--    <view class="rule-btn" bindtap="openRule">如何获得</view>-->
+  </view>
+
+  <view class="rule-content">
+    <view class="subtitle">分享行为：</view>
+    1.分享闲置或互助详情每带来10人次浏览，擦亮卡+1；
+    <view />
+    2.由分享带来新注册用户，擦亮卡+5；
+    <view />
+    3.由分享带来新注册用户首次发布内容，擦亮卡+5。
+    <view class="empty-line" />
+
+    <view class="subtitle">发布内容和交易：</view>
+    1.新用户首次发布内容，擦亮卡+2；
+    <view />
+    2.在平台完成交易，交易双方擦亮卡+1（同一对交易双方每日限1张，互刷无效）；
+    <view />
+    3.累计发布闲置商品数量≥10时，擦亮卡+10；
+    <view />
+    4.累计购买闲置商品数量≥5时，擦亮卡+10。
+    <view class="empty-line" />
+
+    <view class="subtitle">其他：</view>
+    1.对不良内容举报成功，擦亮卡+2；
+    <view />
+    2.首次打开消息通知权限，擦亮卡+5；
+    <view />
+    3.将【楼里楼外校园】添加至“我的小程序”。
   </view>
 
   <view class="detail">
@@ -21,34 +48,34 @@
           <text wx:if="{{item.points_change > 0}}">+</text>{{item.points_change}}
         </view>
       </view>
-<!--      <view class="load-more" bindtap="loadMore">加载更多</view>-->
+      <!--      <view class="load-more" bindtap="loadMore">加载更多</view>-->
     </scroll-view>
   </view>
 </view>
 
-<Dialog type="{{DialogType.PolishCardRule}}" title="如何获得擦亮卡">
-  <view class="rule-content">
-    <view class="subtitle">分享行为：</view>
-    分享闲置或互助详情每带来10人次浏览，擦亮卡+1
-    <view />
-    由分享带来新注册用户，擦亮卡+5
-    <view />
-    由分享带来新注册用户首次发布内容，擦亮卡+5
-    <view class="empty-line" />
+  <!--<Dialog type="{{DialogType.PolishCardRule}}" title="如何获得擦亮卡">-->
+  <!--  <view class="rule-content">-->
+  <!--    <view class="subtitle">分享行为：</view>-->
+  <!--    分享闲置或互助详情每带来10人次浏览，擦亮卡+1-->
+  <!--    <view />-->
+  <!--    由分享带来新注册用户，擦亮卡+5-->
+  <!--    <view />-->
+  <!--    由分享带来新注册用户首次发布内容，擦亮卡+5-->
+  <!--    <view class="empty-line" />-->
 
-    <view class="subtitle">发布内容和交易：</view>
-    新用户首次发布内容，擦亮卡+2
-    <view />
-    在平台完成交易，交易双方擦亮卡+1（同一对交易双方每日限1张）
-    <view />
-    累计发布闲置商品数量≥10时，擦亮卡+10
-    <view />
-    累计购买闲置商品数量≥5时，擦亮卡+10
-    <view class="empty-line" />
+  <!--    <view class="subtitle">发布内容和交易：</view>-->
+  <!--    新用户首次发布内容，擦亮卡+2-->
+  <!--    <view />-->
+  <!--    在平台完成交易，交易双方擦亮卡+1（同一对交易双方每日限1张）-->
+  <!--    <view />-->
+  <!--    累计发布闲置商品数量≥10时，擦亮卡+10-->
+  <!--    <view />-->
+  <!--    累计购买闲置商品数量≥5时，擦亮卡+10-->
+  <!--    <view class="empty-line" />-->
 
-    <view class="subtitle">其他：</view>
-    对违反法律、校规以及平台规则的内容举报成功，擦亮卡+2
-    <view />
-    首次打开消息通知权限，擦亮卡+5
-  </view>
-</Dialog>
+  <!--    <view class="subtitle">其他：</view>-->
+  <!--    对违反法律、校规以及平台规则的内容举报成功，擦亮卡+2-->
+  <!--    <view />-->
+  <!--    首次打开消息通知权限，擦亮卡+5-->
+  <!--  </view>-->
+  <!--</Dialog>-->

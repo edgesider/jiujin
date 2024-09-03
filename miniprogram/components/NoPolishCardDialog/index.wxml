@@ -1,0 +1,9 @@
+<Dialog
+  type="{{DialogType.NoPolishCardDialog}}"
+  title="您当前没有擦亮卡"
+  content="擦亮卡可通过分享、发布内容、交易等方式获取"
+>
+  <view class="buttons">
+    <LLButton class="button" text="查看具体规则" bindtap="onClickOk"/>
+  </view>
+</Dialog>

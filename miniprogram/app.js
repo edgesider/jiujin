@@ -123,11 +123,9 @@ App({
 
   async reportIsAddedToMyProgram() {
     const { self } = getGlobals();
-    console.log('added', self.is_add_my_pro);
     if (!self) {
       return;
     }
-    console.log(await isAddedToMyProgram() && !self.is_add_my_pro);
     if (await isAddedToMyProgram() && !self.is_add_my_pro) {
       await UserAPI.addedToMyProgram();
       await updateSelfInfo();

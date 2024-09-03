@@ -5,18 +5,19 @@ import getConstants, {
   COMMODITY_STATUS_REPORTED,
   COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_SOLD,
-  HELP_POLISH_MIN_DURATION, HELP_STATUS_FINISHED,
+  HELP_POLISH_MIN_DURATION,
+  HELP_STATUS_FINISHED,
   HELP_STATUS_REPORTED,
   HELP_STATUS_RESOLVING,
   HELP_STATUS_RUNNING
 } from '../../constants';
 import { Subscription } from 'rxjs';
 import { MS_IN_HOUR, MS_IN_MINUTE, MS_IN_SECOND, splitMilliseconds } from '../../utils/time';
-import { sleep } from '../../utils/other';
 import { getGlobals } from '../../utils/globals';
 import { Commodity, Help } from '../../types';
 import { openUsePolishCardDialog } from '../UsePolishCardDialog/index';
 import { EntityUtils } from '../../utils/entity';
+import { DialogType, openDialog } from '../../utils/router';
 
 Component({
   properties: {
@@ -135,6 +136,7 @@ Component({
       }
       if (!EntityUtils.canFreePolish({ commodity, help })) {
         if (cards <= 0) {
+          await openDialog(DialogType.NoPolishCardDialog);
           return;
         }
         const res = await openUsePolishCardDialog();

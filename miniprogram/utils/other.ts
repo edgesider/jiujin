@@ -324,7 +324,6 @@ export async function isAddedToMyProgram() {
     // @ts-ignore
     wx.checkIsAddedToMyMiniProgram({
       success: result => {
-        console.log('check result', result);
         res(Boolean(result?.added))
       }
     });

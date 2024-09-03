@@ -16,7 +16,15 @@ Component({
     content: {
       value: '',
       type: String,
-    }
+    },
+    // okButton: {
+    //   value: '',
+    //   type: String,
+    // },
+    // cancelButton: {
+    //   value: '',
+    //   type: String,
+    // },
   },
   data: {
     ...getConstants(),

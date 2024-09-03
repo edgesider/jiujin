@@ -56,7 +56,7 @@ Page({
   getSubscription() {
     return this._subscription!!;
   },
-  openRule() {
-    openDialog(DialogType.PolishCardRule);
-  },
+  // openRule() {
+  //   openDialog(DialogType.PolishCardRule);
+  // },
 })
