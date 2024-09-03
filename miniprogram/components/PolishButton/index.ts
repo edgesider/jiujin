@@ -1,6 +1,13 @@
 import getConstants, {
-  COMMODITY_POLISH_MIN_DURATION, COMMODITY_STATUS_BOOKED, COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_REPORTED,
-  COMMODITY_STATUS_SELLING, COMMODITY_STATUS_SOLD,
+  COMMODITY_POLISH_MIN_DURATION,
+  COMMODITY_STATUS_BOOKED,
+  COMMODITY_STATUS_DEACTIVATED,
+  COMMODITY_STATUS_REPORTED,
+  COMMODITY_STATUS_SELLING,
+  COMMODITY_STATUS_SOLD,
+  HELP_POLISH_MIN_DURATION, HELP_STATUS_FINISHED,
+  HELP_STATUS_REPORTED,
+  HELP_STATUS_RESOLVING,
   HELP_STATUS_RUNNING
 } from '../../constants';
 import { Subscription } from 'rxjs';
@@ -9,7 +16,7 @@ import { sleep } from '../../utils/other';
 import { getGlobals } from '../../utils/globals';
 import { Commodity, Help } from '../../types';
 import { openUsePolishCardDialog } from '../UsePolishCardDialog/index';
-import { CommodityUtils } from '../../utils/commodity';
+import { EntityUtils } from '../../utils/entity';
 
 Component({
   properties: {
@@ -19,9 +26,11 @@ Component({
         this.onUpdate();
       }
     },
-    // TODO 适配互助
     help: {
       type: Object,
+      observer() {
+        this.onUpdate();
+      }
     },
   },
   data: {
@@ -58,26 +67,21 @@ Component({
         commodity?: Commodity,
         help?: Help,
       };
-      // if (!commodity && !help) {
-      //   throw Error('both commodity and help is null');
-      // }
-      // if (commodity && help) {
-      //   throw Error('both commodity and help is not null');
-      // }
-
-      if (!commodity) {
-        throw Error('commodity is null');
+      if (commodity && help) {
+        throw Error('both commodity and help is not null');
       }
-      const enabled = commodity.status === COMMODITY_STATUS_SELLING;
-      const remainMs = (commodity.polish_time + COMMODITY_POLISH_MIN_DURATION) - Date.now();
-      const { polish_cards } = getGlobals().self ?? { polish_cards: 0 };
-      const firstPolish = commodity.create_time === commodity.polish_time;
+
+      const { polish_cards: cards } = getGlobals().self ?? { polish_cards: 0 };
+
+      let enabled: boolean;
+      let remainMs: number;
       let tipText = '';
-      if (enabled) {
-        if (remainMs > 0 && !firstPolish) {
-          tipText = `${this.getRemainText(remainMs)}后可擦亮`;
-        }
-      } else {
+      let firstPolish: boolean;
+
+      if (commodity) {
+        enabled = commodity.status === COMMODITY_STATUS_SELLING;
+        remainMs = (commodity.polish_time + COMMODITY_POLISH_MIN_DURATION) - Date.now();
+        firstPolish = commodity.create_time === commodity.polish_time;
         if (commodity.status === COMMODITY_STATUS_BOOKED) {
           tipText = '已预定';
         } else if (commodity.status === COMMODITY_STATUS_REPORTED || commodity.status === COMMODITY_STATUS_DEACTIVATED) {
@@ -85,13 +89,26 @@ Component({
         } else if (commodity.status === COMMODITY_STATUS_SOLD) {
           tipText = '已售出';
         }
+      } else if (help) {
+        enabled = help.status === HELP_STATUS_RUNNING;
+        remainMs = (help.polish_time + HELP_POLISH_MIN_DURATION) - Date.now();
+        firstPolish = help.create_time === help.polish_time;
+        if (help.status === HELP_STATUS_RESOLVING) {
+          tipText = '解决中';
+        } else if (help.status === HELP_STATUS_REPORTED || help.status === HELP_STATUS_FINISHED) {
+          tipText = '已结束';
+        }
+      } else {
+        throw Error('both commodity and help is null');
+      }
+      if (!enabled) {
         tipText += '不可擦亮';
       }
       this.setData({
-        enabled: enabled,
-        cards: polish_cards,
+        enabled,
+        cards,
         remainMs,
-        firstPolish ,
+        firstPolish,
         tipText,
       });
     },
@@ -109,11 +126,14 @@ Component({
     },
     async onClick() {
       const { remainMs, enabled, cards } = this.data;
-      const commodity = this.properties.commodity as Commodity;
+      const { commodity, help } = this.properties as any as {
+        commodity?: Commodity,
+        help?: Help,
+      };
       if (!enabled) {
         return;
       }
-      if (!CommodityUtils.canFreePolish(commodity)) {
+      if (!EntityUtils.canFreePolish({ commodity, help })) {
         if (cards <= 0) {
           return;
         }

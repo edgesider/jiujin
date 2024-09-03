@@ -3,7 +3,8 @@
     "Comments": "/components/Comments/index",
     "HelpCard": "/components/HelpCard/index",
     "UserTitleBar": "/components/UserTitleBar/index",
-    "CountdownButton": "/components/CountdownButton/index"
+    "CountdownButton": "/components/CountdownButton/index",
+    "PolishButton": "/components/PolishButton"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

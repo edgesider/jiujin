@@ -9,7 +9,7 @@
     <scroll-view class="body" scroll-y="{{true}}" scroll-into-view="{{scrollToView}}" scroll-with-animation="{{true}}">
       <view class="content">
         <view>
-          <view wx:if="{{hasImg===false}}" >
+          <view wx:if="{{hasImg===false}}">
             <view class="divider" />
           </view>
           <view
@@ -31,14 +31,21 @@
           </view>
         </view>
         <view class="info">
-          <view class="bounty" wx:if="{{help.bounty>0}}">
-            <text class="text">悬赏</text>
-            <text class="price">
-              <text class="unit">￥</text>
-              <text class="amount">{{help.bounty / 100}}</text>
-            </text>
+          <view class="line1">
+            <view class="bounty" wx:if="{{help.bounty > 0}}">
+              <text class="text">悬赏</text>
+              <text class="price">
+                <text class="unit">￥</text>
+                <text class="amount">{{help.bounty / 100}}</text>
+              </text>
+            </view>
+            <text class="views">{{viewsInfo.count || 0}}人浏览</text>
           </view>
-          <text class="views">{{help.view_count + 1}}浏览</text>
+          <view class="line2" wx:if="{{viewsInfo}}">
+            <view class="share-view-count">我分享带来{{viewsInfo.share_view_count}}人浏览</view>
+            <view class="polish-card-count">奖励我{{viewsInfo.polish_count}}张擦亮卡</view>
+            <image class="question" src="/images/question.png" bindtap="onClickShareRuleQuestion" />
+          </view>
         </view>
         <view class="paragraphs">
           <mp-html
@@ -52,7 +59,6 @@
         </view>
       </view>
       <view class="divider" />
-
       <Comments id="comments" class="comments" help="{{help}}" bind:loadFinished="onCommentLoadFinished" />
     </scroll-view>
     <view class="footer" wx:if="{{!SinglePageMode}}">
@@ -83,36 +89,32 @@
       <view class="right">
         <block wx:if="{{help.status === HELP_STATUS_RUNNING}}">
           <block wx:if="{{isMine}}">
-            <CountdownButton
-              class="button button-countdown"
-              fontSize="28"
-              initialMillSeconds="{{canPolishDuration}}"
-              suffixText="后可擦亮"
-              finishedText="擦亮"
-              bgStyle="padding: 0 18rpx; font-size: 24rpx;"
-              finishedBgStyle="padding: 14rpx 32rpx;"
-              bind:onClick="onPolish"
+            <PolishButton
+              help="{{help}}"
+              class="button"
+              bind:doPolish="onPolish"
             />
-            <view class="button button-yellowgreen" bindtap="edit">编辑</view>
-            <view class="button button-yellow" bindtap="onDeactivate">结束</view>
+            <LLButton class="button" color="yellowgreen" text="编辑" bind:tap="edit" />
+            <LLButton class="button" color="yellow" text="结束" bind:tap="onDeactivate" />
           </block>
           <block wx:elif='{{help.bounty > 0}}'>
-            <view class="button button-green" bind:tap="onPrivateMessage">去私聊</view>
+            <LLButton class="button" text="去私聊" bind:tap="onPrivateMessage"/>
           </block>
         </block>
         <block wx:elif="{{help.status === HELP_STATUS_RESOLVING}}">
-          <block wx:if="{{isMine || (transaction.buyer === self._id && transaction.status === HelpTransactionStatus.Booked)}}">
-            <view class="button" bindtap="onPrivateMessage">查看对话</view>
+          <block
+            wx:if="{{isMine || (transaction.buyer === self._id && transaction.status === HelpTransactionStatus.Booked)}}">
+            <LLButton class="button" text="查看对话" bindtap="onPrivateMessage" />
           </block>
           <block wx:else>
-            <view class="button button-disabled">他人解决中</view>
+            <LLButton class="button" text="他人解决中" disabled />
           </block>
         </block>
         <block wx:elif="{{help.status === HELP_STATUS_RESOLVED}}">
-          <view class="button button-disabled">已解决</view>
+          <LLButton class="button" text="已解决" disabled />
         </block>
         <block wx:elif="{{help.status === HELP_STATUS_FINISHED}}">
-          <view class="button button-disabled">已结束</view>
+          <LLButton class="button" text="已结束" disabled />
         </block>
       </view>
     </view>

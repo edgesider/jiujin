@@ -82,56 +82,106 @@
 }
 
 .body .content .info {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
+  margin-top: 20rpx;
   padding: 0 var(--content-padding);
-}
-
-.body .content .info .bounty {
-  margin-right: 12rpx;
-  align-self: flex-start;
-  height: 80rpx;
-  min-width: 80rpx;
-  background: linear-gradient(180deg, var(--brand-yellow) 0%, #FF4D4D 100%);
-  flex-grow: 0;
-  flex-shrink: 0;
-  border-radius: 8rpx;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 6rpx 8rpx;
-}
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 16rpx;
 
-.body .content .info .bounty .text {
-  font-size: 20rpx;
-  font-weight: bold;
-  color: #fff;
-}
+  .line1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 
-.body .content .info .bounty .price {
-  color: #fff;
-  display: flex;
-  font-weight: bold;
-  transform: translateX(-4rpx);
-}
+    .bounty {
+      box-sizing: border-box;
+      margin-right: 12rpx;
+      align-self: flex-start;
+      height: 80rpx;
+      min-width: 80rpx;
+      background: linear-gradient(180deg, var(--brand-yellow) 0%, #FF4D4D 100%);
+      flex-grow: 0;
+      flex-shrink: 0;
+      border-radius: 8rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 6rpx 8rpx;
 
-.body .content .info .bounty .unit {
-  font-size: 24rpx;
-}
+      .text {
+        font-size: 20rpx;
+        font-weight: bold;
+        color: #fff;
+      }
 
-.body .content .info .bounty .amount {
-  font-size: 32rpx;
-}
+      .price {
+        color: #fff;
+        display: flex;
+        font-weight: bold;
+        transform: translateX(-4rpx);
 
-.body .content .info .views {
-  margin-bottom: 20rpx;
-  font-size: 24rpx;
-  font-weight: 300;
-  color: #979797;
-  transform: translateY(20rpx);
+        .unit {
+          font-size: 24rpx;
+        }
+
+        .amount {
+          font-size: 32rpx;
+        }
+      }
+    }
+
+    .views {
+      margin-left: 8rpx;
+      font-size: 24rpx;
+      font-weight: 300;
+      color: #979797;
+      transform: translateY(12rpx);
+    }
+
+    .spacer {
+      flex-grow: 1;
+    }
+
+    .quality {
+      flex-grow: 0;
+      flex-shrink: 0;
+      width: 150rpx;
+      height: 60rpx;
+    }
+  }
+
+  .line2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8rpx;
+
+    .share-view-count {
+      color: var(--brand-green);
+      font-size: 20rpx;
+      border-radius: 8rpx;
+      padding: 4rpx 6rpx;
+      border: 0.5px solid var(--brand-green);
+    }
+
+    .polish-card-count {
+      color: var(--brand-yellow);
+      font-size: 20rpx;
+      border-radius: 8rpx;
+      padding: 4rpx 6rpx;
+      border: 0.5px solid var(--brand-yellow);
+    }
+
+    .question {
+      width: 32rpx;
+      height: 32rpx;
+    }
+  }
 }
 
 .body .content .paragraphs {
@@ -214,56 +264,8 @@
   align-items: center;
 }
 
-/*.footer .right .polish-time {*/
-/*  margin-right: 24rpx;*/
-/*  flex-shrink: 1;*/
-/*  font-size: 24rpx;*/
-/*  text-align: right;*/
-/*  color: rgba(0, 0, 0, 0.7);*/
-/*}*/
-
-/*.footer .right .polish-time-hint {*/
-/*  flex-shrink: 1;*/
-/*  font-size: 20rpx;*/
-/*  color: rgba(0, 0, 0, 0.5);*/
-/*  text-align: right;*/
-/*}*/
-
 .footer .right .button {
   margin-right: 10rpx;
 
-  padding: 14rpx 32rpx;
-  font-size: 28rpx;
-  font-weight: bold;
-  flex-shrink: 0;
-  border-radius: 16rpx;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background: var(--brand-green);
-  color: #fff;
-}
-
-.footer .right .button.button-yellow {
-  background: var(--brand-yellow);
-}
-
-.footer .right .button.button-yellowgreen {
-  background: var(--brand-yellowgreen);
-}
-
-.footer .right .button.button-green {
-  background: var(--brand-green);
-}
-
-.footer .right .button.button-countdown {
-  align-self: stretch;
-  padding: 0;
-  background: unset;
-}
-
-.button-disabled {
-  opacity: 0.3;
+  width: 160rpx;
 }

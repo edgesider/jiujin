@@ -59,6 +59,7 @@ let oim: OpenIMSDK;
 let loginWaiters: [(() => void), ((err: any) => void)][] = [];
 
 export async function initOpenIM(self: User, forceUpdateToken = false) {
+  oim?.release();
   oim = new OpenIMSDK();
   // @ts-ignore
   globalThis.oim = oim;
@@ -307,6 +308,7 @@ const allMsgSubject = new Subject<MessageItem>();
 const convMsgSubjects = new Map<string, Subject<MessageItem>>();
 const totalUnreadCountSubject = new BehaviorSubject(0);
 const allConvListSubject = new BehaviorSubject<ConversationItem[]>([]);
+let tokenRefreshCounter = 0;
 
 function listenEvents() {
   oim.getAllConversationList().then(res => {
@@ -349,13 +351,6 @@ function listenEvents() {
       allConvListSubject.next(allConvList);
     }
   });
-  oim.on(CbEvents.OnUserTokenExpired, async (event) => {
-    const self = getGlobals().self; // 先拉selfInfo；如果没有session_key的话，会自动调用authorize
-    if (!self) {
-      return;
-    }
-    await initOpenIM(self, true);
-  });
   oim.on(CbEvents.OnTotalUnreadMessageCountChanged, event => {
     console.log('unread changed', event);
     const count = event.data as number;
@@ -366,8 +361,33 @@ function listenEvents() {
   oim.on(CbEvents.OnUserStatusChanged, event => {
     console.log('user status changed', event);
   });
+
+  const reLogin = () => {
+    const self = getGlobals().self;
+    if (!self) {
+      return;
+    }
+    if (tokenRefreshCounter > 5) {
+      tokenRefreshCounter = 0;
+      console.log('token invalid too many times, refreshing');
+      initOpenIM(self, true);
+    } else {
+      initOpenIM(self);
+    }
+  }
+  oim.on(CbEvents.OnUserTokenExpired, async (event) => {
+    tokenRefreshCounter++;
+    console.log('user token expired');
+    setTimeout(() => {
+      reLogin();
+    }, 2000)
+  });
   oim.on(CbEvents.OnKickedOffline, event => {
+    tokenRefreshCounter++;
     console.log('kicked offline', event);
+    setTimeout(() => {
+      reLogin();
+    }, 2000)
   })
 }
 

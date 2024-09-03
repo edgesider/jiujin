@@ -2,15 +2,11 @@ import { getContentDesc, getQualitiesMap } from '../../utils/strings';
 import moment from 'moment';
 import getConstants, {
   COMMODITY_STATUS_SOLD,
-  COMMODITY_STATUS_SELLING,
   COMMODITY_STATUS_DEACTIVATED, COMMODITY_STATUS_BOOKED, COMMODITY_POLISH_MIN_DURATION
 } from '../../constants';
 import { DATETIME_FORMAT } from '../../utils/time';
 import { ViewsAPI } from '../../api/ViewsAPI';
-import { Commodity, ViewsInfo } from '../../types';
-import { CommodityUtils } from '../../utils/commodity';
-import { getGlobals, updateSelfInfo } from '../../utils/globals';
-import { openUsePolishCardDialog } from '../UsePolishCardDialog/index';
+import { ViewsInfo } from '../../types';
 import { Subscription } from 'rxjs';
 
 const app = getApp();

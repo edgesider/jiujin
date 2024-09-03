@@ -1,31 +1,39 @@
 <view class="root" bind:tap="gotoHelpDetail">
-  <image
-    wx:if="{{help.img_urls.length > 0}}"
-    class="image" mode="aspectFill" src="{{help.img_urls[0]}}/card"
-  />
-  <TextPreview wx:else content="{{desc}}" class="text-preview" />
-
-  <view class="middle">
-    <view class="title">{{desc}}</view>
-    <view class="price">￥{{help.bounty / 100}}</view>
-    <image class="status" src="{{statusImage}}" />
-  </view>
-  <view class="right" wx:if="{{help.seller_id === self._id}}">
-    <block wx:if="{{help.status === 0}}">
-      <CountdownButton
-        class="button"
-        suffixText="后可擦亮"
-        finishedText="擦亮"
-        initialMillSeconds="{{canPolishDuration}}"
-        bgStyle="font-size: 20rpx; border-radius: 12rpx; background-color: rgba(0,0,0,0.5)"
-        finishedBgStyle="font-size: 28rpx; background-color: var(--brand-green);"
-        bind:onClick="polish"
+  <view class="content">
+    <view class="left">
+      <image
+        wx:if="{{help.img_urls.length > 0}}"
+        class="image" mode="aspectFill" src="{{help.img_urls[0]}}/card"
       />
-      <view class="button greenyellow" catch:tap="gotoEdit">编辑</view>
-      <view class="button yellow" catch:tap="deactivate">结束</view>
-    </block>
-    <block wx:elif='{{help.status === HELP_STATUS_RUNNING}}'>
-      <view class="button green" catch:tap="delete">删除</view>
-    </block>
+      <TextPreview wx:else content="{{desc}}" class="text-preview" />
+    </view>
+    <view class="right">
+      <view class="title">{{desc}}</view>
+      <view class="price" wx:if="{{help.price > 0}}"><text class="unit">￥</text>{{help.price / 100}}
+      </view>
+      <view class="price" wx:else />
+      <view class="info">
+        <view class="view-count">{{viewsInfo.count || 0}}人浏览</view>
+        <view class="share-view-count">我分享带来{{viewsInfo.share_view_count || 0}}人浏览</view>
+        <view class="polish-card-count">奖励我{{viewsInfo.polish_count || 0}}张擦亮卡</view>
+      </view>
+    </view>
+  </view>
+  <view class="bottom">
+    <view class="left"></view>
+    <view class="right">
+      <image wx:if="{{statusImage}}" class="status" src="{{statusImage}}" />
+      <block wx:if="{{help.seller_id === self._id}}">
+        <block wx:if='{{help.status === HELP_STATUS_RUNNING}}'>
+          <PolishButton
+            help="{{help}}"
+            class="button"
+            bind:doPolish="polish"
+          />
+          <LLButton class="button" color="yellowgreen" text="编辑" catch:tap="gotoEdit" />
+          <LLButton class="button" color="yellow" text="结束" catch:tap="deactivate" />
+        </block>
+      </block>
+    </view>
   </view>
 </view>

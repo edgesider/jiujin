@@ -1,24 +1,26 @@
-import getConstants, { HELP_POLISH_MIN_DURATION } from "../../constants";
-import { onShareHelp, onShareHelpSync, parseShareInfo, saveShareInfo } from "../../utils/share";
-import api from "../../api/api";
-import moment from "moment";
-import { DATETIME_FORMAT } from "../../utils/time";
+import getConstants, { HELP_POLISH_MIN_DURATION } from '../../constants';
+import { onShareHelp, onShareHelpSync, parseShareInfo, saveShareInfo } from '../../utils/share';
+import api from '../../api/api';
+import moment from 'moment';
+import { DATETIME_FORMAT } from '../../utils/time';
 import {
   ensureVerified, ensureVerifiedSync,
   getRegionPathName,
   sleep,
   toastError,
   toastSucceed
-} from "../../utils/other";
-import { handleLink, openConversationDetail, openHelpEdit, openProfile } from "../../utils/router";
-import { setNeedRefresh } from "../home/index";
-import { startHelpTransaction } from "../../utils/transaction";
-import { HelpAPI } from "../../api/HelpAPI";
-import { reportHelp } from "../../utils/report";
-import { HelpTransactionAPI, HelpTransactionStatus } from "../../api/HelpTransactionAPI";
-import { metric } from "../../utils/metric";
-import { textToRichText } from "../../utils/strings";
-import { isInSingleMode } from "../../utils/globals";
+} from '../../utils/other';
+import { handleLink, openConversationDetail, openHelpEdit, openProfile } from '../../utils/router';
+import { setNeedRefresh } from '../home/index';
+import { startHelpTransaction } from '../../utils/transaction';
+import { HelpAPI } from '../../api/HelpAPI';
+import { reportHelp } from '../../utils/report';
+import { HelpTransaction, HelpTransactionAPI, HelpTransactionStatus } from '../../api/HelpTransactionAPI';
+import { metric } from '../../utils/metric';
+import { textToRichText } from '../../utils/strings';
+import { isInSingleMode } from '../../utils/globals';
+import { ViewsAPI } from '../../api/ViewsAPI';
+import { Help, User, ViewsInfo } from '../../types';
 
 const app = getApp();
 
@@ -31,22 +33,27 @@ Page({
     ridToRegion: {},
     loading: true,
     isMine: false,
-    help: null,
-    transaction: null,
+    help: null as Help | null,
+    transaction: null as HelpTransaction | null,
     createTime: '',
     regionName: '',
-    seller: null,
+    seller: null as User | null,
     htmlContent: '',
-    contentParagraphs: [],
-    firstImageSize: [],
+    contentParagraphs: [] as string[],
+    firstImageSize: [0, 0],
     hasImg: true,
     canPolishDuration: 0,
     polishTimeGeneral: '',
+    viewsInfo: null as ViewsInfo | null,
   },
 
   onLoad: async function (options) {
     await app.waitForReady();
     const { id, scrollToComment, shareInfo: shareInfoStr } = options;
+    if (!id) {
+      toastError('无效的参数');
+      return;
+    }
 
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
@@ -56,29 +63,36 @@ Page({
 
     await this.loadData(id);
     this.setData({
-      scrollToComment: (scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
+      scrollToComment: Boolean(scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
     });
 
     if (!isInSingleMode()) {
-      await HelpAPI.addViewCount(id);
+      ViewsAPI.addView(id, shareInfo?.fromUid).then();
     }
     metric.write('help_detail_show', {}, { id: id, shareInfo: shareInfoStr });
   },
 
-  async loadData(id) {
+  async loadData(id: string) {
     const helpResp = await HelpAPI.getOne(id);
-    if (helpResp.isError) {
+    if (helpResp.isError || !helpResp.data) {
       await wx.showToast({
         icon: 'error', title: '网络错误'
       });
       return;
     }
+    ViewsAPI.getViewsInfo(id).then(viewsInfo => {
+      if (viewsInfo.isError) {
+        console.error('failed to getViewsInfo', viewsInfo.message);
+        return;
+      }
+      this.setData({ viewsInfo: viewsInfo.data })
+    });
     const help = helpResp.data;
 
     const sellerResp = await api.getUserInfo(help.seller_id);
     const seller = sellerResp.isError ? null : sellerResp.data;
     let firstImageSize = [0, 1];
-    if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === "")) {
+    if ((help.img_urls.length === 0) || (help.img_urls.length === 1 && help.img_urls[0] === '')) {
       firstImageSize = [500, 500];
       this.setData({
         hasImg: false
@@ -102,14 +116,14 @@ Page({
 
     const { self } = app.globalData;
     const isMine = self && self._id === help.seller_id;
-    let transaction = null;
+    let transaction: HelpTransaction | null = null;
 
     if (!isInSingleMode()) {
       const transactionsResp = await HelpTransactionAPI.listByHelp(
         help._id,
-        isMine ? { status: HelpTransactionStatus.Booked } : null
+        isMine ? { status: HelpTransactionStatus.Booked } : undefined
       );
-      transaction = transactionsResp.data?.[0];
+      transaction = transactionsResp.data?.[0] ?? null;
     }
 
     this.setData({
@@ -134,9 +148,8 @@ Page({
   },
 
   polishing: false,
-  async onPolish(ev) {
-    if (ev.detail.remain > 0) {
-      // 倒计时未结束
+  async onPolish() {
+    if (!this.data.help) {
       return;
     }
     await ensureVerified();
@@ -162,6 +175,9 @@ Page({
   },
 
   async edit() {
+    if (!this.data.help) {
+      return;
+    }
     await ensureVerified();
     await openHelpEdit(this.data.help, true);
     await this.loadData(this.data.help._id);
@@ -171,11 +187,14 @@ Page({
     const { curr } = param.currentTarget.dataset;
     await wx.previewImage({
       current: `${curr}/detail`,
-      urls: this.data.help.img_urls.map(u => `${u}/detail`)
+      urls: this.data.help!!.img_urls.map(u => `${u}/detail`)
     });
   },
 
   async onDeactivate() {
+    if (!this.data.help) {
+      return;
+    }
     await ensureVerified();
     const { confirm } = await wx.showModal({
       title: '确认结束？',
@@ -201,8 +220,11 @@ Page({
     if (this.togglingCollect) {
       return;
     }
-    this.togglingCollect = true;
     const { help } = this.data;
+    if (!help) {
+      return;
+    }
+    this.togglingCollect = true;
     try {
       if (help.is_collected) {
         const resp = await HelpAPI.uncollect(help._id);
@@ -236,8 +258,11 @@ Page({
     if (this.togglingLike) {
       return;
     }
-    this.togglingLike = true;
     const { help } = this.data;
+    if (!help) {
+      return;
+    }
+    this.togglingLike = true;
     try {
       if (help.is_liked) {
         const resp = await HelpAPI.unlike(help._id);
@@ -267,7 +292,7 @@ Page({
 
   async onClickReport() {
     await ensureVerified();
-    await reportHelp(this.data.help._id);
+    await reportHelp(this.data.help!!._id);
   },
 
   async onClickShare() {
@@ -278,6 +303,9 @@ Page({
   },
 
   async onPrivateMessage() {
+    if (!this.data.help || !this.data.seller) {
+      return;
+    }
     await ensureVerified();
     let tact = this.data.transaction;
     if (!tact) {
@@ -285,7 +313,7 @@ Page({
         title: '请稍后',
         mask: true
       })
-      tact = await startHelpTransaction(this.data.help, this.data.seller);
+      tact = await startHelpTransaction(this.data.help, this.data.seller) ?? null;
       await wx.hideLoading();
       if (!tact) {
         toastError('发起私聊失败，请稍后再试');
@@ -296,21 +324,22 @@ Page({
   },
 
   async onAvatarClick() {
-    await openProfile(this.data.seller);
+    await openProfile(this.data.seller!!);
   },
 
+  // @ts-ignore
   async onShareAppMessage(options) {
     await ensureVerified();
     try {
       wx.showLoading({ title: '请稍等' });
-      return await onShareHelp(options, this.data.help);
+      return await onShareHelp(options, this.data.help!!);
     } finally {
       wx.hideLoading();
     }
   },
   onShareTimeline() {
     ensureVerifiedSync();
-    return onShareHelpSync(this.data.help);
+    return onShareHelpSync(this.data.help!!);
   },
 
   onCommentLoadFinished() {

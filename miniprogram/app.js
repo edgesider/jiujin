@@ -42,7 +42,7 @@ App({
       await this.fetchRegions();
 
       if (self) {
-        await initOpenIM(self, true);
+        await initOpenIM(self, false);
       }
 
       console.warn('initialized. globalData=', this.globalData);

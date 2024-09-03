@@ -6,6 +6,9 @@ import getConstants, {
 import { getContentDesc, getQualitiesMap } from "../../utils/strings";
 import { DATETIME_FORMAT } from "../../utils/time";
 import moment from 'moment';
+import { ViewsInfo } from '../../types';
+import { Subscription } from 'rxjs';
+import { ViewsAPI } from '../../api/ViewsAPI';
 
 const app = getApp();
 Component({
@@ -35,8 +38,27 @@ Component({
     statusImage: '',
     canPolish: false,
     canPolishDuration: 0,
+    viewsInfo: null as ViewsInfo | null,
+  },
+  lifetimes: {
+    attached() {
+      // @ts-ignore
+      this._subscription = new Subscription();
+      this.onUpdate();
+      this.getSubscription().add(app.userChangedSubject.subscribe(user => {
+        this.setData({ self: user });
+        this.onUpdate();
+      }));
+    },
+    detached() {
+      this.getSubscription().unsubscribe();
+    }
   },
   methods: {
+    getSubscription(): Subscription {
+      // @ts-ignore
+      return this._subscription as Subscription;
+    },
     async gotoHelpDetail() {
       this.triggerEvent('onClickCard', {
         help: this.properties.help,
@@ -48,9 +70,6 @@ Component({
       })
     },
     polish(ev) {
-      if (ev.detail.remain > 0) {
-        return;
-      }
       this.triggerEvent('onPolish', {
         help: this.properties.help,
       })
@@ -67,7 +86,14 @@ Component({
     },
     onUpdate() {
       const { showStatusImage } = this.properties;
-      const { content, create_time, polish_time, status } = this.properties.help
+      const { content, create_time, polish_time, status, _id } = this.properties.help
+      ViewsAPI.getViewsInfo(_id).then(viewsInfo => {
+        if (viewsInfo.isError) {
+          console.error('failed to getViewsInfo', viewsInfo.message);
+          return;
+        }
+        this.setData({ viewsInfo: viewsInfo.data })
+      });
       this.setData({
         self: app.globalData.self,
         desc: getContentDesc(content, 40),
@@ -83,8 +109,5 @@ Component({
         canPolish: Date.now() - polish_time > HELP_POLISH_MIN_DURATION
       })
     },
-  },
-  attached() {
-    this.onUpdate();
   },
 })

@@ -28,12 +28,12 @@
               <text class="unit">￥</text>
               <text class="amount">{{commodity.price / 100}}</text>
             </text>
-            <text class="views">{{(viewsInfo ? viewsInfo.count : commodity.view_count) + 1}}浏览</text>
+            <text class="views">{{viewsInfo.count || 0}}人浏览</text>
             <view class="spacer" />
             <image class="quality" src="/images/quality_{{commodity.quality}}_on.png" />
           </view>
           <view class="line2" wx:if="{{viewsInfo}}">
-            <view class="share-view-count">我分享带来{{viewsInfo.share_view_count}}浏览</view>
+            <view class="share-view-count">我分享带来{{viewsInfo.share_view_count}}人浏览</view>
             <view class="polish-card-count">奖励我{{viewsInfo.polish_count}}张擦亮卡</view>
             <image class="question" src="/images/question.png" bindtap="onClickShareRuleQuestion" />
           </view>

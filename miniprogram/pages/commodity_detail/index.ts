@@ -20,7 +20,7 @@ import {
   openProfile,
 } from '../../utils/router';
 import { DATETIME_FORMAT } from '../../utils/time';
-import { onShareCommodity, onShareCommoditySync, parseShareInfo, saveShareInfo, ShareInfo } from '../../utils/share';
+import { onShareCommodity, onShareCommoditySync, parseShareInfo, saveShareInfo } from '../../utils/share';
 import { isInSingleMode, updateSelfInfo, waitForAppReady } from '../../utils/globals';
 import { startTransaction } from '../../utils/transaction';
 import { CommodityAPI } from '../../api/CommodityAPI';
@@ -30,7 +30,6 @@ import { metric } from '../../utils/metric';
 import { textToRichText } from '../../utils/strings';
 import { Commodity, User, ViewsInfo } from '../../types';
 import { ViewsAPI } from '../../api/ViewsAPI';
-import { openUsePolishCardDialog } from '../../components/UsePolishCardDialog/index';
 
 const app = getApp();
 
@@ -56,7 +55,6 @@ Page({
     showNotVerifiedDialog: false,
     statusImage: '',
     viewsInfo: null as ViewsInfo | null,
-    shareInfo: null as ShareInfo | null
   },
   onLoad: async function (options) {
     await waitForAppReady();
@@ -69,7 +67,6 @@ Page({
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
       saveShareInfo(shareInfo).then();
-      this.setData({ shareInfo });
     }
 
     await this.loadData(id);

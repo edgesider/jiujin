@@ -43,6 +43,7 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
   private apiAddr?: string;
   private wsManager?: WebSocketManager;
   private handlerMap = new Map<string, Handler>();
+  private released = false;
 
   private onLoginStateChangeListeners: ((loggedIn: boolean) => void)[] = [];
 
@@ -170,6 +171,11 @@ class OpenIMSDK extends Emitter implements UserApi, FriendApi, GroupApi, Message
       });
     };
   };
+
+  release() {
+    this.released = true;
+    this.wsManager?.release();
+  }
 
   createRequestFunctionWithoutParams = <T = unknown>(
     reqFuncName: RequestApi

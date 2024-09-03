@@ -20,6 +20,7 @@ class WebSocketManager {
   private reconnectAttempts: number;
   private connected: boolean;
   private isProcessingMessage: boolean = false;
+  private released = false;
 
   constructor(
     url: string,
@@ -42,7 +43,7 @@ class WebSocketManager {
             console.log('onReconnectSuccess');
             this.onReconnectSuccess();
           }
-          this.reconnectAttempts = 0;
+          // this.reconnectAttempts = 0;
           this.connected = true;
           resolve();
         };
@@ -50,7 +51,7 @@ class WebSocketManager {
         const onWsClose = () => {
           this.connected = false;
           const willRetry =
-            this.reconnectAttempts < this.maxReconnectAttempts
+            this.reconnectAttempts < this.maxReconnectAttempts && !this.released
           if (willRetry) {
             if (this.isProcessingMessage) {
               setTimeout(() => onWsClose(), 100);
@@ -120,6 +121,10 @@ class WebSocketManager {
       this.ws.close({});
     }
   };
+
+  release() {
+    this.released = true;
+  }
 }
 
 export default WebSocketManager;

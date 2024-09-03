@@ -2,6 +2,7 @@
   "component": true,
   "usingComponents": {
     "TextPreview": "/components/TextPreview/index",
-    "CountdownButton": "../CountdownButton/index"
+    "CountdownButton": "../CountdownButton/index",
+    "PolishButton": "/components/PolishButton/index"
   }
 }

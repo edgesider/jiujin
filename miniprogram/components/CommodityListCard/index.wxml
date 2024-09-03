@@ -5,17 +5,16 @@
     </view>
     <view class="right">
       <view class="title">{{desc}}</view>
-      <view class="price"><text class="unit">￥</text>{{commodity.price / 100}}
-      </view>
+      <view class="price"><text class="unit">￥</text>{{commodity.price / 100}}</view>
       <view class="info">
-        <view class="view-count">{{(viewsInfo ? viewsInfo.count : commodity.view_count) + 1}}浏览</view>
-        <view class="share-view-count">我分享带来{{viewsInfo.share_view_count || 0}}浏览</view>
+        <view class="view-count">{{viewsInfo.count || 0}}人浏览</view>
+        <view class="share-view-count">我分享带来{{viewsInfo.share_view_count || 0}}人浏览</view>
         <view class="polish-card-count">奖励我{{viewsInfo.polish_count || 0}}张擦亮卡</view>
       </view>
     </view>
   </view>
   <view class="bottom">
-    <view class="left">分享</view>
+    <view class="left"></view>
     <view class="right">
       <image wx:if="{{statusImage}}" class="status" src="{{statusImage}}" />
       <block wx:if="{{commodity.seller_id === self._id}}">
