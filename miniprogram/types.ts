@@ -23,6 +23,7 @@ export interface User {
   notify_info_count: number;
   inviter_id?: string;
   polish_cards: number;
+  is_add_my_pro: boolean;
 }
 
 export interface Commodity {

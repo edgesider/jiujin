@@ -318,3 +318,15 @@ export function getCompressedImageUrl(url: string): string {
   u.path = `${u.path}/detail`;
   return assembleUrlObject(u);
 }
+
+export async function isAddedToMyProgram() {
+  return new Promise(res => {
+    // @ts-ignore
+    wx.checkIsAddedToMyMiniProgram({
+      success: result => {
+        console.log('check result', result);
+        res(Boolean(result?.added))
+      }
+    });
+  })
+}

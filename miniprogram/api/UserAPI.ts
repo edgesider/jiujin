@@ -39,4 +39,10 @@ export const UserAPI = {
       }
     }));
   },
+  async addedToMyProgram() {
+    return wrapResp(await request({
+      path: '/user/addToMyPro',
+      method: 'GET',
+    }))
+  }
 }

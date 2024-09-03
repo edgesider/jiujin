@@ -8,6 +8,9 @@ import { syncNotifyStates } from "./utils/notify";
 import { metric } from "./utils/metric";
 import { initSettings } from "./utils/settings";
 import getConstants from "./constants";
+import { getGlobals, updateSelfInfo } from "./utils/globals";
+import { UserAPI } from "./api/UserAPI";
+import { isAddedToMyProgram } from "./utils/other";
 
 App({
   _ready: false,
@@ -62,6 +65,7 @@ App({
     try {
       setTimeout(async () => {
         clearSavedImages();
+        this.reportIsAddedToMyProgram();
       }, 0);
     } catch (e) {
       console.warn(e);
@@ -115,5 +119,18 @@ App({
 
   isReady() {
     return this._ready;
+  },
+
+  async reportIsAddedToMyProgram() {
+    const { self } = getGlobals();
+    console.log('added', self.is_add_my_pro);
+    if (!self) {
+      return;
+    }
+    console.log(await isAddedToMyProgram() && !self.is_add_my_pro);
+    if (await isAddedToMyProgram() && !self.is_add_my_pro) {
+      await UserAPI.addedToMyProgram();
+      await updateSelfInfo();
+    }
   }
 })

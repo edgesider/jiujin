@@ -1,4 +1,4 @@
-import { cloudProtocolToHttp, getRegionPath, setTabBar } from '../../utils/other';
+import { cloudProtocolToHttp, getRegionPath, isAddedToMyProgram, setTabBar, toastInfo } from '../../utils/other';
 import getConstants, { DEFAULT_REGION_ID } from '../../constants';
 import api, { getOpenId } from '../../api/api';
 import { buildShareParam, parseShareInfo, saveShareInfo } from '../../utils/share';
@@ -7,7 +7,7 @@ import { getGlobals, waitForAppReady } from '../../utils/globals';
 import { RegionClickEvent } from '../../components/RegionFilter';
 import { CommodityAPI } from '../../api/CommodityAPI';
 import { Resp } from '../../api/resp';
-import { getEnvVersion } from '../../utils/env';
+import { getEnvVersion, getVersionInfo } from '../../utils/env';
 import { handleSchema, openNotifyCounterDialog } from '../../utils/router';
 import { decodeOptions } from '../../utils/strings';
 
@@ -105,7 +105,7 @@ Page({
   },
   async onClickLogo() {
     if (getEnvVersion() === 'develop' || getEnvVersion() === 'trial') {
-      openNotifyCounterDialog();
+      toastInfo(`version=${getVersionInfo().version}`);
     }
   },
 
