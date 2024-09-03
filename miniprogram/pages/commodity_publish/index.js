@@ -292,12 +292,14 @@ Page({
       // TODO 使用Channel
       setNeedRefresh();
     }
-    if (!editing) {
-      this.setData({ published: resp.data });
-      await openDialog(DialogType.PublishSuccessDialog);
-    } else {
-      wx.navigateBack();
-    }
+    wx.navigateBack();
+
+    // if (!editing) {
+    //   this.setData({ published: resp.data });
+    //   await openDialog(DialogType.PublishSuccessDialog);
+    // } else {
+    //   wx.navigateBack();
+    // }
   },
 
   submitting: false,
