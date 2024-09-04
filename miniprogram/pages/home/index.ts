@@ -106,6 +106,7 @@ Page({
   async onClickLogo() {
     if (getEnvVersion() === 'develop' || getEnvVersion() === 'trial') {
       toastInfo(`version=${getVersionInfo().version}`);
+      handleSchema(`lllw://route?page=/pages/help/index`)
     }
   },
 

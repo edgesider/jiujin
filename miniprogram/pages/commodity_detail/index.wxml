@@ -67,7 +67,7 @@
           <text class="text">{{commodity.collected_count || '收藏'}}</text>
         </view>
         <view class="button">
-          <image class="icon" src="/images/share-wx.png" />
+          <image class="icon" src="/images/share-wx-reward.png" />
           <text class="text">分享</text>
           <button
             open-type="share" plain="true"

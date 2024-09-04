@@ -39,7 +39,6 @@ Component({
     enabled: true,
     cards: 0, // 是否有擦亮卡
     remainMs: 0, // 剩余冷却时间，<= 0时可免费擦亮
-    firstPolish: false, // 是否还没有第一次擦亮，为true时一定可以免费擦亮
 
     tipText: '',
     isDetached: false,
@@ -77,12 +76,10 @@ Component({
       let enabled: boolean;
       let remainMs: number;
       let tipText = '';
-      let firstPolish: boolean;
 
       if (commodity) {
         enabled = commodity.status === COMMODITY_STATUS_SELLING;
         remainMs = (commodity.polish_time + COMMODITY_POLISH_MIN_DURATION) - Date.now();
-        firstPolish = commodity.create_time === commodity.polish_time;
         if (commodity.status === COMMODITY_STATUS_BOOKED) {
           tipText = '已预定';
         } else if (commodity.status === COMMODITY_STATUS_REPORTED || commodity.status === COMMODITY_STATUS_DEACTIVATED) {
@@ -93,7 +90,6 @@ Component({
       } else if (help) {
         enabled = help.status === HELP_STATUS_RUNNING;
         remainMs = (help.polish_time + HELP_POLISH_MIN_DURATION) - Date.now();
-        firstPolish = help.create_time === help.polish_time;
         if (help.status === HELP_STATUS_RESOLVING) {
           tipText = '解决中';
         } else if (help.status === HELP_STATUS_REPORTED || help.status === HELP_STATUS_FINISHED) {
@@ -104,12 +100,13 @@ Component({
       }
       if (!enabled) {
         tipText += '不可擦亮';
+      } else {
+        tipText = this.getRemainText(remainMs) + '后可擦亮';
       }
       this.setData({
         enabled,
         cards,
         remainMs,
-        firstPolish,
         tipText,
       });
     },

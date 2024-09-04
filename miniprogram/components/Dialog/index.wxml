@@ -3,7 +3,7 @@
   <view class="card">
     <view class="wrapper">
       <view wx:if="{{title}}" class="title">{{title}}</view>
-      <view wx:if="{{content}}" class="content">{{content}}</view>
+      <view wx:if="{{content}}" class="content" style="text-align: {{contentAlign || 'left'}}">{{content}}</view>
       <slot />
     </view>
   </view>

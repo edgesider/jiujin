@@ -124,6 +124,7 @@ class WebSocketManager {
 
   release() {
     this.released = true;
+    this.close();
   }
 }
 

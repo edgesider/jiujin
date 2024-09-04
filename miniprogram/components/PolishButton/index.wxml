@@ -1,5 +1,5 @@
 <view
-  class="button {{!enabled ? 'disabled' : ((remainMs <= 0 || firstPolish) ? 'free' : (cards > 0 ? 'use-card' : 'disabled'))}}"
+  class="button {{!enabled ? 'disabled' : (remainMs <= 0 ? 'free' : (cards > 0 ? 'use-card' : 'disabled'))}}"
   catchtap="onClick"
 >
   <text class="button-text" style="{{tipText ? 'transform: translateY(-4rpx)' : ''}}">
@@ -17,7 +17,7 @@
     <text>{{tipText}}</text>
   </view>
 
-  <view class="cards-tag" wx:if="{{remainMs > 0 && !firstPolish}}">
+  <view class="cards-tag" wx:if="{{remainMs > 0}}">
     {{cards}}擦亮卡
   </view>
 </view>

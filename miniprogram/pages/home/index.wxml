@@ -29,7 +29,7 @@
   using-sticky="true"
 >
   <view>
-    <swiper autoplay circular class="top-swiper">
+    <swiper autoplay circular interval="3000" class="top-swiper">
       <swiper-item
         wx:for="{{banners}}"
         wx:key="url"

@@ -4,10 +4,10 @@
     <image class="bg" src="res/card.png" />
     <view class="title">擦亮卡</view>
     <view class="count">持有数量{{sum}}张</view>
-<!--    <view class="rule-btn" bindtap="openRule">如何获得</view>-->
   </view>
 
   <view class="rule-content">
+    <view class="title">如何获得擦亮卡</view>
     <view class="subtitle">分享行为：</view>
     1.分享闲置或互助详情每带来10人次浏览，擦亮卡+1；
     <view />
@@ -31,7 +31,7 @@
     <view />
     2.首次打开消息通知权限，擦亮卡+5；
     <view />
-    3.将【楼里楼外校园】添加至“我的小程序”。
+    3.首次将本小程序添加至“我的小程序”，擦亮卡+5。
   </view>
 
   <view class="detail">

@@ -1,7 +1,7 @@
 import { Commodity, Help, User } from '../types';
 import { ConversationItem } from '../lib/openim/index';
 import { AboutType } from '../pages/about';
-import { getCurrentPage, parseURL, toastSucceed } from './other';
+import { assembleUrlObject, getCurrentPage, parseURL, toastSucceed } from './other';
 import { metric } from './metric';
 import { encode } from 'base64-arraybuffer';
 import { UsePolishCardDialogParams, UsePolishCardDialogResult } from '../components/UsePolishCardDialog';
@@ -15,6 +15,17 @@ export function getRouteFromHomePageUrl(
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
   return `/pages/home/index?${params}`;
 }
+
+export function getRouteFromHelpListUrl(
+  targetPageOrSchema: string,
+  homeParams: Record<string, any> = {},
+) {
+  homeParams['routeTo'] = targetPageOrSchema;
+  const params = Object.entries(homeParams)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+  return `/pages/help/index?${params}`;
+}
+
 
 export async function openProfile(user: string | User) {
   if (typeof user === 'object') {

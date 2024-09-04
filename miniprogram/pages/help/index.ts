@@ -12,6 +12,7 @@ import { waitForAppReady } from '../../utils/globals';
 import { HelpAPI } from '../../api/HelpAPI';
 import { Help, Region, User } from '../../types';
 import { decodeOptions } from '../../utils/strings';
+import { handleSchema } from '../../utils/router';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 
@@ -47,11 +48,15 @@ Page({
     setTabBar(this);
 
     options = decodeOptions(options);
-    const { shareInfo: shareInfoStr } = options;
+    const { shareInfo: shareInfoStr, routeTo } = options;
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
       saveShareInfo(shareInfo).then();
+    }
+
+    if (routeTo) {
+      await handleSchema(routeTo);
     }
 
     this.setData({

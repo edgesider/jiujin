@@ -10,7 +10,14 @@ import {
   toastError,
   toastSucceed
 } from '../../utils/other';
-import { handleLink, openConversationDetail, openHelpEdit, openProfile } from '../../utils/router';
+import {
+  DialogType,
+  handleLink,
+  openConversationDetail,
+  openDialog,
+  openHelpEdit,
+  openProfile
+} from '../../utils/router';
 import { setNeedRefresh } from '../home/index';
 import { startHelpTransaction } from '../../utils/transaction';
 import { HelpAPI } from '../../api/HelpAPI';
@@ -358,5 +365,9 @@ Page({
   onRichTextError(err) {
     console.error('onRichTextError', err);
     metric.write('rich_text_error', {}, { err: err?.toString() });
+  },
+
+  async onClickShareRuleQuestion() {
+    await openDialog(DialogType.ShareRewardRule)
   }
 })

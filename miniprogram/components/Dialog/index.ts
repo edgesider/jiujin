@@ -17,6 +17,10 @@ Component({
       value: '',
       type: String,
     },
+    contentAlign: {
+      type: String,
+      value: 'left', // left/right/center
+    },
     // okButton: {
     //   value: '',
     //   type: String,

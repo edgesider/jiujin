@@ -3,7 +3,7 @@ import { getOpenId } from '../api/api';
 import { Commodity, Help, User } from '../types';
 import { drawCommodityShareImage, drawHelpShareImage, HELP_BOUNTY_IMAGE, HELP_NO_BOUNTY_IMAGE } from './canvas';
 import { metric } from './metric';
-import { getRouteFromHomePageUrl } from './router';
+import { getRouteFromHelpListUrl, getRouteFromHomePageUrl } from './router';
 
 type IShareAppMessageOption = WechatMiniprogram.Page.IShareAppMessageOption;
 
@@ -178,7 +178,7 @@ export async function onShareHelp(options?: IShareAppMessageOption, help?: Help)
   });
   return processShareData({
     title: '互助 | ' + help.content,
-    path: getRouteFromHomePageUrl(
+    path: getRouteFromHelpListUrl(
       '/pages/help_detail/index' +
       `?id=${help._id}` +
       `&shareInfo=${encodeURIComponent(shareInfo)}`),
@@ -196,7 +196,7 @@ export function onShareHelpSync(help: Help) {
   });
   return processShareData({
     title: '互助 | ' + help.content,
-    path: getRouteFromHomePageUrl(
+    path: getRouteFromHelpListUrl(
       '/pages/help_detail/index' +
       `?id=${help._id}` +
       `&shareInfo=${encodeURIComponent(shareInfo)}`),
