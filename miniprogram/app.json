@@ -39,8 +39,18 @@
     "Dialog": "/components/Dialog",
     "Dialogs": "/components/Dialogs",
     "mp-html": "mp-html",
-    "LLButton": "/components/LLButton"
+    "LLButton": "/components/LLButton",
+    "SnapshotCreator": "/components/SnapshotCreator"
   },
+  "renderer": "skyline",
+  "componentFramework": "glass-easel",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "defaultContentBox": true
+    }
+  },
+  "lazyCodeLoading": "requiredComponents",
   "tabBar": {
     "custom": true,
     "list": [

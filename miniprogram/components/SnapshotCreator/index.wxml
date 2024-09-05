@@ -1,0 +1,6 @@
+<view class="root">
+  <snapshot id="commodity-share">
+    <view class="commodity-share" bindtap="click">
+    </view>
+  </snapshot>
+</view>
