@@ -15,6 +15,7 @@
 </view>
 
 <scroll-view
+  type="list"
   class="content-scroll"
   style="margin-top: {{TopBarHeight}}px;"
   scroll-y="true"

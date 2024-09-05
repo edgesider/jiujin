@@ -1,5 +1,5 @@
 <view class="region-filter">
-  <scroll-view scroll-x scroll-into-view="{{scrollIntoView}}">
+  <scroll-view type="list" scroll-x scroll-into-view="{{scrollIntoView}}">
     <view class="container">
       <block
         wx:for="{{regions}}"

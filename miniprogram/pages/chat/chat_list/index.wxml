@@ -24,6 +24,7 @@
 </view>
 
 <scroll-view
+  type="list"
   class="list"
   scroll-y
   refresher-enabled="{{true}}"

@@ -31,7 +31,7 @@
   <view class="spacer" />
   <view bindtap="onEditMyInfo" class="settings">资料设置</view>
 </view>
-<scroll-view>
+<scroll-view type="list">
   <view class="List">
     <view class="list" bindtap="gotoList" data-type="my_commodities">
       <view class="list_title">我的闲置</view>

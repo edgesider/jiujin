@@ -1,6 +1,7 @@
 <TitleBar title="{{convName}}" />
 
 <scroll-view
+  type="list"
   class="container"
   scroll-y="{{true}}"
   bindscrolltolower="onReachBottom"

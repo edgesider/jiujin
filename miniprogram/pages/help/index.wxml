@@ -1,6 +1,7 @@
 <TitleBar title="互助" hasBack="{{false}}" />
   <!-- 头像、昵称、位置、设置入口 -->
 <scroll-view
+  type="list"
   class="content-scroll"
   scroll-y="true"
   scroll-with-animation="true"
