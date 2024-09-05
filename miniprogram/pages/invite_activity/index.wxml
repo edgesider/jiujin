@@ -170,7 +170,7 @@
         <view class="info">
           <text class="text-green">已注册</text>
           <text class="text-grey"> / </text>
-          <text wx:if="{{item.total_release > 0}}" class="text-green">已发布</text>
+          <text wx:if="{{item.total_release > 0 || item.total_help_release > 0}}" class="text-green">已发布</text>
           <text wx:else class="text-yellow">未发布</text>
         </view>
       </view>

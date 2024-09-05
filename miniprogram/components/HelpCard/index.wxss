@@ -161,6 +161,7 @@
   color: #454545;
   /*-webkit-box-orient: vertical;*/
   /*-webkit-line-clamp: 5;*/
+  text-align: justify;
 }
 
 .body .comments {
