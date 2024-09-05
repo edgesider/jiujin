@@ -103,7 +103,7 @@ Component({
         statusImage: !showStatusImage ? null : ({
           [HELP_STATUS_RESOLVED]: '/images/已解决.png',
           [HELP_STATUS_RESOLVING]: '/images/解决中.png',
-          [HELP_STATUS_FINISHED]: '/images/已完成.png',
+          [HELP_STATUS_FINISHED]: '/images/已结束.png',
         })[status] ?? '',
         canPolishDuration: polish_time + HELP_POLISH_MIN_DURATION - Date.now(),
         canPolish: Date.now() - polish_time > HELP_POLISH_MIN_DURATION
