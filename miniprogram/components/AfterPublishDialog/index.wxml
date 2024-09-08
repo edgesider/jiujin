@@ -1,13 +1,18 @@
 <Dialog type="{{DialogType.AfterPublish}}" title="您的内容已成功发布">
-  <view class="content">
-商品发布后每隔<text class="red">48小时</text>可手动擦亮一次
-使用「擦亮卡」不受此时间限制
-
-为避免失效内容浪费用户时间
-商品发布后<text class="red">30天后</text>未擦亮将自动下架
-
-分享内容可获得更多额外曝光以促成交易
-分享带来的浏览量还可兑换擦亮卡奖励
-分享带来新用户最高奖励10元/人
+  <view class="success-dialog">
+    <view class="content">
+      <view>商品发布后每隔<text class="red">48小时</text>可手动擦亮一次</view>
+      <view>使用「擦亮卡」不受此时间限制</view>
+      <view>由分享带来的浏览量还可兑换擦亮卡奖励</view>
+      <view>分享带来新用户最高奖励10元/人</view>
+      <view style="color: #00000099; font-size: 28rpx; font-weight: 600;">
+        点击右上角<image class="dots" src="/images/dots.png"/>也可分享到朋友圈
+      </view>
+    </view>
+    <view class="buttons">
+      <LLButton class="button" color="green" text="分享到" suffixIcon="/images/share-wx-reward-white.png" share />
+      <!--<LLButton class="button" color="yellowgreen" text="生成海报" suffixIcon="/images/share-pyq-white.png" bindtap="onSharePyqClick" />-->
+      <LLButton class="button" color="yellow" text="不用了" bindtap="onShareDismissClick"/>
+    </view>
   </view>
 </Dialog>

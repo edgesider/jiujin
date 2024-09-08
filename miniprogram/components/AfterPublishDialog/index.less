@@ -1,0 +1,36 @@
+@import "/app.wxss";
+
+.success-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  .content {
+    color: #00000099;
+    font-size: 24rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    .dots {
+      width: 40rpx;
+      height: 20rpx;
+    }
+  }
+
+  .buttons {
+    margin-top: 30rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20rpx;
+
+    .button {
+      width: 180rpx;
+      height: 80rpx;
+    }
+  }
+}

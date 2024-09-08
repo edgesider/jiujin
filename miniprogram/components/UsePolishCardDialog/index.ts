@@ -17,7 +17,6 @@ Component({
   properties: {},
   data: {
     ...getConstants(),
-    show: false,
     content: "商品发布后每隔48小时可手动擦亮一次\n使用「擦亮卡」则不受此时间限制"
   },
   lifetimes: {

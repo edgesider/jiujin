@@ -5,7 +5,9 @@
     "UserTitleBar": "/components/UserTitleBar/index",
     "FullPageLoading": "/components/FullPageLoading/index",
     "CountdownButton": "/components/CountdownButton/index",
-    "PolishButton": "/components/PolishButton/index" },
+    "PolishButton": "/components/PolishButton/index",
+    "AfterPublishDialog": "/components/AfterPublishDialog/index"
+  },
   "enablePullDownRefresh": false,
   "disableScroll": true
 }

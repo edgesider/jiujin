@@ -1,5 +1,6 @@
 import getConstants from '../../constants';
 import { Subscription } from 'rxjs';
+import { DialogHelper } from '../../utils/router';
 
 Component({
   properties: {},
@@ -20,6 +21,9 @@ Component({
     getSubscription(): Subscription {
       // @ts-ignore
       return this._subscription as Subscription;
+    },
+    onShareDismissClick() {
+      DialogHelper.closeSelf(this);
     },
   }
 });

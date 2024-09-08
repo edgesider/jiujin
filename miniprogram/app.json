@@ -39,7 +39,8 @@
     "Dialog": "/components/Dialog",
     "Dialogs": "/components/Dialogs",
     "mp-html": "mp-html",
-    "LLButton": "/components/LLButton"
+    "LLButton": "/components/LLButton",
+    "QuestionDialog": "/components/QuestionDialog"
   },
   "tabBar": {
     "custom": true,

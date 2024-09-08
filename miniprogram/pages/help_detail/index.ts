@@ -12,7 +12,7 @@ import {
 } from '../../utils/other';
 import {
   DialogType,
-  handleLink,
+  handleLink, isUrlParamTrue,
   openConversationDetail,
   openDialog,
   openHelpEdit,
@@ -24,7 +24,7 @@ import { HelpAPI } from '../../api/HelpAPI';
 import { reportHelp } from '../../utils/report';
 import { HelpTransaction, HelpTransactionAPI, HelpTransactionStatus } from '../../api/HelpTransactionAPI';
 import { metric } from '../../utils/metric';
-import { textToRichText } from '../../utils/strings';
+import { decodeOptions, textToRichText } from '../../utils/strings';
 import { isInSingleMode } from '../../utils/globals';
 import { ViewsAPI } from '../../api/ViewsAPI';
 import { Help, User, ViewsInfo } from '../../types';
@@ -56,7 +56,12 @@ Page({
 
   onLoad: async function (options) {
     await app.waitForReady();
-    const { id, scrollToComment, shareInfo: shareInfoStr } = options;
+    const {
+      id,
+      scrollToComment,
+      shareInfo: shareInfoStr ,
+      isNewPublished,
+    } = decodeOptions(options);
     if (!id) {
       toastError('无效的参数');
       return;
@@ -72,11 +77,13 @@ Page({
     this.setData({
       scrollToComment: Boolean(scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0') ?? null,
     });
-
+    if (isUrlParamTrue(isNewPublished)) {
+      openDialog(DialogType.AfterPublish).then();
+    }
     if (!isInSingleMode()) {
       ViewsAPI.addView(id, shareInfo?.fromUid).then();
     }
-    metric.write('help_detail_show', {}, { id: id, shareInfo: shareInfoStr });
+    metric.write('help_detail_show', {}, { id: id, shareInfo: shareInfoStr, isNewPublished });
   },
 
   async loadData(id: string) {

@@ -10,6 +10,7 @@ import { Resp } from '../../api/resp';
 import { getEnvVersion, getVersionInfo } from '../../utils/env';
 import { handleSchema, openNotifyCounterDialog } from '../../utils/router';
 import { decodeOptions } from '../../utils/strings';
+import { openQuestionDialog } from '../../components/QuestionDialog/index';
 
 type TouchEvent = WechatMiniprogram.TouchEvent;
 const app = getApp();
@@ -106,7 +107,6 @@ Page({
   async onClickLogo() {
     if (getEnvVersion() === 'develop' || getEnvVersion() === 'trial') {
       toastInfo(`version=${getVersionInfo().version}`);
-      handleSchema(`lllw://route?page=/pages/help/index`)
     }
   },
 
@@ -126,7 +126,7 @@ Page({
     const { self } = app.globalData;
     const rid = self?.rid ?? DEFAULT_REGION_ID;
 
-    const regionPath = getRegionPath(rid).reverse();
+    const regionPath = getRegionPath(rid);
     this.setData({
       regions: regionPath,
       selectedRegionIndex: 0,

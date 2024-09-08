@@ -101,7 +101,9 @@ Component({
       if (!enabled) {
         tipText += '不可擦亮';
       } else {
-        tipText = this.getRemainText(remainMs) + '后可擦亮';
+        if (remainMs > 0) {
+          tipText = this.getRemainText(remainMs) + '后可擦亮';
+        }
       }
       this.setData({
         enabled,

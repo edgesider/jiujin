@@ -2,7 +2,7 @@
   class="button {{!enabled ? 'disabled' : (remainMs <= 0 ? 'free' : (cards > 0 ? 'use-card' : 'disabled'))}}"
   catchtap="onClick"
 >
-  <text class="button-text" style="{{tipText ? 'transform: translateY(-4rpx)' : ''}}">
+  <text class="button-text" style="{{tipText ? 'transform: translateY(-6rpx)' : ''}}">
     <block wx:if="{{enabled && remainMs > 0 && !firstPolish && cards > 0}}">用卡擦亮</block>
     <block wx:else>擦亮</block>
   </text>

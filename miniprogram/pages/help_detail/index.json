@@ -4,7 +4,8 @@
     "HelpCard": "/components/HelpCard/index",
     "UserTitleBar": "/components/UserTitleBar/index",
     "CountdownButton": "/components/CountdownButton/index",
-    "PolishButton": "/components/PolishButton"
+    "PolishButton": "/components/PolishButton",
+    "AfterPublishDialog": "/components/AfterPublishDialog/index"
   },
   "enablePullDownRefresh": false,
   "disableScroll": true

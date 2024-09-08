@@ -7,7 +7,6 @@ Component({
   properties: {},
   data: {
     ...getConstants(),
-    show: false,
   },
   lifetimes: {
     attached() {

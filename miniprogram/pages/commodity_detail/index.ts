@@ -1,6 +1,6 @@
 import api from '../../api/api';
 import { setNeedRefresh } from '../home/index';
-import getConstants, { COMMODITY_STATUS_BOOKED, COMMODITY_POLISH_MIN_DURATION } from '../../constants';
+import getConstants, { COMMODITY_POLISH_MIN_DURATION, COMMODITY_STATUS_BOOKED } from '../../constants';
 import {
   ensureRegistered,
   ensureVerified,
@@ -13,7 +13,7 @@ import {
 import moment from 'moment';
 import {
   DialogType,
-  handleLink,
+  handleLink, isUrlParamTrue,
   openCommodityEdit,
   openConversationDetail,
   openDialog,
@@ -27,7 +27,7 @@ import { CommodityAPI } from '../../api/CommodityAPI';
 import { reportCommodity } from '../../utils/report';
 import { Transaction, TransactionAPI, TransactionStatus } from '../../api/TransactionAPI';
 import { metric } from '../../utils/metric';
-import { textToRichText } from '../../utils/strings';
+import { decodeOptions, textToRichText } from '../../utils/strings';
 import { Commodity, User, ViewsInfo } from '../../types';
 import { ViewsAPI } from '../../api/ViewsAPI';
 
@@ -58,11 +58,17 @@ Page({
   },
   onLoad: async function (options) {
     await waitForAppReady();
-    const { id, scrollToComment, shareInfo: shareInfoStr } = options;
-
+    const {
+      id,
+      scrollToComment,
+      shareInfo: shareInfoStr,
+      isNewPublished, // 是否是新发布之后跳过来的
+    } = decodeOptions(options);
     if (!id) {
-      throw Error('invalid id');
+      toastError('无效的参数');
+      return;
     }
+
     const shareInfo = parseShareInfo(shareInfoStr);
     if (shareInfo) {
       console.log('shareInfo', shareInfo);
@@ -71,13 +77,15 @@ Page({
 
     await this.loadData(id);
     this.setData({
-      scrollToComment: Boolean((scrollToComment && scrollToComment !== 'false' && scrollToComment !== '0')),
+      scrollToComment: isUrlParamTrue(scrollToComment),
     });
-
-    if (!isInSingleMode()) {
-      await ViewsAPI.addView(id, shareInfo?.fromUid);
+    if (isUrlParamTrue(isNewPublished)) {
+      openDialog(DialogType.AfterPublish).then();
     }
-    metric.write('commodity_detail_show', {}, { id });
+    if (!isInSingleMode()) {
+      ViewsAPI.addView(id, shareInfo?.fromUid).then();
+    }
+    metric.write('commodity_detail_show', {}, { id, shareInfo: shareInfoStr, isNewPublished });
   },
   back() {
     wx.navigateBack().then();

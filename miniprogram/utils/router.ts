@@ -5,6 +5,7 @@ import { assembleUrlObject, getCurrentPage, parseURL, toastSucceed } from './oth
 import { metric } from './metric';
 import { encode } from 'base64-arraybuffer';
 import { UsePolishCardDialogParams, UsePolishCardDialogResult } from '../components/UsePolishCardDialog';
+import { ShareInfo } from './share';
 
 export function getRouteFromHomePageUrl(
   targetPageOrSchema: string,
@@ -39,15 +40,21 @@ export async function openProfile(user: string | User) {
 interface CommodityDetailOptions {
   id: string;
   scrollToComment?: boolean;
+  isNewPublished?: boolean; // 是否是新发布之后跳过来的
 }
 
-export async function openCommodityDetail(options: CommodityDetailOptions) {
+export async function openCommodityDetail(options: CommodityDetailOptions, redirectTo: boolean = false) {
   if (!options.id) {
     throw Error('commodity id is required');
   }
-  await wx.navigateTo({
-    url: `/pages/commodity_detail/index?id=${options.id}&scrollToComment=${Boolean(options.scrollToComment)}`,
-  })
+  const url = `/pages/commodity_detail/index?id=${options.id}` +
+    `&scrollToComment=${Boolean(options.scrollToComment)}` +
+    `&isNewPublished=${Boolean(options.isNewPublished)}`;
+  if (redirectTo) {
+    await wx.redirectTo({ url })
+  } else {
+    await wx.navigateTo({ url })
+  }
 }
 
 export async function openConversationDetail(conv: ConversationItem | string) {
@@ -121,15 +128,21 @@ export async function openCommodityEdit(commodity: Commodity, waitFinished = fal
 interface HelpDetailOptions {
   id: string;
   scrollToComment?: boolean;
+  isNewPublished?: boolean;
 }
 
-export async function openHelpDetail(options: HelpDetailOptions) {
+export async function openHelpDetail(options: HelpDetailOptions, redirectTo = false) {
   if (!options.id) {
     throw Error('help id is required');
   }
-  await wx.navigateTo({
-    url: `/pages/help_detail/index?id=${options.id}&scrollToComment=${Boolean(options.scrollToComment)}`,
-  })
+  const url = `/pages/help_detail/index?id=${options.id}` +
+    `&scrollToComment=${Boolean(options.scrollToComment)}` +
+    `&isNewPublished=${options.isNewPublished}`;
+  if (redirectTo) {
+    await wx.redirectTo({ url })
+  } else {
+    await wx.navigateTo({ url })
+  }
 }
 
 export async function openHelpPublish(from?: Help, waitFinished = false) {
@@ -232,10 +245,12 @@ export enum DialogType {
   ShareRewardRule,
   // 确认使用擦亮卡
   UsePolishCard,
+  // 发布成功后
   AfterPublish,
-  PublishSuccessDialog,
   // 无擦亮卡
   NoPolishCardDialog,
+  // 带输入对话框
+  Question,
 }
 
 export async function openDialog<P, R>(type: DialogType, params?: P): Promise<R | undefined> {
@@ -256,7 +271,12 @@ export async function openDialog<P, R>(type: DialogType, params?: P): Promise<R 
 
 export const DialogHelper = {
   initDialog(comp) {
-    getCurrentPage()[getDialogKey(comp.properties.type)] = comp;
+    const page = getCurrentPage();
+    const key = getDialogKey(comp.properties.type);
+    if (page[key]) {
+      throw Error(`dialog ${DialogType[comp.properties.type]} has been registered`);
+    }
+    page[key] = comp;
   },
   clearDialog(comp) {
     delete getCurrentPage()[getDialogKey(comp.properties.type) + '_params'];
@@ -303,4 +323,8 @@ function getDialogKey(type: DialogType) {
 
 export function openMyPolishCard() {
   wx.navigateTo({ url: '/pages/my_polish_card/index' }).then();
+}
+
+export function isUrlParamTrue(p: string | undefined | null): boolean {
+  return Boolean((p && p !== 'false' && p !== '0'));
 }

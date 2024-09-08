@@ -8,7 +8,7 @@ import { waitForAppReady } from "../../utils/globals";
 import { ErrCode } from "../../api/ErrCode";
 import { compressImage } from "../../utils/canvas";
 import { metric } from "../../utils/metric";
-import { DialogType, openDialog } from "../../utils/router";
+import { DialogType, openCommodityDetail, openDialog } from "../../utils/router";
 import { onShareApp, onShareCommodity } from "../../utils/share";
 import { CommodityAPI } from "../../api/CommodityAPI";
 
@@ -41,7 +41,6 @@ Page({
     filtration: ["全部可见", "同校区可见", "同性别可见", "同楼可见"],
     choose_filtration: "全部可见",
 
-    published: false,
   },
 
   async onLoad(options) {
@@ -292,14 +291,14 @@ Page({
       // TODO 使用Channel
       setNeedRefresh();
     }
-    wx.navigateBack();
 
-    // if (!editing) {
-    //   this.setData({ published: resp.data });
-    //   await openDialog(DialogType.PublishSuccessDialog);
-    // } else {
-    //   wx.navigateBack();
-    // }
+    if (!editing) {
+      await openCommodityDetail({ id: resp.data._id, isNewPublished: true }, true);
+    } else {
+      toastSucceed('已保存');
+      await sleep(1500);
+      await wx.navigateBack();
+    }
   },
 
   submitting: false,
@@ -331,29 +330,4 @@ Page({
       });
     }
   },
-
-  onShareWxClick() {
-  },
-  onSharePyqClick() {
-    // toastInfo('暂不支持？');
-    wx.showActionSheet({
-      itemList: ['复制链接', '分享海报', '分享微信'],
-    })
-  },
-  onShareDismissClick() {
-    wx.navigateBack();
-  },
-
-  async onShareAppMessage(options) {
-    if (this.data.published) {
-      toastLoading('请稍后');
-      try {
-        return await onShareCommodity(null, this.data.published);
-      } finally {
-        toastLoadingHide();
-      }
-    } else {
-      return onShareApp();
-    }
-  }
 })

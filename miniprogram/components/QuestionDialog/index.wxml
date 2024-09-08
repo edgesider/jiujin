@@ -1,0 +1,12 @@
+<Dialog type="{{DialogType.Question}}" title="{{title}}">
+  <textarea
+    class="input"
+    placeholder="{{placeholder}}"
+    model:value="{{inputValue}}"
+    maxlength="100"
+  />
+  <view class="buttons">
+    <view class="ll-btn" bindtap="onClickOk">{{confirmText}}</view>
+    <view class="ll-btn ll-btn-yellow" bindtap="onClickCancel">{{cancelText}}</view>
+  </view>
+</Dialog>

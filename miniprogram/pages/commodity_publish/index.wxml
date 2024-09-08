@@ -70,24 +70,3 @@
 <button bindtap="onSubmit" style="background: {{submit?'#f0f0f0':'var(--brand-green)'}};" class="submit">
   {{buttonText}}
 </button>
-
-<Dialog type="{{DialogType.PublishSuccessDialog}}">
-  <view class="success-dialog">
-    <view class="content">
-      <view>商品发布后每隔<text class="red">48小时</text>可手动擦亮一次</view>
-      <view>使用「擦亮卡」不受此时间限制</view>
-      <view style="height: 1em;" />
-      <view>为避免失效内容浪费用户时间</view>
-      <view>商品发布后<text class="red">30天</text>后未擦亮将自动下架</view>
-      <view style="height: 1em;" />
-      <view>分享内容可获得更多额外曝光以促成交易</view>
-      <view>分享带来的浏览量还可兑换擦亮卡奖励</view>
-      <view>分享带来新用户最高奖励10元/人</view>
-    </view>
-    <view class="buttons">
-      <LLButton class="button" color="green" text="分享到" suffixIcon="/images/share-wx-reward-white.png" share />
-<!--      <LLButton class="button" color="yellowgreen" text="生成海报" suffixIcon="/images/share-pyq-white.png" bindtap="onSharePyqClick" />-->
-      <LLButton class="button" color="yellow" text="不用了" bindtap="onShareDismissClick"/>
-    </view>
-  </view>
-</Dialog>

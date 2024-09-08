@@ -7,6 +7,7 @@ import { ErrCode } from "../../api/ErrCode";
 import { decodeOptions } from "../../utils/strings";
 import { compressImage } from "../../utils/canvas";
 import { metric } from "../../utils/metric";
+import { openHelpDetail } from "../../utils/router";
 
 const app = getApp()
 Page({
@@ -218,10 +219,14 @@ Page({
       // TODO 使用Channel
       setNeedRefresh();
     }
-    toastSucceed(editing ? '已保存' : '发布成功');
 
-    await sleep(1500);
-    await wx.navigateBack();
+    if (!editing) {
+      await openHelpDetail({ id: resp.data._id, isNewPublished: true }, true);
+    } else {
+      toastSucceed('已保存');
+      await sleep(1500);
+      await wx.navigateBack();
+    }
   },
 
   submitting: false,

@@ -98,7 +98,7 @@
             <LLButton class="button" color="yellow" text="结束" bind:tap="onDeactivate" />
           </block>
           <block wx:elif='{{help.bounty > 0}}'>
-            <LLButton class="button" text="去私聊" bind:tap="onPrivateMessage"/>
+            <LLButton class="button" text="去私聊" bind:tap="onPrivateMessage" />
           </block>
         </block>
         <block wx:elif="{{help.status === HELP_STATUS_RESOLVING}}">
@@ -122,3 +122,5 @@
 </view>
 
 <Dialogs />
+<AfterPublishDialog />
+<QuestionDialog />
