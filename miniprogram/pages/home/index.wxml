@@ -62,7 +62,7 @@
         wx:for="{{commodityList}}" wx:key="_id" wx:for-item="item"
         class="card"
         commodity="{{item}}"
-        currRegionLevel="{{selectedRegionIndex + 1}}"
+        currRegionLevel="{{4 - selectedRegionIndex}}"
       />
     </view>
 
@@ -73,13 +73,13 @@
           <view class="actions">
             <view>到底啦~</view>
             <view class="action" bindtap="refreshCurrentTab">刷新</view>
-            <block wx:if="{{selectedRegionIndex > 0}}">
+            <block wx:if="{{selectedRegionIndex < 3}}">
               <view>或</view>
               <view
                 class="action"
                 bind:tap="onRegionSwitchClick"
-                data-idx="{{selectedRegionIndex - 1}}"
-              >去“{{regions[selectedRegionIndex - 1].name}}”看看
+                data-idx="{{selectedRegionIndex + 1}}"
+              >去“{{regions[selectedRegionIndex + 1].name}}”看看
               </view>
             </block>
           </view>

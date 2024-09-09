@@ -63,12 +63,13 @@ export function getRegionPath(rid: number, {
 }
 
 /**
- * @return 学院路/大运村/1公寓
+ * @return eg. 学院路/大运村/1公寓
  */
 export function getRegionPathName(rid: number, minLevel = 2, short = false) {
   return getRegionPath(rid, { minLevel })
     .map(r => short ? r.short_name : r.name)
-    .reverse().join('/')
+    .reverse()
+    .join('/')
 }
 
 export function getL1Regions(ridToRegion?: Record<number, Region | undefined>): Region[] {
