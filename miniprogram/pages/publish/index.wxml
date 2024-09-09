@@ -1,15 +1,7 @@
 <TitleBar title="发布" hasDivider="{{false}}" />
 <view class="root" style="margin-bottom: calc({{TabBarHeight}}px + 30rpx)">
-  <view class="button green" bindtap="createCommodity">
-    <view class="title">闲置物品</view>
-    <view class="subtitle">每一分价值都值得被传递</view>
-    <image src="/images/publish_commodity.png" class="icon" />
-  </view>
-  <view class="button yellow" bindtap="createHelp">
-    <view class="title">互助信息</view>
-    <view class="subtitle">谁还没个需要帮助的时候呢</view>
-    <image src="/images/publish_help.png" class="icon" />
-  </view>
+  <image class="button" src="/images/co_publish.png" bindtap="createCommodity" />
+  <image class="button" src="/images/help_publish.png" bindtap="createHelp" />
 </view>
 
 <Dialogs />

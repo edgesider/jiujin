@@ -22,7 +22,6 @@
   <view class="bottom">
     <view class="left"></view>
     <view class="right">
-      <image wx:if="{{statusImage}}" class="status" src="{{statusImage}}" />
       <block wx:if="{{help.seller_id === self._id}}">
         <block wx:if='{{help.status === HELP_STATUS_RUNNING}}'>
           <PolishButton
@@ -36,4 +35,5 @@
       </block>
     </view>
   </view>
+  <image wx:if="{{statusImage}}" class="status" src="{{statusImage}}" />
 </view>

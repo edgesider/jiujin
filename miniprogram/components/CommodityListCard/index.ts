@@ -117,7 +117,7 @@ Component({
         statusImage: !showStatusImage ? null : ({
           [COMMODITY_STATUS_SOLD]: '/images/已成交.png',
           [COMMODITY_STATUS_BOOKED]: '/images/已预订.png',
-          [COMMODITY_STATUS_DEACTIVATED]: '/images/已结束.png',
+          [COMMODITY_STATUS_DEACTIVATED]: '/images/已下架.png',
         })[status] ?? '',
         canPolishDuration: polish_time + COMMODITY_POLISH_MIN_DURATION - Date.now(),
         canPolish: Date.now() - polish_time > COMMODITY_POLISH_MIN_DURATION

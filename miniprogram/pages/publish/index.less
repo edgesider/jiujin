@@ -17,46 +17,11 @@ page {
   flex-direction: column;
   justify-content: flex-end;
   align-items: stretch;
-
+  background: #daffaa;
 
   > .button {
-    position: relative;
-    height: 200rpx;
-    border-radius: 32rpx;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding-left: 32rpx;
-    gap: 6rpx;
-  }
-
-  > .button.green {
-    background-color: var(--brand-green);
-  }
-
-  > .button.yellow {
-    background-color: var(--brand-yellow);
-  }
-
-  > .button .title {
-    color: #000000e5;
-    font-weight: 600;
-    font-size: 40rpx;
-  }
-
-  > .button .subtitle {
-    color: #00000099;
-    font-size: 24rpx;
-  }
-
-  > .button .icon {
-    width: 72rpx;
-    height: 72rpx;
-    position: absolute;
-    right: 32rpx;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 100%;
+    height: calc(0.34 * (100vw - 40rpx));
   }
 }
 

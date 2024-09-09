@@ -16,7 +16,6 @@
   <view class="bottom">
     <view class="left"></view>
     <view class="right">
-      <image wx:if="{{statusImage}}" class="status" src="{{statusImage}}" />
       <block wx:if="{{commodity.seller_id === self._id}}">
         <block wx:if="{{commodity.status === COMMODITY_STATUS_DEACTIVATED}}">
           <LLButton class="button" color="green" catch:tap="activate" text="重新上架" />
@@ -37,4 +36,5 @@
       </block>
     </view>
   </view>
+  <image wx:if="{{statusImage}}" class="status" src="{{statusImage}}" />
 </view>

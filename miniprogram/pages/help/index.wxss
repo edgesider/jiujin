@@ -94,6 +94,7 @@ page {
 
 .filters .region-filter {
   width: 1px;
+  z-index: 200;
   flex-grow: 1;
   flex-shrink: 1;
 }

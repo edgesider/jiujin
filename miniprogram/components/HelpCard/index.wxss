@@ -49,12 +49,11 @@
 }
 
 .body .status-icon {
-  width: 136rpx;
+  width: 96rpx;
   height: 96rpx;
   position: absolute;
   right: 110rpx;
   top: 10rpx;
-  z-index: 100;
 }
 
 .body .content .images {
