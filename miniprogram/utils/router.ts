@@ -1,11 +1,9 @@
 import { Commodity, Help, User } from '../types';
 import { ConversationItem } from '../lib/openim/index';
 import { AboutType } from '../pages/about';
-import { assembleUrlObject, getCurrentPage, parseURL, toastSucceed } from './other';
+import { getCurrentPage, parseURL, toastSucceed } from './other';
 import { metric } from './metric';
-import { encode } from 'base64-arraybuffer';
-import { UsePolishCardDialogParams, UsePolishCardDialogResult } from '../components/UsePolishCardDialog';
-import { ShareInfo } from './share';
+import getConstants from '../constants';
 
 export function getRouteFromHomePageUrl(
   targetPageOrSchema: string,
@@ -273,7 +271,7 @@ export const DialogHelper = {
   initDialog(comp) {
     const page = getCurrentPage();
     const key = getDialogKey(comp.properties.type);
-    if (page[key]) {
+    if (page[key] && getConstants().Platform !== 'devtools' /* devtool 可能是 hot reload 导致的 */) {
       throw Error(`dialog ${DialogType[comp.properties.type]} has been registered`);
     }
     page[key] = comp;
