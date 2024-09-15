@@ -5,7 +5,7 @@
     <text>求助走丢了</text>
   </view>
   <block wx:else>
-    <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{createTime}}" />
+    <UserTitleBar user="{{seller}}" hasBack="{{true}}" time="{{polishTimeGeneral}}" />
     <scroll-view class="body" scroll-y="{{true}}" scroll-into-view="{{scrollToView}}" scroll-with-animation="{{true}}">
       <view class="content">
         <view>

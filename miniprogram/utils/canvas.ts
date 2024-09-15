@@ -46,11 +46,25 @@ async function drawImage(canvas: OffscreenCanvas, ctx: CanvasContext, imgUrl: st
       } else if (h === -1) {
         h = img.height / img.width * w;
       }
-      const srcWidth = img.width;
-      const srcHeight = h / w * img.width;
-      const srcY = (img.height - srcHeight) / 2;
+      let srcWidth: number;
+      let srcHeight: number;
+      let srcX: number;
+      let srcY: number;
+      if (w / h > img.width / img.height) {
+        // 比较高的图片
+        srcWidth = img.width;
+        srcHeight = h / w * img.width;
+        srcX = 0;
+        srcY = (img.height - srcHeight) / 2;
+      } else {
+        // 比较宽的图片
+        srcHeight = img.height;
+        srcWidth = w / h * img.height;
+        srcX = (img.width - srcWidth) / 2;
+        srcY = 0;
+      }
       // @ts-ignore
-      ctx.drawImage(img, 0, srcY, srcWidth, srcHeight, x, y, w, h);
+      ctx.drawImage(img, srcX, srcY, Math.round(srcWidth), Math.round(srcHeight), x, y, w, h);
       res();
     }
     img.onerror = rej;
